@@ -1,0 +1,43 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'series_model.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+_$SeriesModelImpl _$$SeriesModelImplFromJson(Map<String, dynamic> json) =>
+    _$SeriesModelImpl(
+      seriesId: json['seriesId'] as String,
+      tmdbId: json['tmdbId'] as int,
+      title: json['title'] as String,
+      overview: json['overview'] as String?,
+      posterPath: json['posterPath'] as String?,
+      backdropPath: json['backdropPath'] as String?,
+      firstAirDate: json['firstAirDate'] as String?,
+      genres: (json['genres'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
+      networks: (json['networks'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
+      seasonCount: json['seasonCount'] as int? ?? 0,
+      status: json['status'] as String?,
+    );
+
+Map<String, dynamic> _$$SeriesModelImplToJson(_$SeriesModelImpl instance) =>
+    <String, dynamic>{
+      'seriesId': instance.seriesId,
+      'tmdbId': instance.tmdbId,
+      'title': instance.title,
+      'overview': instance.overview,
+      'posterPath': instance.posterPath,
+      'backdropPath': instance.backdropPath,
+      'firstAirDate': instance.firstAirDate,
+      'genres': instance.genres,
+      'networks': instance.networks,
+      'seasonCount': instance.seasonCount,
+      'status': instance.status,
+    };
