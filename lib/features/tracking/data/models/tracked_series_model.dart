@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import '../../../series/data/models/series_model.dart';
 import 'season_rating_model.dart';
 
 part 'tracked_series_model.freezed.dart';
@@ -14,6 +15,7 @@ class TrackedSeriesModel with _$TrackedSeriesModel {
     int? seriesRating,
     String? seriesReview,
     @Default([]) List<SeasonRatingModel> seasonRatings,
+    SeriesModel? series,
     required DateTime addedAt,
     required DateTime lastUpdated,
   }) = _TrackedSeriesModel;

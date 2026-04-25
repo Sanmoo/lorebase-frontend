@@ -23,7 +23,7 @@ class DashboardPage extends ConsumerWidget {
         onRefresh: () => ref.read(dashboardViewModelProvider.notifier).refresh(),
         child: dashboardState.when(
           loading: () => const LoadingWidget(message: 'Loading your dashboard...'),
-          error: (error, _) => ErrorWidget(
+          error: (error, _) => AppErrorWidget(
             message: error.toString(),
             onRetry: () => ref.read(dashboardViewModelProvider.notifier).refresh(),
           ),

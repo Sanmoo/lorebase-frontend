@@ -20,6 +20,9 @@ _$TrackedSeriesModelImpl _$$TrackedSeriesModelImplFromJson(
                   (e) => SeasonRatingModel.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
+      series: json['series'] == null
+          ? null
+          : SeriesModel.fromJson(json['series'] as Map<String, dynamic>),
       addedAt: DateTime.parse(json['addedAt'] as String),
       lastUpdated: DateTime.parse(json['lastUpdated'] as String),
     );
@@ -34,6 +37,7 @@ Map<String, dynamic> _$$TrackedSeriesModelImplToJson(
       'seriesRating': instance.seriesRating,
       'seriesReview': instance.seriesReview,
       'seasonRatings': instance.seasonRatings,
+      'series': instance.series,
       'addedAt': instance.addedAt.toIso8601String(),
       'lastUpdated': instance.lastUpdated.toIso8601String(),
     };

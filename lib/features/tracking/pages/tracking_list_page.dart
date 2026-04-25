@@ -67,7 +67,7 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
         children: List.generate(4, (index) {
           return trackingState.when(
             loading: () => const LoadingWidget(),
-            error: (error, _) => ErrorWidget(
+            error: (error, _) => AppErrorWidget(
               message: error.toString(),
               onRetry: () => _loadTrackingForTab(index),
             ),
@@ -89,11 +89,17 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
                 itemCount: trackings.length,
                 itemBuilder: (context, i) {
                   final tracking = trackings[i];
+                  final series = tracking.series;
+                  if (series == null) {
+                    return const Center(
+                      child: Icon(Icons.tv_off, color: Colors.grey),
+                    );
+                  }
                   return Column(
                     children: [
                       Expanded(
                         child: SeriesPoster(
-                          series: tracking.series, // This requires series data enrichment
+                          series: series,
                           onTap: () {
                             // TODO: Navigate to tracking detail
                           },

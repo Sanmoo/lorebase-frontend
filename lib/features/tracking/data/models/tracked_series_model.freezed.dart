@@ -28,6 +28,7 @@ mixin _$TrackedSeriesModel {
   String? get seriesReview => throw _privateConstructorUsedError;
   List<SeasonRatingModel> get seasonRatings =>
       throw _privateConstructorUsedError;
+  SeriesModel? get series => throw _privateConstructorUsedError;
   DateTime get addedAt => throw _privateConstructorUsedError;
   DateTime get lastUpdated => throw _privateConstructorUsedError;
 
@@ -55,8 +56,11 @@ abstract class $TrackedSeriesModelCopyWith<$Res> {
       int? seriesRating,
       String? seriesReview,
       List<SeasonRatingModel> seasonRatings,
+      SeriesModel? series,
       DateTime addedAt,
       DateTime lastUpdated});
+
+  $SeriesModelCopyWith<$Res>? get series;
 }
 
 /// @nodoc
@@ -81,6 +85,7 @@ class _$TrackedSeriesModelCopyWithImpl<$Res, $Val extends TrackedSeriesModel>
     Object? seriesRating = freezed,
     Object? seriesReview = freezed,
     Object? seasonRatings = null,
+    Object? series = freezed,
     Object? addedAt = null,
     Object? lastUpdated = null,
   }) {
@@ -113,6 +118,10 @@ class _$TrackedSeriesModelCopyWithImpl<$Res, $Val extends TrackedSeriesModel>
           ? _value.seasonRatings
           : seasonRatings // ignore: cast_nullable_to_non_nullable
               as List<SeasonRatingModel>,
+      series: freezed == series
+          ? _value.series
+          : series // ignore: cast_nullable_to_non_nullable
+              as SeriesModel?,
       addedAt: null == addedAt
           ? _value.addedAt
           : addedAt // ignore: cast_nullable_to_non_nullable
@@ -122,6 +131,20 @@ class _$TrackedSeriesModelCopyWithImpl<$Res, $Val extends TrackedSeriesModel>
           : lastUpdated // ignore: cast_nullable_to_non_nullable
               as DateTime,
     ) as $Val);
+  }
+
+  /// Create a copy of TrackedSeriesModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $SeriesModelCopyWith<$Res>? get series {
+    if (_value.series == null) {
+      return null;
+    }
+
+    return $SeriesModelCopyWith<$Res>(_value.series!, (value) {
+      return _then(_value.copyWith(series: value) as $Val);
+    });
   }
 }
 
@@ -141,8 +164,12 @@ abstract class _$$TrackedSeriesModelImplCopyWith<$Res>
       int? seriesRating,
       String? seriesReview,
       List<SeasonRatingModel> seasonRatings,
+      SeriesModel? series,
       DateTime addedAt,
       DateTime lastUpdated});
+
+  @override
+  $SeriesModelCopyWith<$Res>? get series;
 }
 
 /// @nodoc
@@ -165,6 +192,7 @@ class __$$TrackedSeriesModelImplCopyWithImpl<$Res>
     Object? seriesRating = freezed,
     Object? seriesReview = freezed,
     Object? seasonRatings = null,
+    Object? series = freezed,
     Object? addedAt = null,
     Object? lastUpdated = null,
   }) {
@@ -197,6 +225,10 @@ class __$$TrackedSeriesModelImplCopyWithImpl<$Res>
           ? _value._seasonRatings
           : seasonRatings // ignore: cast_nullable_to_non_nullable
               as List<SeasonRatingModel>,
+      series: freezed == series
+          ? _value.series
+          : series // ignore: cast_nullable_to_non_nullable
+              as SeriesModel?,
       addedAt: null == addedAt
           ? _value.addedAt
           : addedAt // ignore: cast_nullable_to_non_nullable
@@ -220,6 +252,7 @@ class _$TrackedSeriesModelImpl implements _TrackedSeriesModel {
       this.seriesRating,
       this.seriesReview,
       final List<SeasonRatingModel> seasonRatings = const [],
+      this.series,
       required this.addedAt,
       required this.lastUpdated})
       : _seasonRatings = seasonRatings;
@@ -249,13 +282,15 @@ class _$TrackedSeriesModelImpl implements _TrackedSeriesModel {
   }
 
   @override
+  final SeriesModel? series;
+  @override
   final DateTime addedAt;
   @override
   final DateTime lastUpdated;
 
   @override
   String toString() {
-    return 'TrackedSeriesModel(trackingId: $trackingId, userId: $userId, seriesId: $seriesId, status: $status, seriesRating: $seriesRating, seriesReview: $seriesReview, seasonRatings: $seasonRatings, addedAt: $addedAt, lastUpdated: $lastUpdated)';
+    return 'TrackedSeriesModel(trackingId: $trackingId, userId: $userId, seriesId: $seriesId, status: $status, seriesRating: $seriesRating, seriesReview: $seriesReview, seasonRatings: $seasonRatings, series: $series, addedAt: $addedAt, lastUpdated: $lastUpdated)';
   }
 
   @override
@@ -275,6 +310,7 @@ class _$TrackedSeriesModelImpl implements _TrackedSeriesModel {
                 other.seriesReview == seriesReview) &&
             const DeepCollectionEquality()
                 .equals(other._seasonRatings, _seasonRatings) &&
+            (identical(other.series, series) || other.series == series) &&
             (identical(other.addedAt, addedAt) || other.addedAt == addedAt) &&
             (identical(other.lastUpdated, lastUpdated) ||
                 other.lastUpdated == lastUpdated));
@@ -291,6 +327,7 @@ class _$TrackedSeriesModelImpl implements _TrackedSeriesModel {
       seriesRating,
       seriesReview,
       const DeepCollectionEquality().hash(_seasonRatings),
+      series,
       addedAt,
       lastUpdated);
 
@@ -320,6 +357,7 @@ abstract class _TrackedSeriesModel implements TrackedSeriesModel {
       final int? seriesRating,
       final String? seriesReview,
       final List<SeasonRatingModel> seasonRatings,
+      final SeriesModel? series,
       required final DateTime addedAt,
       required final DateTime lastUpdated}) = _$TrackedSeriesModelImpl;
 
@@ -340,6 +378,8 @@ abstract class _TrackedSeriesModel implements TrackedSeriesModel {
   String? get seriesReview;
   @override
   List<SeasonRatingModel> get seasonRatings;
+  @override
+  SeriesModel? get series;
   @override
   DateTime get addedAt;
   @override

@@ -57,7 +57,7 @@ class _SeriesSearchPageState extends ConsumerState<SeriesSearchPage> {
       ),
       body: searchState.when(
         loading: () => const LoadingWidget(),
-        error: (error, _) => ErrorWidget(
+        error: (error, _) => AppErrorWidget(
           message: error.toString(),
           onRetry: () => _onSearchChanged(_searchController.text),
         ),
