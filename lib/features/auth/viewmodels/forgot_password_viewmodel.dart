@@ -1,5 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../data/repositories/auth_repository.dart';
+import 'auth_viewmodel.dart';
 
 part 'forgot_password_viewmodel.g.dart';
 
