@@ -56,6 +56,8 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
         title: const Text('My Lists'),
         bottom: TabBar(
           controller: _tabController,
+          isScrollable: true,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           tabs: TrackingStatus.values
               .map((s) => Tab(text: s.label))
               .toList(),
