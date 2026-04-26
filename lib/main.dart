@@ -8,7 +8,11 @@ import 'app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load();
+  try {
+    await dotenv.load();
+  } catch (e) {
+    debugPrint('Warning: .env file not found, using defaults');
+  }
   await _configureAmplify();
   runApp(
     const ProviderScope(
