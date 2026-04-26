@@ -1,3 +1,4 @@
+import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:dio/dio.dart';
 
@@ -9,8 +10,9 @@ class AuthInterceptor extends Interceptor {
   ) async {
     try {
       final session = await Amplify.Auth.fetchAuthSession();
-      if (session.isSignedIn) {
-        final token = session.userPoolTokensResult.value.accessToken.raw;
+      if (session.isSignedIn && session is CognitoAuthSession) {
+        final cognitoSession = session as CognitoAuthSession;
+        final token = cognitoSession.userPoolTokensResult.value.accessToken.raw;
         options.headers['Authorization'] = 'Bearer $token';
       }
     } catch (e) {
