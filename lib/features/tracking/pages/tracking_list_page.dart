@@ -54,67 +54,76 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Lists'),
-        bottom: TabBar(
-          controller: _tabController,
-          isScrollable: true,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          tabs: TrackingStatus.values
-              .map((s) => Tab(text: s.label))
-              .toList(),
-        ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: List.generate(4, (index) {
-          return trackingState.when(
-            loading: () => const LoadingWidget(),
-            error: (error, _) => AppErrorWidget(
-              message: error.toString(),
-              onRetry: () => _loadTrackingForTab(index),
+      body: Column(
+        children: [
+          Container(
+            color: Theme.of(context).appBarTheme.backgroundColor ?? Theme.of(context).primaryColor,
+            child: TabBar(
+              controller: _tabController,
+              isScrollable: true,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              tabs: TrackingStatus.values
+                  .map((s) => Tab(text: s.label))
+                  .toList(),
             ),
-            data: (trackings) {
-              if (trackings.isEmpty) {
-                return EmptyStateWidget(
-                  message: 'No ${TrackingStatus.values[index].label} series yet',
-                  icon: Icons.tv_off,
-                );
-              }
-              return GridView.builder(
-                padding: const EdgeInsets.all(16.0),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  childAspectRatio: 0.55,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                ),
-                itemCount: trackings.length,
-                itemBuilder: (context, i) {
-                  final tracking = trackings[i];
-                  final series = tracking.series;
-                  if (series == null) {
-                    return const Center(
-                      child: Icon(Icons.tv_off, color: Colors.grey),
-                    );
-                  }
-                  return Column(
-                    children: [
-                      Expanded(
-                        child: SeriesPoster(
-                          series: series,
-                          onTap: () {
-                            // TODO: Navigate to tracking detail
-                          },
-                        ),
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: List.generate(4, (index) {
+                return trackingState.when(
+                  loading: () => const LoadingWidget(),
+                  error: (error, _) => AppErrorWidget(
+                    message: error.toString(),
+                    onRetry: () => _loadTrackingForTab(index),
+                  ),
+                  data: (trackings) {
+                    if (trackings.isEmpty) {
+                      return EmptyStateWidget(
+                        message: 'No ${TrackingStatus.values[index].label} series yet',
+                        icon: Icons.tv_off,
+                      );
+                    }
+                    return GridView.builder(
+                      padding: const EdgeInsets.all(16.0),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        childAspectRatio: 0.55,
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 12,
                       ),
-                      const SizedBox(height: 4),
-                      TrackingStatusChip(status: tracking.status),
-                    ],
-                  );
-                },
-              );
-            },
-          );
-        }),
+                      itemCount: trackings.length,
+                      itemBuilder: (context, i) {
+                        final tracking = trackings[i];
+                        final series = tracking.series;
+                        if (series == null) {
+                          return const Center(
+                            child: Icon(Icons.tv_off, color: Colors.grey),
+                          );
+                        }
+                        return Column(
+                          children: [
+                            Expanded(
+                              child: SeriesPoster(
+                                series: series,
+                                onTap: () {
+                                  // TODO: Navigate to tracking detail
+                                },
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            TrackingStatusChip(status: tracking.status),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                );
+              }),
+            ),
+          ),
+        ],
       ),
     );
   }
