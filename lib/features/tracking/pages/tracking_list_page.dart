@@ -57,6 +57,8 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
         bottom: TabBar(
           controller: _tabController,
           isScrollable: true,
+          padding: EdgeInsets.zero,
+          indicatorPadding: EdgeInsets.zero,
           tabs: TrackingStatus.values
               .map((s) => Tab(text: s.label))
               .toList(),
