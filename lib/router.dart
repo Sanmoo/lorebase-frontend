@@ -2,15 +2,42 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'core/widgets/scaffold_with_nav_bar.dart';
+import 'features/auth/pages/forgot_password_page.dart';
+import 'features/auth/pages/login_page.dart';
+import 'features/auth/pages/register_page.dart';
+import 'features/auth/viewmodels/auth_viewmodel.dart';
 import 'features/dashboard/pages/dashboard_page.dart';
 import 'features/recommendation/pages/recommendation_page.dart';
 import 'features/series/pages/series_search_page.dart';
 import 'features/tracking/pages/tracking_list_page.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
+  final authState = ref.watch(authViewModelProvider);
+
   return GoRouter(
-    initialLocation: '/dashboard',
+    initialLocation: '/login',
+    redirect: (context, state) {
+      final isAuthRoute = ['/login', '/register', '/forgot-password']
+          .contains(state.matchedLocation);
+      final isAuthenticated = authState.isAuthenticated;
+
+      if (!isAuthenticated && !isAuthRoute) return '/login';
+      if (isAuthenticated && isAuthRoute) return '/dashboard';
+      return null;
+    },
     routes: [
+      GoRoute(
+        path: '/login',
+        builder: (context, state) => const LoginPage(),
+      ),
+      GoRoute(
+        path: '/register',
+        builder: (context, state) => const RegisterPage(),
+      ),
+      GoRoute(
+        path: '/forgot-password',
+        builder: (context, state) => const ForgotPasswordPage(),
+      ),
       ShellRoute(
         builder: (context, state, child) => ScaffoldWithNavBar(child: child),
         routes: [
