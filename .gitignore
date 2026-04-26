@@ -66,5 +66,8 @@ amplifytools.xcconfig
 **.sample
 #amplify-do-not-edit-end
 
+# Worktrees
+.worktrees/
+
 # Environment files
 .env
