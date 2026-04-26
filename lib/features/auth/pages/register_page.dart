@@ -1,0 +1,241 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../viewmodels/register_viewmodel.dart';
+import '../widgets/auth_button.dart';
+import '../widgets/auth_page_scaffold.dart';
+import '../widgets/auth_text_field.dart';
+
+class RegisterPage extends ConsumerStatefulWidget {
+  const RegisterPage({super.key});
+
+  @override
+  ConsumerState<RegisterPage> createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends ConsumerState<RegisterPage> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmController = TextEditingController();
+  final _codeController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _emailController.addListener(() {
+      ref.read(registerViewModelProvider.notifier).setEmail(_emailController.text);
+    });
+    _passwordController.addListener(() {
+      ref.read(registerViewModelProvider.notifier).setPassword(_passwordController.text);
+    });
+    _confirmController.addListener(() {
+      ref.read(registerViewModelProvider.notifier).setConfirmPassword(_confirmController.text);
+    });
+    _codeController.addListener(() {
+      ref.read(registerViewModelProvider.notifier).setConfirmationCode(_codeController.text);
+    });
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmController.dispose();
+    _codeController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    final success = await ref.read(registerViewModelProvider.notifier).submit();
+    if (!success && mounted) {
+      // Error already shown inline
+    }
+  }
+
+  Future<void> _confirm() async {
+    final success = await ref.read(registerViewModelProvider.notifier).confirmSignUp();
+    if (success && mounted) {
+      context.go('/dashboard');
+    }
+  }
+
+  Color _strengthColor(PasswordStrength strength) {
+    switch (strength) {
+      case PasswordStrength.weak:
+        return Colors.redAccent;
+      case PasswordStrength.medium:
+        return Colors.orangeAccent;
+      case PasswordStrength.strong:
+        return Colors.greenAccent;
+    }
+  }
+
+  String _strengthText(PasswordStrength strength) {
+    switch (strength) {
+      case PasswordStrength.weak:
+        return 'Fraca';
+      case PasswordStrength.medium:
+        return 'Média';
+      case PasswordStrength.strong:
+        return 'Forte';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final registerState = ref.watch(registerViewModelProvider);
+
+    return AuthPageScaffold(
+      children: [
+        Text(
+          registerState.showConfirmation ? 'Confirme seu e-mail' : 'Criar conta',
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          registerState.showConfirmation
+              ? 'Digite o código enviado para ${registerState.email}'
+              : 'Comece a organizar suas séries',
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.white70,
+              ),
+        ),
+        const SizedBox(height: 32),
+        if (registerState.showConfirmation) ...[
+          AuthTextField(
+            controller: _codeController,
+            hint: 'Código de confirmação',
+            icon: Icons.confirmation_number_outlined,
+            keyboardType: TextInputType.number,
+          ),
+          const SizedBox(height: 16),
+          AuthButton(
+            text: 'Confirmar e entrar',
+            isLoading: registerState.isLoading,
+            onPressed: _confirm,
+          ),
+          const SizedBox(height: 12),
+          TextButton(
+            onPressed: () => ref.read(registerViewModelProvider.notifier).resendCode(),
+            child: const Text(
+              'Reenviar código',
+              style: TextStyle(color: Colors.white70),
+            ),
+          ),
+        ] else ...[
+          AuthTextField(
+            controller: _emailController,
+            hint: 'E-mail',
+            icon: Icons.mail_outline,
+            keyboardType: TextInputType.emailAddress,
+          ),
+          const SizedBox(height: 16),
+          AuthTextField(
+            controller: _passwordController,
+            hint: 'Senha',
+            icon: Icons.lock_outline,
+            obscureText: registerState.obscurePassword,
+            onToggleObscure: () {
+              ref.read(registerViewModelProvider.notifier).toggleObscurePassword();
+            },
+          ),
+          const SizedBox(height: 8),
+          // Password strength indicator
+          if (registerState.password.isNotEmpty)
+            Row(
+              children: [
+                Expanded(
+                  flex: registerState.passwordStrength == PasswordStrength.weak ? 1 : 0,
+                  child: Container(height: 3, color: Colors.redAccent),
+                ),
+                Expanded(
+                  flex: registerState.passwordStrength == PasswordStrength.medium ? 1 : 0,
+                  child: Container(height: 3, color: Colors.orangeAccent),
+                ),
+                Expanded(
+                  flex: registerState.passwordStrength == PasswordStrength.strong ? 1 : 0,
+                  child: Container(height: 3, color: Colors.greenAccent),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  _strengthText(registerState.passwordStrength),
+                  style: TextStyle(
+                    color: _strengthColor(registerState.passwordStrength),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          const SizedBox(height: 16),
+          AuthTextField(
+            controller: _confirmController,
+            hint: 'Confirmar senha',
+            icon: Icons.lock_outline,
+            obscureText: registerState.obscurePassword,
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Checkbox(
+                value: registerState.termsAccepted,
+                onChanged: (_) => ref.read(registerViewModelProvider.notifier).toggleTerms(),
+                fillColor: WidgetStateProperty.resolveWith((states) {
+                  if (states.contains(WidgetState.selected)) {
+                    return Colors.white;
+                  }
+                  return Colors.white30;
+                }),
+                checkColor: Theme.of(context).primaryColor,
+              ),
+              Expanded(
+                child: Text(
+                  'Li e aceito os Termos de Uso',
+                  style: TextStyle(color: Colors.white.withOpacity(0.8)),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          AuthButton(
+            text: 'Criar conta',
+            isLoading: registerState.isLoading,
+            onPressed: _submit,
+          ),
+        ],
+        if (registerState.errorMessage != null) ...[
+          const SizedBox(height: 12),
+          Text(
+            registerState.errorMessage!,
+            style: const TextStyle(color: Colors.redAccent, fontSize: 13),
+            textAlign: TextAlign.center,
+          ),
+        ],
+        const SizedBox(height: 16),
+        TextButton(
+          onPressed: () => context.go('/login'),
+          child: const Text.rich(
+            TextSpan(
+              text: 'Já tem conta? ',
+              style: TextStyle(color: Colors.white70),
+              children: [
+                TextSpan(
+                  text: 'Entrar',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
