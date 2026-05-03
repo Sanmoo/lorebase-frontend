@@ -12,7 +12,7 @@ class LorebaseApp extends ConsumerWidget {
     final authState = ref.watch(authViewModelProvider);
 
     return MaterialApp.router(
-      title: 'lorebase',
+      title: 'Lorebase',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
