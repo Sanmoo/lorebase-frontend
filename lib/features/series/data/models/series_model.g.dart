@@ -8,7 +8,6 @@ part of 'series_model.dart';
 
 _$SeriesModelImpl _$$SeriesModelImplFromJson(Map<String, dynamic> json) =>
     _$SeriesModelImpl(
-      seriesId: json['seriesId'] as String,
       tmdbId: json['tmdbId'] as int,
       title: json['title'] as String,
       overview: json['overview'] as String?,
@@ -29,7 +28,6 @@ _$SeriesModelImpl _$$SeriesModelImplFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$$SeriesModelImplToJson(_$SeriesModelImpl instance) =>
     <String, dynamic>{
-      'seriesId': instance.seriesId,
       'tmdbId': instance.tmdbId,
       'title': instance.title,
       'overview': instance.overview,

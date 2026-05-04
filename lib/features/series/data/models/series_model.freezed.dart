@@ -20,7 +20,6 @@ SeriesModel _$SeriesModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$SeriesModel {
-  String get seriesId => throw _privateConstructorUsedError;
   int get tmdbId => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
   String? get overview => throw _privateConstructorUsedError;
@@ -49,8 +48,7 @@ abstract class $SeriesModelCopyWith<$Res> {
       _$SeriesModelCopyWithImpl<$Res, SeriesModel>;
   @useResult
   $Res call(
-      {String seriesId,
-      int tmdbId,
+      {int tmdbId,
       String title,
       String? overview,
       String? posterPath,
@@ -77,7 +75,6 @@ class _$SeriesModelCopyWithImpl<$Res, $Val extends SeriesModel>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? seriesId = null,
     Object? tmdbId = null,
     Object? title = null,
     Object? overview = freezed,
@@ -90,10 +87,6 @@ class _$SeriesModelCopyWithImpl<$Res, $Val extends SeriesModel>
     Object? status = freezed,
   }) {
     return _then(_value.copyWith(
-      seriesId: null == seriesId
-          ? _value.seriesId
-          : seriesId // ignore: cast_nullable_to_non_nullable
-              as String,
       tmdbId: null == tmdbId
           ? _value.tmdbId
           : tmdbId // ignore: cast_nullable_to_non_nullable
@@ -147,8 +140,7 @@ abstract class _$$SeriesModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String seriesId,
-      int tmdbId,
+      {int tmdbId,
       String title,
       String? overview,
       String? posterPath,
@@ -173,7 +165,6 @@ class __$$SeriesModelImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? seriesId = null,
     Object? tmdbId = null,
     Object? title = null,
     Object? overview = freezed,
@@ -186,10 +177,6 @@ class __$$SeriesModelImplCopyWithImpl<$Res>
     Object? status = freezed,
   }) {
     return _then(_$SeriesModelImpl(
-      seriesId: null == seriesId
-          ? _value.seriesId
-          : seriesId // ignore: cast_nullable_to_non_nullable
-              as String,
       tmdbId: null == tmdbId
           ? _value.tmdbId
           : tmdbId // ignore: cast_nullable_to_non_nullable
@@ -238,8 +225,7 @@ class __$$SeriesModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$SeriesModelImpl implements _SeriesModel {
   const _$SeriesModelImpl(
-      {required this.seriesId,
-      required this.tmdbId,
+      {required this.tmdbId,
       required this.title,
       this.overview,
       this.posterPath,
@@ -255,8 +241,6 @@ class _$SeriesModelImpl implements _SeriesModel {
   factory _$SeriesModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$SeriesModelImplFromJson(json);
 
-  @override
-  final String seriesId;
   @override
   final int tmdbId;
   @override
@@ -295,7 +279,7 @@ class _$SeriesModelImpl implements _SeriesModel {
 
   @override
   String toString() {
-    return 'SeriesModel(seriesId: $seriesId, tmdbId: $tmdbId, title: $title, overview: $overview, posterPath: $posterPath, backdropPath: $backdropPath, firstAirDate: $firstAirDate, genres: $genres, networks: $networks, seasonCount: $seasonCount, status: $status)';
+    return 'SeriesModel(tmdbId: $tmdbId, title: $title, overview: $overview, posterPath: $posterPath, backdropPath: $backdropPath, firstAirDate: $firstAirDate, genres: $genres, networks: $networks, seasonCount: $seasonCount, status: $status)';
   }
 
   @override
@@ -303,8 +287,6 @@ class _$SeriesModelImpl implements _SeriesModel {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$SeriesModelImpl &&
-            (identical(other.seriesId, seriesId) ||
-                other.seriesId == seriesId) &&
             (identical(other.tmdbId, tmdbId) || other.tmdbId == tmdbId) &&
             (identical(other.title, title) || other.title == title) &&
             (identical(other.overview, overview) ||
@@ -326,7 +308,6 @@ class _$SeriesModelImpl implements _SeriesModel {
   @override
   int get hashCode => Object.hash(
       runtimeType,
-      seriesId,
       tmdbId,
       title,
       overview,
@@ -356,8 +337,7 @@ class _$SeriesModelImpl implements _SeriesModel {
 
 abstract class _SeriesModel implements SeriesModel {
   const factory _SeriesModel(
-      {required final String seriesId,
-      required final int tmdbId,
+      {required final int tmdbId,
       required final String title,
       final String? overview,
       final String? posterPath,
@@ -371,8 +351,6 @@ abstract class _SeriesModel implements SeriesModel {
   factory _SeriesModel.fromJson(Map<String, dynamic> json) =
       _$SeriesModelImpl.fromJson;
 
-  @override
-  String get seriesId;
   @override
   int get tmdbId;
   @override

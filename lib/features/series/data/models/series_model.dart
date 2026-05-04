@@ -6,7 +6,6 @@ part 'series_model.g.dart';
 @freezed
 class SeriesModel with _$SeriesModel {
   const factory SeriesModel({
-    required String seriesId,
     required int tmdbId,
     required String title,
     String? overview,
