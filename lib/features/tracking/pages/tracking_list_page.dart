@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/widgets/empty_state_widget.dart';
 import '../../../../core/widgets/error_widget.dart';
@@ -107,9 +108,8 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
                             Expanded(
                               child: SeriesPoster(
                                 series: series,
-                                onTap: () {
-                                  // TODO: Navigate to tracking detail
-                                },
+                                onTap: () =>
+                                    context.push('/series/${series.tmdbId}'),
                               ),
                             ),
                             const SizedBox(height: 4),
