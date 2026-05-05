@@ -178,9 +178,17 @@ class SeriesDetailPage extends ConsumerWidget {
                       );
                       if (confirm == true && ctx.mounted) {
                         Navigator.pop(ctx);
-                        ref
-                            .read(seriesDetailViewModelProvider(tmdbId).notifier)
-                            .removeTracking();
+                        try {
+                          await ref
+                              .read(seriesDetailViewModelProvider(tmdbId).notifier)
+                              .removeTracking();
+                        } catch (e) {
+                          if (ctx.mounted) {
+                            ScaffoldMessenger.of(ctx).showSnackBar(
+                              SnackBar(content: Text('Error: $e')),
+                            );
+                          }
+                        }
                       }
                     },
                     child: const Text('Remove from List'),
@@ -347,7 +355,7 @@ class _SeriesDetailLoaded extends StatelessWidget {
                       ),
                       if (tracking != null) ...[
                         const SizedBox(width: 12),
-                        TrackingStatusChip(status: tracking.status),
+                        TrackingStatusChip(status: tracking!.status),
                       ],
                     ],
                   ),
