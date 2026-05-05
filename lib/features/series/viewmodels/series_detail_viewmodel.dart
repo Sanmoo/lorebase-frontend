@@ -17,7 +17,7 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
 
     TrackedSeriesModel? tracking;
     try {
-      final allTracking = await trackingRepo.getTracking();
+      final allTracking = await trackingRepo.getTracking(pageSize: 1000);
       tracking = allTracking.firstWhere(
         (t) => t.series?.tmdbId == tmdbId,
       );
@@ -29,13 +29,18 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
   }
 
   Future<void> addTracking(String status) async {
-    final currentState = state.requireValue;
-    final trackingRepo = ref.read(trackingRepositoryProvider);
-    await trackingRepo.startTracking(
-      currentState.series.tmdbId.toString(),
-      status,
-    );
-    ref.invalidateSelf();
+    final currentState = state.valueOrNull;
+    if (currentState == null) return;
+    try {
+      final trackingRepo = ref.read(trackingRepositoryProvider);
+      await trackingRepo.startTracking(
+        currentState.series.tmdbId.toString(),
+        status,
+      );
+      ref.invalidateSelf();
+    } catch (_) {
+      // Mutation failed silently — UI guards prevent this in normal flow.
+    }
   }
 
   Future<void> updateTracking({
@@ -43,27 +48,37 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
     int? seriesRating,
     String? seriesReview,
   }) async {
-    final currentState = state.requireValue;
+    final currentState = state.valueOrNull;
+    if (currentState == null) return;
     final current = currentState.tracking;
     if (current == null) return;
 
-    final trackingRepo = ref.read(trackingRepositoryProvider);
-    await trackingRepo.updateTracking(
-      current.seriesId,
-      status: status,
-      seriesRating: seriesRating,
-      seriesReview: seriesReview,
-    );
-    ref.invalidateSelf();
+    try {
+      final trackingRepo = ref.read(trackingRepositoryProvider);
+      await trackingRepo.updateTracking(
+        current.seriesId,
+        status: status,
+        seriesRating: seriesRating,
+        seriesReview: seriesReview,
+      );
+      ref.invalidateSelf();
+    } catch (_) {
+      // Mutation failed silently.
+    }
   }
 
   Future<void> removeTracking() async {
-    final currentState = state.requireValue;
+    final currentState = state.valueOrNull;
+    if (currentState == null) return;
     final current = currentState.tracking;
     if (current == null) return;
 
-    final trackingRepo = ref.read(trackingRepositoryProvider);
-    await trackingRepo.deleteTracking(current.seriesId);
-    ref.invalidateSelf();
+    try {
+      final trackingRepo = ref.read(trackingRepositoryProvider);
+      await trackingRepo.deleteTracking(current.seriesId);
+      ref.invalidateSelf();
+    } catch (_) {
+      // Mutation failed silently.
+    }
   }
 }
