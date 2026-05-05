@@ -124,7 +124,6 @@ class SeriesDetailPage extends ConsumerWidget {
                 const SizedBox(height: 24),
                 FilledButton(
                   onPressed: () async {
-                    Navigator.pop(ctx);
                     final notifier = ref.read(
                       seriesDetailViewModelProvider(tmdbId).notifier,
                     );
@@ -140,6 +139,7 @@ class SeriesDetailPage extends ConsumerWidget {
                       } else {
                         await notifier.addTracking(selectedStatus);
                       }
+                      if (ctx.mounted) Navigator.pop(ctx);
                     } catch (e) {
                       if (ctx.mounted) {
                         ScaffoldMessenger.of(ctx).showSnackBar(
@@ -177,11 +177,11 @@ class SeriesDetailPage extends ConsumerWidget {
                         ),
                       );
                       if (confirm == true && ctx.mounted) {
-                        Navigator.pop(ctx);
                         try {
                           await ref
                               .read(seriesDetailViewModelProvider(tmdbId).notifier)
                               .removeTracking();
+                          if (ctx.mounted) Navigator.pop(ctx);
                         } catch (e) {
                           if (ctx.mounted) {
                             ScaffoldMessenger.of(ctx).showSnackBar(

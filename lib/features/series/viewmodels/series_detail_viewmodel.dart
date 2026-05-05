@@ -31,16 +31,12 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
   Future<void> addTracking(String status) async {
     final currentState = state.valueOrNull;
     if (currentState == null) return;
-    try {
-      final trackingRepo = ref.read(trackingRepositoryProvider);
-      await trackingRepo.startTracking(
-        currentState.series.tmdbId.toString(),
-        status,
-      );
-      ref.invalidateSelf();
-    } catch (_) {
-      // Mutation failed silently — UI guards prevent this in normal flow.
-    }
+    final trackingRepo = ref.read(trackingRepositoryProvider);
+    await trackingRepo.startTracking(
+      currentState.series.tmdbId.toString(),
+      status,
+    );
+    ref.invalidateSelf();
   }
 
   Future<void> updateTracking({
@@ -53,18 +49,14 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
     final current = currentState.tracking;
     if (current == null) return;
 
-    try {
-      final trackingRepo = ref.read(trackingRepositoryProvider);
-      await trackingRepo.updateTracking(
-        current.seriesId,
-        status: status,
-        seriesRating: seriesRating,
-        seriesReview: seriesReview,
-      );
-      ref.invalidateSelf();
-    } catch (_) {
-      // Mutation failed silently.
-    }
+    final trackingRepo = ref.read(trackingRepositoryProvider);
+    await trackingRepo.updateTracking(
+      current.seriesId,
+      status: status,
+      seriesRating: seriesRating,
+      seriesReview: seriesReview,
+    );
+    ref.invalidateSelf();
   }
 
   Future<void> removeTracking() async {
@@ -73,12 +65,8 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
     final current = currentState.tracking;
     if (current == null) return;
 
-    try {
-      final trackingRepo = ref.read(trackingRepositoryProvider);
-      await trackingRepo.deleteTracking(current.seriesId);
-      ref.invalidateSelf();
-    } catch (_) {
-      // Mutation failed silently.
-    }
+    final trackingRepo = ref.read(trackingRepositoryProvider);
+    await trackingRepo.deleteTracking(current.seriesId);
+    ref.invalidateSelf();
   }
 }
