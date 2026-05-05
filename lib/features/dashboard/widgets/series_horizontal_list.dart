@@ -4,8 +4,9 @@ import '../../series/widgets/series_poster.dart';
 
 class SeriesHorizontalList extends StatelessWidget {
   final List<SeriesModel> series;
+  final ValueChanged<SeriesModel>? onTap;
 
-  const SeriesHorizontalList({super.key, required this.series});
+  const SeriesHorizontalList({super.key, required this.series, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +23,7 @@ class SeriesHorizontalList extends StatelessWidget {
             child: SeriesPoster(
               series: item,
               width: 120,
+              onTap: onTap != null ? () => onTap!(item) : null,
             ),
           );
         },

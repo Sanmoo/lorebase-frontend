@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/empty_state_widget.dart';
@@ -83,7 +84,11 @@ class DashboardPage extends ConsumerWidget {
               ),
               if (dashboard.watching.items.isNotEmpty)
                 SliverToBoxAdapter(
-                  child: WatchingSection(series: dashboard.watching.items),
+                  child: WatchingSection(
+                    series: dashboard.watching.items,
+                    onTap: (series) =>
+                        context.push('/series/${series.tmdbId}'),
+                  ),
                 ),
               if (dashboard.wantToWatch.items.isNotEmpty)
                 SliverToBoxAdapter(
@@ -91,6 +96,8 @@ class DashboardPage extends ConsumerWidget {
                     padding: const EdgeInsets.only(top: 24.0),
                     child: WatchingSection(
                       series: dashboard.wantToWatch.items,
+                      onTap: (series) =>
+                          context.push('/series/${series.tmdbId}'),
                     ),
                   ),
                 ),

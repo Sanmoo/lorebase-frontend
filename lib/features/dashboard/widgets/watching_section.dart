@@ -4,8 +4,9 @@ import 'series_horizontal_list.dart';
 
 class WatchingSection extends StatelessWidget {
   final List<SeriesModel> series;
+  final ValueChanged<SeriesModel>? onTap;
 
-  const WatchingSection({super.key, required this.series});
+  const WatchingSection({super.key, required this.series, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +23,7 @@ class WatchingSection extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        SeriesHorizontalList(series: series),
+        SeriesHorizontalList(series: series, onTap: onTap),
       ],
     );
   }
