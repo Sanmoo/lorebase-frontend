@@ -10,6 +10,7 @@ import 'features/dashboard/pages/dashboard_page.dart';
 import 'features/recommendation/pages/recommendation_page.dart';
 import 'features/series/pages/series_search_page.dart';
 import 'features/tracking/pages/tracking_list_page.dart';
+import 'features/series/pages/series_detail_page.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authViewModelProvider);
@@ -48,6 +49,13 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/search',
             builder: (context, state) => const SeriesSearchPage(),
+          ),
+          GoRoute(
+            path: '/series/:tmdbId',
+            builder: (context, state) {
+              final tmdbId = int.parse(state.pathParameters['tmdbId']!);
+              return SeriesDetailPage(tmdbId: tmdbId);
+            },
           ),
           GoRoute(
             path: '/tracking',
