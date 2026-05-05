@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/widgets/empty_state_widget.dart';
 import '../../../../core/widgets/error_widget.dart';
@@ -83,9 +84,7 @@ class _SeriesSearchPageState extends ConsumerState<SeriesSearchPage> {
                 padding: const EdgeInsets.only(bottom: 12.0),
                 child: SeriesCard(
                   series: item,
-                  onTap: () {
-                    // TODO: Navigate to series detail
-                  },
+                  onTap: () => context.push('/series/${item.tmdbId}'),
                 ),
               );
             },
