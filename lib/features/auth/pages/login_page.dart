@@ -73,6 +73,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           errorText: loginState.errorMessage != null && !loginState.isValid
               ? loginState.errorMessage
               : null,
+          onSubmitted: (_) => FocusScope.of(context).nextFocus(),
         ),
         const SizedBox(height: 16),
         AuthTextField(
@@ -83,6 +84,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           onToggleObscure: () {
             ref.read(loginViewModelProvider.notifier).toggleObscurePassword();
           },
+          onSubmitted: (_) => _submit(),
         ),
         if (loginState.errorMessage != null && loginState.isValid) ...[
           const SizedBox(height: 12),
