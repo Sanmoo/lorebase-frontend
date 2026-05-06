@@ -9,6 +9,7 @@ class AuthTextField extends StatelessWidget {
   final String? errorText;
   final VoidCallback? onToggleObscure;
   final FormFieldValidator<String>? validator;
+  final ValueChanged<String>? onSubmitted;
 
   const AuthTextField({
     super.key,
@@ -20,6 +21,7 @@ class AuthTextField extends StatelessWidget {
     this.errorText,
     this.onToggleObscure,
     this.validator,
+    this.onSubmitted,
   });
 
   @override
@@ -29,6 +31,7 @@ class AuthTextField extends StatelessWidget {
       obscureText: obscureText,
       keyboardType: keyboardType,
       validator: validator,
+      onFieldSubmitted: onSubmitted,
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         hintText: hint,
