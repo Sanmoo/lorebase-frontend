@@ -112,6 +112,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             hint: 'Código de confirmação',
             icon: Icons.confirmation_number_outlined,
             keyboardType: TextInputType.number,
+            onSubmitted: (_) => _confirm(),
           ),
           const SizedBox(height: 16),
           AuthButton(
@@ -133,6 +134,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             hint: 'E-mail',
             icon: Icons.mail_outline,
             keyboardType: TextInputType.emailAddress,
+            onSubmitted: (_) => FocusScope.of(context).nextFocus(),
           ),
           const SizedBox(height: 16),
           AuthTextField(
@@ -143,6 +145,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             onToggleObscure: () {
               ref.read(registerViewModelProvider.notifier).toggleObscurePassword();
             },
+            onSubmitted: (_) => FocusScope.of(context).nextFocus(),
           ),
           const SizedBox(height: 8),
           // Password strength indicator
@@ -178,6 +181,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             hint: 'Confirmar senha',
             icon: Icons.lock_outline,
             obscureText: registerState.obscurePassword,
+            onSubmitted: (_) => _submit(),
           ),
           const SizedBox(height: 16),
           Row(
