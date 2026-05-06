@@ -17,7 +17,9 @@ class DashboardRepositoryImpl implements DashboardRepository {
   Future<DashboardModel> getDashboard() async {
     try {
       final response = await _dio.get('/dashboard');
-      return DashboardModel.fromJson(response.data);
+      final data = response.data as Map<String, dynamic>;
+      _normalizeDashboardItems(data);
+      return DashboardModel.fromJson(data);
     } on DioException catch (e) {
       if (e.error is ServerException) {
         throw e.error as ServerException;
@@ -26,6 +28,25 @@ class DashboardRepositoryImpl implements DashboardRepository {
         message: e.message ?? 'Failed to load dashboard',
         statusCode: e.response?.statusCode,
       );
+    }
+  }
+
+  void _normalizeDashboardItems(Map<String, dynamic> data) {
+    for (final section in ['watching', 'wantToWatch', 'completed', 'dropped']) {
+      final sectionData = data[section];
+      if (sectionData is Map<String, dynamic>) {
+        final items = sectionData['items'];
+        if (items is List) {
+          for (final item in items) {
+            if (item is Map<String, dynamic>) {
+              if (item['tmdbId'] == null && item['seriesId'] != null) {
+                item['tmdbId'] =
+                    int.tryParse(item['seriesId'].toString()) ?? 0;
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
