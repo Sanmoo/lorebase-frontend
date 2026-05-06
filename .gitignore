@@ -71,3 +71,4 @@ amplifytools.xcconfig
 
 # Environment files
 .env
+.superpowers/
