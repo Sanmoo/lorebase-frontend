@@ -97,6 +97,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
             hint: 'E-mail',
             icon: Icons.mail_outline,
             keyboardType: TextInputType.emailAddress,
+            onSubmitted: (_) => _requestCode(),
           ),
           const SizedBox(height: 24),
           AuthButton(
@@ -110,6 +111,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
             hint: 'Código de verificação',
             icon: Icons.confirmation_number_outlined,
             keyboardType: TextInputType.number,
+            onSubmitted: (_) => FocusScope.of(context).nextFocus(),
           ),
           const SizedBox(height: 16),
           AuthTextField(
@@ -120,6 +122,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
             onToggleObscure: () {
               ref.read(forgotPasswordViewModelProvider.notifier).toggleObscurePassword();
             },
+            onSubmitted: (_) => FocusScope.of(context).nextFocus(),
           ),
           const SizedBox(height: 16),
           AuthTextField(
@@ -127,6 +130,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
             hint: 'Confirmar nova senha',
             icon: Icons.lock_outline,
             obscureText: state.obscurePassword,
+            onSubmitted: (_) => _resetPassword(),
           ),
           const SizedBox(height: 24),
           AuthButton(
