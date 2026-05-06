@@ -369,37 +369,48 @@ class _SeriesDetailLoaded extends StatelessWidget {
             const SizedBox(height: 16),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: GridView(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 2.0,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                ),
+              child: Column(
                 children: [
-                  _InfoCard(
-                    icon: Icons.calendar_today,
-                    label: 'First Air Date',
-                    value: series.firstAirDate ?? '—',
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _InfoCard(
+                          icon: Icons.calendar_today,
+                          label: 'First Air Date',
+                          value: series.firstAirDate ?? '—',
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _InfoCard(
+                          icon: Icons.collections,
+                          label: 'Seasons',
+                          value: '${series.seasonCount}',
+                        ),
+                      ),
+                    ],
                   ),
-                  _InfoCard(
-                    icon: Icons.collections,
-                    label: 'Seasons',
-                    value: '${series.seasonCount}',
-                  ),
-                  _InfoCard(
-                    icon: Icons.live_tv,
-                    label: 'Networks',
-                    value: series.networks.isNotEmpty
-                        ? series.networks.join(', ')
-                        : '—',
-                  ),
-                  _InfoCard(
-                    icon: Icons.info_outline,
-                    label: 'Status',
-                    value: series.status ?? '—',
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _InfoCard(
+                          icon: Icons.live_tv,
+                          label: 'Networks',
+                          value: series.networks.isNotEmpty
+                              ? series.networks.join(', ')
+                              : '—',
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _InfoCard(
+                          icon: Icons.info_outline,
+                          label: 'Status',
+                          value: series.status ?? '—',
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
