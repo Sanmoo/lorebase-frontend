@@ -19,7 +19,9 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
     try {
       final allTracking = await trackingRepo.getTracking(pageSize: 1000);
       tracking = allTracking.firstWhere(
-        (t) => t.series?.tmdbId == tmdbId,
+        (t) =>
+            (t.series != null && t.series!.tmdbId == tmdbId) ||
+            t.seriesId == tmdbId.toString(),
       );
     } catch (_) {
       tracking = null;

@@ -86,8 +86,11 @@ class DashboardPage extends ConsumerWidget {
                 SliverToBoxAdapter(
                   child: WatchingSection(
                     series: dashboard.watching.items,
-                    onTap: (series) =>
-                        context.push('/series/${series.tmdbId}'),
+                    onTap: (series) {
+                      if (series.tmdbId != 0) {
+                        context.push('/series/${series.tmdbId}');
+                      }
+                    },
                   ),
                 ),
               if (dashboard.wantToWatch.items.isNotEmpty)
@@ -96,8 +99,11 @@ class DashboardPage extends ConsumerWidget {
                     padding: const EdgeInsets.only(top: 24.0),
                     child: WatchingSection(
                       series: dashboard.wantToWatch.items,
-                      onTap: (series) =>
-                          context.push('/series/${series.tmdbId}'),
+                      onTap: (series) {
+                        if (series.tmdbId != 0) {
+                          context.push('/series/${series.tmdbId}');
+                        }
+                      },
                     ),
                   ),
                 ),

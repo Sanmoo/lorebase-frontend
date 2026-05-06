@@ -108,8 +108,9 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
                             Expanded(
                               child: SeriesPoster(
                                 series: series,
-                                onTap: () =>
-                                    context.push('/series/${series.tmdbId}'),
+                                onTap: series.tmdbId != 0
+                                    ? () => context.push('/series/${series.tmdbId}')
+                                    : null,
                               ),
                             ),
                             const SizedBox(height: 4),

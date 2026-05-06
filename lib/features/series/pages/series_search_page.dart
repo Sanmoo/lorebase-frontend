@@ -84,7 +84,9 @@ class _SeriesSearchPageState extends ConsumerState<SeriesSearchPage> {
                 padding: const EdgeInsets.only(bottom: 12.0),
                 child: SeriesCard(
                   series: item,
-                  onTap: () => context.push('/series/${item.tmdbId}'),
+                  onTap: item.tmdbId != 0
+                      ? () => context.push('/series/${item.tmdbId}')
+                      : null,
                 ),
               );
             },
