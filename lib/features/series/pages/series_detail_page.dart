@@ -374,7 +374,7 @@ class _SeriesDetailLoaded extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  childAspectRatio: 2.5,
+                  childAspectRatio: 2.0,
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
                 ),
