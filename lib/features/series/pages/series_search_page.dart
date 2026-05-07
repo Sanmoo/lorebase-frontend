@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,17 +16,22 @@ class SeriesSearchPage extends ConsumerStatefulWidget {
 }
 
 class _SeriesSearchPageState extends ConsumerState<SeriesSearchPage> {
+  Timer? _debounceTimer;
   final _searchController = TextEditingController();
 
   @override
   void dispose() {
+    _debounceTimer?.cancel();
     _searchController.dispose();
     super.dispose();
   }
 
   void _onSearchChanged(String query) {
+    _debounceTimer?.cancel();
     if (query.length >= 2) {
-      ref.read(seriesSearchViewModelProvider.notifier).search(query);
+      _debounceTimer = Timer(const Duration(milliseconds: 300), () {
+        ref.read(seriesSearchViewModelProvider.notifier).search(query);
+      });
     } else if (query.isEmpty) {
       ref.read(seriesSearchViewModelProvider.notifier).clear();
     }
