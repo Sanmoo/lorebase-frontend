@@ -16,11 +16,7 @@ class DashboardPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final dashboardState = ref.watch(dashboardViewModelProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('lorebase'),
-      ),
-      body: RefreshIndicator(
+    return RefreshIndicator(
         onRefresh: () => ref.read(dashboardViewModelProvider.notifier).refresh(),
         child: dashboardState.when(
           loading: () => const LoadingWidget(message: 'Loading your dashboard...'),
@@ -117,7 +113,6 @@ class DashboardPage extends ConsumerWidget {
             ],
           ),
         ),
-      ),
     );
   }
 }
