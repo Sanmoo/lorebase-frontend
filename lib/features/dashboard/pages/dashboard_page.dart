@@ -82,7 +82,8 @@ class DashboardPage extends ConsumerWidget {
             ),
             if (dashboard.watching.items.isNotEmpty)
               SliverToBoxAdapter(
-                child: WatchingSection(
+                child: DashboardSection(
+                  title: 'Watching',
                   series: dashboard.watching.items,
                   onTap: (series) {
                     if (series.tmdbId != 0) {
@@ -95,7 +96,8 @@ class DashboardPage extends ConsumerWidget {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.only(top: 24.0),
-                  child: WatchingSection(
+                  child: DashboardSection(
+                    title: 'Want to Watch',
                     series: dashboard.wantToWatch.items,
                     onTap: (series) {
                       if (series.tmdbId != 0) {
@@ -105,8 +107,40 @@ class DashboardPage extends ConsumerWidget {
                   ),
                 ),
               ),
+            if (dashboard.completed.items.isNotEmpty)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 24.0),
+                  child: DashboardSection(
+                    title: 'Completed',
+                    series: dashboard.completed.items,
+                    onTap: (series) {
+                      if (series.tmdbId != 0) {
+                        context.push('/series/${series.tmdbId}');
+                      }
+                    },
+                  ),
+                ),
+              ),
+            if (dashboard.dropped.items.isNotEmpty)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 24.0),
+                  child: DashboardSection(
+                    title: 'Dropped',
+                    series: dashboard.dropped.items,
+                    onTap: (series) {
+                      if (series.tmdbId != 0) {
+                        context.push('/series/${series.tmdbId}');
+                      }
+                    },
+                  ),
+                ),
+              ),
             if (dashboard.watching.items.isEmpty &&
-                dashboard.wantToWatch.items.isEmpty)
+                dashboard.wantToWatch.items.isEmpty &&
+                dashboard.completed.items.isEmpty &&
+                dashboard.dropped.items.isEmpty)
               const SliverFillRemaining(
                 child: EmptyStateWidget(
                   message:
