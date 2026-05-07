@@ -37,10 +37,13 @@ class _SeriesSearchPageState extends ConsumerState<SeriesSearchPage> {
     }
   }
 
+  void _onClear() {
+    _searchController.clear();
+    ref.read(seriesSearchViewModelProvider.notifier).clear();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final searchState = ref.watch(seriesSearchViewModelProvider);
-
     return Scaffold(
       appBar: AppBar(
         title: TextField(
@@ -52,53 +55,67 @@ class _SeriesSearchPageState extends ConsumerState<SeriesSearchPage> {
             suffixIcon: _searchController.text.isNotEmpty
                 ? IconButton(
                     icon: const Icon(Icons.clear),
-                    onPressed: () {
-                      _searchController.clear();
-                      ref.read(seriesSearchViewModelProvider.notifier).clear();
-                    },
+                    onPressed: _onClear,
                   )
                 : null,
           ),
           onChanged: _onSearchChanged,
         ),
       ),
-      body: searchState.when(
-        loading: () => const LoadingWidget(),
-        error: (error, _) => AppErrorWidget(
-          message: error.toString(),
-          onRetry: () => _onSearchChanged(_searchController.text),
-        ),
-        data: (series) {
-          if (series.isEmpty && _searchController.text.isEmpty) {
-            return const EmptyStateWidget(
-              message: 'Type at least 2 characters to search',
-              icon: Icons.search,
-            );
-          }
-          if (series.isEmpty) {
-            return const EmptyStateWidget(
-              message: 'No series found',
-              icon: Icons.search_off,
-            );
-          }
-          return ListView.builder(
-            padding: const EdgeInsets.all(16.0),
-            itemCount: series.length,
-            itemBuilder: (context, index) {
-              final item = series[index];
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 12.0),
-                child: SeriesCard(
-                  series: item,
-                  onTap: item.tmdbId != 0
-                      ? () => context.push('/series/${item.tmdbId}')
-                      : null,
-                ),
-              );
-            },
-          );
-        },
+      body: _SearchResultsBody(
+        query: _searchController.text,
+        onRetry: () => _onSearchChanged(_searchController.text),
       ),
+    );
+  }
+}
+
+class _SearchResultsBody extends ConsumerWidget {
+  final String query;
+  final VoidCallback onRetry;
+
+  const _SearchResultsBody({required this.query, required this.onRetry});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final searchState = ref.watch(seriesSearchViewModelProvider);
+
+    return searchState.when(
+      loading: () => const LoadingWidget(),
+      error: (error, _) => AppErrorWidget(
+        message: error.toString(),
+        onRetry: onRetry,
+      ),
+      data: (series) {
+        if (series.isEmpty && query.isEmpty) {
+          return const EmptyStateWidget(
+            message: 'Type at least 2 characters to search',
+            icon: Icons.search,
+          );
+        }
+        if (series.isEmpty) {
+          return const EmptyStateWidget(
+            message: 'No series found',
+            icon: Icons.search_off,
+          );
+        }
+        return ListView.builder(
+          padding: const EdgeInsets.all(16.0),
+          itemCount: series.length,
+          itemBuilder: (context, index) {
+            final item = series[index];
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12.0),
+              child: SeriesCard(
+                series: item,
+                onTap: item.tmdbId != 0
+                    ? () => context.push('/series/${item.tmdbId}')
+                    : null,
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }
