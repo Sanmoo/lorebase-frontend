@@ -65,10 +65,11 @@ class SeriesDetailPage extends ConsumerWidget {
               top: 24,
               bottom: MediaQuery.of(ctx).viewInsets.bottom + 24,
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
                 Text(
                   isEditing ? 'Manage Tracking' : 'Add to List',
                   style: Theme.of(ctx).textTheme.titleLarge?.copyWith(
@@ -200,7 +201,8 @@ class SeriesDetailPage extends ConsumerWidget {
                     child: const Text('Remove from List'),
                   ),
                 ],
-              ],
+                ],
+              ),
             ),
           ),
         ),
