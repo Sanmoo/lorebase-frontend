@@ -68,6 +68,7 @@ amplifytools.xcconfig
 
 # Worktrees
 .worktrees/
+.pi/
 
 # Environment files
 .env
