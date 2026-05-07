@@ -2,11 +2,17 @@ import 'package:flutter/material.dart';
 import '../../series/data/models/series_model.dart';
 import 'series_horizontal_list.dart';
 
-class WatchingSection extends StatelessWidget {
+class DashboardSection extends StatelessWidget {
+  final String title;
   final List<SeriesModel> series;
   final ValueChanged<SeriesModel>? onTap;
 
-  const WatchingSection({super.key, required this.series, this.onTap});
+  const DashboardSection({
+    super.key,
+    required this.title,
+    required this.series,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +22,7 @@ class WatchingSection extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Text(
-            'Watching',
+            title,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
