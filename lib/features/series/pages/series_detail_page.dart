@@ -365,10 +365,11 @@ class _SeriesDetailLoaded extends StatelessWidget {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      Text(
-                        '${series.seasonCount} season${series.seasonCount != 1 ? 's' : ''}',
-                        style: theme.textTheme.bodyMedium,
-                      ),
+                      if (series.seasonCount > 0)
+                        Text(
+                          '${series.seasonCount} season${series.seasonCount != 1 ? 's' : ''}',
+                          style: theme.textTheme.bodyMedium,
+                        ),
                       if (tracking != null) ...[
                         const SizedBox(width: 12),
                         TrackingStatusChip(status: tracking!.status),
@@ -401,7 +402,7 @@ class _SeriesDetailLoaded extends StatelessWidget {
                         child: _InfoCard(
                           icon: Icons.collections,
                           label: 'Seasons',
-                          value: '${series.seasonCount}',
+                          value: series.seasonCount > 0 ? '${series.seasonCount}' : '—',
                         ),
                       ),
                     ],
