@@ -17,71 +17,86 @@ class DashboardPage extends ConsumerWidget {
     final dashboardState = ref.watch(dashboardViewModelProvider);
 
     return RefreshIndicator(
-        onRefresh: () => ref.read(dashboardViewModelProvider.notifier).refresh(),
-        child: dashboardState.when(
-          loading: () => const LoadingWidget(message: 'Loading your dashboard...'),
-          error: (error, _) => AppErrorWidget(
-            message: error.toString(),
-            onRetry: () => ref.read(dashboardViewModelProvider.notifier).refresh(),
-          ),
-          data: (dashboard) => CustomScrollView(
-            slivers: [
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: StatsCard(
-                          title: 'Watching',
-                          count: dashboard.stats.watchingCount,
-                          icon: Icons.play_circle_outline,
-                          color: AppColors.watching,
-                        ),
+      onRefresh: () => ref.read(dashboardViewModelProvider.notifier).refresh(),
+      child: dashboardState.when(
+        loading: () =>
+            const LoadingWidget(message: 'Loading your dashboard...'),
+        error: (error, _) => AppErrorWidget(
+          message: error.toString(),
+          onRetry: () =>
+              ref.read(dashboardViewModelProvider.notifier).refresh(),
+        ),
+        data: (dashboard) => CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: StatsCard(
+                        title: 'Watching',
+                        count: dashboard.stats.watchingCount,
+                        icon: Icons.play_circle_outline,
+                        color: AppColors.watching,
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: StatsCard(
-                          title: 'Want to Watch',
-                          count: dashboard.stats.wantToWatchCount,
-                          icon: Icons.bookmark_border,
-                          color: AppColors.wantToWatch,
-                        ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: StatsCard(
+                        title: 'Want to Watch',
+                        count: dashboard.stats.wantToWatchCount,
+                        icon: Icons.bookmark_border,
+                        color: AppColors.wantToWatch,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: StatsCard(
-                          title: 'Completed',
-                          count: dashboard.stats.completedCount,
-                          icon: Icons.check_circle_outline,
-                          color: AppColors.completed,
-                        ),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: StatsCard(
+                        title: 'Completed',
+                        count: dashboard.stats.completedCount,
+                        icon: Icons.check_circle_outline,
+                        color: AppColors.completed,
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: StatsCard(
-                          title: 'Dropped',
-                          count: dashboard.stats.droppedCount,
-                          icon: Icons.cancel_outlined,
-                          color: AppColors.dropped,
-                        ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: StatsCard(
+                        title: 'Dropped',
+                        count: dashboard.stats.droppedCount,
+                        icon: Icons.cancel_outlined,
+                        color: AppColors.dropped,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-              if (dashboard.watching.items.isNotEmpty)
-                SliverToBoxAdapter(
+            ),
+            if (dashboard.watching.items.isNotEmpty)
+              SliverToBoxAdapter(
+                child: WatchingSection(
+                  series: dashboard.watching.items,
+                  onTap: (series) {
+                    if (series.tmdbId != 0) {
+                      context.push('/series/${series.tmdbId}');
+                    }
+                  },
+                ),
+              ),
+            if (dashboard.wantToWatch.items.isNotEmpty)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 24.0),
                   child: WatchingSection(
-                    series: dashboard.watching.items,
+                    series: dashboard.wantToWatch.items,
                     onTap: (series) {
                       if (series.tmdbId != 0) {
                         context.push('/series/${series.tmdbId}');
@@ -89,30 +104,19 @@ class DashboardPage extends ConsumerWidget {
                     },
                   ),
                 ),
-              if (dashboard.wantToWatch.items.isNotEmpty)
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 24.0),
-                    child: WatchingSection(
-                      series: dashboard.wantToWatch.items,
-                      onTap: (series) {
-                        if (series.tmdbId != 0) {
-                          context.push('/series/${series.tmdbId}');
-                        }
-                      },
-                    ),
-                  ),
+              ),
+            if (dashboard.watching.items.isEmpty &&
+                dashboard.wantToWatch.items.isEmpty)
+              const SliverFillRemaining(
+                child: EmptyStateWidget(
+                  message:
+                      'No series tracked yet.\nSearch and add your first series!',
+                  icon: Icons.tv_off,
                 ),
-              if (dashboard.watching.items.isEmpty && dashboard.wantToWatch.items.isEmpty)
-                const SliverFillRemaining(
-                  child: EmptyStateWidget(
-                    message: 'No series tracked yet.\nSearch and add your first series!',
-                    icon: Icons.tv_off,
-                  ),
-                ),
-            ],
-          ),
+              ),
+          ],
         ),
+      ),
     );
   }
 }
