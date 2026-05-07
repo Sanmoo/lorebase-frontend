@@ -30,14 +30,26 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
     return SeriesDetailState(series: series, tracking: tracking);
   }
 
-  Future<void> addTracking(String status) async {
+  Future<void> addTracking(
+    String status, {
+    int? seriesRating,
+    String? seriesReview,
+  }) async {
     final currentState = state.valueOrNull;
     if (currentState == null) return;
     final trackingRepo = ref.read(trackingRepositoryProvider);
-    await trackingRepo.startTracking(
+    final tracking = await trackingRepo.startTracking(
       currentState.series.tmdbId.toString(),
       status,
     );
+    if (seriesRating != null ||
+        (seriesReview != null && seriesReview.isNotEmpty)) {
+      await trackingRepo.updateTracking(
+        tracking.seriesId,
+        seriesRating: seriesRating,
+        seriesReview: seriesReview,
+      );
+    }
     ref.invalidateSelf();
   }
 

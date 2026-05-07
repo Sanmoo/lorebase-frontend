@@ -137,7 +137,13 @@ class SeriesDetailPage extends ConsumerWidget {
                               : null,
                         );
                       } else {
-                        await notifier.addTracking(selectedStatus);
+                        await notifier.addTracking(
+                          selectedStatus,
+                          seriesRating: selectedRating,
+                          seriesReview: reviewController.text.isNotEmpty
+                              ? reviewController.text
+                              : null,
+                        );
                       }
                       if (ctx.mounted) Navigator.pop(ctx);
                     } catch (e) {
