@@ -58,10 +58,11 @@ class SeriesCard extends StatelessWidget {
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                     const SizedBox(height: 4),
-                    Text(
-                      '${series.seasonCount} season${series.seasonCount != 1 ? 's' : ''}',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
+                    if (series.seasonCount > 0)
+                      Text(
+                        '${series.seasonCount} season${series.seasonCount != 1 ? 's' : ''}',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
                   ],
                 ),
               ),
