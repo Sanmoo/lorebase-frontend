@@ -48,9 +48,11 @@ class SeriesDetailPage extends ConsumerWidget {
     final series = detail.series;
     final tracking = detail.tracking;
     final isEditing = tracking != null;
-    String selectedStatus = tracking?.status ?? TrackingStatus.wantToWatch.value;
+    String selectedStatus =
+        tracking?.status ?? TrackingStatus.wantToWatch.value;
     int? selectedRating = tracking?.seriesRating;
-    final reviewController = TextEditingController(text: tracking?.seriesReview ?? '');
+    final reviewController =
+        TextEditingController(text: tracking?.seriesReview ?? '');
 
     showModalBottomSheet(
       context: context,
@@ -70,137 +72,138 @@ class SeriesDetailPage extends ConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                Text(
-                  isEditing ? 'Manage Tracking' : 'Add to List',
-                  style: Theme.of(ctx).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
+                  Text(
+                    isEditing ? 'Manage Tracking' : 'Add to List',
+                    style: Theme.of(ctx).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  const SizedBox(height: 16),
+                  ...TrackingStatus.values.map((status) {
+                    final isSelected = status.value == selectedStatus;
+                    return ListTile(
+                      leading: Icon(
+                        isSelected ? Icons.check_circle : Icons.circle_outlined,
+                        color: isSelected
+                            ? Theme.of(ctx).colorScheme.primary
+                            : null,
                       ),
-                ),
-                const SizedBox(height: 16),
-                ...TrackingStatus.values.map((status) {
-                  final isSelected = status.value == selectedStatus;
-                  return ListTile(
-                    leading: Icon(
-                      isSelected ? Icons.check_circle : Icons.circle_outlined,
-                      color: isSelected
-                          ? Theme.of(ctx).colorScheme.primary
-                          : null,
-                    ),
-                    title: Text(status.label),
-                    onTap: () {
+                      title: Text(status.label),
+                      onTap: () {
+                        setSheetState(() {
+                          selectedStatus = status.value;
+                        });
+                      },
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    );
+                  }),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Rating',
+                    style: Theme.of(ctx).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  RatingStars(
+                    rating: selectedRating,
+                    maxRating: 10,
+                    onRatingChanged: (r) {
                       setSheetState(() {
-                        selectedStatus = status.value;
+                        selectedRating = r;
                       });
                     },
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  );
-                }),
-                const SizedBox(height: 24),
-                Text(
-                  'Rating',
-                  style: Theme.of(ctx).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 8),
-                RatingStars(
-                  rating: selectedRating,
-                  maxRating: 10,
-                  onRatingChanged: (r) {
-                    setSheetState(() {
-                      selectedRating = r;
-                    });
-                  },
-                ),
-                const SizedBox(height: 24),
-                TextField(
-                  controller: reviewController,
-                  maxLines: 3,
-                  decoration: const InputDecoration(
-                    labelText: 'Review (optional)',
-                    border: OutlineInputBorder(),
-                    alignLabelWithHint: true,
                   ),
-                ),
-                const SizedBox(height: 24),
-                FilledButton(
-                  onPressed: () async {
-                    final notifier = ref.read(
-                      seriesDetailViewModelProvider(tmdbId).notifier,
-                    );
-                    try {
-                      if (isEditing) {
-                        await notifier.updateTracking(
-                          status: selectedStatus,
-                          seriesRating: selectedRating,
-                          seriesReview: reviewController.text.isNotEmpty
-                              ? reviewController.text
-                              : null,
-                        );
-                      } else {
-                        await notifier.addTracking(
-                          selectedStatus,
-                          seriesRating: selectedRating,
-                          seriesReview: reviewController.text.isNotEmpty
-                              ? reviewController.text
-                              : null,
-                        );
-                      }
-                      if (ctx.mounted) Navigator.pop(ctx);
-                    } catch (e) {
-                      if (ctx.mounted) {
-                        ScaffoldMessenger.of(ctx).showSnackBar(
-                          SnackBar(content: Text('Error: $e')),
-                        );
-                      }
-                    }
-                  },
-                  child: Text(isEditing ? 'Save Changes' : 'Add to List'),
-                ),
-                if (isEditing) ...[
-                  const SizedBox(height: 12),
-                  OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Theme.of(ctx).colorScheme.error,
+                  const SizedBox(height: 24),
+                  TextField(
+                    controller: reviewController,
+                    maxLines: 3,
+                    decoration: const InputDecoration(
+                      labelText: 'Review (optional)',
+                      border: OutlineInputBorder(),
+                      alignLabelWithHint: true,
                     ),
+                  ),
+                  const SizedBox(height: 24),
+                  FilledButton(
                     onPressed: () async {
-                      final confirm = await showDialog<bool>(
-                        context: ctx,
-                        builder: (dctx) => AlertDialog(
-                          title: const Text('Remove from List'),
-                          content: Text(
-                            'Remove "${series.title}" from your list?',
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(dctx, false),
-                              child: const Text('Cancel'),
-                            ),
-                            TextButton(
-                              onPressed: () => Navigator.pop(dctx, true),
-                              child: const Text('Remove'),
-                            ),
-                          ],
-                        ),
+                      final notifier = ref.read(
+                        seriesDetailViewModelProvider(tmdbId).notifier,
                       );
-                      if (confirm == true && ctx.mounted) {
-                        try {
-                          await ref
-                              .read(seriesDetailViewModelProvider(tmdbId).notifier)
-                              .removeTracking();
-                          if (ctx.mounted) Navigator.pop(ctx);
-                        } catch (e) {
-                          if (ctx.mounted) {
-                            ScaffoldMessenger.of(ctx).showSnackBar(
-                              SnackBar(content: Text('Error: $e')),
-                            );
-                          }
+                      try {
+                        if (isEditing) {
+                          await notifier.updateTracking(
+                            status: selectedStatus,
+                            seriesRating: selectedRating,
+                            seriesReview: reviewController.text.isNotEmpty
+                                ? reviewController.text
+                                : null,
+                          );
+                        } else {
+                          await notifier.addTracking(
+                            selectedStatus,
+                            seriesRating: selectedRating,
+                            seriesReview: reviewController.text.isNotEmpty
+                                ? reviewController.text
+                                : null,
+                          );
+                        }
+                        if (ctx.mounted) Navigator.pop(ctx);
+                      } catch (e) {
+                        if (ctx.mounted) {
+                          ScaffoldMessenger.of(ctx).showSnackBar(
+                            SnackBar(content: Text('Error: $e')),
+                          );
                         }
                       }
                     },
-                    child: const Text('Remove from List'),
+                    child: Text(isEditing ? 'Save Changes' : 'Add to List'),
                   ),
-                ],
+                  if (isEditing) ...[
+                    const SizedBox(height: 12),
+                    OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Theme.of(ctx).colorScheme.error,
+                      ),
+                      onPressed: () async {
+                        final confirm = await showDialog<bool>(
+                          context: ctx,
+                          builder: (dctx) => AlertDialog(
+                            title: const Text('Remove from List'),
+                            content: Text(
+                              'Remove "${series.title}" from your list?',
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(dctx, false),
+                                child: const Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.pop(dctx, true),
+                                child: const Text('Remove'),
+                              ),
+                            ],
+                          ),
+                        );
+                        if (confirm == true && ctx.mounted) {
+                          try {
+                            await ref
+                                .read(seriesDetailViewModelProvider(tmdbId)
+                                    .notifier)
+                                .removeTracking();
+                            if (ctx.mounted) Navigator.pop(ctx);
+                          } catch (e) {
+                            if (ctx.mounted) {
+                              ScaffoldMessenger.of(ctx).showSnackBar(
+                                SnackBar(content: Text('Error: $e')),
+                              );
+                            }
+                          }
+                        }
+                      },
+                      child: const Text('Remove from List'),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -225,8 +228,10 @@ class _SeriesDetailLoaded extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final hasBackdrop = series.backdropPath != null && series.backdropPath!.isNotEmpty;
-    final hasPoster = series.posterPath != null && series.posterPath!.isNotEmpty;
+    final hasBackdrop =
+        series.backdropPath != null && series.backdropPath!.isNotEmpty;
+    final hasPoster =
+        series.posterPath != null && series.posterPath!.isNotEmpty;
 
     return Scaffold(
       appBar: AppBar(
@@ -311,14 +316,17 @@ class _SeriesDetailLoaded extends StatelessWidget {
                                 errorWidget: (_, __, ___) => Container(
                                   width: 120,
                                   height: 180,
-                                  color: theme.colorScheme.surfaceContainerHighest,
-                                  child: const Icon(Icons.broken_image, size: 40),
+                                  color:
+                                      theme.colorScheme.surfaceContainerHighest,
+                                  child:
+                                      const Icon(Icons.broken_image, size: 40),
                                 ),
                               )
                             : Container(
                                 width: 120,
                                 height: 180,
-                                color: theme.colorScheme.surfaceContainerHighest,
+                                color:
+                                    theme.colorScheme.surfaceContainerHighest,
                                 child: const Icon(Icons.tv, size: 40),
                               ),
                       ),
