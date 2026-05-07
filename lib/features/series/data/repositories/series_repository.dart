@@ -5,7 +5,7 @@ import '../../../../core/providers/core_providers.dart';
 import '../models/series_model.dart';
 
 abstract class SeriesRepository {
-  Future<List<SeriesModel>> searchSeries(String query, {int limit = 20});
+  Future<List<SeriesModel>> searchSeries(String query, {int limit = 20, CancelToken? cancelToken});
   Future<SeriesModel> getSeriesById(String id);
 }
 
@@ -15,7 +15,7 @@ class SeriesRepositoryImpl implements SeriesRepository {
   SeriesRepositoryImpl(this._dio);
 
   @override
-  Future<List<SeriesModel>> searchSeries(String query, {int limit = 20}) async {
+  Future<List<SeriesModel>> searchSeries(String query, {int limit = 20, CancelToken? cancelToken}) async {
     try {
       final response = await _dio.get(
         '/series',
@@ -23,6 +23,7 @@ class SeriesRepositoryImpl implements SeriesRepository {
           'q': query,
           'limit': limit,
         },
+        cancelToken: cancelToken,
       );
       final items = response.data['items'] as List;
       return items.map((json) => SeriesModel.fromJson(json)).toList();

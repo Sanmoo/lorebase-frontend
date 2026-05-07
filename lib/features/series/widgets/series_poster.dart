@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../data/models/series_model.dart';
 
@@ -23,18 +22,21 @@ class SeriesPoster extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
-            child: CachedNetworkImage(
-              imageUrl: series.posterPath ?? '',
+            child: Image.network(
+              series.posterPath ?? '',
               width: width,
               height: width * 1.5,
               fit: BoxFit.cover,
-              placeholder: (context, url) => Container(
-                width: width,
-                height: width * 1.5,
-                color: Colors.grey[300],
-                child: const Center(child: CircularProgressIndicator()),
-              ),
-              errorWidget: (context, url, error) => Container(
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Container(
+                  width: width,
+                  height: width * 1.5,
+                  color: Colors.grey[300],
+                  child: const Center(child: CircularProgressIndicator()),
+                );
+              },
+              errorBuilder: (context, error, stackTrace) => Container(
                 width: width,
                 height: width * 1.5,
                 color: Colors.grey[300],

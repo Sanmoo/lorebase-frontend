@@ -7,7 +7,7 @@ part of 'series_search_viewmodel.dart';
 // **************************************************************************
 
 String _$seriesSearchViewModelHash() =>
-    r'111f910506a852431b4b6582efaad0f3604e3fcd';
+    r'3533b2837bdc499cc314322ab7076c231d5a5fe2';
 
 /// See also [SeriesSearchViewModel].
 @ProviderFor(SeriesSearchViewModel)

@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../data/models/series_model.dart';
 
@@ -20,17 +19,20 @@ class SeriesCard extends StatelessWidget {
         onTap: onTap,
         child: Row(
           children: [
-            CachedNetworkImage(
-              imageUrl: series.posterPath ?? '',
+            Image.network(
+              series.posterPath ?? '',
               width: 100,
               height: 150,
               fit: BoxFit.cover,
-              placeholder: (context, url) => Container(
-                width: 100,
-                height: 150,
-                color: Colors.grey[300],
-              ),
-              errorWidget: (context, url, error) => Container(
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Container(
+                  width: 100,
+                  height: 150,
+                  color: Colors.grey[300],
+                );
+              },
+              errorBuilder: (context, error, stackTrace) => Container(
                 width: 100,
                 height: 150,
                 color: Colors.grey[300],

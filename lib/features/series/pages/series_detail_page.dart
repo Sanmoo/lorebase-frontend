@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/widgets/error_widget.dart';
@@ -258,10 +257,10 @@ class _SeriesDetailLoaded extends StatelessWidget {
                 children: [
                   if (hasBackdrop)
                     Positioned.fill(
-                      child: CachedNetworkImage(
-                        imageUrl: series.backdropPath!,
+                      child: Image.network(
+                        series.backdropPath!,
                         fit: BoxFit.cover,
-                        errorWidget: (_, __, ___) => Container(
+                        errorBuilder: (context, error, stackTrace) => Container(
                           color: theme.colorScheme.surfaceContainerHighest,
                         ),
                       ),
@@ -308,12 +307,12 @@ class _SeriesDetailLoaded extends StatelessWidget {
                           ],
                         ),
                         child: hasPoster
-                            ? CachedNetworkImage(
-                                imageUrl: series.posterPath!,
+                            ? Image.network(
+                                series.posterPath!,
                                 width: 120,
                                 height: 180,
                                 fit: BoxFit.cover,
-                                errorWidget: (_, __, ___) => Container(
+                                errorBuilder: (context, error, stackTrace) => Container(
                                   width: 120,
                                   height: 180,
                                   color:
