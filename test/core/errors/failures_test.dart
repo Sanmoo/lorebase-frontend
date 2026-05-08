@@ -57,22 +57,26 @@ void main() {
 
   group('Runtime construction', () {
     test('ServerFailure runtime', () {
-      const failure = ServerFailure();
+      // ignore: prefer_const_constructors
+      final failure = ServerFailure();
       expect(failure.message, 'Server error occurred');
     });
 
     test('ServerFailure runtime with custom message', () {
-      const failure = ServerFailure('Custom');
+      // ignore: prefer_const_constructors
+      final failure = ServerFailure('Custom');
       expect(failure.message, 'Custom');
     });
 
     test('NetworkFailure runtime', () {
-      const failure = NetworkFailure();
+      // ignore: prefer_const_constructors
+      final failure = NetworkFailure();
       expect(failure.message, 'Network error. Check your connection.');
     });
 
     test('AuthFailure runtime', () {
-      const failure = AuthFailure();
+      // ignore: prefer_const_constructors
+      final failure = AuthFailure();
       expect(failure.message, 'Authentication failed');
     });
   });

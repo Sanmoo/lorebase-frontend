@@ -35,21 +35,24 @@ void main() {
     });
 
     testWidgets('runtime construction with null message', (tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(body: LoadingWidget()),
-        ),
-      );
+      await tester.pumpWidget(_buildLoadingWidget());
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
     testWidgets('runtime with message', (tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(body: LoadingWidget(message: 'Loading...')),
-        ),
-      );
+      await tester.pumpWidget(_buildLoadingWidget(message: 'Loading...'));
       expect(find.text('Loading...'), findsOneWidget);
     });
   });
+}
+
+Widget _buildLoadingWidget({String? message}) {
+  // ignore: prefer_const_constructors
+  return MaterialApp(
+    // ignore: prefer_const_constructors
+    home: Scaffold(
+      // ignore: prefer_const_constructors
+      body: LoadingWidget(message: message),
+    ),
+  );
 }

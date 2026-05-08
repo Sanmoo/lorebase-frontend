@@ -25,14 +25,20 @@ class FakeAuthRepo implements AuthRepository {
 
   @override
   Future<void> resetPassword(String email) async {
-    if (failResetPassword) throw const AuthException('Email not found');
+    if (failResetPassword) {
+      // ignore: prefer_const_constructors
+      throw AuthException('Email not found');
+    }
     if (failWithGeneric) throw Exception('Network error');
   }
 
   @override
   Future<void> confirmResetPassword(
       String email, String code, String newPassword) async {
-    if (failConfirmResetPassword) throw const AuthException('Invalid code');
+    if (failConfirmResetPassword) {
+      // ignore: prefer_const_constructors
+      throw AuthException('Invalid code');
+    }
     if (failWithGeneric) throw Exception('Network error');
   }
 }

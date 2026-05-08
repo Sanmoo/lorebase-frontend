@@ -19,9 +19,11 @@ void main() {
     });
 
     testWidgets('recommendation page uses non-const constructor', (tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(home: RecommendationPage()),
-      );
+      // ignore: prefer_const_constructors
+      await tester.pumpWidget(MaterialApp(
+        // ignore: prefer_const_constructors
+        home: RecommendationPage(),
+      ));
       expect(find.text('Recommendation feature coming soon!'), findsOneWidget);
     });
   });

@@ -12,7 +12,10 @@ class FakeAuthRepo implements AuthRepository {
 
   @override
   Future<String> signIn(String email, String password) async {
-    if (failWithAuthException) throw const AuthException('Bad credentials');
+    if (failWithAuthException) {
+      // ignore: prefer_const_constructors
+      throw AuthException('Bad credentials');
+    }
     if (failWithGeneric) throw Exception('Network error');
     return signInResult;
   }

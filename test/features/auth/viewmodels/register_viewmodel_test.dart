@@ -18,20 +18,28 @@ class FakeAuthRepo implements AuthRepository {
   @override
   Future<String> signIn(String email, String password) async {
     if (failWithGeneric) throw Exception('Network error');
-    if (failWithAuthException) throw const AuthException('Bad credentials');
+    if (failWithAuthException) {
+      // ignore: prefer_const_constructors
+      throw AuthException('Bad credentials');
+    }
     return signInResult;
   }
 
   @override
   Future<void> signUp(String email, String password) async {
-    if (failSignUp) throw const AuthException('Email already in use');
+    if (failSignUp) {
+      // ignore: prefer_const_constructors
+      throw AuthException('Email already in use');
+    }
     if (failSignUpGeneric) throw Exception('Network error');
-    // success: no-op
   }
 
   @override
   Future<void> confirmSignUp(String email, String code) async {
-    if (failConfirmSignUp) throw const AuthException('Invalid confirmation code');
+    if (failConfirmSignUp) {
+      // ignore: prefer_const_constructors
+      throw AuthException('Invalid confirmation code');
+    }
     if (failConfirmSignUpGeneric) throw Exception('Network error');
   }
 
