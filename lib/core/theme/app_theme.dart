@@ -8,7 +8,6 @@ abstract class AppTheme {
       colorScheme: const ColorScheme.light(
         primary: AppColors.primary,
         surface: AppColors.surface,
-        background: AppColors.background,
         error: AppColors.error,
       ),
       scaffoldBackgroundColor: AppColors.background,
@@ -38,7 +37,6 @@ abstract class AppTheme {
       colorScheme: const ColorScheme.dark(
         primary: AppColors.primaryLight,
         surface: AppColors.surfaceDark,
-        background: AppColors.backgroundDark,
         error: AppColors.error,
       ),
       scaffoldBackgroundColor: AppColors.backgroundDark,

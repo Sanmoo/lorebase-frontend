@@ -36,8 +36,8 @@ void main() {
 
     testWidgets('runtime construction with null message', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: const Scaffold(body: LoadingWidget()),
+        const MaterialApp(
+          home: Scaffold(body: LoadingWidget()),
         ),
       );
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -45,7 +45,7 @@ void main() {
 
     testWidgets('runtime with message', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(body: LoadingWidget(message: 'Loading...')),
         ),
       );

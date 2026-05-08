@@ -12,7 +12,7 @@ import 'package:lorebase/features/tracking/data/models/tracked_series_model.dart
 import 'package:lorebase/features/auth/viewmodels/auth_viewmodel.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_state.dart';
 
-SeriesModel _testSeries() => SeriesModel(
+SeriesModel _testSeries() => const SeriesModel(
       tmdbId: 1,
       title: 'Test Series',
       overview: 'A test overview',

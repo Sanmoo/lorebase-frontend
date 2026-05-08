@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lorebase/core/theme/app_colors.dart';
 
 class StatsCard extends StatelessWidget {
   final String title;

@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lorebase/features/series/data/models/series_model.dart';
 import 'package:lorebase/features/series/data/repositories/series_repository.dart';
-import 'package:lorebase/features/series/viewmodels/series_detail_state.dart';
 import 'package:lorebase/features/series/viewmodels/series_detail_viewmodel.dart';
 import 'package:lorebase/features/tracking/data/models/tracked_series_model.dart';
 import 'package:lorebase/features/tracking/data/repositories/tracking_repository.dart';
@@ -101,7 +100,7 @@ void main() {
 
     test('build() returns SeriesDetailState with series and tracking', () async {
       final seriesRepo = FakeSeriesRepo()
-        ..seriesResult = SeriesModel(tmdbId: 42, title: 'Test Show');
+        ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
       final trackingRepo = FakeTrackingRepo()
         ..trackingResults = [
           TrackedSeriesModel(
@@ -109,7 +108,7 @@ void main() {
             userId: 'user-1',
             seriesId: '42',
             status: 'WATCHING',
-            series: SeriesModel(tmdbId: 42, title: 'Test Show'),
+            series: const SeriesModel(tmdbId: 42, title: 'Test Show'),
             addedAt: DateTime.now(),
             lastUpdated: DateTime.now(),
           ),
@@ -130,7 +129,7 @@ void main() {
 
     test('build() with no matching tracking returns null tracking', () async {
       final seriesRepo = FakeSeriesRepo()
-        ..seriesResult = SeriesModel(tmdbId: 42, title: 'Test Show');
+        ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
       final trackingRepo = FakeTrackingRepo()
         ..trackingResults = [
           TrackedSeriesModel(
@@ -156,7 +155,7 @@ void main() {
 
     test('build() with tracking error returns null tracking', () async {
       final seriesRepo = FakeSeriesRepo()
-        ..seriesResult = SeriesModel(tmdbId: 42, title: 'Test Show');
+        ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
       final trackingRepo = FakeTrackingRepo()..shouldThrowTracking = true;
       final container =
           createContainer(seriesRepo: seriesRepo, trackingRepo: trackingRepo);
@@ -172,7 +171,7 @@ void main() {
 
     test('build() matches tracking by nested series.tmdbId', () async {
       final seriesRepo = FakeSeriesRepo()
-        ..seriesResult = SeriesModel(tmdbId: 42, title: 'Test Show');
+        ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
       final trackingRepo = FakeTrackingRepo()
         ..trackingResults = [
           TrackedSeriesModel(
@@ -180,7 +179,7 @@ void main() {
             userId: 'user-1',
             seriesId: 'not42',
             status: 'WATCHING',
-            series: SeriesModel(tmdbId: 42, title: 'Test Show'),
+            series: const SeriesModel(tmdbId: 42, title: 'Test Show'),
             addedAt: DateTime.now(),
             lastUpdated: DateTime.now(),
           ),
@@ -199,7 +198,7 @@ void main() {
 
     test('addTracking() without rating creates tracking', () async {
       final seriesRepo = FakeSeriesRepo()
-        ..seriesResult = SeriesModel(tmdbId: 42, title: 'Test Show');
+        ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
       final trackingRepo = FakeTrackingRepo();
       final container =
           createContainer(seriesRepo: seriesRepo, trackingRepo: trackingRepo);
@@ -216,7 +215,7 @@ void main() {
 
     test('addTracking() with rating and review calls updateTracking', () async {
       final seriesRepo = FakeSeriesRepo()
-        ..seriesResult = SeriesModel(tmdbId: 42, title: 'Test Show');
+        ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
       final trackingRepo = FakeTrackingRepo();
       final container =
           createContainer(seriesRepo: seriesRepo, trackingRepo: trackingRepo);
@@ -235,7 +234,7 @@ void main() {
 
     test('updateTracking() with rating calls repo', () async {
       final seriesRepo = FakeSeriesRepo()
-        ..seriesResult = SeriesModel(tmdbId: 42, title: 'Test Show');
+        ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
       final trackingRepo = FakeTrackingRepo()
         ..trackingResults = [
           TrackedSeriesModel(
@@ -243,7 +242,7 @@ void main() {
             userId: 'user-1',
             seriesId: '42',
             status: 'WATCHING',
-            series: SeriesModel(tmdbId: 42, title: 'Test Show'),
+            series: const SeriesModel(tmdbId: 42, title: 'Test Show'),
             addedAt: DateTime.now(),
             lastUpdated: DateTime.now(),
           ),
@@ -265,7 +264,7 @@ void main() {
     test('removeTracking() calls deleteTracking with correct seriesId',
         () async {
       final seriesRepo = FakeSeriesRepo()
-        ..seriesResult = SeriesModel(tmdbId: 42, title: 'Test Show');
+        ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
       final trackingRepo = FakeTrackingRepo()
         ..trackingResults = [
           TrackedSeriesModel(
@@ -273,7 +272,7 @@ void main() {
             userId: 'user-1',
             seriesId: '42',
             status: 'WATCHING',
-            series: SeriesModel(tmdbId: 42, title: 'Test Show'),
+            series: const SeriesModel(tmdbId: 42, title: 'Test Show'),
             addedAt: DateTime.now(),
             lastUpdated: DateTime.now(),
           ),
@@ -306,7 +305,7 @@ void main() {
 
     test('removeTracking() no-ops when tracking is null in state', () async {
       final seriesRepo = FakeSeriesRepo()
-        ..seriesResult = SeriesModel(tmdbId: 42, title: 'Test Show');
+        ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
       final trackingRepo = FakeTrackingRepo();
       final container =
           createContainer(seriesRepo: seriesRepo, trackingRepo: trackingRepo);
@@ -336,7 +335,7 @@ void main() {
 
     test('addTracking() with empty review and no rating calls updateTracking', () async {
       final seriesRepo = FakeSeriesRepo()
-        ..seriesResult = SeriesModel(tmdbId: 42, title: 'Test Show');
+        ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
       final trackingRepo = FakeTrackingRepo();
       final container =
           createContainer(seriesRepo: seriesRepo, trackingRepo: trackingRepo);
@@ -353,7 +352,7 @@ void main() {
 
     test('addTracking() with non-empty review and no rating calls updateTracking', () async {
       final seriesRepo = FakeSeriesRepo()
-        ..seriesResult = SeriesModel(tmdbId: 42, title: 'Test Show');
+        ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
       final trackingRepo = FakeTrackingRepo();
       final container =
           createContainer(seriesRepo: seriesRepo, trackingRepo: trackingRepo);

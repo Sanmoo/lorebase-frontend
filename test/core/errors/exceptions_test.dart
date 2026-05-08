@@ -30,17 +30,17 @@ void main() {
 
   group('Runtime construction', () {
     test('ServerException runtime', () {
-      final ex = ServerException(message: 'Oops', statusCode: 500);
+      const ex = ServerException(message: 'Oops', statusCode: 500);
       expect(ex.toString(), 'ServerException: Oops (status: 500)');
     });
 
     test('NetworkException runtime', () {
-      final ex = NetworkException(message: 'No connection');
+      const ex = NetworkException(message: 'No connection');
       expect(ex.toString(), 'NetworkException: No connection');
     });
 
     test('AuthException runtime', () {
-      final ex = AuthException(message: 'Unauthorized');
+      const ex = AuthException(message: 'Unauthorized');
       expect(ex.toString(), 'AuthException: Unauthorized');
     });
   });

@@ -117,18 +117,18 @@ void main() {
 
     group('runtime (non-const) construction', () {
       test('authenticated constructor works at runtime', () {
-        final state = AuthState.authenticated('runtime-user');
+        const state = AuthState.authenticated('runtime-user');
         expect(state.userId, 'runtime-user');
         expect(state.isAuthenticated, true);
       });
 
       test('unauthenticated constructor works at runtime', () {
-        final state = AuthState.unauthenticated();
+        const state = AuthState.unauthenticated();
         expect(state.status, AuthStatus.unauthenticated);
       });
 
       test('unknown constructor works at runtime', () {
-        final state = AuthState.unknown();
+        const state = AuthState.unknown();
         expect(state.isLoading, true);
         expect(state.userId, isNull);
       });

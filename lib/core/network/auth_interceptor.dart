@@ -11,7 +11,7 @@ class AuthInterceptor extends Interceptor {
     try {
       final session = await Amplify.Auth.fetchAuthSession();
       if (session.isSignedIn && session is CognitoAuthSession) {
-        final cognitoSession = session as CognitoAuthSession;
+        final cognitoSession = session;
         final token = cognitoSession.userPoolTokensResult.value.accessToken.raw;
         options.headers['Authorization'] = 'Bearer $token';
       }

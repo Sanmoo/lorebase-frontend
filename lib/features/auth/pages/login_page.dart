@@ -112,7 +112,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         const SizedBox(height: 16),
         Row(
           children: [
-            Expanded(child: Divider(color: Colors.white30)),
+            const Expanded(child: Divider(color: Colors.white30)),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
@@ -120,7 +120,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 style: TextStyle(color: Colors.white.withOpacity(0.5)),
               ),
             ),
-            Expanded(child: Divider(color: Colors.white30)),
+            const Expanded(child: Divider(color: Colors.white30)),
           ],
         ),
         const SizedBox(height: 16),

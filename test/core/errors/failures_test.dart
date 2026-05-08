@@ -57,22 +57,22 @@ void main() {
 
   group('Runtime construction', () {
     test('ServerFailure runtime', () {
-      final failure = ServerFailure();
+      const failure = ServerFailure();
       expect(failure.message, 'Server error occurred');
     });
 
     test('ServerFailure runtime with custom message', () {
-      final failure = ServerFailure('Custom');
+      const failure = ServerFailure('Custom');
       expect(failure.message, 'Custom');
     });
 
     test('NetworkFailure runtime', () {
-      final failure = NetworkFailure();
+      const failure = NetworkFailure();
       expect(failure.message, 'Network error. Check your connection.');
     });
 
     test('AuthFailure runtime', () {
-      final failure = AuthFailure();
+      const failure = AuthFailure();
       expect(failure.message, 'Authentication failed');
     });
   });

@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lorebase/features/dashboard/data/models/dashboard_section_model.dart';
-import 'package:lorebase/features/series/data/models/series_model.dart';
 
 void main() {
   group('DashboardSectionModel', () {

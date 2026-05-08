@@ -20,7 +20,7 @@ void main() {
 
     testWidgets('recommendation page uses non-const constructor', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(home: RecommendationPage()),
+        const MaterialApp(home: RecommendationPage()),
       );
       expect(find.text('Recommendation feature coming soon!'), findsOneWidget);
     });

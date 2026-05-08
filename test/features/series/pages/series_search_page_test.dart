@@ -82,8 +82,8 @@ void main() {
 
     testWidgets('shows results list when data available', (tester) async {
       final results = [
-        SeriesModel(tmdbId: 1, title: 'Breaking Bad'),
-        SeriesModel(tmdbId: 2, title: 'Better Call Saul'),
+        const SeriesModel(tmdbId: 1, title: 'Breaking Bad'),
+        const SeriesModel(tmdbId: 2, title: 'Better Call Saul'),
       ];
       final fakeVM = FakeSearchVM(state: AsyncValue.data(results));
       final container = createContainer(fakeVM);
@@ -213,7 +213,7 @@ void main() {
 
     testWidgets('tapping series item does not crash', (tester) async {
       final results = [
-        SeriesModel(tmdbId: 1, title: 'Breaking Bad'),
+        const SeriesModel(tmdbId: 1, title: 'Breaking Bad'),
       ];
       final fakeVM = FakeSearchVM(state: AsyncValue.data(results));
       final container = createContainer(fakeVM);

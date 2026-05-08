@@ -80,9 +80,9 @@ void main() {
     });
 
     testWidgets('handles null posterPath gracefully', (tester) async {
-      final series = SeriesModel(tmdbId: 1, title: 'Null Poster');
+      const series = SeriesModel(tmdbId: 1, title: 'Null Poster');
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: SeriesPoster(series: series),
           ),

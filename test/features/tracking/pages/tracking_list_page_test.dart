@@ -206,7 +206,7 @@ void main() {
     });
 
     testWidgets('series with tmdbId 0 shows no navigation', (tester) async {
-      final series = SeriesModel(tmdbId: 0, title: 'Test');
+      const series = SeriesModel(tmdbId: 0, title: 'Test');
       final trackings = [
         _tracking('t1', 'WATCHING', series: series),
       ];
@@ -221,7 +221,7 @@ void main() {
     });
 
     testWidgets('tracks state with series shows TrackingStatusChip', (tester) async {
-      final series = SeriesModel(tmdbId: 5, title: 'Test');
+      const series = SeriesModel(tmdbId: 5, title: 'Test');
       final trackings = [
         _tracking('t1', 'WANT_TO_WATCH', series: series),
       ];

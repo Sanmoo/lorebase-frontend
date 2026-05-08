@@ -16,12 +16,12 @@ class FakeDashboardRepo implements DashboardRepository {
     return result ?? _defaultDashboard();
   }
 
-  DashboardModel _defaultDashboard() => DashboardModel(
-        watching: const DashboardSectionModel(),
-        wantToWatch: const DashboardSectionModel(),
-        completed: const DashboardSectionModel(),
-        dropped: const DashboardSectionModel(),
-        stats: const DashboardStatsModel(),
+  DashboardModel _defaultDashboard() => const DashboardModel(
+        watching: DashboardSectionModel(),
+        wantToWatch: DashboardSectionModel(),
+        completed: DashboardSectionModel(),
+        dropped: DashboardSectionModel(),
+        stats: DashboardStatsModel(),
       );
 }
 
@@ -39,12 +39,12 @@ void main() {
     });
 
     test('build() loads dashboard data on success', () async {
-      final dashboard = DashboardModel(
-        watching: const DashboardSectionModel(),
-        wantToWatch: const DashboardSectionModel(),
-        completed: const DashboardSectionModel(),
-        dropped: const DashboardSectionModel(),
-        stats: const DashboardStatsModel(watchingCount: 5, totalTracked: 10),
+      const dashboard = DashboardModel(
+        watching: DashboardSectionModel(),
+        wantToWatch: DashboardSectionModel(),
+        completed: DashboardSectionModel(),
+        dropped: DashboardSectionModel(),
+        stats: DashboardStatsModel(watchingCount: 5, totalTracked: 10),
       );
       final repo = FakeDashboardRepo()..result = dashboard;
       final container = ProviderContainer(overrides: [
@@ -105,12 +105,12 @@ void main() {
       expect(container.read(dashboardViewModelProvider).value!.stats.totalTracked, 0);
 
       // Change repo data and refresh
-      repo.result = DashboardModel(
-        watching: const DashboardSectionModel(),
-        wantToWatch: const DashboardSectionModel(),
-        completed: const DashboardSectionModel(),
-        dropped: const DashboardSectionModel(),
-        stats: const DashboardStatsModel(totalTracked: 42),
+      repo.result = const DashboardModel(
+        watching: DashboardSectionModel(),
+        wantToWatch: DashboardSectionModel(),
+        completed: DashboardSectionModel(),
+        dropped: DashboardSectionModel(),
+        stats: DashboardStatsModel(totalTracked: 42),
       );
 
       await container.read(dashboardViewModelProvider.notifier).refresh();

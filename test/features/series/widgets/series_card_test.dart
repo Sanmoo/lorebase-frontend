@@ -6,14 +6,14 @@ import 'package:lorebase/features/series/widgets/series_card.dart';
 void main() {
   group('SeriesCard', () {
     testWidgets('hides season count text when seasonCount is 0', (tester) async {
-      final series = SeriesModel(
+      const series = SeriesModel(
         tmdbId: 1,
         title: 'Test Series',
         seasonCount: 0,
       );
 
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: SeriesCard(series: series),
           ),
@@ -24,14 +24,14 @@ void main() {
     });
 
     testWidgets('shows season count text when seasonCount is greater than 0', (tester) async {
-      final series = SeriesModel(
+      const series = SeriesModel(
         tmdbId: 1,
         title: 'Test Series',
         seasonCount: 5,
       );
 
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: SeriesCard(series: series),
           ),
@@ -42,14 +42,14 @@ void main() {
     });
 
     testWidgets('shows singular season when seasonCount is 1', (tester) async {
-      final series = SeriesModel(
+      const series = SeriesModel(
         tmdbId: 1,
         title: 'Test Series',
         seasonCount: 1,
       );
 
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: SeriesCard(series: series),
           ),
@@ -60,7 +60,7 @@ void main() {
     });
 
     testWidgets('shows genres when provided', (tester) async {
-      final series = SeriesModel(
+      const series = SeriesModel(
         tmdbId: 1,
         title: 'Test Series',
         genres: ['Drama', 'Sci-Fi'],
@@ -68,7 +68,7 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: SeriesCard(series: series),
           ),
@@ -79,7 +79,7 @@ void main() {
     });
 
     testWidgets('hides genres when empty', (tester) async {
-      final series = SeriesModel(
+      const series = SeriesModel(
         tmdbId: 1,
         title: 'Test Series',
         genres: [],
@@ -87,7 +87,7 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: SeriesCard(series: series),
           ),
@@ -98,14 +98,14 @@ void main() {
     });
 
     testWidgets('shows broken image on network error', (tester) async {
-      final series = SeriesModel(
+      const series = SeriesModel(
         tmdbId: 1,
         title: 'Test Series',
         posterPath: '/bad.jpg',
       );
 
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: SeriesCard(series: series),
           ),
@@ -117,14 +117,14 @@ void main() {
     });
 
     testWidgets('shows loading indicator while image loads', (tester) async {
-      final series = SeriesModel(
+      const series = SeriesModel(
         tmdbId: 1,
         title: 'Test Series',
         posterPath: '/image.jpg',
       );
 
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: SeriesCard(series: series),
           ),

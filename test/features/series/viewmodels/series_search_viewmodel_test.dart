@@ -48,7 +48,7 @@ void main() {
 
     test('search() with empty query clears results', () async {
       final repo = FakeSeriesRepo()
-        ..results = [SeriesModel(tmdbId: 1, title: 'Test')];
+        ..results = [const SeriesModel(tmdbId: 1, title: 'Test')];
       final container = createContainer(repo);
       addTearDown(container.dispose);
 
@@ -62,8 +62,8 @@ void main() {
 
     test('search() success returns results', () async {
       final results = [
-        SeriesModel(tmdbId: 1, title: 'Breaking Bad'),
-        SeriesModel(tmdbId: 2, title: 'Better Call Saul'),
+        const SeriesModel(tmdbId: 1, title: 'Breaking Bad'),
+        const SeriesModel(tmdbId: 2, title: 'Better Call Saul'),
       ];
       final repo = FakeSeriesRepo()..results = results;
       final container = createContainer(repo);
@@ -94,7 +94,7 @@ void main() {
 
     test('clear() resets to empty list', () async {
       final repo = FakeSeriesRepo()
-        ..results = [SeriesModel(tmdbId: 1, title: 'Test')];
+        ..results = [const SeriesModel(tmdbId: 1, title: 'Test')];
       final container = createContainer(repo);
       addTearDown(container.dispose);
 

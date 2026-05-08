@@ -5,7 +5,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lorebase/features/tracking/data/repositories/tracking_repository.dart';
-import 'package:lorebase/features/tracking/data/models/tracked_series_model.dart';
 import 'package:lorebase/core/errors/exceptions.dart';
 import 'package:lorebase/core/providers/core_providers.dart';
 

@@ -20,12 +20,12 @@ class FakeDashboardVM extends DashboardViewModel {
   AsyncValue<DashboardModel> build() => testState;
 }
 
-DashboardModel _emptyDashboard() => DashboardModel(
-      watching: const DashboardSectionModel(),
-      wantToWatch: const DashboardSectionModel(),
-      completed: const DashboardSectionModel(),
-      dropped: const DashboardSectionModel(),
-      stats: const DashboardStatsModel(),
+DashboardModel _emptyDashboard() => const DashboardModel(
+      watching: DashboardSectionModel(),
+      wantToWatch: DashboardSectionModel(),
+      completed: DashboardSectionModel(),
+      dropped: DashboardSectionModel(),
+      stats: DashboardStatsModel(),
     );
 
 class FakeAuthVM extends AuthViewModel {
@@ -102,19 +102,19 @@ void main() {
     });
 
     testWidgets('data shows stats cards', (tester) async {
-      final dashboard = DashboardModel(
-        watching: const DashboardSectionModel(),
-        wantToWatch: const DashboardSectionModel(),
-        completed: const DashboardSectionModel(),
-        dropped: const DashboardSectionModel(),
-        stats: const DashboardStatsModel(
+      const dashboard = DashboardModel(
+        watching: DashboardSectionModel(),
+        wantToWatch: DashboardSectionModel(),
+        completed: DashboardSectionModel(),
+        dropped: DashboardSectionModel(),
+        stats: DashboardStatsModel(
           watchingCount: 3,
           wantToWatchCount: 2,
           completedCount: 5,
           droppedCount: 1,
         ),
       );
-      final fakeVM = FakeDashboardVM(testState: AsyncValue.data(dashboard));
+      final fakeVM = FakeDashboardVM(testState: const AsyncValue.data(dashboard));
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
 
@@ -128,24 +128,24 @@ void main() {
     });
 
     testWidgets('sections render when items are present', (tester) async {
-      final series = SeriesModel(
+      const series = SeriesModel(
         tmdbId: 456,
         title: 'x',
         posterPath: 'http://example.com/p.jpg',
       );
-      final dashboard = DashboardModel(
+      const dashboard = DashboardModel(
         watching: DashboardSectionModel(items: [series]),
-        wantToWatch: const DashboardSectionModel(),
-        completed: const DashboardSectionModel(),
-        dropped: const DashboardSectionModel(),
-        stats: const DashboardStatsModel(
+        wantToWatch: DashboardSectionModel(),
+        completed: DashboardSectionModel(),
+        dropped: DashboardSectionModel(),
+        stats: DashboardStatsModel(
           watchingCount: 1,
           wantToWatchCount: 0,
           completedCount: 0,
           droppedCount: 0,
         ),
       );
-      final fakeVM = FakeDashboardVM(testState: AsyncValue.data(dashboard));
+      final fakeVM = FakeDashboardVM(testState: const AsyncValue.data(dashboard));
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
 
@@ -159,18 +159,18 @@ void main() {
     });
 
     testWidgets('renders all four sections when items present', (tester) async {
-      final series = SeriesModel(tmdbId: 1, title: 'Series');
-      final dashboard = DashboardModel(
+      const series = SeriesModel(tmdbId: 1, title: 'Series');
+      const dashboard = DashboardModel(
         watching: DashboardSectionModel(items: [series]),
         wantToWatch: DashboardSectionModel(items: [series]),
         completed: DashboardSectionModel(items: [series]),
         dropped: DashboardSectionModel(items: [series]),
-        stats: const DashboardStatsModel(
+        stats: DashboardStatsModel(
           watchingCount: 1, wantToWatchCount: 1,
           completedCount: 1, droppedCount: 1,
         ),
       );
-      final fakeVM = FakeDashboardVM(testState: AsyncValue.data(dashboard));
+      final fakeVM = FakeDashboardVM(testState: const AsyncValue.data(dashboard));
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
 
@@ -187,15 +187,15 @@ void main() {
     });
 
     testWidgets('section with tmdbId 0 does not navigate', (tester) async {
-      final series = SeriesModel(tmdbId: 0, title: 'No nav');
-      final dashboard = DashboardModel(
+      const series = SeriesModel(tmdbId: 0, title: 'No nav');
+      const dashboard = DashboardModel(
         watching: DashboardSectionModel(items: [series]),
-        wantToWatch: const DashboardSectionModel(),
-        completed: const DashboardSectionModel(),
-        dropped: const DashboardSectionModel(),
-        stats: const DashboardStatsModel(watchingCount: 1),
+        wantToWatch: DashboardSectionModel(),
+        completed: DashboardSectionModel(),
+        dropped: DashboardSectionModel(),
+        stats: DashboardStatsModel(watchingCount: 1),
       );
-      final fakeVM = FakeDashboardVM(testState: AsyncValue.data(dashboard));
+      final fakeVM = FakeDashboardVM(testState: const AsyncValue.data(dashboard));
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
 
@@ -208,15 +208,15 @@ void main() {
     });
 
     testWidgets('dashboard with wantToWatch section renders', (tester) async {
-      final series = SeriesModel(tmdbId: 2, title: 'Want');
-      final dashboard = DashboardModel(
-        watching: const DashboardSectionModel(),
+      const series = SeriesModel(tmdbId: 2, title: 'Want');
+      const dashboard = DashboardModel(
+        watching: DashboardSectionModel(),
         wantToWatch: DashboardSectionModel(items: [series]),
-        completed: const DashboardSectionModel(),
-        dropped: const DashboardSectionModel(),
-        stats: const DashboardStatsModel(wantToWatchCount: 1),
+        completed: DashboardSectionModel(),
+        dropped: DashboardSectionModel(),
+        stats: DashboardStatsModel(wantToWatchCount: 1),
       );
-      final fakeVM = FakeDashboardVM(testState: AsyncValue.data(dashboard));
+      final fakeVM = FakeDashboardVM(testState: const AsyncValue.data(dashboard));
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
 
@@ -228,15 +228,15 @@ void main() {
     });
 
     testWidgets('dashboard with completed section renders', (tester) async {
-      final series = SeriesModel(tmdbId: 3, title: 'Done');
-      final dashboard = DashboardModel(
-        watching: const DashboardSectionModel(),
-        wantToWatch: const DashboardSectionModel(),
+      const series = SeriesModel(tmdbId: 3, title: 'Done');
+      const dashboard = DashboardModel(
+        watching: DashboardSectionModel(),
+        wantToWatch: DashboardSectionModel(),
         completed: DashboardSectionModel(items: [series]),
-        dropped: const DashboardSectionModel(),
-        stats: const DashboardStatsModel(completedCount: 1),
+        dropped: DashboardSectionModel(),
+        stats: DashboardStatsModel(completedCount: 1),
       );
-      final fakeVM = FakeDashboardVM(testState: AsyncValue.data(dashboard));
+      final fakeVM = FakeDashboardVM(testState: const AsyncValue.data(dashboard));
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
 
@@ -248,15 +248,15 @@ void main() {
     });
 
     testWidgets('dashboard with dropped section renders', (tester) async {
-      final series = SeriesModel(tmdbId: 4, title: 'Dropped');
-      final dashboard = DashboardModel(
-        watching: const DashboardSectionModel(),
-        wantToWatch: const DashboardSectionModel(),
-        completed: const DashboardSectionModel(),
+      const series = SeriesModel(tmdbId: 4, title: 'Dropped');
+      const dashboard = DashboardModel(
+        watching: DashboardSectionModel(),
+        wantToWatch: DashboardSectionModel(),
+        completed: DashboardSectionModel(),
         dropped: DashboardSectionModel(items: [series]),
-        stats: const DashboardStatsModel(droppedCount: 1),
+        stats: DashboardStatsModel(droppedCount: 1),
       );
-      final fakeVM = FakeDashboardVM(testState: AsyncValue.data(dashboard));
+      final fakeVM = FakeDashboardVM(testState: const AsyncValue.data(dashboard));
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
 
@@ -280,18 +280,18 @@ void main() {
     });
 
     testWidgets('sections with tmdbId 0 do not navigate', (tester) async {
-      final series = SeriesModel(tmdbId: 0, title: 'No Nav');
-      final dashboard = DashboardModel(
+      const series = SeriesModel(tmdbId: 0, title: 'No Nav');
+      const dashboard = DashboardModel(
         watching: DashboardSectionModel(items: [series]),
         wantToWatch: DashboardSectionModel(items: [series]),
         completed: DashboardSectionModel(items: [series]),
         dropped: DashboardSectionModel(items: [series]),
-        stats: const DashboardStatsModel(
+        stats: DashboardStatsModel(
           watchingCount: 1, wantToWatchCount: 1,
           completedCount: 1, droppedCount: 1,
         ),
       );
-      final fakeVM = FakeDashboardVM(testState: AsyncValue.data(dashboard));
+      final fakeVM = FakeDashboardVM(testState: const AsyncValue.data(dashboard));
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
 
@@ -319,18 +319,18 @@ void main() {
     });
 
     testWidgets('tapping watching section series navigates', (tester) async {
-      final series = SeriesModel(
+      const series = SeriesModel(
         tmdbId: 456, title: 'Series A',
         posterPath: 'http://example.com/p.jpg',
       );
-      final dashboard = DashboardModel(
+      const dashboard = DashboardModel(
         watching: DashboardSectionModel(items: [series]),
-        wantToWatch: const DashboardSectionModel(),
-        completed: const DashboardSectionModel(),
-        dropped: const DashboardSectionModel(),
-        stats: const DashboardStatsModel(watchingCount: 1),
+        wantToWatch: DashboardSectionModel(),
+        completed: DashboardSectionModel(),
+        dropped: DashboardSectionModel(),
+        stats: DashboardStatsModel(watchingCount: 1),
       );
-      final fakeVM = FakeDashboardVM(testState: AsyncValue.data(dashboard));
+      final fakeVM = FakeDashboardVM(testState: const AsyncValue.data(dashboard));
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
 

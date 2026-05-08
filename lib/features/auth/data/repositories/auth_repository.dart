@@ -1,4 +1,3 @@
-import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 
 abstract class AuthRepository {
@@ -20,7 +19,7 @@ class AmplifyAuthRepository implements AuthRepository {
       password: password,
     );
     if (!result.isSignedIn) {
-      throw AuthException('Login failed. Please check your credentials.');
+      throw const AuthException('Login failed. Please check your credentials.');
     }
     final session = await Amplify.Auth.fetchAuthSession();
     final user = await Amplify.Auth.getCurrentUser();
