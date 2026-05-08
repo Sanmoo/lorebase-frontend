@@ -122,6 +122,12 @@ flutter run -d chrome
 
 # Lint
 dart analyze
+
+# Coverage quality gate (line + function + branch at 100%)
+make test-coverage
+
+# Run all checks: analyze + coverage gate
+make check
 ```
 
 ## What NOT to Do
