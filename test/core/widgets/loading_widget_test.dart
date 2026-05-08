@@ -33,5 +33,23 @@ void main() {
       expect(find.text('Carregando...'), findsOneWidget);
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
+
+    testWidgets('runtime construction with null message', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: const Scaffold(body: LoadingWidget()),
+        ),
+      );
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    });
+
+    testWidgets('runtime with message', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(body: LoadingWidget(message: 'Loading...')),
+        ),
+      );
+      expect(find.text('Loading...'), findsOneWidget);
+    });
   });
 }

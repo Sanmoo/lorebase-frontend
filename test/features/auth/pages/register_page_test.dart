@@ -248,5 +248,121 @@ void main() {
 
       expect(find.byIcon(Icons.visibility), findsOneWidget);
     });
+
+    testWidgets('typing in fields triggers listeners', (tester) async {
+      final fakeVM = FakeRegisterVM();
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.enterText(find.byType(TextFormField).at(0), 'a@b.com');
+      await tester.pump();
+
+      expect(fakeVM.state.email, 'a@b.com');
+    });
+
+    testWidgets('login link navigates to login', (tester) async {
+      final fakeVM = FakeRegisterVM();
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.ensureVisible(find.textContaining('Já tem conta?'));
+      await tester.tap(find.textContaining('Já tem conta?'));
+      await tester.pump();
+
+      expect(find.byType(SizedBox), findsWidgets);
+    });
+
+    testWidgets('typing in password field triggers listener', (tester) async {
+      final fakeVM = FakeRegisterVM();
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.enterText(find.byType(TextFormField).at(1), 'StrongP@ss1');
+      await tester.pump();
+
+      expect(fakeVM.state.password, 'StrongP@ss1');
+    });
+
+    testWidgets('submit with valid data without terms shows error', (tester) async {
+      final fakeVM = FakeRegisterVM(
+        state: const RegisterState(
+          email: 'a@b.com',
+          password: 'StrongPass1',
+          confirmPassword: 'StrongPass1',
+          termsAccepted: false,
+        ),
+      );
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await _scrollToSubmitButton(tester);
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Criar conta'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.text('Aceite os termos de uso'), findsOneWidget);
+    });
+
+    testWidgets('submit with valid data goes to confirmation', (tester) async {
+      final fakeVM = FakeRegisterVM(
+        state: const RegisterState(
+          email: 'a@b.com',
+          password: 'StrongPass1',
+          confirmPassword: 'StrongPass1',
+          termsAccepted: true,
+        ),
+      );
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await _scrollToSubmitButton(tester);
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Criar conta'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.text('Confirme seu e-mail'), findsOneWidget);
+    });
+
+    testWidgets('confirmation screen shows resend and confirm buttons', (tester) async {
+      final fakeVM = FakeRegisterVM(
+        state: const RegisterState(
+          email: 'a@b.com',
+          password: 'StrongPass1',
+          confirmPassword: 'StrongPass1',
+          termsAccepted: true,
+          showConfirmation: true,
+        ),
+      );
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      expect(find.text('Confirmar e entrar'), findsOneWidget);
+      expect(find.text('Reenviar código'), findsOneWidget);
+    });
+
+    testWidgets('typing in confirm password triggers listener', (tester) async {
+      final fakeVM = FakeRegisterVM();
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.enterText(find.byType(TextFormField).at(2), 'match');
+      await tester.pump();
+
+      expect(fakeVM.state.confirmPassword, 'match');
+    });
   });
 }

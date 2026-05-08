@@ -9,7 +9,9 @@ import 'package:lorebase/features/auth/viewmodels/auth_state.dart';
 
 class FakeForgotPasswordVM extends ForgotPasswordViewModel {
   bool requestCodeCalled = false;
+  bool requestCodeResult = true;
   bool resetPasswordCalled = false;
+  bool resetPasswordResult = true;
   final ForgotPasswordState testState;
 
   FakeForgotPasswordVM({ForgotPasswordState? state})
@@ -21,13 +23,13 @@ class FakeForgotPasswordVM extends ForgotPasswordViewModel {
   @override
   Future<bool> requestCode() async {
     requestCodeCalled = true;
-    return true;
+    return requestCodeResult;
   }
 
   @override
   Future<bool> resetPassword() async {
     resetPasswordCalled = true;
-    return true;
+    return resetPasswordResult;
   }
 
   @override
@@ -203,6 +205,129 @@ void main() {
 
       expect(fakeVM.resetPasswordCalled, true);
       expect(find.text('Redefinir senha'), findsNothing);
+    });
+
+    testWidgets('shows loading indicator when isLoading', (tester) async {
+      final fakeVM = FakeForgotPasswordVM(
+        state: const ForgotPasswordState(isLoading: true),
+      );
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      expect(find.byType(CircularProgressIndicator), findsWidgets);
+    });
+
+    testWidgets('phase 2 shows password toggle icon', (tester) async {
+      final fakeVM = FakeForgotPasswordVM(
+        state: const ForgotPasswordState(
+          phase: ForgotPasswordPhase.resetPassword,
+          obscurePassword: true,
+        ),
+      );
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      expect(find.byIcon(Icons.visibility_off), findsOneWidget);
+
+      await tester.tap(find.byIcon(Icons.visibility_off));
+      await tester.pump();
+
+      expect(fakeVM.state.obscurePassword, false);
+    });
+
+    testWidgets('requestCode with empty email sets error', (tester) async {
+      final fakeVM = FakeForgotPasswordVM(
+        state: const ForgotPasswordState(email: ''),
+      );
+      fakeVM.requestCodeResult = false;
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.tap(find.text('Enviar código'));
+      await tester.pump();
+
+      expect(fakeVM.requestCodeCalled, true);
+    });
+
+    testWidgets('resetPassword with empty fields shows error', (tester) async {
+      final fakeVM = FakeForgotPasswordVM(
+        state: const ForgotPasswordState(
+          phase: ForgotPasswordPhase.resetPassword,
+        ),
+      );
+      fakeVM.resetPasswordResult = false;
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.ensureVisible(find.text('Redefinir senha'));
+      await tester.tap(find.text('Redefinir senha'));
+      await tester.pump();
+
+      expect(fakeVM.resetPasswordCalled, true);
+    });
+
+    testWidgets('back to login navigates', (tester) async {
+      final fakeVM = FakeForgotPasswordVM();
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.tap(find.text('Voltar para o login'));
+      await tester.pump();
+
+      expect(find.byType(SizedBox), findsWidgets);
+    });
+
+    testWidgets('typing in email field triggers listener', (tester) async {
+      final fakeVM = FakeForgotPasswordVM();
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.enterText(find.byType(TextFormField).first, 'a@b.com');
+      await tester.pump();
+
+      expect(fakeVM.state.email, 'a@b.com');
+    });
+
+    testWidgets('phase 2 typing in fields triggers listeners', (tester) async {
+      final fakeVM = FakeForgotPasswordVM(
+        state: const ForgotPasswordState(
+          phase: ForgotPasswordPhase.resetPassword,
+        ),
+      );
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      final codeField = find.byType(TextFormField).at(0);
+      await tester.enterText(codeField, '123456');
+      await tester.pump();
+
+      final passwordField = find.byType(TextFormField).at(1);
+      await tester.enterText(passwordField, 'newPass');
+      await tester.pump();
+
+      expect(fakeVM.state.code, '123456');
+      expect(fakeVM.state.newPassword, 'newPass');
     });
   });
 }

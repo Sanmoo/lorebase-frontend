@@ -38,5 +38,25 @@ void main() {
       );
       // Should not throw — SeriesPoster renders with network image placeholder
     });
+
+    testWidgets('onTap fires when tapping a poster', (tester) async {
+      var tappedId = 0;
+      final series = [_series(1, 'Show A')];
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              height: 600,
+              child: SeriesHorizontalList(
+                series: series,
+                onTap: (s) => tappedId = s.tmdbId,
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('Show A'));
+      expect(tappedId, 1);
+    });
   });
 }

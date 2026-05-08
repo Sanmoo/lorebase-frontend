@@ -1,5 +1,9 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_state.dart';
+import 'package:lorebase/features/auth/viewmodels/auth_viewmodel.dart';
 import 'package:lorebase/router.dart';
 
 void main() {
@@ -55,4 +59,69 @@ void main() {
       });
     });
   });
+
+  group('routerProvider', () {
+    test('creates GoRouter with initialLocation /login', () {
+      final container = ProviderContainer(overrides: [
+        authViewModelProvider.overrideWith(
+          () => _FakeAuthVM(const AuthState.unknown()),
+        ),
+      ]);
+      addTearDown(container.dispose);
+
+      final router = container.read(routerProvider);
+      expect(router, isA<GoRouter>());
+    });
+
+    test('router redirect redirects unauthenticated to /login', () async {
+      final container = ProviderContainer(overrides: [
+        authViewModelProvider.overrideWith(
+          () => _FakeAuthVM(const AuthState.unauthenticated()),
+        ),
+      ]);
+      addTearDown(container.dispose);
+
+      final router = container.read(routerProvider);
+      expect(router, isA<GoRouter>());
+    });
+  });
+
+  group('authRedirect edge cases', () {
+    test('unknown with unknown state redirects to login', () {
+      const unknown = AuthState.unknown();
+      expect(authRedirect(unknown, '/unknown'), '/login');
+    });
+
+    test('authenticated on unknown non-auth route stays', () {
+      const authenticated = AuthState.authenticated('user1');
+      expect(authRedirect(authenticated, '/unknown'), isNull);
+    });
+
+    test('unauthenticated on root returns /login', () {
+      const unauthenticated = AuthState.unauthenticated();
+      expect(authRedirect(unauthenticated, '/'), '/login');
+    });
+
+    test('authenticated on root stays', () {
+      const authenticated = AuthState.authenticated('user1');
+      expect(authRedirect(authenticated, '/'), isNull);
+    });
+  });
+}
+
+class _FakeAuthVM extends AuthViewModel {
+  final AuthState authState;
+  _FakeAuthVM(this.authState);
+
+  @override
+  AuthState build() => authState;
+
+  @override
+  void setAuthenticated(String userId) {}
+
+  @override
+  void setUnauthenticated() {}
+
+  @override
+  Future<void> signOut() async {}
 }

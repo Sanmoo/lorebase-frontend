@@ -333,5 +333,40 @@ void main() {
 
       expect(trackingRepo.lastStartedTracking, isNull);
     });
+
+    test('addTracking() with empty review and no rating calls updateTracking', () async {
+      final seriesRepo = FakeSeriesRepo()
+        ..seriesResult = SeriesModel(tmdbId: 42, title: 'Test Show');
+      final trackingRepo = FakeTrackingRepo();
+      final container =
+          createContainer(seriesRepo: seriesRepo, trackingRepo: trackingRepo);
+      addTearDown(container.dispose);
+
+      await container.read(seriesDetailViewModelProvider(42).future);
+      await container
+          .read(seriesDetailViewModelProvider(42).notifier)
+          .addTracking('WATCHING', seriesReview: '');
+
+      expect(trackingRepo.lastStartedTracking, isNotNull);
+      expect(trackingRepo.lastUpdatedFields, isNull);
+    });
+
+    test('addTracking() with non-empty review and no rating calls updateTracking', () async {
+      final seriesRepo = FakeSeriesRepo()
+        ..seriesResult = SeriesModel(tmdbId: 42, title: 'Test Show');
+      final trackingRepo = FakeTrackingRepo();
+      final container =
+          createContainer(seriesRepo: seriesRepo, trackingRepo: trackingRepo);
+      addTearDown(container.dispose);
+
+      await container.read(seriesDetailViewModelProvider(42).future);
+      await container
+          .read(seriesDetailViewModelProvider(42).notifier)
+          .addTracking('WATCHING', seriesReview: 'Nice show');
+
+      expect(trackingRepo.lastStartedTracking, isNotNull);
+      expect(trackingRepo.lastUpdatedFields, isNotNull);
+      expect(trackingRepo.lastUpdatedFields!['seriesReview'], 'Nice show');
+    });
   });
 }

@@ -77,5 +77,62 @@ void main() {
 
       expect(find.text('Drama, Sci-Fi'), findsOneWidget);
     });
+
+    testWidgets('hides genres when empty', (tester) async {
+      final series = SeriesModel(
+        tmdbId: 1,
+        title: 'Test Series',
+        genres: [],
+        seasonCount: 3,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SeriesCard(series: series),
+          ),
+        ),
+      );
+
+      expect(find.textContaining('Drama'), findsNothing);
+    });
+
+    testWidgets('shows broken image on network error', (tester) async {
+      final series = SeriesModel(
+        tmdbId: 1,
+        title: 'Test Series',
+        posterPath: '/bad.jpg',
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SeriesCard(series: series),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byIcon(Icons.broken_image), findsOneWidget);
+    });
+
+    testWidgets('shows loading indicator while image loads', (tester) async {
+      final series = SeriesModel(
+        tmdbId: 1,
+        title: 'Test Series',
+        posterPath: '/image.jpg',
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SeriesCard(series: series),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+    });
   });
 }

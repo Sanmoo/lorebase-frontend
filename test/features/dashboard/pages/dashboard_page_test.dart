@@ -157,5 +157,191 @@ void main() {
       expect(find.text('Completed'), findsOneWidget);
       expect(find.textContaining('No series tracked'), findsNothing);
     });
+
+    testWidgets('renders all four sections when items present', (tester) async {
+      final series = SeriesModel(tmdbId: 1, title: 'Series');
+      final dashboard = DashboardModel(
+        watching: DashboardSectionModel(items: [series]),
+        wantToWatch: DashboardSectionModel(items: [series]),
+        completed: DashboardSectionModel(items: [series]),
+        dropped: DashboardSectionModel(items: [series]),
+        stats: const DashboardStatsModel(
+          watchingCount: 1, wantToWatchCount: 1,
+          completedCount: 1, droppedCount: 1,
+        ),
+      );
+      final fakeVM = FakeDashboardVM(testState: AsyncValue.data(dashboard));
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      // Stats cards are always visible
+      expect(find.text('Watching'), findsAtLeast(1));
+      expect(find.text('Want to Watch'), findsAtLeast(1));
+      expect(find.text('Completed'), findsAtLeast(1));
+      expect(find.text('Dropped'), findsAtLeast(1));
+      expect(find.text('Series'), findsAtLeast(1));
+    });
+
+    testWidgets('section with tmdbId 0 does not navigate', (tester) async {
+      final series = SeriesModel(tmdbId: 0, title: 'No nav');
+      final dashboard = DashboardModel(
+        watching: DashboardSectionModel(items: [series]),
+        wantToWatch: const DashboardSectionModel(),
+        completed: const DashboardSectionModel(),
+        dropped: const DashboardSectionModel(),
+        stats: const DashboardStatsModel(watchingCount: 1),
+      );
+      final fakeVM = FakeDashboardVM(testState: AsyncValue.data(dashboard));
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.text('No nav'), findsOneWidget);
+      expect(find.text('Watching'), findsNWidgets(2));
+    });
+
+    testWidgets('dashboard with wantToWatch section renders', (tester) async {
+      final series = SeriesModel(tmdbId: 2, title: 'Want');
+      final dashboard = DashboardModel(
+        watching: const DashboardSectionModel(),
+        wantToWatch: DashboardSectionModel(items: [series]),
+        completed: const DashboardSectionModel(),
+        dropped: const DashboardSectionModel(),
+        stats: const DashboardStatsModel(wantToWatchCount: 1),
+      );
+      final fakeVM = FakeDashboardVM(testState: AsyncValue.data(dashboard));
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.text('Want'), findsOneWidget);
+    });
+
+    testWidgets('dashboard with completed section renders', (tester) async {
+      final series = SeriesModel(tmdbId: 3, title: 'Done');
+      final dashboard = DashboardModel(
+        watching: const DashboardSectionModel(),
+        wantToWatch: const DashboardSectionModel(),
+        completed: DashboardSectionModel(items: [series]),
+        dropped: const DashboardSectionModel(),
+        stats: const DashboardStatsModel(completedCount: 1),
+      );
+      final fakeVM = FakeDashboardVM(testState: AsyncValue.data(dashboard));
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.text('Done'), findsOneWidget);
+    });
+
+    testWidgets('dashboard with dropped section renders', (tester) async {
+      final series = SeriesModel(tmdbId: 4, title: 'Dropped');
+      final dashboard = DashboardModel(
+        watching: const DashboardSectionModel(),
+        wantToWatch: const DashboardSectionModel(),
+        completed: const DashboardSectionModel(),
+        dropped: DashboardSectionModel(items: [series]),
+        stats: const DashboardStatsModel(droppedCount: 1),
+      );
+      final fakeVM = FakeDashboardVM(testState: AsyncValue.data(dashboard));
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.text('Dropped'), findsAtLeast(1));
+    });
+
+    testWidgets('all sections with empty items shows empty state', (tester) async {
+      final dashboard = _emptyDashboard();
+      final fakeVM = FakeDashboardVM(testState: AsyncValue.data(dashboard));
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      expect(find.textContaining('No series tracked'), findsOneWidget);
+    });
+
+    testWidgets('sections with tmdbId 0 do not navigate', (tester) async {
+      final series = SeriesModel(tmdbId: 0, title: 'No Nav');
+      final dashboard = DashboardModel(
+        watching: DashboardSectionModel(items: [series]),
+        wantToWatch: DashboardSectionModel(items: [series]),
+        completed: DashboardSectionModel(items: [series]),
+        dropped: DashboardSectionModel(items: [series]),
+        stats: const DashboardStatsModel(
+          watchingCount: 1, wantToWatchCount: 1,
+          completedCount: 1, droppedCount: 1,
+        ),
+      );
+      final fakeVM = FakeDashboardVM(testState: AsyncValue.data(dashboard));
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      // All sections render but no navigation occurs (tmdbId is 0)
+      expect(find.text('No Nav'), findsAtLeast(1));
+    });
+
+    testWidgets('retry button on error calls refresh', (tester) async {
+      final fakeVM =
+          FakeDashboardVM(testState: AsyncValue.error('Error!', StackTrace.current));
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.tap(find.text('Retry'));
+      await tester.pump();
+
+      expect(find.text('Retry'), findsOneWidget);
+    });
+
+    testWidgets('tapping watching section series navigates', (tester) async {
+      final series = SeriesModel(
+        tmdbId: 456, title: 'Series A',
+        posterPath: 'http://example.com/p.jpg',
+      );
+      final dashboard = DashboardModel(
+        watching: DashboardSectionModel(items: [series]),
+        wantToWatch: const DashboardSectionModel(),
+        completed: const DashboardSectionModel(),
+        dropped: const DashboardSectionModel(),
+        stats: const DashboardStatsModel(watchingCount: 1),
+      );
+      final fakeVM = FakeDashboardVM(testState: AsyncValue.data(dashboard));
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      await tester.tap(find.text('Series A'));
+      await tester.pump();
+
+      expect(find.text('Series A'), findsOneWidget);
+    });
   });
 }

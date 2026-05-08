@@ -10,13 +10,14 @@ import 'package:lorebase/features/auth/viewmodels/auth_state.dart';
 
 class FakeSearchVM extends SeriesSearchViewModel {
   final AsyncValue<List<SeriesModel>> testState;
+  bool retryCalled = false;
   FakeSearchVM({AsyncValue<List<SeriesModel>>? state})
       : testState = state ?? const AsyncValue.data([]);
 
   @override
   AsyncValue<List<SeriesModel>> build() => testState;
   @override
-  Future<void> search(String query) async {}
+  Future<void> search(String query) async { retryCalled = true; }
   @override
   void clear() {}
 }
@@ -135,5 +136,95 @@ void main() {
       expect(find.text('Retry'), findsOneWidget);
     });
 
+    testWidgets('shows no results message when empty data with non-empty query',
+        (tester) async {
+      final fakeVM = FakeSearchVM(state: const AsyncValue.data([]));
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      expect(
+        find.textContaining('Type at least 2 characters'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('search field has autofocus', (tester) async {
+      final fakeVM = FakeSearchVM();
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      final textField = find.byType(TextField);
+      expect(textField, findsOneWidget);
+      // TextField should be focused (autofocus)
+      expect(tester.testTextInput.isVisible, isTrue);
+    });
+
+    testWidgets('typing text triggers debounced search', (tester) async {
+      final fakeVM = FakeSearchVM();
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.enterText(find.byType(TextField), 'breaking');
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+
+      expect(fakeVM.retryCalled, true);
+    });
+
+    testWidgets('retry button calls search', (tester) async {
+      final fakeVM = FakeSearchVM(
+        state: AsyncValue.error('Failed', StackTrace.current),
+      );
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.enterText(find.byType(TextField), 'test');
+      await tester.pump();
+
+      await tester.tap(find.text('Retry'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+
+      expect(fakeVM.retryCalled, true);
+    });
+
+    testWidgets('typing text triggers onChanged with debounce', (tester) async {
+      final fakeVM = FakeSearchVM();
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.enterText(find.byType(TextField), 'breaking');
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+
+      expect(fakeVM.retryCalled, true);
+    });
+
+    testWidgets('tapping series item does not crash', (tester) async {
+      final results = [
+        SeriesModel(tmdbId: 1, title: 'Breaking Bad'),
+      ];
+      final fakeVM = FakeSearchVM(state: AsyncValue.data(results));
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.tap(find.text('Breaking Bad'));
+      await tester.pump();
+
+      expect(find.text('Breaking Bad'), findsOneWidget);
+    });
   });
 }

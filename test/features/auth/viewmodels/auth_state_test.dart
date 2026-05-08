@@ -107,6 +107,12 @@ void main() {
         );
         expect(copied.errorMessage, isNull);
       });
+
+      test('copyWith with userId overrides', () {
+        const state = AuthState.unauthenticated();
+        final copied = state.copyWith(userId: 'new-id');
+        expect(copied.userId, 'new-id');
+      });
     });
 
     group('runtime (non-const) construction', () {
@@ -119,6 +125,12 @@ void main() {
       test('unauthenticated constructor works at runtime', () {
         final state = AuthState.unauthenticated();
         expect(state.status, AuthStatus.unauthenticated);
+      });
+
+      test('unknown constructor works at runtime', () {
+        final state = AuthState.unknown();
+        expect(state.isLoading, true);
+        expect(state.userId, isNull);
       });
     });
   });
