@@ -14,27 +14,46 @@ class FakeRegisterVM extends RegisterViewModel {
 
   @override
   RegisterState build() => testState;
-  @override
-  Future<bool> submit() async {
-    state = testState.copyWith(showConfirmation: true);
-    return true;
-  }
+
   @override
   void setEmail(String e) => state = state.copyWith(email: e);
+
   @override
   void setPassword(String p) => state = state.copyWith(password: p);
+
   @override
   void setConfirmPassword(String p) =>
       state = state.copyWith(confirmPassword: p);
+
   @override
   void toggleTerms() =>
       state = state.copyWith(termsAccepted: !state.termsAccepted);
+
   @override
   void toggleObscurePassword() =>
       state = state.copyWith(obscurePassword: !state.obscurePassword);
+
   @override
   void setConfirmationCode(String c) =>
       state = state.copyWith(confirmationCode: c);
+
+  @override
+  Future<bool> submit() async {
+    if (!state.isValid) {
+      if (state.password != state.confirmPassword) {
+        state = state.copyWith(errorMessage: 'As senhas não coincidem');
+      } else if (state.passwordStrength == PasswordStrength.weak) {
+        state = state.copyWith(errorMessage: 'A senha é muito fraca');
+      } else if (!state.termsAccepted) {
+        state = state.copyWith(errorMessage: 'Aceite os termos de uso');
+      } else {
+        state = state.copyWith(errorMessage: 'Preencha todos os campos');
+      }
+      return false;
+    }
+    state = state.copyWith(showConfirmation: true);
+    return true;
+  }
 }
 
 class FakeAuthVM extends AuthViewModel {
@@ -64,6 +83,15 @@ Widget _wrap(ProviderContainer container) {
   );
 }
 
+Future<void> _scrollToSubmitButton(WidgetTester tester) async {
+  await tester.dragUntilVisible(
+    find.widgetWithText(ElevatedButton, 'Criar conta'),
+    find.byType(SingleChildScrollView),
+    const Offset(0, -200),
+  );
+  await tester.pump();
+}
+
 void main() {
   group('RegisterPage', () {
     ProviderContainer createContainer(FakeRegisterVM fakeVM) {
@@ -85,13 +113,20 @@ void main() {
       final fakeVM = FakeRegisterVM(
         state: const RegisterState(
           email: 'a@b.com',
-          showConfirmation: true,
+          password: 'StrongPass1',
+          confirmPassword: 'StrongPass1',
+          termsAccepted: true,
         ),
       );
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
       await tester.pumpWidget(_wrap(container));
       await tester.pump();
+
+      await _scrollToSubmitButton(tester);
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Criar conta'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
 
       expect(find.text('Confirme seu e-mail'), findsOneWidget);
       expect(find.text('Confirmar e entrar'), findsOneWidget);
@@ -116,6 +151,102 @@ void main() {
       await tester.pump();
 
       expect(find.textContaining('Já tem conta?'), findsOneWidget);
+    });
+
+    testWidgets('shows validation error for empty fields', (tester) async {
+      final fakeVM = FakeRegisterVM(
+        state: const RegisterState(),
+      );
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await _scrollToSubmitButton(tester);
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Criar conta'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.text('A senha é muito fraca'), findsOneWidget);
+    });
+
+    testWidgets('shows validation error for password mismatch',
+        (tester) async {
+      final fakeVM = FakeRegisterVM(
+        state: const RegisterState(
+          email: 'a@b.com',
+          password: 'StrongPass1',
+          confirmPassword: 'Different1',
+          termsAccepted: true,
+        ),
+      );
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await _scrollToSubmitButton(tester);
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Criar conta'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.text('As senhas não coincidem'), findsOneWidget);
+    });
+
+    testWidgets('shows validation error for weak password', (tester) async {
+      final fakeVM = FakeRegisterVM(
+        state: const RegisterState(
+          email: 'a@b.com',
+          password: 'abc',
+          confirmPassword: 'abc',
+          termsAccepted: true,
+        ),
+      );
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await _scrollToSubmitButton(tester);
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Criar conta'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.text('A senha é muito fraca'), findsOneWidget);
+    });
+
+    testWidgets('shows loading indicator when submitting', (tester) async {
+      final fakeVM = FakeRegisterVM(
+        state: const RegisterState(isLoading: true),
+      );
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(
+        find.widgetWithText(ElevatedButton, 'Criar conta'),
+        findsNothing,
+      );
+    });
+
+    testWidgets('toggles password visibility', (tester) async {
+      final fakeVM = FakeRegisterVM(
+        state: const RegisterState(obscurePassword: true),
+      );
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      expect(find.byIcon(Icons.visibility_off), findsOneWidget);
+
+      await tester.tap(find.byIcon(Icons.visibility_off));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.byIcon(Icons.visibility), findsOneWidget);
     });
   });
 }
