@@ -7,6 +7,7 @@ import 'package:lorebase/features/dashboard/viewmodels/dashboard_viewmodel.dart'
 import 'package:lorebase/features/dashboard/data/models/dashboard_model.dart';
 import 'package:lorebase/features/dashboard/data/models/dashboard_section_model.dart';
 import 'package:lorebase/features/dashboard/data/models/dashboard_stats_model.dart';
+import 'package:lorebase/features/series/data/models/series_model.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_viewmodel.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_state.dart';
 
@@ -120,8 +121,41 @@ void main() {
       await tester.pumpWidget(_wrap(container));
       await tester.pump();
 
-      expect(find.text('Watching'), findsOneWidget);
+      expect(find.text('3'), findsOneWidget);
+      expect(find.text('2'), findsOneWidget);
+      expect(find.text('5'), findsOneWidget);
+      expect(find.text('1'), findsOneWidget);
+    });
+
+    testWidgets('sections render when items are present', (tester) async {
+      final series = SeriesModel(
+        tmdbId: 456,
+        title: 'x',
+        posterPath: 'http://example.com/p.jpg',
+      );
+      final dashboard = DashboardModel(
+        watching: DashboardSectionModel(items: [series]),
+        wantToWatch: const DashboardSectionModel(),
+        completed: const DashboardSectionModel(),
+        dropped: const DashboardSectionModel(),
+        stats: const DashboardStatsModel(
+          watchingCount: 1,
+          wantToWatchCount: 0,
+          completedCount: 0,
+          droppedCount: 0,
+        ),
+      );
+      final fakeVM = FakeDashboardVM(testState: AsyncValue.data(dashboard));
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.text('Watching'), findsNWidgets(2));
       expect(find.text('Completed'), findsOneWidget);
+      expect(find.textContaining('No series tracked'), findsNothing);
     });
   });
 }
