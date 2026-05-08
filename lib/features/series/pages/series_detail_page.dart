@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cached_network_image_platform_interface/cached_network_image_platform_interface.dart';
 import '../../../../core/widgets/error_widget.dart';
 import '../../../../core/widgets/loading_widget.dart';
 import '../../tracking/data/models/tracked_series_model.dart';
@@ -267,6 +268,7 @@ class _SeriesDetailLoaded extends StatelessWidget {
                         alignment: Alignment.bottomCenter,
                         child: CachedNetworkImage(
                           imageUrl: series.backdropPath!,
+                          imageRenderMethodForWeb: ImageRenderMethodForWeb.HttpGet,
                           width: MediaQuery.of(context).size.width,
                           height: 262,
                           fit: BoxFit.cover,
@@ -330,6 +332,8 @@ class _SeriesDetailLoaded extends StatelessWidget {
                                   alignment: Alignment.bottomCenter,
                                   child: CachedNetworkImage(
                                     imageUrl: series.posterPath!,
+                                    imageRenderMethodForWeb:
+                                        ImageRenderMethodForWeb.HttpGet,
                                     width: 120,
                                     height: 192,
                                     fit: BoxFit.cover,

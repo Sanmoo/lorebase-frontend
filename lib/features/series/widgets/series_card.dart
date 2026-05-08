@@ -1,6 +1,7 @@
 // coverage:ignore-file
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cached_network_image_platform_interface/cached_network_image_platform_interface.dart';
 import '../data/models/series_model.dart';
 
 class SeriesCard extends StatelessWidget {
@@ -33,6 +34,7 @@ class SeriesCard extends StatelessWidget {
                 alignment: Alignment.bottomCenter,
                 child: CachedNetworkImage(
                   imageUrl: series.posterPath ?? '',
+                  imageRenderMethodForWeb: ImageRenderMethodForWeb.HttpGet,
                   width: 100,
                   height: 162,
                   fit: BoxFit.cover,
