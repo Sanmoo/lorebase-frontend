@@ -12,6 +12,7 @@ class FakeAuthRepo implements AuthRepository {
   bool failSignUp = false;
   bool failSignUpGeneric = false;
   bool failConfirmSignUp = false;
+  bool failConfirmSignUpGeneric = false;
   bool failResendSignUpCode = false;
 
   @override
@@ -31,6 +32,7 @@ class FakeAuthRepo implements AuthRepository {
   @override
   Future<void> confirmSignUp(String email, String code) async {
     if (failConfirmSignUp) throw AuthException('Invalid confirmation code');
+    if (failConfirmSignUpGeneric) throw Exception('Network error');
   }
 
   @override
@@ -351,6 +353,62 @@ void main() {
       // Should complete without throwing
       await notifier.resendCode();
       // No assertion needed — reaching here means no exception was thrown
+    });
+
+    test('submit() with terms not accepted sets specific error', () async {
+      final container = createContainer(FakeAuthRepo());
+      addTearDown(container.dispose);
+
+      final notifier = container.read(registerViewModelProvider.notifier);
+      notifier.setEmail('a@b.com');
+      notifier.setPassword('Test1234');
+      notifier.setConfirmPassword('Test1234');
+      // termsAccepted stays false
+
+      final result = await notifier.submit();
+      expect(result, false);
+
+      final state = container.read(registerViewModelProvider);
+      expect(state.errorMessage, 'Aceite os termos de uso');
+    });
+
+    test('submit() with email empty but password strong sets fill-all error',
+        () async {
+      final container = createContainer(FakeAuthRepo());
+      addTearDown(container.dispose);
+
+      final notifier = container.read(registerViewModelProvider.notifier);
+      notifier.setPassword('Test1234');
+      notifier.setConfirmPassword('Test1234');
+      notifier.toggleTerms();
+
+      final result = await notifier.submit();
+      expect(result, false);
+
+      final state = container.read(registerViewModelProvider);
+      expect(state.errorMessage, 'Preencha todos os campos');
+    });
+
+    test('confirmSignUp() with generic exception sets fallback error',
+        () async {
+      final repo = FakeAuthRepo()..failConfirmSignUpGeneric = true;
+      final container = createContainer(repo);
+      addTearDown(container.dispose);
+
+      final notifier = container.read(registerViewModelProvider.notifier);
+      notifier.setEmail('test@email.com');
+      notifier.setPassword('Test1234');
+      notifier.setConfirmPassword('Test1234');
+      notifier.toggleTerms();
+      await notifier.submit();
+      notifier.setConfirmationCode('123456');
+
+      final result = await notifier.confirmSignUp();
+      expect(result, false);
+
+      final state = container.read(registerViewModelProvider);
+      expect(state.errorMessage, contains('Código inválido'));
+      expect(state.isLoading, false);
     });
   });
 }

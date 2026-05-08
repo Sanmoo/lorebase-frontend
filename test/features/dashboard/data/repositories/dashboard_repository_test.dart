@@ -2,10 +2,12 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lorebase/features/dashboard/data/repositories/dashboard_repository.dart';
 import 'package:lorebase/features/dashboard/data/models/dashboard_model.dart';
 import 'package:lorebase/core/errors/exceptions.dart';
+import 'package:lorebase/core/providers/core_providers.dart';
 
 class MockAdapter implements HttpClientAdapter {
   final ResponseBody? Function(RequestOptions options)? onFetch;
@@ -132,6 +134,38 @@ void main() {
 
       final result = await repo.getDashboard();
       expect(result.watching.items[0].tmdbId, 123);
+    });
+
+    test('getDashboard() re-throws ServerException from DioException.error',
+        () async {
+      final dio = Dio()
+        ..httpClientAdapter = MockAdapter(
+          onFetch: (options) => throw DioException(
+            type: DioExceptionType.badResponse,
+            error: const ServerException(
+              message: 'Auth failed',
+              statusCode: 401,
+            ),
+            requestOptions: RequestOptions(path: ''),
+          ),
+        );
+      final repo = DashboardRepositoryImpl(dio);
+
+      expect(
+        () => repo.getDashboard(),
+        throwsA(isA<ServerException>()),
+      );
+    });
+
+    test('dashboardRepositoryProvider creates DashboardRepositoryImpl', () {
+      final dio = Dio();
+      final container = ProviderContainer(overrides: [
+        dioProvider.overrideWith((ref) => dio),
+      ]);
+      addTearDown(container.dispose);
+
+      final repo = container.read(dashboardRepositoryProvider);
+      expect(repo, isA<DashboardRepositoryImpl>());
     });
   });
 }

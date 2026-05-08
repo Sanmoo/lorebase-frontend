@@ -2,10 +2,12 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lorebase/features/series/data/repositories/series_repository.dart';
 import 'package:lorebase/features/series/data/models/series_model.dart';
 import 'package:lorebase/core/errors/exceptions.dart';
+import 'package:lorebase/core/providers/core_providers.dart';
 
 class MockAdapter implements HttpClientAdapter {
   final ResponseBody? Function(RequestOptions options)? onFetch;
@@ -130,6 +132,17 @@ void main() {
         () => repo.getSeriesById('123'),
         throwsA(isA<ServerException>()),
       );
+    });
+
+    test('seriesRepositoryProvider creates SeriesRepositoryImpl', () {
+      final dio = Dio();
+      final container = ProviderContainer(overrides: [
+        dioProvider.overrideWith((ref) => dio),
+      ]);
+      addTearDown(container.dispose);
+
+      final repo = container.read(seriesRepositoryProvider);
+      expect(repo, isA<SeriesRepositoryImpl>());
     });
   });
 }

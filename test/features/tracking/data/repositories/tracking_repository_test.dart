@@ -2,10 +2,12 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lorebase/features/tracking/data/repositories/tracking_repository.dart';
 import 'package:lorebase/features/tracking/data/models/tracked_series_model.dart';
 import 'package:lorebase/core/errors/exceptions.dart';
+import 'package:lorebase/core/providers/core_providers.dart';
 
 class MockAdapter implements HttpClientAdapter {
   final ResponseBody? Function(RequestOptions options)? onFetch;
@@ -177,6 +179,40 @@ void main() {
         () => repo.deleteTracking('1'),
         throwsA(isA<ServerException>()),
       );
+    });
+
+    test('updateTracking() passes seasonRatings in data', () async {
+      Map<String, dynamic>? capturedData;
+      final dio = Dio()
+        ..httpClientAdapter = MockAdapter(
+          onFetch: (options) {
+            capturedData = options.data as Map<String, dynamic>?;
+            return _json(_trackingJson('t-updated'));
+          },
+        );
+      final repo = TrackingRepositoryImpl(dio);
+
+      await repo.updateTracking(
+        'series-1',
+        status: 'WATCHING',
+        seasonRatings: [
+          {'seasonNumber': 1, 'rating': 8},
+        ],
+      );
+      expect(capturedData, isNotNull);
+      expect(capturedData!['seasonRatings'], isA<List>());
+      expect((capturedData!['seasonRatings'] as List).length, 1);
+    });
+
+    test('trackingRepositoryProvider creates TrackingRepositoryImpl', () {
+      final dio = Dio();
+      final container = ProviderContainer(overrides: [
+        dioProvider.overrideWith((ref) => dio),
+      ]);
+      addTearDown(container.dispose);
+
+      final repo = container.read(trackingRepositoryProvider);
+      expect(repo, isA<TrackingRepositoryImpl>());
     });
   });
 }
