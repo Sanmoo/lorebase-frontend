@@ -17,5 +17,12 @@ void main() {
       );
       expect(find.text('Recommendation'), findsOneWidget);
     });
+
+    testWidgets('recommendation page uses non-const constructor', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(home: RecommendationPage()),
+      );
+      expect(find.text('Recommendation feature coming soon!'), findsOneWidget);
+    });
   });
 }

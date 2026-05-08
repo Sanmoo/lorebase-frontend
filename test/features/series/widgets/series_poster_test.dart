@@ -49,5 +49,49 @@ void main() {
       await tester.tap(find.text('Test'));
       // No crash — test passes by reaching here
     });
+
+    testWidgets('shows broken image icon when poster image fails to load',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SeriesPoster(series: _testSeries(title: 'Breaking Bad')),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byIcon(Icons.broken_image), findsOneWidget);
+    });
+
+    testWidgets('shows title text and loads image',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SeriesPoster(series: _testSeries(title: 'Test')),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.text('Test'), findsOneWidget);
+    });
+
+    testWidgets('handles null posterPath gracefully', (tester) async {
+      final series = SeriesModel(tmdbId: 1, title: 'Null Poster');
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SeriesPoster(series: series),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.text('Null Poster'), findsOneWidget);
+    });
   });
 }

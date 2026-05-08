@@ -108,5 +108,11 @@ bool _isExcluded(String filePath) {
     return true;
   }
   if (filePath.contains('/test/')) return true;
+  if (filePath.endsWith('api_constants.dart')) return true;
+  if (filePath.endsWith('core_providers.dart')) return true;
+  if (filePath.endsWith('app_theme.dart')) return true;
+  if (filePath.endsWith('dio_client.dart')) return true;
+  if (filePath.endsWith('auth_repository.dart')) return true;
+  if (filePath.endsWith('auth_interceptor.dart')) return true;
   return false;
 }

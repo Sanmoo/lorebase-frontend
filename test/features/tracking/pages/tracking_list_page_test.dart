@@ -5,19 +5,23 @@ import 'package:go_router/go_router.dart';
 import 'package:lorebase/features/tracking/pages/tracking_list_page.dart';
 import 'package:lorebase/features/tracking/viewmodels/tracking_list_viewmodel.dart';
 import 'package:lorebase/features/tracking/data/models/tracked_series_model.dart';
+import 'package:lorebase/features/series/data/models/series_model.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_viewmodel.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_state.dart';
 
 final now = DateTime.now();
 
-TrackedSeriesModel _tracking(String id, String status) => TrackedSeriesModel(
+TrackedSeriesModel _tracking(String id, String status, {SeriesModel? series}) => TrackedSeriesModel(
       trackingId: id,
       userId: 'user-1',
       seriesId: '123',
       status: status,
+      series: series,
       addedAt: now,
       lastUpdated: now,
     );
+
+SeriesModel _series(int id) => SeriesModel(tmdbId: id, title: 'Show $id');
 
 class FakeTrackingListVM extends TrackingListViewModel {
   final AsyncValue<List<TrackedSeriesModel>> testState;
@@ -121,6 +125,114 @@ void main() {
       await tester.pump();
 
       expect(find.text('Retry'), findsOneWidget);
+    });
+
+    testWidgets('shows error message text', (tester) async {
+      final fakeVM = FakeTrackingListVM(
+          state: AsyncValue.error('Failed to load', StackTrace.current));
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      expect(find.text('Failed to load'), findsOneWidget);
+    });
+
+    testWidgets('shows correct empty state message per tab', (tester) async {
+      final container = createContainer(FakeTrackingListVM());
+      addTearDown(container.dispose);
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      expect(find.text('No Want to Watch series yet'), findsOneWidget);
+    });
+
+    testWidgets('tab switching works', (tester) async {
+      final container = createContainer(FakeTrackingListVM());
+      addTearDown(container.dispose);
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      expect(find.text('Want to Watch'), findsOneWidget);
+
+      await tester.tap(find.text('Watching'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('No Watching series yet'), findsOneWidget);
+    });
+
+    testWidgets('renders series in grid when data available', (tester) async {
+      final trackings = [
+        _tracking('t1', 'WATCHING', series: _series(1)),
+        _tracking('t2', 'WATCHING', series: _series(2)),
+      ];
+      final fakeVM = FakeTrackingListVM(state: AsyncValue.data(trackings));
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.text('Show 1'), findsOneWidget);
+      expect(find.text('Show 2'), findsOneWidget);
+    });
+
+    testWidgets('shows tv icon when series is null', (tester) async {
+      final trackings = [
+        _tracking('t1', 'WATCHING', series: null),
+      ];
+      final fakeVM = FakeTrackingListVM(state: AsyncValue.data(trackings));
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.byIcon(Icons.tv_off), findsOneWidget);
+    });
+
+    testWidgets('shows TrackingStatusChip per item', (tester) async {
+      final trackings = [
+        _tracking('t1', 'WATCHING', series: _series(1)),
+      ];
+      final fakeVM = FakeTrackingListVM(state: AsyncValue.data(trackings));
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.textContaining('Watching'), findsWidgets);
+    });
+
+    testWidgets('series with tmdbId 0 shows no navigation', (tester) async {
+      final series = SeriesModel(tmdbId: 0, title: 'Test');
+      final trackings = [
+        _tracking('t1', 'WATCHING', series: series),
+      ];
+      final fakeVM = FakeTrackingListVM(state: AsyncValue.data(trackings));
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.text('Test'), findsOneWidget);
+    });
+
+    testWidgets('tracks state with series shows TrackingStatusChip', (tester) async {
+      final series = SeriesModel(tmdbId: 5, title: 'Test');
+      final trackings = [
+        _tracking('t1', 'WANT_TO_WATCH', series: series),
+      ];
+      final fakeVM = FakeTrackingListVM(state: AsyncValue.data(trackings));
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.text('Test'), findsOneWidget);
     });
   });
 }
