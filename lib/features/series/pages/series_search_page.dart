@@ -8,6 +8,7 @@ import '../../../../core/widgets/error_widget.dart';
 import '../../../../core/widgets/loading_widget.dart';
 import '../viewmodels/series_search_viewmodel.dart';
 import '../widgets/series_card.dart';
+import '../../../../core/constants/app_constants.dart';
 
 class SeriesSearchPage extends ConsumerStatefulWidget {
   const SeriesSearchPage({super.key});
@@ -30,7 +31,7 @@ class _SeriesSearchPageState extends ConsumerState<SeriesSearchPage> {
   void _onSearchChanged(String query) {
     _debounceTimer?.cancel();
     if (query.length >= 2) {
-      _debounceTimer = Timer(const Duration(milliseconds: 300), () {
+      _debounceTimer = Timer(AppConstants.kSearchDebounceDuration, () {
         ref.read(seriesSearchViewModelProvider.notifier).search(query);
       });
     } else if (query.isEmpty) {
