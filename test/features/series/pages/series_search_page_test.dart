@@ -120,5 +120,20 @@ void main() {
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
+
+    testWidgets('shows error message and retry when search fails',
+        (tester) async {
+      final fakeVM = FakeSearchVM(
+        state: AsyncValue.error('Search failed', StackTrace.current),
+      );
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      expect(find.text('Search failed'), findsOneWidget);
+      expect(find.text('Retry'), findsOneWidget);
+    });
+
   });
 }

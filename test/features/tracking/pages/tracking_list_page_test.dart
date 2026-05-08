@@ -122,5 +122,39 @@ void main() {
 
       expect(find.text('Retry'), findsOneWidget);
     });
+
+    testWidgets('shows error message text', (tester) async {
+      final fakeVM = FakeTrackingListVM(
+          state: AsyncValue.error('Failed to load', StackTrace.current));
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      expect(find.text('Failed to load'), findsOneWidget);
+    });
+
+    testWidgets('shows correct empty state message per tab', (tester) async {
+      final container = createContainer(FakeTrackingListVM());
+      addTearDown(container.dispose);
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      expect(find.text('No Want to Watch series yet'), findsOneWidget);
+    });
+
+    testWidgets('tab switching works', (tester) async {
+      final container = createContainer(FakeTrackingListVM());
+      addTearDown(container.dispose);
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      expect(find.text('Want to Watch'), findsOneWidget);
+
+      await tester.tap(find.text('Watching'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('No Watching series yet'), findsOneWidget);
+    });
   });
 }

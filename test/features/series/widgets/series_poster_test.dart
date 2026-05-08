@@ -49,5 +49,19 @@ void main() {
       await tester.tap(find.text('Test'));
       // No crash — test passes by reaching here
     });
+
+    testWidgets('shows broken image icon when poster image fails to load',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SeriesPoster(series: _testSeries(title: 'Breaking Bad')),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byIcon(Icons.broken_image), findsOneWidget);
+    });
   });
 }
