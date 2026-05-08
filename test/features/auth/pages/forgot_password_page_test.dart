@@ -161,5 +161,48 @@ void main() {
       await tester.tap(find.text('Enviar código'));
       expect(fakeVM.requestCodeCalled, true);
     });
+
+    testWidgets('requestCode success shows snackbar', (tester) async {
+      final fakeVM = FakeForgotPasswordVM(
+        state: const ForgotPasswordState(email: 'test@email.com'),
+      );
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.tap(find.text('Enviar código'));
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+
+      expect(find.text('Código enviado para seu e-mail'), findsOneWidget);
+    });
+
+    testWidgets('tapping reset password button calls resetPassword and navigates',
+        (tester) async {
+      final fakeVM = FakeForgotPasswordVM(
+        state: const ForgotPasswordState(
+          phase: ForgotPasswordPhase.resetPassword,
+          email: 'test@email.com',
+          code: '123456',
+          newPassword: 'newPass',
+          confirmPassword: 'newPass',
+        ),
+      );
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.ensureVisible(find.text('Redefinir senha'));
+      await tester.tap(find.text('Redefinir senha'));
+      await tester.pump();
+      await tester.pumpAndSettle();
+
+      expect(fakeVM.resetPasswordCalled, true);
+      expect(find.text('Redefinir senha'), findsNothing);
+    });
   });
 }

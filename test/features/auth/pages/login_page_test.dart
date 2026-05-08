@@ -139,5 +139,41 @@ void main() {
       expect(find.text('Esqueceu a senha?'), findsOneWidget);
       expect(find.textContaining('Cadastre-se'), findsOneWidget);
     });
+
+    testWidgets('shows standalone error when form is valid', (tester) async {
+      final fakeVM = FakeLoginVM(
+        state: const LoginState(
+          email: 'a@b.com',
+          password: '123',
+          errorMessage: 'Login failed',
+        ),
+      );
+      final container = ProviderContainer(overrides: [
+        loginViewModelProvider.overrideWith(() => fakeVM),
+        authViewModelProvider.overrideWith(() => FakeAuthVM()),
+      ]);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrapLoginPage(container));
+      await tester.pump();
+
+      expect(find.text('Login failed'), findsOneWidget);
+    });
+
+    testWidgets('shows loading spinner when isLoading is true', (tester) async {
+      final fakeVM = FakeLoginVM(
+        state: const LoginState(isLoading: true),
+      );
+      final container = ProviderContainer(overrides: [
+        loginViewModelProvider.overrideWith(() => fakeVM),
+        authViewModelProvider.overrideWith(() => FakeAuthVM()),
+      ]);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrapLoginPage(container));
+      await tester.pump();
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    });
   });
 }

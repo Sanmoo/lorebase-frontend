@@ -40,5 +40,42 @@ void main() {
 
       expect(find.textContaining('5 season'), findsOneWidget);
     });
+
+    testWidgets('shows singular season when seasonCount is 1', (tester) async {
+      final series = SeriesModel(
+        tmdbId: 1,
+        title: 'Test Series',
+        seasonCount: 1,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SeriesCard(series: series),
+          ),
+        ),
+      );
+
+      expect(find.text('1 season'), findsOneWidget);
+    });
+
+    testWidgets('shows genres when provided', (tester) async {
+      final series = SeriesModel(
+        tmdbId: 1,
+        title: 'Test Series',
+        genres: ['Drama', 'Sci-Fi'],
+        seasonCount: 3,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SeriesCard(series: series),
+          ),
+        ),
+      );
+
+      expect(find.text('Drama, Sci-Fi'), findsOneWidget);
+    });
   });
 }
