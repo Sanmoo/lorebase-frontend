@@ -173,7 +173,7 @@ void main() {
 
       await tester.enterText(find.byType(TextField), 'breaking');
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 400));
+      await tester.pump(const Duration(milliseconds: 1100));
 
       expect(fakeVM.retryCalled, true);
     });
@@ -192,7 +192,7 @@ void main() {
 
       await tester.tap(find.text('Retry'));
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 400));
+      await tester.pump(const Duration(milliseconds: 1100));
 
       expect(fakeVM.retryCalled, true);
     });
@@ -206,7 +206,7 @@ void main() {
 
       await tester.enterText(find.byType(TextField), 'breaking');
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 400));
+      await tester.pump(const Duration(milliseconds: 1100));
 
       expect(fakeVM.retryCalled, true);
     });
