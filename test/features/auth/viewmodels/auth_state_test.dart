@@ -99,6 +99,27 @@ void main() {
         expect(copied.status, state.status);
         expect(copied.userId, state.userId);
       });
+
+      test('clears errorMessage when not provided', () {
+        const state = AuthState.unauthenticated();
+        final copied = state.copyWith(
+          status: AuthStatus.authenticated,
+        );
+        expect(copied.errorMessage, isNull);
+      });
+    });
+
+    group('runtime (non-const) construction', () {
+      test('authenticated constructor works at runtime', () {
+        final state = AuthState.authenticated('runtime-user');
+        expect(state.userId, 'runtime-user');
+        expect(state.isAuthenticated, true);
+      });
+
+      test('unauthenticated constructor works at runtime', () {
+        final state = AuthState.unauthenticated();
+        expect(state.status, AuthStatus.unauthenticated);
+      });
     });
   });
 }

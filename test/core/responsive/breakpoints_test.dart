@@ -40,6 +40,16 @@ void main() {
       expect(size, ScreenSize.desktop);
     });
   });
+
+  group('Breakpoints constants', () {
+    test('mobile is 600', () {
+      expect(Breakpoints.mobile, 600);
+    });
+
+    test('tablet is 900', () {
+      expect(Breakpoints.tablet, 900);
+    });
+  });
 }
 
 Future<void> _pumpWithWidth(WidgetTester tester, double width) async {
