@@ -1,5 +1,6 @@
 // coverage:ignore-file
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../data/models/series_model.dart';
 
 class SeriesCard extends StatelessWidget {
@@ -20,24 +21,30 @@ class SeriesCard extends StatelessWidget {
         onTap: onTap,
         child: Row(
           children: [
-            Image.network(
-              series.posterPath ?? '',
+            Container(
               width: 100,
               height: 150,
-              fit: BoxFit.cover,
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Container(
+              color: Colors.grey[300],
+              child: OverflowBox(
+                minWidth: 100,
+                maxWidth: 100,
+                minHeight: 162,
+                maxHeight: 162,
+                alignment: Alignment.bottomCenter,
+                child: CachedNetworkImage(
+                  imageUrl: series.posterPath ?? '',
                   width: 100,
-                  height: 150,
-                  color: Colors.grey[300],
-                );
-              },
-              errorBuilder: (context, error, stackTrace) => Container(
-                width: 100,
-                height: 150,
-                color: Colors.grey[300],
-                child: const Icon(Icons.broken_image),
+                  height: 162,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Container(
+                    width: 100,
+                    height: 150,
+                    color: Colors.grey[300],
+                  ),
+                  errorWidget: (context, url, error) => const Icon(
+                    Icons.broken_image,
+                  ),
+                ),
               ),
             ),
             Expanded(

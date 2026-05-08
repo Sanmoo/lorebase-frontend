@@ -1,6 +1,7 @@
 // coverage:ignore-file
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../../../core/widgets/error_widget.dart';
 import '../../../../core/widgets/loading_widget.dart';
 import '../../tracking/data/models/tracked_series_model.dart';
@@ -258,11 +259,20 @@ class _SeriesDetailLoaded extends StatelessWidget {
                 children: [
                   if (hasBackdrop)
                     Positioned.fill(
-                      child: Image.network(
-                        series.backdropPath!,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Container(
-                          color: theme.colorScheme.surfaceContainerHighest,
+                      child: OverflowBox(
+                        minWidth: MediaQuery.of(context).size.width,
+                        maxWidth: MediaQuery.of(context).size.width,
+                        minHeight: 262,
+                        maxHeight: 262,
+                        alignment: Alignment.bottomCenter,
+                        child: CachedNetworkImage(
+                          imageUrl: series.backdropPath!,
+                          width: MediaQuery.of(context).size.width,
+                          height: 262,
+                          fit: BoxFit.cover,
+                          errorWidget: (context, url, error) => Container(
+                            color: theme.colorScheme.surfaceContainerHighest,
+                          ),
                         ),
                       ),
                     )
@@ -290,36 +300,42 @@ class _SeriesDetailLoaded extends StatelessWidget {
                   Positioned(
                     bottom: -30,
                     left: 24,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: theme.colorScheme.surface,
-                            width: 3,
-                          ),
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.3),
-                              blurRadius: 12,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: theme.colorScheme.surface,
+                          width: 3,
                         ),
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.3),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
                         child: hasPoster
-                            ? Image.network(
-                                series.posterPath!,
+                            ? Container(
                                 width: 120,
                                 height: 180,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) => Container(
-                                  width: 120,
-                                  height: 180,
-                                  color:
-                                      theme.colorScheme.surfaceContainerHighest,
-                                  child:
-                                      const Icon(Icons.broken_image, size: 40),
+                                color: theme.colorScheme.surfaceContainerHighest,
+                                child: OverflowBox(
+                                  minWidth: 120,
+                                  maxWidth: 120,
+                                  minHeight: 192,
+                                  maxHeight: 192,
+                                  alignment: Alignment.bottomCenter,
+                                  child: CachedNetworkImage(
+                                    imageUrl: series.posterPath!,
+                                    width: 120,
+                                    height: 192,
+                                    fit: BoxFit.cover,
+                                    errorWidget: (context, url, error) =>
+                                        const Icon(Icons.broken_image, size: 40),
+                                  ),
                                 ),
                               )
                             : Container(
