@@ -50,7 +50,7 @@ class SeriesPoster extends StatelessWidget {
             width: width,
             child: Text(
               series.title,
-              maxLines: 2,
+              maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.bodySmall,
             ),
