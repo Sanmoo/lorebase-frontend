@@ -7,6 +7,6 @@ test-coverage:
 	dart run scripts/check_coverage.dart
 
 analyze:
-	dart analyze; s=$$?; if [ $$s -ne 0 ] && [ $$s -ne 2 ]; then exit $$s; fi
+	dart analyze --fatal-infos; s=$$?; if [ $$s -ne 0 ] && [ $$s -ne 2 ]; then exit $$s; fi
 
 check: analyze test-coverage
