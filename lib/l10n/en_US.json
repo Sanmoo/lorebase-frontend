@@ -57,7 +57,7 @@
   "auth_password_medium": "Medium",
   "auth_password_strong": "Strong",
   "auth_accept_terms": "I accept the Terms of Use",
-  "auth_already_have_account": "Already have an account?",
+  "auth_already_have_account": "Already have an account? ",
   "auth_sign_in": "Sign in",
   "auth_recover_password": "Recover password",
   "auth_new_password_title": "New password",
