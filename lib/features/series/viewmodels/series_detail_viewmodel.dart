@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../../../core/cache/cache_providers.dart';
 import '../data/repositories/series_repository.dart';
 import '../../tracking/data/repositories/tracking_repository.dart';
 import '../../tracking/data/models/tracked_series_model.dart';
@@ -50,6 +51,8 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
         seriesReview: seriesReview,
       );
     }
+    await ref.read(cacheServiceProvider).remove('dashboard');
+    await ref.read(cacheServiceProvider).removeByPrefix('tracking:');
     ref.invalidateSelf();
   }
 
@@ -70,6 +73,8 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
       seriesRating: seriesRating,
       seriesReview: seriesReview,
     );
+    await ref.read(cacheServiceProvider).remove('dashboard');
+    await ref.read(cacheServiceProvider).removeByPrefix('tracking:');
     ref.invalidateSelf();
   }
 
@@ -81,6 +86,8 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
 
     final trackingRepo = ref.read(trackingRepositoryProvider);
     await trackingRepo.deleteTracking(current.seriesId);
+    await ref.read(cacheServiceProvider).remove('dashboard');
+    await ref.read(cacheServiceProvider).removeByPrefix('tracking:');
     ref.invalidateSelf();
   }
 }

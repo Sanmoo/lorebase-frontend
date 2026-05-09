@@ -132,6 +132,57 @@ class TrackingListViewModel extends _$TrackingListViewModel {
     });
   }
 
+  Future<void> startTracking(String seriesId, String status) async {
+    await _invalidateCache();
+    try {
+      final repository = ref.read(trackingRepositoryProvider);
+      await repository.startTracking(seriesId, status);
+      await refresh();
+    } catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
+    }
+  }
+
+  Future<void> updateTracking(
+    String seriesId, {
+    String? status,
+    int? seriesRating,
+    String? seriesReview,
+    List<Map<String, dynamic>>? seasonRatings,
+  }) async {
+    await _invalidateCache();
+    try {
+      final repository = ref.read(trackingRepositoryProvider);
+      await repository.updateTracking(
+        seriesId,
+        status: status,
+        seriesRating: seriesRating,
+        seriesReview: seriesReview,
+        seasonRatings: seasonRatings,
+      );
+      await refresh();
+    } catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
+    }
+  }
+
+  Future<void> deleteTracking(String seriesId) async {
+    await _invalidateCache();
+    try {
+      final repository = ref.read(trackingRepositoryProvider);
+      await repository.deleteTracking(seriesId);
+      await refresh();
+    } catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
+    }
+  }
+
+  Future<void> _invalidateCache() async {
+    final cacheService = ref.read(cacheServiceProvider);
+    await cacheService.remove('dashboard');
+    await cacheService.removeByPrefix('tracking:');
+  }
+
   String _buildCacheKey() => 'tracking:${_currentStatus ?? "all"}:$_page';
 
   List<TrackedSeriesModel> _parseItems(String json) {

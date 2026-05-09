@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lorebase/core/cache/cache_service.dart';
+import 'package:lorebase/core/cache/cache_providers.dart';
 import 'package:lorebase/features/series/data/models/series_model.dart';
 import 'package:lorebase/features/series/data/repositories/series_repository.dart';
 import 'package:lorebase/features/series/viewmodels/series_detail_viewmodel.dart';
@@ -95,6 +97,7 @@ void main() {
       return ProviderContainer(overrides: [
         seriesRepositoryProvider.overrideWith((ref) => seriesRepo),
         trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
+        cacheServiceProvider.overrideWith((ref) => CacheService()),
       ]);
     }
 
