@@ -39,6 +39,7 @@ class TrackingRepositoryImpl implements TrackingRepository {
           if (status != null) 'status': status,
           'page': page,
           'pageSize': pageSize,
+          'includeSeries': true,
         },
       );
       final items = response.data['items'] as List;

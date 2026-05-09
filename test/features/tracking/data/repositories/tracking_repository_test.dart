@@ -57,7 +57,7 @@ void main() {
       expect(results[1].trackingId, 't-2');
     });
 
-    test('getTracking() passes status, page, pageSize as query params',
+    test('getTracking() passes status, page, pageSize, includeSeries as query params',
         () async {
       Map<String, dynamic>? capturedParams;
       final dio = Dio()
@@ -74,6 +74,7 @@ void main() {
       expect(capturedParams!['status'], 'WATCHING');
       expect(capturedParams!['page'], 2);
       expect(capturedParams!['pageSize'], 10);
+      expect(capturedParams!['includeSeries'], true);
     });
 
     test('getTracking() throws ServerException on DioException', () async {
