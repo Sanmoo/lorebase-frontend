@@ -41,12 +41,19 @@ dependencies:
   flutter_dotenv: ^5.1.0
   meta: ^1.11.0
 
+  # i18n
+  slang: ^4.0.0
+  slang_flutter: ^4.0.0
+  flutter_localizations:
+    sdk: flutter
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.1
   mockito: ^5.4.0
   build_runner: ^2.4.0
+  slang_build_runner: ^4.0.0
   coverage: ^1.15.0
   freezed: ^2.4.0
   json_serializable: ^6.7.0
