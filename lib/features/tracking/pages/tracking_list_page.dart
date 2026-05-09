@@ -8,7 +8,7 @@ import '../../../../core/widgets/loading_widget.dart';
 import '../../series/widgets/series_poster.dart';
 import '../data/tracking_status.dart';
 import '../viewmodels/tracking_list_viewmodel.dart';
-import '../widgets/tracking_status_chip.dart';
+import '../widgets/rating_stars.dart';
 
 class TrackingListPage extends ConsumerStatefulWidget {
   const TrackingListPage({super.key});
@@ -115,7 +115,11 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
                               ),
                             ),
                             const SizedBox(height: 4),
-                            TrackingStatusChip(status: tracking.status),
+                            RatingStars(
+                              rating: tracking.seriesRating,
+                              size: 10,
+                              maxRating: 10,
+                            ),
                           ],
                         );
                       },

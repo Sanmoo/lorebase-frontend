@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lorebase/features/tracking/widgets/rating_stars.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lorebase/features/tracking/pages/tracking_list_page.dart';
@@ -11,11 +12,12 @@ import 'package:lorebase/features/auth/viewmodels/auth_state.dart';
 
 final now = DateTime.now();
 
-TrackedSeriesModel _tracking(String id, String status, {SeriesModel? series}) => TrackedSeriesModel(
+TrackedSeriesModel _tracking(String id, String status, {SeriesModel? series, int? seriesRating}) => TrackedSeriesModel(
       trackingId: id,
       userId: 'user-1',
       seriesId: '123',
       status: status,
+      seriesRating: seriesRating,
       series: series,
       addedAt: now,
       lastUpdated: now,
@@ -191,9 +193,9 @@ void main() {
       expect(find.byIcon(Icons.tv_off), findsOneWidget);
     });
 
-    testWidgets('shows TrackingStatusChip per item', (tester) async {
+    testWidgets('shows rating stars per item', (tester) async {
       final trackings = [
-        _tracking('t1', 'WATCHING', series: _series(1)),
+        _tracking('t1', 'WATCHING', series: _series(1), seriesRating: 8),
       ];
       final fakeVM = FakeTrackingListVM(state: AsyncValue.data(trackings));
       final container = createContainer(fakeVM);
@@ -202,7 +204,9 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      expect(find.textContaining('Watching'), findsWidgets);
+      expect(find.byType(RatingStars), findsOneWidget);
+      expect(find.byIcon(Icons.star), findsNWidgets(8));
+      expect(find.byIcon(Icons.star_border), findsNWidgets(2));
     });
 
     testWidgets('series with tmdbId 0 shows no navigation', (tester) async {
@@ -220,7 +224,7 @@ void main() {
       expect(find.text('Test'), findsOneWidget);
     });
 
-    testWidgets('tracks state with series shows TrackingStatusChip', (tester) async {
+    testWidgets('tracks state with series shows poster and title', (tester) async {
       const series = SeriesModel(tmdbId: 5, title: 'Test');
       final trackings = [
         _tracking('t1', 'WANT_TO_WATCH', series: series),
