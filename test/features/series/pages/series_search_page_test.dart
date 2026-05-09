@@ -7,6 +7,7 @@ import 'package:lorebase/features/series/viewmodels/series_search_viewmodel.dart
 import 'package:lorebase/features/series/data/models/series_model.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_viewmodel.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_state.dart';
+import 'package:lorebase/l10n/strings.g.dart';
 
 class FakeSearchVM extends SeriesSearchViewModel {
   final AsyncValue<List<SeriesModel>> testState;
@@ -36,21 +37,25 @@ class FakeAuthVM extends AuthViewModel {
 Widget _wrap(ProviderContainer container) {
   return UncontrolledProviderScope(
     container: container,
-    child: MaterialApp.router(
-      routerConfig: GoRouter(
-        initialLocation: '/search',
-        routes: [
-          GoRoute(
-            path: '/search',
-            builder: (_, __) => const SeriesSearchPage(),
-          ),
-        ],
+    child: TranslationProvider(
+      child: MaterialApp.router(
+        routerConfig: GoRouter(
+          initialLocation: '/search',
+          routes: [
+            GoRoute(
+              path: '/search',
+              builder: (_, __) => const SeriesSearchPage(),
+            ),
+          ],
+        ),
       ),
     ),
   );
 }
 
-void main() {
+Future<void> main() async {
+  await LocaleSettings.setLocale(AppLocale.enUs);
+
   group('SeriesSearchPage', () {
     ProviderContainer createContainer(FakeSearchVM fakeVM) {
       return ProviderContainer(overrides: [

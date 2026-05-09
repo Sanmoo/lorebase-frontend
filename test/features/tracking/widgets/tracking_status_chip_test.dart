@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lorebase/features/tracking/widgets/tracking_status_chip.dart';
+import 'package:lorebase/l10n/strings.g.dart';
 
-void main() {
+Future<void> main() async {
+  await LocaleSettings.setLocale(AppLocale.enUs);
+
   group('TrackingStatusChip', () {
     testWidgets('WATCHING shows label "Watching"', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(body: TrackingStatusChip(status: 'WATCHING')),
+        TranslationProvider(
+          child: const MaterialApp(
+            home: Scaffold(body: TrackingStatusChip(status: 'WATCHING')),
+          ),
         ),
       );
       expect(find.text('Watching'), findsOneWidget);
@@ -15,8 +20,10 @@ void main() {
 
     testWidgets('WANT_TO_WATCH shows label "Want to Watch"', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(body: TrackingStatusChip(status: 'WANT_TO_WATCH')),
+        TranslationProvider(
+          child: const MaterialApp(
+            home: Scaffold(body: TrackingStatusChip(status: 'WANT_TO_WATCH')),
+          ),
         ),
       );
       expect(find.text('Want to Watch'), findsOneWidget);
@@ -24,8 +31,10 @@ void main() {
 
     testWidgets('COMPLETED shows label "Completed"', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(body: TrackingStatusChip(status: 'COMPLETED')),
+        TranslationProvider(
+          child: const MaterialApp(
+            home: Scaffold(body: TrackingStatusChip(status: 'COMPLETED')),
+          ),
         ),
       );
       expect(find.text('Completed'), findsOneWidget);
@@ -33,8 +42,10 @@ void main() {
 
     testWidgets('DROPPED shows label "Dropped"', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(body: TrackingStatusChip(status: 'DROPPED')),
+        TranslationProvider(
+          child: const MaterialApp(
+            home: Scaffold(body: TrackingStatusChip(status: 'DROPPED')),
+          ),
         ),
       );
       expect(find.text('Dropped'), findsOneWidget);
@@ -42,8 +53,10 @@ void main() {
 
     testWidgets('unknown status falls back to "Want to Watch"', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(body: TrackingStatusChip(status: 'INVALID')),
+        TranslationProvider(
+          child: const MaterialApp(
+            home: Scaffold(body: TrackingStatusChip(status: 'INVALID')),
+          ),
         ),
       );
       expect(find.text('Want to Watch'), findsOneWidget);

@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lorebase/features/tracking/data/tracking_status.dart';
+import 'package:lorebase/l10n/strings.g.dart';
 
 void main() {
   group('TrackingStatus', () {
@@ -38,18 +39,26 @@ void main() {
       );
     });
 
-    test('each enum value has correct value and label', () {
+    test('each enum value has correct value and i18nKey', () {
       expect(TrackingStatus.wantToWatch.value, 'WANT_TO_WATCH');
-      expect(TrackingStatus.wantToWatch.label, 'Want to Watch');
+      expect(TrackingStatus.wantToWatch.i18nKey, 'tracking_want_to_watch');
 
       expect(TrackingStatus.watching.value, 'WATCHING');
-      expect(TrackingStatus.watching.label, 'Watching');
+      expect(TrackingStatus.watching.i18nKey, 'tracking_watching');
 
       expect(TrackingStatus.completed.value, 'COMPLETED');
-      expect(TrackingStatus.completed.label, 'Completed');
+      expect(TrackingStatus.completed.i18nKey, 'tracking_completed');
 
       expect(TrackingStatus.dropped.value, 'DROPPED');
-      expect(TrackingStatus.dropped.label, 'Dropped');
+      expect(TrackingStatus.dropped.i18nKey, 'tracking_dropped');
+    });
+
+    test('each enum value has correct label via Translations', () async {
+      final t = await AppLocale.enUs.build();
+      expect(TrackingStatus.wantToWatch.label(t), 'Want to Watch');
+      expect(TrackingStatus.watching.label(t), 'Watching');
+      expect(TrackingStatus.completed.label(t), 'Completed');
+      expect(TrackingStatus.dropped.label(t), 'Dropped');
     });
 
     test('TrackingStatus.values length is 4', () {

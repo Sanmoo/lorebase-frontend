@@ -11,6 +11,7 @@ import 'package:lorebase/features/series/data/models/series_model.dart';
 import 'package:lorebase/features/tracking/data/models/tracked_series_model.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_viewmodel.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_state.dart';
+import 'package:lorebase/l10n/strings.g.dart';
 
 SeriesModel _testSeries() => const SeriesModel(
       tmdbId: 1,
@@ -78,22 +79,26 @@ class FakeAuthVM extends AuthViewModel {
 Widget _wrap(ProviderContainer container) {
   return UncontrolledProviderScope(
     container: container,
-    child: MaterialApp.router(
-      routerConfig: GoRouter(
-        initialLocation: '/series/1',
-        routes: [
-          GoRoute(
-            path: '/series/:tmdbId',
-            builder: (_, state) => SeriesDetailPage(
-                tmdbId: int.parse(state.pathParameters['tmdbId']!)),
-          ),
-        ],
+    child: TranslationProvider(
+      child: MaterialApp.router(
+        routerConfig: GoRouter(
+          initialLocation: '/series/1',
+          routes: [
+            GoRoute(
+              path: '/series/:tmdbId',
+              builder: (_, state) => SeriesDetailPage(
+                  tmdbId: int.parse(state.pathParameters['tmdbId']!)),
+            ),
+          ],
+        ),
       ),
     ),
   );
 }
 
-void main() {
+Future<void> main() async {
+  await LocaleSettings.setLocale(AppLocale.enUs);
+
   group('SeriesDetailPage', () {
     testWidgets('renders with Add to List button when not tracking',
         (tester) async {
@@ -487,7 +492,7 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      expect(find.textContaining('Error'), findsOneWidget);
+      expect(find.text('Server error. Please try again later.'), findsOneWidget);
     });
 
     testWidgets('error state retry button triggers ref.invalidate', (tester) async {
@@ -570,7 +575,7 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      expect(find.textContaining('Error'), findsOneWidget);
+      expect(find.text('Server error. Please try again later.'), findsOneWidget);
     });
 
     testWidgets('remove dialog cancel does not remove', (tester) async {
@@ -675,7 +680,7 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      expect(find.textContaining('Error'), findsOneWidget);
+      expect(find.text('Server error. Please try again later.'), findsOneWidget);
     });
 
     testWidgets('networks empty shows dash', (tester) async {

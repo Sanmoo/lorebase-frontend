@@ -9,6 +9,7 @@ import 'package:lorebase/features/tracking/data/models/tracked_series_model.dart
 import 'package:lorebase/features/series/data/models/series_model.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_viewmodel.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_state.dart';
+import 'package:lorebase/l10n/strings.g.dart';
 
 final now = DateTime.now();
 
@@ -54,21 +55,25 @@ class FakeAuthVM extends AuthViewModel {
 Widget _wrap(ProviderContainer container) {
   return UncontrolledProviderScope(
     container: container,
-    child: MaterialApp.router(
-      routerConfig: GoRouter(
-        initialLocation: '/tracking',
-        routes: [
-          GoRoute(
-            path: '/tracking',
-            builder: (_, __) => const TrackingListPage(),
-          ),
-        ],
+    child: TranslationProvider(
+      child: MaterialApp.router(
+        routerConfig: GoRouter(
+          initialLocation: '/tracking',
+          routes: [
+            GoRoute(
+              path: '/tracking',
+              builder: (_, __) => const TrackingListPage(),
+            ),
+          ],
+        ),
       ),
     ),
   );
 }
 
-void main() {
+Future<void> main() async {
+  await LocaleSettings.setLocale(AppLocale.enUs);
+
   group('TrackingListPage', () {
     ProviderContainer createContainer(FakeTrackingListVM fakeVM) {
       return ProviderContainer(overrides: [

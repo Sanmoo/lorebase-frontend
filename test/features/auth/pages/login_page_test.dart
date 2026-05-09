@@ -6,6 +6,7 @@ import 'package:lorebase/features/auth/pages/login_page.dart';
 import 'package:lorebase/features/auth/viewmodels/login_viewmodel.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_viewmodel.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_state.dart';
+import 'package:lorebase/l10n/strings.g.dart';
 
 class FakeLoginVM extends LoginViewModel {
   bool submitCalled = false;
@@ -51,27 +52,29 @@ class FakeAuthVM extends AuthViewModel {
 Widget _wrapLoginPage(ProviderContainer container) {
   return UncontrolledProviderScope(
     container: container,
-    child: MaterialApp.router(
-      routerConfig: GoRouter(
-        initialLocation: '/login',
-        routes: [
-          GoRoute(
-            path: '/login',
-            builder: (_, __) => const LoginPage(),
-          ),
-          GoRoute(
-            path: '/register',
-            builder: (_, __) => const SizedBox(),
-          ),
-          GoRoute(
-            path: '/forgot-password',
-            builder: (_, __) => const SizedBox(),
-          ),
-          GoRoute(
-            path: '/dashboard',
-            builder: (_, __) => const SizedBox(),
-          ),
-        ],
+    child: TranslationProvider(
+      child: MaterialApp.router(
+        routerConfig: GoRouter(
+          initialLocation: '/login',
+          routes: [
+            GoRoute(
+              path: '/login',
+              builder: (_, __) => const LoginPage(),
+            ),
+            GoRoute(
+              path: '/register',
+              builder: (_, __) => const SizedBox(),
+            ),
+            GoRoute(
+              path: '/forgot-password',
+              builder: (_, __) => const SizedBox(),
+            ),
+            GoRoute(
+              path: '/dashboard',
+              builder: (_, __) => const SizedBox(),
+            ),
+          ],
+        ),
       ),
     ),
   );

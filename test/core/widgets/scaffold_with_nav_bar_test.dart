@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lorebase/core/widgets/scaffold_with_nav_bar.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_viewmodel.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_state.dart';
+import 'package:lorebase/l10n/strings.g.dart';
 
 class FakeAuthViewModel extends AuthViewModel {
   bool signOutCalled = false;
@@ -30,33 +31,35 @@ Widget _wrapWithRouter(Widget child, {String location = '/dashboard'}) {
     overrides: [
       authViewModelProvider.overrideWith(() => FakeAuthViewModel()),
     ],
-    child: MaterialApp.router(
-      routerConfig: GoRouter(
-        initialLocation: location,
-        routes: [
-          ShellRoute(
-            builder: (context, state, child) =>
-                ScaffoldWithNavBar(child: child),
-            routes: [
-              GoRoute(
-                path: '/dashboard',
-                builder: (context, state) => child,
-              ),
-              GoRoute(
-                path: '/search',
-                builder: (context, state) => child,
-              ),
-              GoRoute(
-                path: '/tracking',
-                builder: (context, state) => child,
-              ),
-              GoRoute(
-                path: '/recommend',
-                builder: (context, state) => child,
-              ),
-            ],
-          ),
-        ],
+    child: TranslationProvider(
+      child: MaterialApp.router(
+        routerConfig: GoRouter(
+          initialLocation: location,
+          routes: [
+            ShellRoute(
+              builder: (context, state, child) =>
+                  ScaffoldWithNavBar(child: child),
+              routes: [
+                GoRoute(
+                  path: '/dashboard',
+                  builder: (context, state) => child,
+                ),
+                GoRoute(
+                  path: '/search',
+                  builder: (context, state) => child,
+                ),
+                GoRoute(
+                  path: '/tracking',
+                  builder: (context, state) => child,
+                ),
+                GoRoute(
+                  path: '/recommend',
+                  builder: (context, state) => child,
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     ),
   );
@@ -67,39 +70,43 @@ Widget _wrapWithRouteLabels(String location) {
     overrides: [
       authViewModelProvider.overrideWith(() => FakeAuthViewModel()),
     ],
-    child: MaterialApp.router(
-      routerConfig: GoRouter(
-        initialLocation: location,
-        routes: [
-          ShellRoute(
-            builder: (context, state, child) =>
-                ScaffoldWithNavBar(child: child),
-            routes: [
-              GoRoute(
-                path: '/dashboard',
-                builder: (context, state) => const Text('Dashboard Page'),
-              ),
-              GoRoute(
-                path: '/search',
-                builder: (context, state) => const Text('Search Page'),
-              ),
-              GoRoute(
-                path: '/tracking',
-                builder: (context, state) => const Text('Tracking Page'),
-              ),
-              GoRoute(
-                path: '/recommend',
-                builder: (context, state) => const Text('Recommend Page'),
-              ),
-            ],
-          ),
-        ],
+    child: TranslationProvider(
+      child: MaterialApp.router(
+        routerConfig: GoRouter(
+          initialLocation: location,
+          routes: [
+            ShellRoute(
+              builder: (context, state, child) =>
+                  ScaffoldWithNavBar(child: child),
+              routes: [
+                GoRoute(
+                  path: '/dashboard',
+                  builder: (context, state) => const Text('Dashboard Page'),
+                ),
+                GoRoute(
+                  path: '/search',
+                  builder: (context, state) => const Text('Search Page'),
+                ),
+                GoRoute(
+                  path: '/tracking',
+                  builder: (context, state) => const Text('Tracking Page'),
+                ),
+                GoRoute(
+                  path: '/recommend',
+                  builder: (context, state) => const Text('Recommend Page'),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     ),
   );
 }
 
-void main() {
+Future<void> main() async {
+  await LocaleSettings.setLocale(AppLocale.enUs);
+
   group('ScaffoldWithNavBar', () {
     testWidgets('renders 4 bottom navigation items', (tester) async {
       await tester.pumpWidget(_wrapWithRouter(const Text('Content')));
@@ -127,33 +134,35 @@ void main() {
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: container,
-          child: MaterialApp.router(
-            routerConfig: GoRouter(
-              initialLocation: '/dashboard',
-              routes: [
-                ShellRoute(
-                  builder: (context, state, child) =>
-                      ScaffoldWithNavBar(child: child),
-                  routes: [
-                    GoRoute(
-                      path: '/dashboard',
-                      builder: (context, state) => const Text('Content'),
-                    ),
-                    GoRoute(
-                      path: '/search',
-                      builder: (context, state) => const Text('Content'),
-                    ),
-                    GoRoute(
-                      path: '/tracking',
-                      builder: (context, state) => const Text('Content'),
-                    ),
-                    GoRoute(
-                      path: '/recommend',
-                      builder: (context, state) => const Text('Content'),
-                    ),
-                  ],
-                ),
-              ],
+          child: TranslationProvider(
+            child: MaterialApp.router(
+              routerConfig: GoRouter(
+                initialLocation: '/dashboard',
+                routes: [
+                  ShellRoute(
+                    builder: (context, state, child) =>
+                        ScaffoldWithNavBar(child: child),
+                    routes: [
+                      GoRoute(
+                        path: '/dashboard',
+                        builder: (context, state) => const Text('Content'),
+                      ),
+                      GoRoute(
+                        path: '/search',
+                        builder: (context, state) => const Text('Content'),
+                      ),
+                      GoRoute(
+                        path: '/tracking',
+                        builder: (context, state) => const Text('Content'),
+                      ),
+                      GoRoute(
+                        path: '/recommend',
+                        builder: (context, state) => const Text('Content'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),

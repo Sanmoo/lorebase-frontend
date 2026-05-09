@@ -6,6 +6,7 @@ import 'package:lorebase/features/auth/pages/forgot_password_page.dart';
 import 'package:lorebase/features/auth/viewmodels/forgot_password_viewmodel.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_viewmodel.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_state.dart';
+import 'package:lorebase/l10n/strings.g.dart';
 
 class FakeForgotPasswordVM extends ForgotPasswordViewModel {
   bool requestCodeCalled = false;
@@ -70,19 +71,21 @@ class FakeAuthVM extends AuthViewModel {
 Widget _wrap(ProviderContainer container) {
   return UncontrolledProviderScope(
     container: container,
-    child: MaterialApp.router(
-      routerConfig: GoRouter(
-        initialLocation: '/forgot-password',
-        routes: [
-          GoRoute(
-            path: '/forgot-password',
-            builder: (_, __) => const ForgotPasswordPage(),
-          ),
-          GoRoute(
-            path: '/login',
-            builder: (_, __) => const SizedBox(),
-          ),
-        ],
+    child: TranslationProvider(
+      child: MaterialApp.router(
+        routerConfig: GoRouter(
+          initialLocation: '/forgot-password',
+          routes: [
+            GoRoute(
+              path: '/forgot-password',
+              builder: (_, __) => const ForgotPasswordPage(),
+            ),
+            GoRoute(
+              path: '/login',
+              builder: (_, __) => const SizedBox(),
+            ),
+          ],
+        ),
       ),
     ),
   );

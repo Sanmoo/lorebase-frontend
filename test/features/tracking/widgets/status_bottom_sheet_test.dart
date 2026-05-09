@@ -1,23 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lorebase/features/tracking/widgets/status_bottom_sheet.dart';
+import 'package:lorebase/l10n/strings.g.dart';
 
-void main() {
+Future<void> main() async {
+  await LocaleSettings.setLocale(AppLocale.enUs);
+
   group('StatusBottomSheet', () {
     testWidgets('shows "Update Status" title', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: Builder(
-              builder: (context) => ElevatedButton(
-                onPressed: () => showModalBottomSheet(
-                  context: context,
-                  builder: (_) => StatusBottomSheet(
-                    currentStatus: 'WATCHING',
-                    onStatusSelected: (_) {},
+        TranslationProvider(
+          child: MaterialApp(
+            home: Scaffold(
+              body: Builder(
+                builder: (context) => ElevatedButton(
+                  onPressed: () => showModalBottomSheet(
+                    context: context,
+                    builder: (_) => StatusBottomSheet(
+                      currentStatus: 'WATCHING',
+                      onStatusSelected: (_) {},
+                    ),
                   ),
+                  child: const Text('Open'),
                 ),
-                child: const Text('Open'),
               ),
             ),
           ),
@@ -30,18 +35,20 @@ void main() {
 
     testWidgets('shows all 4 TrackingStatus labels', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: Builder(
-              builder: (context) => ElevatedButton(
-                onPressed: () => showModalBottomSheet(
-                  context: context,
-                  builder: (_) => StatusBottomSheet(
-                    currentStatus: 'WATCHING',
-                    onStatusSelected: (_) {},
+        TranslationProvider(
+          child: MaterialApp(
+            home: Scaffold(
+              body: Builder(
+                builder: (context) => ElevatedButton(
+                  onPressed: () => showModalBottomSheet(
+                    context: context,
+                    builder: (_) => StatusBottomSheet(
+                      currentStatus: 'WATCHING',
+                      onStatusSelected: (_) {},
+                    ),
                   ),
+                  child: const Text('Open'),
                 ),
-                child: const Text('Open'),
               ),
             ),
           ),
@@ -57,18 +64,20 @@ void main() {
 
     testWidgets('current status has check_circle icon', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: Builder(
-              builder: (context) => ElevatedButton(
-                onPressed: () => showModalBottomSheet(
-                  context: context,
-                  builder: (_) => StatusBottomSheet(
-                    currentStatus: 'WATCHING',
-                    onStatusSelected: (_) {},
+        TranslationProvider(
+          child: MaterialApp(
+            home: Scaffold(
+              body: Builder(
+                builder: (context) => ElevatedButton(
+                  onPressed: () => showModalBottomSheet(
+                    context: context,
+                    builder: (_) => StatusBottomSheet(
+                      currentStatus: 'WATCHING',
+                      onStatusSelected: (_) {},
+                    ),
                   ),
+                  child: const Text('Open'),
                 ),
-                child: const Text('Open'),
               ),
             ),
           ),
@@ -83,18 +92,20 @@ void main() {
     testWidgets('tapping option calls onStatusSelected', (tester) async {
       String? selected;
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: Builder(
-              builder: (context) => ElevatedButton(
-                onPressed: () => showModalBottomSheet(
-                  context: context,
-                  builder: (_) => StatusBottomSheet(
-                    currentStatus: 'WATCHING',
-                    onStatusSelected: (s) => selected = s,
+        TranslationProvider(
+          child: MaterialApp(
+            home: Scaffold(
+              body: Builder(
+                builder: (context) => ElevatedButton(
+                  onPressed: () => showModalBottomSheet(
+                    context: context,
+                    builder: (_) => StatusBottomSheet(
+                      currentStatus: 'WATCHING',
+                      onStatusSelected: (s) => selected = s,
+                    ),
                   ),
+                  child: const Text('Open'),
                 ),
-                child: const Text('Open'),
               ),
             ),
           ),

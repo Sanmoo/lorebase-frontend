@@ -10,6 +10,7 @@ import 'package:lorebase/features/dashboard/data/models/dashboard_stats_model.da
 import 'package:lorebase/features/series/data/models/series_model.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_viewmodel.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_state.dart';
+import 'package:lorebase/l10n/strings.g.dart';
 
 class FakeDashboardVM extends DashboardViewModel {
   final AsyncValue<DashboardModel> testState;
@@ -45,21 +46,25 @@ class FakeAuthVM extends AuthViewModel {
 Widget _wrap(ProviderContainer container) {
   return UncontrolledProviderScope(
     container: container,
-    child: MaterialApp.router(
-      routerConfig: GoRouter(
-        initialLocation: '/dashboard',
-        routes: [
-          GoRoute(
-            path: '/dashboard',
-            builder: (_, __) => const DashboardPage(),
-          ),
-        ],
+    child: TranslationProvider(
+      child: MaterialApp.router(
+        routerConfig: GoRouter(
+          initialLocation: '/dashboard',
+          routes: [
+            GoRoute(
+              path: '/dashboard',
+              builder: (_, __) => const DashboardPage(),
+            ),
+          ],
+        ),
       ),
     ),
   );
 }
 
-void main() {
+Future<void> main() async {
+  await LocaleSettings.setLocale(AppLocale.enUs);
+
   group('DashboardPage', () {
     ProviderContainer createContainer(FakeDashboardVM fakeVM) {
       return ProviderContainer(overrides: [
