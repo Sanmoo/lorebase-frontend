@@ -69,11 +69,19 @@ class DashboardViewModel extends _$DashboardViewModel {
   Future<void> refresh() async {
     state = const AsyncValue.loading();
     try {
-      final cacheService = ref.read(cacheServiceProvider);
-      await cacheService.remove('dashboard');
       final data = await _fetchAndCache();
       state = AsyncValue.data(data);
     } catch (error, stackTrace) {
+      final cacheService = ref.read(cacheServiceProvider);
+      final hit = cacheService.getSync('dashboard');
+      if (hit != null) {
+        try {
+          state = AsyncValue.data(DashboardModel.fromJson(
+            jsonDecode(hit.json) as Map<String, dynamic>,
+          ));
+          return;
+        } catch (_) {}
+      }
       state = AsyncValue.error(error, stackTrace);
     }
   }

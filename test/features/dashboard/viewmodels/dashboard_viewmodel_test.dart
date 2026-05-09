@@ -127,6 +127,32 @@ void main() {
       subscription.close();
     });
 
+    test('refresh() keeps stale data on network failure', () async {
+      final cacheService = CacheService();
+      await cacheService.set('dashboard', CacheEntry(
+        json: jsonEncode(const DashboardModel(
+          watching: DashboardSectionModel(),
+          wantToWatch: DashboardSectionModel(),
+          completed: DashboardSectionModel(),
+          dropped: DashboardSectionModel(),
+          stats: DashboardStatsModel(watchingCount: 3),
+        ).toJson()),
+        cachedAt: DateTime.now(),
+        ttl: const Duration(hours: 6),
+      ));
+      final repo = FakeDashboardRepo()..shouldThrow = true;
+      final container = ProviderContainer(overrides: [
+        dashboardRepositoryProvider.overrideWith((ref) => repo),
+        cacheServiceProvider.overrideWith((ref) => cacheService),
+      ]);
+      addTearDown(container.dispose);
+
+      await container.read(dashboardViewModelProvider.notifier).refresh();
+      final state = container.read(dashboardViewModelProvider);
+      expect(state.hasValue, true);
+      expect(state.value!.stats.watchingCount, 3);
+    });
+
     test('build() returns cached data from memory', () async {
       final cacheService = CacheService();
       await cacheService.set('dashboard', CacheEntry(
