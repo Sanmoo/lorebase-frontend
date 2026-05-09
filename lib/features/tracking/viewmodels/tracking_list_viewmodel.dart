@@ -50,7 +50,34 @@ class TrackingListViewModel extends _$TrackingListViewModel {
   }
 
   Future<void> refresh() async {
-    await loadTracking(status: _currentStatus);
+    final cacheService = ref.read(cacheServiceProvider);
+    final key = _buildCacheKey();
+    final staleEntry = cacheService.getSync(key);
+    await cacheService.remove(key);
+
+    state = const AsyncValue.loading();
+    try {
+      final repository = ref.read(trackingRepositoryProvider);
+      final items = await repository.getTracking(
+        status: _currentStatus,
+        page: _page,
+        pageSize: _pageSize,
+      );
+      final entry = CacheEntry(
+        json: jsonEncode(items.map((e) => e.toJson()).toList()),
+        cachedAt: DateTime.now(),
+        ttl: const Duration(hours: 6),
+      );
+      await cacheService.set(key, entry);
+      state = AsyncValue.data(items);
+    } catch (error, stackTrace) {
+      if (staleEntry != null) {
+        await cacheService.set(key, staleEntry);
+        state = AsyncValue.data(_parseItems(staleEntry.json));
+      } else {
+        state = AsyncValue.error(error, stackTrace);
+      }
+    }
   }
 
   Future<void> _fetch({bool append = false}) async {
