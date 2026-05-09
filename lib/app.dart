@@ -1,8 +1,10 @@
 // coverage:ignore-file
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'core/i18n/locale_provider.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/viewmodels/auth_viewmodel.dart';
+import 'l10n/translations.g.dart';
 import 'router.dart';
 
 class LorebaseApp extends ConsumerWidget {
@@ -11,6 +13,7 @@ class LorebaseApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authViewModelProvider);
+    final localeState = ref.watch(localeProvider);
 
     return MaterialApp.router(
       title: 'Lorebase',
@@ -18,6 +21,17 @@ class LorebaseApp extends ConsumerWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
+      locale: localeState,
+      supportedLocales: const [
+        Locale('pt', 'BR'),
+        Locale('en', 'US'),
+        Locale('es'),
+      ],
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
       routerConfig: ref.watch(routerProvider),
       builder: (context, child) {
         if (authState.isLoading) {
