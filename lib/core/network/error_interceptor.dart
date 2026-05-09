@@ -1,7 +1,12 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../errors/exceptions.dart';
 
 class ErrorInterceptor extends Interceptor {
+  final Ref _ref;
+
+  ErrorInterceptor(this._ref);
+
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
     switch (err.type) {

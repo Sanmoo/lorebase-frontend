@@ -1,10 +1,12 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../constants/api_constants.dart';
 import 'auth_interceptor.dart';
 import 'error_interceptor.dart';
+import 'locale_interceptor.dart';
 
 class DioClient {
-  static Dio create() {
+  static Dio create(Ref ref) {
     final dio = Dio(
       BaseOptions(
         baseUrl: ApiConstants.baseUrl,
@@ -19,7 +21,8 @@ class DioClient {
 
     dio.interceptors.addAll([
       AuthInterceptor(),
-      ErrorInterceptor(),
+      LocaleInterceptor(ref),
+      ErrorInterceptor(ref),
       LogInterceptor(
         requestBody: true,
         responseBody: true,
