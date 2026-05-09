@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/empty_state_widget.dart';
 import '../../../../core/widgets/error_widget.dart';
 import '../../../../core/widgets/loading_widget.dart';
+import '../../../core/cache/cache_providers.dart';
 import '../viewmodels/dashboard_viewmodel.dart';
 import '../widgets/stats_card.dart';
 import '../widgets/watching_section.dart';
@@ -15,6 +16,15 @@ class DashboardPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen<String?>(dashboardBackgroundErrorProvider, (prev, next) {
+      if (next != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(next)),
+        );
+        ref.read(dashboardBackgroundErrorProvider.notifier).state = null;
+      }
+    });
+
     final dashboardState = ref.watch(dashboardViewModelProvider);
 
     return RefreshIndicator(
