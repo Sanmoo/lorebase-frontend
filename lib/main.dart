@@ -26,8 +26,12 @@ void main() async {
 }
 
 Future<void> _configureHive() async {
-  await Hive.initFlutter();
-  await Hive.openBox('cache');
+  try {
+    await Hive.initFlutter();
+    await Hive.openBox('cache');
+  } catch (e) {
+    debugPrint('Could not configure Hive cache: $e');
+  }
 }
 
 Future<void> _configureAmplify() async {
