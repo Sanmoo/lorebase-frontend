@@ -4,9 +4,9 @@ import '../errors/exceptions.dart';
 
 class ErrorInterceptor extends Interceptor {
   // ignore: unused_field — reserved for future i18n of error messages
-  final Ref _ref;
+  final Ref? _ref;
 
-  ErrorInterceptor(this._ref);
+  ErrorInterceptor([this._ref]);
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {

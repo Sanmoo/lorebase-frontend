@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../l10n/strings.g.dart';
 import '../providers/core_providers.dart';
 
 const _localeStorageKey = 'locale';
@@ -22,11 +23,11 @@ class LocaleNotifier extends Notifier<Locale> {
       final saved = await storage.read(key: _localeStorageKey);
       if (saved != null) {
         final parts = saved.split('_');
-        if (parts.length == 2) {
-          state = Locale(parts[0], parts[1]);
-        } else {
-          state = Locale(parts[0]);
-        }
+        final locale = parts.length == 2
+            ? Locale(parts[0], parts[1])
+            : Locale(parts[0]);
+        state = locale;
+        _syncLocaleSettings(locale);
       }
     } catch (_) {}
   }
@@ -48,6 +49,7 @@ class LocaleNotifier extends Notifier<Locale> {
 
   Future<void> setLocale(Locale locale) async {
     state = locale;
+    _syncLocaleSettings(locale);
     try {
       final storage = ref.read(secureStorageProvider);
       final value = locale.countryCode != null
@@ -55,5 +57,15 @@ class LocaleNotifier extends Notifier<Locale> {
           : locale.languageCode;
       await storage.write(key: _localeStorageKey, value: value);
     } catch (_) {}
+  }
+
+  void _syncLocaleSettings(Locale locale) {
+    if (locale.languageCode == 'pt') {
+      LocaleSettings.setLocale(AppLocale.ptBr);
+    } else if (locale.languageCode == 'es') {
+      LocaleSettings.setLocale(AppLocale.es);
+    } else {
+      LocaleSettings.setLocale(AppLocale.enUs);
+    }
   }
 }
