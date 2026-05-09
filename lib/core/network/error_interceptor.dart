@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../errors/exceptions.dart';
 
 class ErrorInterceptor extends Interceptor {
+  // ignore: unused_field — reserved for future i18n of error messages
   final Ref _ref;
 
   ErrorInterceptor(this._ref);
