@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../l10n/strings.g.dart';
 import '../viewmodels/login_viewmodel.dart';
 import '../widgets/auth_button.dart';
 import '../widgets/auth_page_scaffold.dart';
@@ -45,12 +46,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
     final loginState = ref.watch(loginViewModelProvider);
 
     return AuthPageScaffold(
       children: [
         Text(
-          'Bem-vindo de volta',
+          t.login_welcome,
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 color: Colors.white,
@@ -59,7 +61,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         ),
         const SizedBox(height: 8),
         Text(
-          'Entre para continuar suas listas',
+          t.login_subtitle,
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Colors.white70,
@@ -68,7 +70,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         const SizedBox(height: 32),
         AuthTextField(
           controller: _emailController,
-          hint: 'E-mail',
+          hint: t.login_email_hint,
           icon: Icons.mail_outline,
           keyboardType: TextInputType.emailAddress,
           errorText: loginState.errorMessage != null && !loginState.isValid
@@ -79,7 +81,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         const SizedBox(height: 16),
         AuthTextField(
           controller: _passwordController,
-          hint: 'Senha',
+          hint: t.login_password_hint,
           icon: Icons.lock_outline,
           obscureText: loginState.obscurePassword,
           onToggleObscure: () {
@@ -97,15 +99,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         ],
         const SizedBox(height: 24),
         AuthButton(
-          text: 'Entrar',
+          text: t.login_button,
           isLoading: loginState.isLoading,
           onPressed: _submit,
         ),
         const SizedBox(height: 16),
         TextButton(
           onPressed: () => context.push('/forgot-password'),
-          child: const Text(
-            'Esqueceu a senha?',
+          child: Text(
+            t.login_forgot_password,
             style: TextStyle(color: Colors.white70),
           ),
         ),
@@ -116,7 +118,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
-                'ou',
+                t.login_or,
                 style: TextStyle(color: Colors.white.withOpacity(0.5)),
               ),
             ),
@@ -126,13 +128,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         const SizedBox(height: 16),
         TextButton(
           onPressed: () => context.push('/register'),
-          child: const Text.rich(
+          child: Text.rich(
             TextSpan(
-              text: 'Não tem conta? ',
+              text: t.login_no_account,
               style: TextStyle(color: Colors.white70),
               children: [
                 TextSpan(
-                  text: 'Cadastre-se',
+                  text: t.login_sign_up,
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,

@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../l10n/strings.g.dart';
 
-class RecommendationPage extends StatelessWidget {
+class RecommendationPage extends ConsumerWidget {
   const RecommendationPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final t = context.t;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Recommendation'),
+        title: Text(t.recommend_title),
       ),
-      body: const Center(
-        child: Text('Recommendation feature coming soon!'),
+      body: Center(
+        child: Text(t.recommend_coming_soon),
       ),
     );
   }

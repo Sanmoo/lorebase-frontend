@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../l10n/strings.g.dart';
 import '../data/tracking_status.dart';
 
 class TrackingStatusChip extends StatelessWidget {
@@ -26,7 +27,7 @@ class TrackingStatusChip extends StatelessWidget {
     final trackingStatus = TrackingStatus.fromString(status);
     return Chip(
       label: Text(
-        trackingStatus.label,
+        trackingStatus.label(context.t),
         style: const TextStyle(
           color: Colors.white,
           fontSize: 12,

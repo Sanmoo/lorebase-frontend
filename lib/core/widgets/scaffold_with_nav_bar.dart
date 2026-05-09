@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/viewmodels/auth_viewmodel.dart';
+import '../../l10n/strings.g.dart';
+import '../i18n/locale_provider.dart';
 
 class ScaffoldWithNavBar extends ConsumerWidget {
   final Widget child;
@@ -46,10 +48,15 @@ class ScaffoldWithNavBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final t = context.t;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('lorebase'),
+        title: Text(t.app_title),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.language),
+            onPressed: () => _showLanguageSheet(context, ref, t),
+          ),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () => ref.read(authViewModelProvider.notifier).signOut(),
@@ -60,28 +67,72 @@ class ScaffoldWithNavBar extends ConsumerWidget {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _getCurrentIndex(context),
         onTap: (index) => _onItemTapped(index, context),
-        items: const [
+        items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.dashboard_outlined),
             activeIcon: Icon(Icons.dashboard),
-            label: 'Home',
+            label: t.nav_home,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.search_outlined),
             activeIcon: Icon(Icons.search),
-            label: 'Search',
+            label: t.nav_search,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.format_list_bulleted),
             activeIcon: Icon(Icons.format_list_bulleted),
-            label: 'My Lists',
+            label: t.nav_my_lists,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.recommend_outlined),
             activeIcon: Icon(Icons.recommend),
-            label: 'Recommend',
+            label: t.nav_recommend,
           ),
         ],
+      ),
+    );
+  }
+
+  void _showLanguageSheet(BuildContext context, WidgetRef ref, Translations t) {
+    final currentLocale = ref.read(localeProvider);
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: Text(t.locale_pt_BR),
+              trailing: currentLocale == const Locale('pt', 'BR')
+                  ? const Icon(Icons.check)
+                  : null,
+              onTap: () {
+                ref.read(localeProvider.notifier).setLocale(const Locale('pt', 'BR'));
+                Navigator.pop(ctx);
+              },
+            ),
+            ListTile(
+              title: Text(t.locale_en_US),
+              trailing: currentLocale == const Locale('en', 'US')
+                  ? const Icon(Icons.check)
+                  : null,
+              onTap: () {
+                ref.read(localeProvider.notifier).setLocale(const Locale('en', 'US'));
+                Navigator.pop(ctx);
+              },
+            ),
+            ListTile(
+              title: Text(t.locale_es),
+              trailing: currentLocale == const Locale('es')
+                  ? const Icon(Icons.check)
+                  : null,
+              onTap: () {
+                ref.read(localeProvider.notifier).setLocale(const Locale('es'));
+                Navigator.pop(ctx);
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

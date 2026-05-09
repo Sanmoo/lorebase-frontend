@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/empty_state_widget.dart';
 import '../../../../core/widgets/error_widget.dart';
 import '../../../../core/widgets/loading_widget.dart';
+import '../../../l10n/strings.g.dart';
 import '../../../core/cache/cache_providers.dart';
 import '../viewmodels/dashboard_viewmodel.dart';
 import '../widgets/stats_card.dart';
@@ -16,6 +17,7 @@ class DashboardPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final t = context.t;
     ref.listen<String?>(dashboardBackgroundErrorProvider, (prev, next) {
       if (next != null) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -31,7 +33,7 @@ class DashboardPage extends ConsumerWidget {
       onRefresh: () => ref.read(dashboardViewModelProvider.notifier).refresh(),
       child: dashboardState.when(
         loading: () =>
-            const LoadingWidget(message: 'Loading your dashboard...'),
+            LoadingWidget(message: t.dashboard_loading),
         error: (error, _) => AppErrorWidget(
           message: error.toString(),
           onRetry: () =>
@@ -46,7 +48,7 @@ class DashboardPage extends ConsumerWidget {
                   children: [
                     Expanded(
                       child: StatsCard(
-                        title: 'Watching',
+                        title: t.dashboard_watching,
                         count: dashboard.stats.watchingCount,
                         icon: Icons.play_circle_outline,
                         color: AppColors.watching,
@@ -55,7 +57,7 @@ class DashboardPage extends ConsumerWidget {
                     const SizedBox(width: 12),
                     Expanded(
                       child: StatsCard(
-                        title: 'Want to Watch',
+                        title: t.dashboard_want_to_watch,
                         count: dashboard.stats.wantToWatchCount,
                         icon: Icons.bookmark_border,
                         color: AppColors.wantToWatch,
@@ -72,7 +74,7 @@ class DashboardPage extends ConsumerWidget {
                   children: [
                     Expanded(
                       child: StatsCard(
-                        title: 'Completed',
+                        title: t.dashboard_completed,
                         count: dashboard.stats.completedCount,
                         icon: Icons.check_circle_outline,
                         color: AppColors.completed,
@@ -81,7 +83,7 @@ class DashboardPage extends ConsumerWidget {
                     const SizedBox(width: 12),
                     Expanded(
                       child: StatsCard(
-                        title: 'Dropped',
+                        title: t.dashboard_dropped,
                         count: dashboard.stats.droppedCount,
                         icon: Icons.cancel_outlined,
                         color: AppColors.dropped,
@@ -94,7 +96,7 @@ class DashboardPage extends ConsumerWidget {
             if (dashboard.watching.items.isNotEmpty)
               SliverToBoxAdapter(
                 child: DashboardSection(
-                  title: 'Watching',
+                  title: t.dashboard_watching,
                   series: dashboard.watching.items,
                   onTap: (series) {
                     if (series.tmdbId != 0) {
@@ -108,7 +110,7 @@ class DashboardPage extends ConsumerWidget {
                 child: Padding(
                   padding: const EdgeInsets.only(top: 24.0),
                   child: DashboardSection(
-                    title: 'Want to Watch',
+                    title: t.dashboard_want_to_watch,
                     series: dashboard.wantToWatch.items,
                     onTap: (series) {
                       if (series.tmdbId != 0) {
@@ -123,7 +125,7 @@ class DashboardPage extends ConsumerWidget {
                 child: Padding(
                   padding: const EdgeInsets.only(top: 24.0),
                   child: DashboardSection(
-                    title: 'Completed',
+                    title: t.dashboard_completed,
                     series: dashboard.completed.items,
                     onTap: (series) {
                       if (series.tmdbId != 0) {
@@ -138,7 +140,7 @@ class DashboardPage extends ConsumerWidget {
                 child: Padding(
                   padding: const EdgeInsets.only(top: 24.0),
                   child: DashboardSection(
-                    title: 'Dropped',
+                    title: t.dashboard_dropped,
                     series: dashboard.dropped.items,
                     onTap: (series) {
                       if (series.tmdbId != 0) {
@@ -152,10 +154,9 @@ class DashboardPage extends ConsumerWidget {
                 dashboard.wantToWatch.items.isEmpty &&
                 dashboard.completed.items.isEmpty &&
                 dashboard.dropped.items.isEmpty)
-              const SliverFillRemaining(
+              SliverFillRemaining(
                 child: EmptyStateWidget(
-                  message:
-                      'No series tracked yet.\nSearch and add your first series!',
+                  message: t.dashboard_empty,
                   icon: Icons.tv_off,
                 ),
               ),

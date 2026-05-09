@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/widgets/empty_state_widget.dart';
 import '../../../../core/widgets/error_widget.dart';
 import '../../../../core/widgets/loading_widget.dart';
+import '../../../l10n/strings.g.dart';
 import '../../series/widgets/series_poster.dart';
 import '../data/tracking_status.dart';
 import '../viewmodels/tracking_list_viewmodel.dart';
@@ -52,6 +53,7 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
     ref.listen<String?>(trackingBackgroundErrorProvider, (prev, next) {
       if (next != null) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -65,7 +67,7 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Lists'),
+        title: Text(t.tracking_list_title),
       ),
       body: Column(
         children: [
@@ -76,7 +78,7 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
               isScrollable: true,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               tabs: TrackingStatus.values
-                  .map((s) => Tab(text: s.label))
+                  .map((s) => Tab(text: s.label(t)))
                   .toList(),
             ),
           ),
@@ -93,7 +95,7 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
                   data: (trackings) {
                     if (trackings.isEmpty) {
                       return EmptyStateWidget(
-                        message: 'No ${TrackingStatus.values[index].label} series yet',
+                        message: t.tracking_empty.replaceFirst('{status}', TrackingStatus.values[index].label(t)),
                         icon: Icons.tv_off,
                       );
                     }

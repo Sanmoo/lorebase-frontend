@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cached_network_image_platform_interface/cached_network_image_platform_interface.dart';
 import '../../../../core/widgets/error_widget.dart';
 import '../../../../core/widgets/loading_widget.dart';
+import '../../../l10n/strings.g.dart';
 import '../../tracking/data/models/tracked_series_model.dart';
 import '../../tracking/data/tracking_status.dart';
 import '../../tracking/widgets/rating_stars.dart';
@@ -20,12 +21,13 @@ class SeriesDetailPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final t = context.t;
     final detailAsync = ref.watch(seriesDetailViewModelProvider(tmdbId));
 
     return detailAsync.when(
       loading: () => Scaffold(
         appBar: AppBar(),
-        body: const LoadingWidget(message: 'Loading series details...'),
+        body: LoadingWidget(message: t.series_detail_loading),
       ),
       error: (error, _) => Scaffold(
         appBar: AppBar(),
@@ -75,7 +77,7 @@ class SeriesDetailPage extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    isEditing ? 'Manage Tracking' : 'Add to List',
+                    isEditing ? ctx.t.series_detail_manage_tracking : ctx.t.series_detail_add_to_list,
                     style: Theme.of(ctx).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -90,7 +92,7 @@ class SeriesDetailPage extends ConsumerWidget {
                             ? Theme.of(ctx).colorScheme.primary
                             : null,
                       ),
-                      title: Text(status.label),
+                      title: Text(status.label(ctx.t)),
                       onTap: () {
                         setSheetState(() {
                           selectedStatus = status.value;
@@ -103,7 +105,7 @@ class SeriesDetailPage extends ConsumerWidget {
                   }),
                   const SizedBox(height: 24),
                   Text(
-                    'Rating',
+                    ctx.t.series_detail_rating,
                     style: Theme.of(ctx).textTheme.titleMedium,
                   ),
                   const SizedBox(height: 8),
@@ -120,9 +122,9 @@ class SeriesDetailPage extends ConsumerWidget {
                   TextField(
                     controller: reviewController,
                     maxLines: 3,
-                    decoration: const InputDecoration(
-                      labelText: 'Review (optional)',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: ctx.t.series_detail_review,
+                      border: const OutlineInputBorder(),
                       alignLabelWithHint: true,
                     ),
                   ),
@@ -154,12 +156,12 @@ class SeriesDetailPage extends ConsumerWidget {
                       } catch (e) {
                         if (ctx.mounted) {
                           ScaffoldMessenger.of(ctx).showSnackBar(
-                            SnackBar(content: Text('Error: $e')),
+                            SnackBar(content: Text(ctx.t.error_server)),
                           );
                         }
                       }
                     },
-                    child: Text(isEditing ? 'Save Changes' : 'Add to List'),
+                    child: Text(isEditing ? ctx.t.series_detail_save_changes : ctx.t.series_detail_add_to_list),
                   ),
                   if (isEditing) ...[
                     const SizedBox(height: 12),
@@ -171,18 +173,18 @@ class SeriesDetailPage extends ConsumerWidget {
                         final confirm = await showDialog<bool>(
                           context: ctx,
                           builder: (dctx) => AlertDialog(
-                            title: const Text('Remove from List'),
+                            title: Text(ctx.t.series_detail_remove_from_list),
                             content: Text(
-                              'Remove "${series.title}" from your list?',
+                              ctx.t.series_detail_remove_confirm.replaceFirst('{title}', series.title),
                             ),
                             actions: [
                               TextButton(
                                 onPressed: () => Navigator.pop(dctx, false),
-                                child: const Text('Cancel'),
+                                child: Text(ctx.t.series_detail_cancel),
                               ),
                               TextButton(
                                 onPressed: () => Navigator.pop(dctx, true),
-                                child: const Text('Remove'),
+                                child: Text(ctx.t.series_detail_remove),
                               ),
                             ],
                           ),
@@ -197,13 +199,13 @@ class SeriesDetailPage extends ConsumerWidget {
                           } catch (e) {
                             if (ctx.mounted) {
                               ScaffoldMessenger.of(ctx).showSnackBar(
-                                SnackBar(content: Text('Error: $e')),
+                                SnackBar(content: Text(ctx.t.error_server)),
                               );
                             }
                           }
                         }
                       },
-                      child: const Text('Remove from List'),
+                      child: Text(ctx.t.series_detail_remove_from_list),
                     ),
                   ],
                 ],
@@ -229,6 +231,7 @@ class _SeriesDetailLoaded extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
     final theme = Theme.of(context);
     final hasBackdrop =
         series.backdropPath != null && series.backdropPath!.isNotEmpty;
@@ -245,7 +248,7 @@ class _SeriesDetailLoaded extends StatelessWidget {
           child: FilledButton.icon(
             onPressed: onTrackingAction,
             icon: Icon(tracking != null ? Icons.edit : Icons.add),
-            label: Text(tracking != null ? 'Manage Tracking' : 'Add to List'),
+            label: Text(tracking != null ? t.series_detail_manage_tracking : t.series_detail_add_to_list),
           ),
         ),
       ),
@@ -387,7 +390,8 @@ class _SeriesDetailLoaded extends StatelessWidget {
                     children: [
                       if (series.seasonCount > 0)
                         Text(
-                          '${series.seasonCount} season${series.seasonCount != 1 ? 's' : ''}',
+                          '${series.seasonCount} ${series.seasonCount == 1 ? 'season' : 'seasons'}',
+
                           style: theme.textTheme.bodyMedium,
                         ),
                       if (tracking != null) ...[
@@ -413,7 +417,7 @@ class _SeriesDetailLoaded extends StatelessWidget {
                       Expanded(
                         child: _InfoCard(
                           icon: Icons.calendar_today,
-                          label: 'First Air Date',
+                          label: t.series_detail_first_air_date,
                           value: series.firstAirDate ?? '—',
                         ),
                       ),
@@ -421,7 +425,7 @@ class _SeriesDetailLoaded extends StatelessWidget {
                       Expanded(
                         child: _InfoCard(
                           icon: Icons.collections,
-                          label: 'Seasons',
+                          label: t.series_detail_seasons,
                           value: series.seasonCount > 0 ? '${series.seasonCount}' : '—',
                         ),
                       ),
@@ -433,7 +437,7 @@ class _SeriesDetailLoaded extends StatelessWidget {
                       Expanded(
                         child: _InfoCard(
                           icon: Icons.live_tv,
-                          label: 'Networks',
+                          label: t.series_detail_networks,
                           value: series.networks.isNotEmpty
                               ? series.networks.join(', ')
                               : '—',
@@ -443,7 +447,7 @@ class _SeriesDetailLoaded extends StatelessWidget {
                       Expanded(
                         child: _InfoCard(
                           icon: Icons.info_outline,
-                          label: 'Status',
+                          label: t.series_detail_status,
                           value: series.status ?? '—',
                         ),
                       ),
@@ -474,20 +478,21 @@ class _OverviewSectionState extends State<_OverviewSection> {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
     final overview = widget.overview;
     if (overview == null || overview.isEmpty) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Overview',
+            t.series_detail_overview,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
           ),
           const SizedBox(height: 8),
           Text(
-            'No description available.',
+            t.series_detail_no_description,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -500,7 +505,7 @@ class _OverviewSectionState extends State<_OverviewSection> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Overview',
+          t.series_detail_overview,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -516,7 +521,7 @@ class _OverviewSectionState extends State<_OverviewSection> {
         GestureDetector(
           onTap: () => setState(() => _expanded = !_expanded),
           child: Text(
-            _expanded ? 'Show less' : 'Show more',
+            _expanded ? t.series_detail_show_less : t.series_detail_show_more,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.w600,

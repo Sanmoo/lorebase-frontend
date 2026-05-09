@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/widgets/empty_state_widget.dart';
 import '../../../../core/widgets/error_widget.dart';
 import '../../../../core/widgets/loading_widget.dart';
+import '../../../l10n/strings.g.dart';
 import '../viewmodels/series_search_viewmodel.dart';
 import '../widgets/series_card.dart';
 import '../../../../core/constants/app_constants.dart';
@@ -52,7 +53,7 @@ class _SeriesSearchPageState extends ConsumerState<SeriesSearchPage> {
           controller: _searchController,
           autofocus: true,
           decoration: InputDecoration(
-            hintText: 'Search series...',
+            hintText: context.t.search_hint,
             border: InputBorder.none,
             suffixIcon: _searchController.text.isNotEmpty
                 ? IconButton(
@@ -80,6 +81,7 @@ class _SearchResultsBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final t = context.t;
     final searchState = ref.watch(seriesSearchViewModelProvider);
 
     return searchState.when(
@@ -90,14 +92,14 @@ class _SearchResultsBody extends ConsumerWidget {
       ),
       data: (series) {
         if (series.isEmpty && query.isEmpty) {
-          return const EmptyStateWidget(
-            message: 'Type at least 2 characters to search',
+          return EmptyStateWidget(
+            message: t.search_empty,
             icon: Icons.search,
           );
         }
         if (series.isEmpty) {
-          return const EmptyStateWidget(
-            message: 'No series found',
+          return EmptyStateWidget(
+            message: t.search_no_results,
             icon: Icons.search_off,
           );
         }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../l10n/strings.g.dart';
 import '../data/tracking_status.dart';
 
 class StatusBottomSheet extends StatelessWidget {
@@ -36,7 +37,7 @@ class StatusBottomSheet extends StatelessWidget {
                   isSelected ? Icons.check_circle : Icons.circle_outlined,
                   color: isSelected ? Theme.of(context).primaryColor : null,
                 ),
-                title: Text(status.label),
+                title: Text(status.label(context.t)),
                 onTap: () {
                   onStatusSelected(status.value);
                   Navigator.pop(context);

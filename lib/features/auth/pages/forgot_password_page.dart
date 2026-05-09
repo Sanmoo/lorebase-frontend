@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../l10n/strings.g.dart';
 import '../viewmodels/forgot_password_viewmodel.dart';
 import '../widgets/auth_button.dart';
 import '../widgets/auth_page_scaffold.dart';
@@ -50,7 +51,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
     final success = await ref.read(forgotPasswordViewModelProvider.notifier).requestCode();
     if (success && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Código enviado para seu e-mail')),
+        SnackBar(content: Text(context.t.auth_code_sent_success)),
       );
     }
   }
@@ -59,7 +60,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
     final success = await ref.read(forgotPasswordViewModelProvider.notifier).resetPassword();
     if (success && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Senha redefinida com sucesso')),
+        SnackBar(content: Text(context.t.auth_password_reset_success)),
       );
       context.go('/login');
     }
@@ -67,14 +68,15 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
     final state = ref.watch(forgotPasswordViewModelProvider);
 
     return AuthPageScaffold(
       children: [
         Text(
           state.phase == ForgotPasswordPhase.requestCode
-              ? 'Recuperar senha'
-              : 'Nova senha',
+              ? t.auth_recover_password
+              : t.auth_new_password_title,
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 color: Colors.white,
@@ -84,8 +86,8 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
         const SizedBox(height: 8),
         Text(
           state.phase == ForgotPasswordPhase.requestCode
-              ? 'Digite seu e-mail para receber um código de verificação'
-              : 'Digite o código enviado para seu e-mail e sua nova senha',
+              ? t.auth_forgot_subtitle_request
+              : t.auth_forgot_subtitle_reset,
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Colors.white70,
@@ -95,21 +97,21 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
         if (state.phase == ForgotPasswordPhase.requestCode) ...[
           AuthTextField(
             controller: _emailController,
-            hint: 'E-mail',
+            hint: t.auth_email_hint,
             icon: Icons.mail_outline,
             keyboardType: TextInputType.emailAddress,
             onSubmitted: (_) => _requestCode(),
           ),
           const SizedBox(height: 24),
           AuthButton(
-            text: 'Enviar código',
+            text: t.auth_send_code,
             isLoading: state.isLoading,
             onPressed: _requestCode,
           ),
         ] else ...[
           AuthTextField(
             controller: _codeController,
-            hint: 'Código de verificação',
+            hint: t.auth_verification_code_hint,
             icon: Icons.confirmation_number_outlined,
             keyboardType: TextInputType.number,
             onSubmitted: (_) => FocusScope.of(context).nextFocus(),
@@ -117,7 +119,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
           const SizedBox(height: 16),
           AuthTextField(
             controller: _passwordController,
-            hint: 'Nova senha',
+            hint: t.auth_new_password_hint,
             icon: Icons.lock_outline,
             obscureText: state.obscurePassword,
             onToggleObscure: () {
@@ -128,14 +130,14 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
           const SizedBox(height: 16),
           AuthTextField(
             controller: _confirmController,
-            hint: 'Confirmar nova senha',
+            hint: t.auth_confirm_new_password_hint,
             icon: Icons.lock_outline,
             obscureText: state.obscurePassword,
             onSubmitted: (_) => _resetPassword(),
           ),
           const SizedBox(height: 24),
           AuthButton(
-            text: 'Redefinir senha',
+            text: t.auth_reset_password,
             isLoading: state.isLoading,
             onPressed: _resetPassword,
           ),
@@ -151,8 +153,8 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
         const SizedBox(height: 16),
         TextButton(
           onPressed: () => context.go('/login'),
-          child: const Text(
-            'Voltar para o login',
+          child: Text(
+            t.auth_back_to_login,
             style: TextStyle(color: Colors.white70),
           ),
         ),

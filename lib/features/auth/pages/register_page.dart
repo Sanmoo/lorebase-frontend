@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../l10n/strings.g.dart';
 import '../viewmodels/register_viewmodel.dart';
 import '../widgets/auth_button.dart';
 import '../widgets/auth_page_scaffold.dart';
@@ -71,25 +72,23 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     }
   }
 
-  String _strengthText(PasswordStrength strength) {
-    switch (strength) {
-      case PasswordStrength.weak:
-        return 'Fraca';
-      case PasswordStrength.medium:
-        return 'Média';
-      case PasswordStrength.strong:
-        return 'Forte';
-    }
+  String _strengthText(PasswordStrength strength, Translations t) {
+    return switch (strength) {
+      PasswordStrength.weak => t.auth_password_weak,
+      PasswordStrength.medium => t.auth_password_medium,
+      PasswordStrength.strong => t.auth_password_strong,
+    };
   }
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
     final registerState = ref.watch(registerViewModelProvider);
 
     return AuthPageScaffold(
       children: [
         Text(
-          registerState.showConfirmation ? 'Confirme seu e-mail' : 'Criar conta',
+          registerState.showConfirmation ? t.auth_confirm_email : t.auth_create_account,
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 color: Colors.white,
@@ -99,8 +98,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
         const SizedBox(height: 8),
         Text(
           registerState.showConfirmation
-              ? 'Digite o código enviado para ${registerState.email}'
-              : 'Comece a organizar suas séries',
+              ? t.auth_code_sent_to.replaceFirst('{email}', registerState.email)
+              : t.login_subtitle,
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Colors.white70,
@@ -110,29 +109,29 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
         if (registerState.showConfirmation) ...[
           AuthTextField(
             controller: _codeController,
-            hint: 'Código de confirmação',
+            hint: t.auth_confirmation_code,
             icon: Icons.confirmation_number_outlined,
             keyboardType: TextInputType.number,
             onSubmitted: (_) => _confirm(),
           ),
           const SizedBox(height: 16),
           AuthButton(
-            text: 'Confirmar e entrar',
+            text: t.auth_confirm_and_login,
             isLoading: registerState.isLoading,
             onPressed: _confirm,
           ),
           const SizedBox(height: 12),
           TextButton(
             onPressed: () => ref.read(registerViewModelProvider.notifier).resendCode(),
-            child: const Text(
-              'Reenviar código',
+            child: Text(
+              t.auth_resend_code,
               style: TextStyle(color: Colors.white70),
             ),
           ),
         ] else ...[
           AuthTextField(
             controller: _emailController,
-            hint: 'E-mail',
+            hint: t.auth_email_hint,
             icon: Icons.mail_outline,
             keyboardType: TextInputType.emailAddress,
             onSubmitted: (_) => FocusScope.of(context).nextFocus(),
@@ -140,7 +139,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
           const SizedBox(height: 16),
           AuthTextField(
             controller: _passwordController,
-            hint: 'Senha',
+            hint: t.auth_password_hint,
             icon: Icons.lock_outline,
             obscureText: registerState.obscurePassword,
             onToggleObscure: () {
@@ -167,7 +166,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  _strengthText(registerState.passwordStrength),
+                  _strengthText(registerState.passwordStrength, t),
                   style: TextStyle(
                     color: _strengthColor(registerState.passwordStrength),
                     fontSize: 12,
@@ -179,7 +178,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
           const SizedBox(height: 16),
           AuthTextField(
             controller: _confirmController,
-            hint: 'Confirmar senha',
+            hint: t.auth_confirm_password_hint,
             icon: Icons.lock_outline,
             obscureText: registerState.obscurePassword,
             onSubmitted: (_) => _submit(),
@@ -200,7 +199,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               ),
               Expanded(
                 child: Text(
-                  'Li e aceito os Termos de Uso',
+                  t.auth_accept_terms,
                   style: TextStyle(color: Colors.white.withOpacity(0.8)),
                 ),
               ),
@@ -208,7 +207,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
           ),
           const SizedBox(height: 24),
           AuthButton(
-            text: 'Criar conta',
+            text: t.auth_create_account,
             isLoading: registerState.isLoading,
             onPressed: _submit,
           ),
@@ -224,13 +223,13 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
         const SizedBox(height: 16),
         TextButton(
           onPressed: () => context.go('/login'),
-          child: const Text.rich(
+          child: Text.rich(
             TextSpan(
-              text: 'Já tem conta? ',
+              text: t.auth_already_have_account,
               style: TextStyle(color: Colors.white70),
               children: [
                 TextSpan(
-                  text: 'Entrar',
+                  text: t.auth_sign_in,
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
