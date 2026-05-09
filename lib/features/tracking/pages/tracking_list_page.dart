@@ -9,6 +9,7 @@ import '../../series/widgets/series_poster.dart';
 import '../data/tracking_status.dart';
 import '../viewmodels/tracking_list_viewmodel.dart';
 import '../widgets/rating_stars.dart';
+import '../../../../core/cache/cache_providers.dart';
 
 class TrackingListPage extends ConsumerStatefulWidget {
   const TrackingListPage({super.key});
@@ -51,6 +52,15 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<String?>(trackingBackgroundErrorProvider, (prev, next) {
+      if (next != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(next)),
+        );
+        ref.read(trackingBackgroundErrorProvider.notifier).state = null;
+      }
+    });
+
     final trackingState = ref.watch(trackingListViewModelProvider);
 
     return Scaffold(

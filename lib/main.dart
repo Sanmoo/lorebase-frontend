@@ -3,6 +3,7 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:url_strategy/url_strategy.dart';
 import 'amplifyconfiguration.dart';
 import 'app.dart';
@@ -15,12 +16,22 @@ void main() async {
   } catch (e) {
     debugPrint('Warning: .env file not found, using defaults');
   }
+  await _configureHive();
   await _configureAmplify();
   runApp(
     const ProviderScope(
       child: LorebaseApp(),
     ),
   );
+}
+
+Future<void> _configureHive() async {
+  try {
+    await Hive.initFlutter();
+    await Hive.openBox('cache');
+  } catch (e) {
+    debugPrint('Could not configure Hive cache: $e');
+  }
 }
 
 Future<void> _configureAmplify() async {

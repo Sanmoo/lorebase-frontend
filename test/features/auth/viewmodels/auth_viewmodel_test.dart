@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lorebase/core/cache/cache_service.dart';
+import 'package:lorebase/core/cache/cache_providers.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_viewmodel.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_state.dart';
 import 'package:lorebase/features/auth/data/repositories/auth_repository.dart';
@@ -106,6 +108,7 @@ void main() {
       final repo = FakeAuthRepo();
       final container = ProviderContainer(overrides: [
         authRepositoryProvider.overrideWith((ref) => repo),
+        cacheServiceProvider.overrideWith((ref) => CacheService()),
       ]);
       addTearDown(container.dispose);
 
@@ -118,6 +121,7 @@ void main() {
     test('signOut sets state to unauthenticated', () async {
       final container = ProviderContainer(overrides: [
         authRepositoryProvider.overrideWith((ref) => FakeAuthRepo()),
+        cacheServiceProvider.overrideWith((ref) => CacheService()),
       ]);
       addTearDown(container.dispose);
 
@@ -133,6 +137,7 @@ void main() {
       final repo = FakeAuthRepo()..signOutThrows = true;
       final container = ProviderContainer(overrides: [
         authRepositoryProvider.overrideWith((ref) => repo),
+        cacheServiceProvider.overrideWith((ref) => CacheService()),
       ]);
       addTearDown(container.dispose);
 

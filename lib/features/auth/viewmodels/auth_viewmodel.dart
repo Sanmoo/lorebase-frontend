@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../../../core/cache/cache_providers.dart';
 import '../data/repositories/auth_repository.dart';
 import 'auth_state.dart';
 
@@ -33,6 +34,7 @@ class AuthViewModel extends _$AuthViewModel {
     } catch (_) {
       // Ignore sign-out errors
     }
+    await ref.read(cacheServiceProvider).clearAll();
     state = const AuthState.unauthenticated();
   }
 

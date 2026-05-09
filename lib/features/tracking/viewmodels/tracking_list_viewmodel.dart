@@ -1,4 +1,7 @@
+import 'dart:convert';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../../../core/cache/cache_entry.dart';
+import '../../../core/cache/cache_providers.dart';
 import '../data/models/tracked_series_model.dart';
 import '../data/repositories/tracking_repository.dart';
 
@@ -18,8 +21,24 @@ class TrackingListViewModel extends _$TrackingListViewModel {
   Future<void> loadTracking({String? status}) async {
     _currentStatus = status;
     _page = 1;
+
+    final cacheKey = _buildCacheKey();
+    final cacheService = ref.read(cacheServiceProvider);
+
+    var hit = cacheService.getSync(cacheKey);
+    hit ??= cacheService.getFromDiskSync(cacheKey);
+
+    if (hit != null) {
+      final items = _parseItems(hit.json);
+      state = AsyncValue.data(items);
+      if (!hit.isFresh) {
+        _backgroundRefresh(cacheKey);
+      }
+      return;
+    }
+
     state = const AsyncValue.loading();
-    await _fetch();
+    await _fetch(append: false);
   }
 
   Future<void> loadMore() async {
@@ -28,9 +47,13 @@ class TrackingListViewModel extends _$TrackingListViewModel {
     await _fetch(append: true);
   }
 
-  Future<void> refresh() => loadTracking(status: _currentStatus);
+  Future<void> refresh() async {
+    final cacheService = ref.read(cacheServiceProvider);
+    final key = _buildCacheKey();
+    final staleEntry = cacheService.getSync(key);
+    await cacheService.remove(key);
 
-  Future<void> _fetch({bool append = false}) async {
+    state = const AsyncValue.loading();
     try {
       final repository = ref.read(trackingRepositoryProvider);
       final items = await repository.getTracking(
@@ -38,6 +61,41 @@ class TrackingListViewModel extends _$TrackingListViewModel {
         page: _page,
         pageSize: _pageSize,
       );
+      final entry = CacheEntry(
+        json: jsonEncode(items.map((e) => e.toJson()).toList()),
+        cachedAt: DateTime.now(),
+        ttl: const Duration(hours: 6),
+      );
+      await cacheService.set(key, entry);
+      state = AsyncValue.data(items);
+    } catch (error, stackTrace) {
+      if (staleEntry != null) {
+        await cacheService.set(key, staleEntry);
+        state = AsyncValue.data(_parseItems(staleEntry.json));
+      } else {
+        state = AsyncValue.error(error, stackTrace);
+      }
+    }
+  }
+
+  Future<void> _fetch({bool append = false}) async {
+    try {
+      final repository = ref.read(trackingRepositoryProvider);
+      final cacheService = ref.read(cacheServiceProvider);
+
+      final items = await repository.getTracking(
+        status: _currentStatus,
+        page: _page,
+        pageSize: _pageSize,
+      );
+
+      final entry = CacheEntry(
+        json: jsonEncode(items.map((e) => e.toJson()).toList()),
+        cachedAt: DateTime.now(),
+        ttl: const Duration(hours: 6),
+      );
+      await cacheService.set(_buildCacheKey(), entry);
+
       if (append && state.hasValue) {
         state = AsyncValue.data([...state.value!, ...items]);
       } else {
@@ -46,5 +104,89 @@ class TrackingListViewModel extends _$TrackingListViewModel {
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
+  }
+
+  void _backgroundRefresh(String key) {
+    Future(() async {
+      try {
+        final repository = ref.read(trackingRepositoryProvider);
+        final cacheService = ref.read(cacheServiceProvider);
+        final items = await repository.getTracking(
+          status: _currentStatus,
+          page: _page,
+          pageSize: _pageSize,
+        );
+        final entry = CacheEntry(
+          json: jsonEncode(items.map((e) => e.toJson()).toList()),
+          cachedAt: DateTime.now(),
+          ttl: const Duration(hours: 6),
+        );
+        await cacheService.set(key, entry);
+        state = AsyncValue.data(items);
+      } catch (_) {
+        ref.read(trackingBackgroundErrorProvider.notifier).state =
+            'Could not refresh. Pull down to retry.';
+      }
+    });
+  }
+
+  Future<void> startTracking(String seriesId, String status) async {
+    await _invalidateCache();
+    try {
+      final repository = ref.read(trackingRepositoryProvider);
+      await repository.startTracking(seriesId, status);
+      await refresh();
+    } catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
+    }
+  }
+
+  Future<void> updateTracking(
+    String seriesId, {
+    String? status,
+    int? seriesRating,
+    String? seriesReview,
+    List<Map<String, dynamic>>? seasonRatings,
+  }) async {
+    await _invalidateCache();
+    try {
+      final repository = ref.read(trackingRepositoryProvider);
+      await repository.updateTracking(
+        seriesId,
+        status: status,
+        seriesRating: seriesRating,
+        seriesReview: seriesReview,
+        seasonRatings: seasonRatings,
+      );
+      await refresh();
+    } catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
+    }
+  }
+
+  Future<void> deleteTracking(String seriesId) async {
+    await _invalidateCache();
+    try {
+      final repository = ref.read(trackingRepositoryProvider);
+      await repository.deleteTracking(seriesId);
+      await refresh();
+    } catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
+    }
+  }
+
+  Future<void> _invalidateCache() async {
+    final cacheService = ref.read(cacheServiceProvider);
+    await cacheService.remove('dashboard');
+    await cacheService.removeByPrefix('tracking:');
+  }
+
+  String _buildCacheKey() => 'tracking:${_currentStatus ?? "all"}:$_page';
+
+  List<TrackedSeriesModel> _parseItems(String json) {
+    final list = jsonDecode(json) as List;
+    return list
+        .map((e) => TrackedSeriesModel.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 }

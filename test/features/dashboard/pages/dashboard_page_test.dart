@@ -18,6 +18,9 @@ class FakeDashboardVM extends DashboardViewModel {
 
   @override
   AsyncValue<DashboardModel> build() => testState;
+
+  @override
+  Future<void> refresh() async {} // no-op: test doesn't depend on state change
 }
 
 DashboardModel _emptyDashboard() => const DashboardModel(

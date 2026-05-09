@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lorebase/core/cache/cache_service.dart';
+import 'package:lorebase/core/cache/cache_providers.dart';
 import 'package:lorebase/features/tracking/viewmodels/tracking_list_viewmodel.dart';
 import 'package:lorebase/features/tracking/data/repositories/tracking_repository.dart';
 import 'package:lorebase/features/tracking/data/models/tracked_series_model.dart';
@@ -49,9 +51,10 @@ class FakeTrackingRepo implements TrackingRepository {
 
 void main() {
   group('TrackingListViewModel', () {
-    ProviderContainer createContainer(FakeTrackingRepo repo) {
+    ProviderContainer createContainer(FakeTrackingRepo repo, {CacheService? cache}) {
       return ProviderContainer(overrides: [
         trackingRepositoryProvider.overrideWith((ref) => repo),
+        cacheServiceProvider.overrideWith((ref) => cache ?? CacheService()),
       ]);
     }
 
@@ -118,14 +121,17 @@ void main() {
     test('refresh() reuses current status filter', () async {
       final items = [_makeTracking('t-1', 'COMPLETED')];
       final repo = FakeTrackingRepo()..results = items;
-      final container = createContainer(repo);
+      final cache = CacheService();
+      final container = createContainer(repo, cache: cache);
       addTearDown(container.dispose);
 
       final notifier = container.read(trackingListViewModelProvider.notifier);
       await notifier.loadTracking(status: 'COMPLETED');
       expect(container.read(trackingListViewModelProvider).value!.length, 1);
 
-      // Change repo data and refresh
+      // Clear cache so refresh re-fetches from network
+      await cache.clearAll();
+
       repo.results = [
         _makeTracking('t-1', 'COMPLETED'),
         _makeTracking('t-2', 'COMPLETED'),
