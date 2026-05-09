@@ -7,7 +7,7 @@ part of 'tracking_list_viewmodel.dart';
 // **************************************************************************
 
 String _$trackingListViewModelHash() =>
-    r'8246a805c640c7eeb2f5a297807c2ae2e989a942';
+    r'5bf1fa71658c22be325565af8f9e09cda1f03231';
 
 /// See also [TrackingListViewModel].
 @ProviderFor(TrackingListViewModel)

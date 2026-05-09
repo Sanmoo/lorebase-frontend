@@ -14,9 +14,7 @@ class DashboardViewModel extends _$DashboardViewModel {
     final cacheService = ref.read(cacheServiceProvider);
 
     var hit = cacheService.getSync('dashboard');
-    if (hit == null) {
-      hit = cacheService.getFromDiskSync('dashboard');
-    }
+    hit ??= cacheService.getFromDiskSync('dashboard');
 
     if (hit != null) {
       final data = DashboardModel.fromJson(

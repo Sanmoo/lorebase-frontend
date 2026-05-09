@@ -26,9 +26,7 @@ class TrackingListViewModel extends _$TrackingListViewModel {
     final cacheService = ref.read(cacheServiceProvider);
 
     var hit = cacheService.getSync(cacheKey);
-    if (hit == null) {
-      hit = cacheService.getFromDiskSync(cacheKey);
-    }
+    hit ??= cacheService.getFromDiskSync(cacheKey);
 
     if (hit != null) {
       final items = _parseItems(hit.json);

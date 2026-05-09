@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lorebase/core/cache/cache_entry.dart';
 import 'package:lorebase/core/cache/cache_service.dart';
 import 'package:lorebase/core/cache/cache_providers.dart';
 import 'package:lorebase/features/tracking/viewmodels/tracking_list_viewmodel.dart';
