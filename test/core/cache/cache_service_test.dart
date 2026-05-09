@@ -20,6 +20,54 @@ void main() {
     await Hive.deleteBoxFromDisk('test');
   });
 
+  group('CacheService without Hive', () {
+    late CacheService memoryOnlyService;
+
+    setUp(() {
+      memoryOnlyService = CacheService();
+    });
+
+    test('getSync returns null for unknown key', () {
+      expect(memoryOnlyService.getSync('x'), isNull);
+    });
+
+    test('set and getSync work with memory only', () async {
+      final entry = CacheEntry(
+        json: '{}', cachedAt: DateTime.now(), ttl: const Duration(hours: 1),
+      );
+      await memoryOnlyService.set('k', entry);
+      expect(memoryOnlyService.getSync('k'), same(entry));
+    });
+
+    test('getFromDiskSync returns null without Hive', () {
+      expect(memoryOnlyService.getFromDiskSync('x'), isNull);
+    });
+
+    test('remove works without Hive', () async {
+      await memoryOnlyService.set('k', CacheEntry(
+        json: '{}', cachedAt: DateTime.now(), ttl: const Duration(hours: 1),
+      ));
+      await memoryOnlyService.remove('k');
+      expect(memoryOnlyService.getSync('k'), isNull);
+    });
+
+    test('removeByPrefix works without Hive', () async {
+      await memoryOnlyService.set('a:1', CacheEntry(json: '{}', cachedAt: DateTime.now(), ttl: const Duration(hours: 1)));
+      await memoryOnlyService.set('b:1', CacheEntry(json: '{}', cachedAt: DateTime.now(), ttl: const Duration(hours: 1)));
+      await memoryOnlyService.removeByPrefix('a:');
+      expect(memoryOnlyService.getSync('a:1'), isNull);
+      expect(memoryOnlyService.getSync('b:1'), isNotNull);
+    });
+
+    test('clearAll works without Hive', () async {
+      await memoryOnlyService.set('k', CacheEntry(
+        json: '{}', cachedAt: DateTime.now(), ttl: const Duration(hours: 1),
+      ));
+      await memoryOnlyService.clearAll();
+      expect(memoryOnlyService.getSync('k'), isNull);
+    });
+  });
+
   group('CacheService', () {
     test('getSync returns null for unknown key', () {
       expect(service.getSync('unknown'), isNull);

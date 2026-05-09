@@ -12,11 +12,16 @@ class CacheService {
   CacheEntry? getFromDiskSync(String key) {
     final raw = _hiveBox?.get(key);
     if (raw == null) return null;
-    final entry = CacheEntry.fromJson(
-      Map<String, dynamic>.from(raw as Map),
-    );
-    _memory[key] = entry;
-    return entry;
+    try {
+      final entry = CacheEntry.fromJson(
+        Map<String, dynamic>.from(raw as Map),
+      );
+      _memory[key] = entry;
+      return entry;
+    } catch (_) {
+      _hiveBox?.delete(key);
+      return null;
+    }
   }
 
   Future<void> set(String key, CacheEntry entry) async {
