@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../l10n/strings.g.dart';
+import '../cache/cache_providers.dart';
 import '../providers/core_providers.dart';
 
 const _localeStorageKey = 'locale';
@@ -50,6 +51,7 @@ class LocaleNotifier extends Notifier<Locale> {
   Future<void> setLocale(Locale locale) async {
     state = locale;
     _syncLocaleSettings(locale);
+    ref.read(cacheServiceProvider).clearAll();
     try {
       final storage = ref.read(secureStorageProvider);
       final value = locale.countryCode != null
