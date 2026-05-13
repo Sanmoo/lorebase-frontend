@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import '../data/models/series_model.dart';
-import '../../tracking/data/models/tracked_series_model.dart';
+import '../../tracking/data/models/tracked_media_model.dart';
 
 part 'series_detail_state.freezed.dart';
 
@@ -8,6 +8,6 @@ part 'series_detail_state.freezed.dart';
 class SeriesDetailState with _$SeriesDetailState {
   const factory SeriesDetailState({
     required SeriesModel series,
-    TrackedSeriesModel? tracking,
+    TrackedMediaModel? tracking,
   }) = _SeriesDetailState;
 }

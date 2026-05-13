@@ -2,7 +2,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../core/cache/cache_providers.dart';
 import '../data/repositories/series_repository.dart';
 import '../../tracking/data/repositories/tracking_repository.dart';
-import '../../tracking/data/models/tracked_series_model.dart';
+import '../../tracking/data/models/tracked_media_model.dart';
+import '../../tracking/data/models/media_type.dart';
 import 'series_detail_state.dart';
 
 part 'series_detail_viewmodel.g.dart';
@@ -16,13 +17,16 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
 
     final series = await seriesRepo.getSeriesById(tmdbId.toString());
 
-    TrackedSeriesModel? tracking;
+    TrackedMediaModel? tracking;
     try {
-      final allTracking = await trackingRepo.getTracking(pageSize: 1000);
+      final allTracking = await trackingRepo.getTracking(
+        pageSize: 1000,
+        mediaType: MediaType.series,
+      );
       tracking = allTracking.firstWhere(
         (t) =>
-            (t.series != null && t.series!.tmdbId == tmdbId) ||
-            t.seriesId == tmdbId.toString(),
+            (t.media != null && t.media!.tmdbId == tmdbId) ||
+            t.mediaId == tmdbId.toString(),
       );
     } catch (_) {
       tracking = null;
@@ -33,22 +37,23 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
 
   Future<void> addTracking(
     String status, {
-    int? seriesRating,
-    String? seriesReview,
+    int? rating,
+    String? review,
   }) async {
     final currentState = state.valueOrNull;
     if (currentState == null) return;
     final trackingRepo = ref.read(trackingRepositoryProvider);
     final tracking = await trackingRepo.startTracking(
       currentState.series.tmdbId.toString(),
+      MediaType.series,
       status,
     );
-    if (seriesRating != null ||
-        (seriesReview != null && seriesReview.isNotEmpty)) {
+    if (rating != null || (review != null && review.isNotEmpty)) {
       await trackingRepo.updateTracking(
-        tracking.seriesId,
-        seriesRating: seriesRating,
-        seriesReview: seriesReview,
+        tracking.mediaId,
+        mediaType: MediaType.series,
+        rating: rating,
+        review: review,
       );
     }
     await ref.read(cacheServiceProvider).remove('dashboard');
@@ -58,8 +63,8 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
 
   Future<void> updateTracking({
     String? status,
-    int? seriesRating,
-    String? seriesReview,
+    int? rating,
+    String? review,
   }) async {
     final currentState = state.valueOrNull;
     if (currentState == null) return;
@@ -68,10 +73,11 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
 
     final trackingRepo = ref.read(trackingRepositoryProvider);
     await trackingRepo.updateTracking(
-      current.seriesId,
+      current.mediaId,
+      mediaType: MediaType.series,
       status: status,
-      seriesRating: seriesRating,
-      seriesReview: seriesReview,
+      rating: rating,
+      review: review,
     );
     await ref.read(cacheServiceProvider).remove('dashboard');
     await ref.read(cacheServiceProvider).removeByPrefix('tracking:');
@@ -85,7 +91,10 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
     if (current == null) return;
 
     final trackingRepo = ref.read(trackingRepositoryProvider);
-    await trackingRepo.deleteTracking(current.seriesId);
+    await trackingRepo.deleteTracking(
+      current.mediaId,
+      mediaType: MediaType.series,
+    );
     await ref.read(cacheServiceProvider).remove('dashboard');
     await ref.read(cacheServiceProvider).removeByPrefix('tracking:');
     ref.invalidateSelf();

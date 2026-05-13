@@ -1,43 +1,46 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'tracked_series_model.dart';
+part of 'tracked_media_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$TrackedSeriesModelImpl _$$TrackedSeriesModelImplFromJson(
+_$TrackedMediaModelImpl _$$TrackedMediaModelImplFromJson(
         Map<String, dynamic> json) =>
-    _$TrackedSeriesModelImpl(
+    _$TrackedMediaModelImpl(
       trackingId: json['trackingId'] as String,
       userId: json['userId'] as String,
-      seriesId: json['seriesId'] as String,
+      mediaType: mediaTypeFromJson(json['mediaType'] as String),
+      mediaId: json['mediaId'] as String,
       status: json['status'] as String,
-      seriesRating: json['seriesRating'] as int?,
-      seriesReview: json['seriesReview'] as String?,
+      rating: json['rating'] as int?,
+      review: json['review'] as String?,
       seasonRatings: (json['seasonRatings'] as List<dynamic>?)
               ?.map(
                   (e) => SeasonRatingModel.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
-      series: json['series'] == null
+      media: json['media'] == null
           ? null
-          : SeriesModel.fromJson(json['series'] as Map<String, dynamic>),
+          : TrackedMediaSummaryModel.fromJson(
+              json['media'] as Map<String, dynamic>),
       addedAt: DateTime.parse(json['addedAt'] as String),
       lastUpdated: DateTime.parse(json['lastUpdated'] as String),
     );
 
-Map<String, dynamic> _$$TrackedSeriesModelImplToJson(
-        _$TrackedSeriesModelImpl instance) =>
+Map<String, dynamic> _$$TrackedMediaModelImplToJson(
+        _$TrackedMediaModelImpl instance) =>
     <String, dynamic>{
       'trackingId': instance.trackingId,
       'userId': instance.userId,
-      'seriesId': instance.seriesId,
+      'mediaType': mediaTypeToJson(instance.mediaType),
+      'mediaId': instance.mediaId,
       'status': instance.status,
-      'seriesRating': instance.seriesRating,
-      'seriesReview': instance.seriesReview,
+      'rating': instance.rating,
+      'review': instance.review,
       'seasonRatings': instance.seasonRatings,
-      'series': instance.series,
+      'media': instance.media,
       'addedAt': instance.addedAt.toIso8601String(),
       'lastUpdated': instance.lastUpdated.toIso8601String(),
     };

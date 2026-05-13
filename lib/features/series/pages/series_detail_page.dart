@@ -6,7 +6,7 @@ import 'package:cached_network_image_platform_interface/cached_network_image_pla
 import '../../../../core/widgets/error_widget.dart';
 import '../../../../core/widgets/loading_widget.dart';
 import '../../../l10n/strings.g.dart';
-import '../../tracking/data/models/tracked_series_model.dart';
+import '../../tracking/data/models/tracked_media_model.dart';
 import '../../tracking/data/tracking_status.dart';
 import '../../tracking/widgets/rating_stars.dart';
 import '../../tracking/widgets/tracking_status_chip.dart';
@@ -54,9 +54,9 @@ class SeriesDetailPage extends ConsumerWidget {
     final isEditing = tracking != null;
     String selectedStatus =
         tracking?.status ?? TrackingStatus.wantToWatch.value;
-    int? selectedRating = tracking?.seriesRating;
+    int? selectedRating = tracking?.rating;
     final reviewController =
-        TextEditingController(text: tracking?.seriesReview ?? '');
+        TextEditingController(text: tracking?.review ?? '');
 
     showModalBottomSheet(
       context: context,
@@ -138,16 +138,16 @@ class SeriesDetailPage extends ConsumerWidget {
                         if (isEditing) {
                           await notifier.updateTracking(
                             status: selectedStatus,
-                            seriesRating: selectedRating,
-                            seriesReview: reviewController.text.isNotEmpty
+                            rating: selectedRating,
+                            review: reviewController.text.isNotEmpty
                                 ? reviewController.text
                                 : null,
                           );
                         } else {
                           await notifier.addTracking(
                             selectedStatus,
-                            seriesRating: selectedRating,
-                            seriesReview: reviewController.text.isNotEmpty
+                            rating: selectedRating,
+                            review: reviewController.text.isNotEmpty
                                 ? reviewController.text
                                 : null,
                           );
@@ -220,7 +220,7 @@ class SeriesDetailPage extends ConsumerWidget {
 
 class _SeriesDetailLoaded extends StatelessWidget {
   final SeriesModel series;
-  final TrackedSeriesModel? tracking;
+  final TrackedMediaModel? tracking;
   final VoidCallback onTrackingAction;
 
   const _SeriesDetailLoaded({

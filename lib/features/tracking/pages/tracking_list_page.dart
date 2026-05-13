@@ -6,10 +6,10 @@ import '../../../../core/widgets/empty_state_widget.dart';
 import '../../../../core/widgets/error_widget.dart';
 import '../../../../core/widgets/loading_widget.dart';
 import '../../../l10n/strings.g.dart';
-import '../../series/widgets/series_poster.dart';
 import '../data/tracking_status.dart';
 import '../viewmodels/tracking_list_viewmodel.dart';
 import '../widgets/rating_stars.dart';
+import '../widgets/tracked_media_poster.dart';
 import '../../../../core/cache/cache_providers.dart';
 
 class TrackingListPage extends ConsumerStatefulWidget {
@@ -110,8 +110,8 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
                       itemCount: trackings.length,
                       itemBuilder: (context, i) {
                         final tracking = trackings[i];
-                        final series = tracking.series;
-                        if (series == null) {
+                        final media = tracking.media;
+                        if (media == null) {
                           return const Center(
                             child: Icon(Icons.tv_off, color: Colors.grey),
                           );
@@ -120,18 +120,18 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
                           children: [
                             Expanded(
                               child: LayoutBuilder(
-                                builder: (context, constraints) => SeriesPoster(
-                                  series: series,
+                                builder: (context, constraints) => TrackedMediaPoster(
+                                  media: media,
                                   width: constraints.maxWidth,
-                                  onTap: series.tmdbId != 0
-                                      ? () => context.push('/series/${series.tmdbId}')
+                                  onTap: media.tmdbId != 0
+                                      ? () => context.push('/series/${media.tmdbId}')
                                       : null,
                                 ),
                               ),
                             ),
                             const SizedBox(height: 4),
                             RatingStars(
-                              rating: tracking.seriesRating,
+                              rating: tracking.rating,
                               size: 10,
                               maxRating: 10,
                             ),

@@ -6,7 +6,9 @@ import 'package:lorebase/core/cache/cache_providers.dart';
 import 'package:lorebase/features/series/data/models/series_model.dart';
 import 'package:lorebase/features/series/data/repositories/series_repository.dart';
 import 'package:lorebase/features/series/viewmodels/series_detail_viewmodel.dart';
-import 'package:lorebase/features/tracking/data/models/tracked_series_model.dart';
+import 'package:lorebase/features/tracking/data/models/tracked_media_model.dart';
+import 'package:lorebase/features/tracking/data/models/tracked_media_summary_model.dart';
+import 'package:lorebase/features/tracking/data/models/media_type.dart';
 import 'package:lorebase/features/tracking/data/repositories/tracking_repository.dart';
 
 class FakeSeriesRepo implements SeriesRepository {
@@ -28,28 +30,38 @@ class FakeSeriesRepo implements SeriesRepository {
 }
 
 class FakeTrackingRepo implements TrackingRepository {
-  List<TrackedSeriesModel> trackingResults = [];
+  List<TrackedMediaModel> trackingResults = [];
   bool shouldThrowTracking = false;
-  TrackedSeriesModel? lastStartedTracking;
-  TrackedSeriesModel? lastUpdatedTracking;
-  String? lastDeletedSeriesId;
+  TrackedMediaModel? lastStartedTracking;
+  TrackedMediaModel? lastUpdatedTracking;
+  String? lastDeletedMediaId;
+  MediaType? lastMediaType;
   Map<String, dynamic>? lastUpdatedFields;
 
   @override
-  Future<List<TrackedSeriesModel>> getTracking(
-      {String? status, int pageSize = 20, int page = 1}) async {
+  Future<List<TrackedMediaModel>> getTracking({
+    String? status,
+    MediaType? mediaType,
+    int pageSize = 20,
+    int page = 1,
+  }) async {
+    lastMediaType = mediaType;
     if (shouldThrowTracking) throw Exception('failed');
     return trackingResults;
   }
 
   @override
-  Future<TrackedSeriesModel> startTracking(
-      String seriesId, String status) async {
+  Future<TrackedMediaModel> startTracking(
+    String mediaId,
+    MediaType mediaType,
+    String status,
+  ) async {
     final now = DateTime.now();
-    final result = TrackedSeriesModel(
-      trackingId: 'track-$seriesId',
+    final result = TrackedMediaModel(
+      trackingId: 'track-$mediaId',
       userId: 'user-1',
-      seriesId: seriesId,
+      mediaType: mediaType,
+      mediaId: mediaId,
       status: status,
       addedAt: now,
       lastUpdated: now,
@@ -59,21 +71,25 @@ class FakeTrackingRepo implements TrackingRepository {
   }
 
   @override
-  Future<TrackedSeriesModel> updateTracking(String seriesId,
-      {String? status,
-      int? seriesRating,
-      String? seriesReview,
-      List<Map<String, dynamic>>? seasonRatings}) async {
+  Future<TrackedMediaModel> updateTracking(
+    String mediaId, {
+    required MediaType mediaType,
+    String? status,
+    int? rating,
+    String? review,
+    List<Map<String, dynamic>>? seasonRatings,
+  }) async {
     lastUpdatedFields = <String, dynamic>{
-      'seriesRating': seriesRating,
-      'seriesReview': seriesReview,
+      'rating': rating,
+      'review': review,
       'status': status,
     };
     final now = DateTime.now();
-    final result = TrackedSeriesModel(
-      trackingId: 'track-$seriesId',
+    final result = TrackedMediaModel(
+      trackingId: 'track-$mediaId',
       userId: 'user-1',
-      seriesId: seriesId,
+      mediaType: mediaType,
+      mediaId: mediaId,
       status: status ?? '',
       addedAt: now,
       lastUpdated: now,
@@ -83,8 +99,11 @@ class FakeTrackingRepo implements TrackingRepository {
   }
 
   @override
-  Future<void> deleteTracking(String seriesId) async {
-    lastDeletedSeriesId = seriesId;
+  Future<void> deleteTracking(
+    String mediaId, {
+    required MediaType mediaType,
+  }) async {
+    lastDeletedMediaId = mediaId;
   }
 }
 
@@ -106,12 +125,17 @@ void main() {
         ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
       final trackingRepo = FakeTrackingRepo()
         ..trackingResults = [
-          TrackedSeriesModel(
+          TrackedMediaModel(
             trackingId: 'track-42',
             userId: 'user-1',
-            seriesId: '42',
+            mediaType: MediaType.series,
+            mediaId: '42',
             status: 'WATCHING',
-            series: const SeriesModel(tmdbId: 42, title: 'Test Show'),
+            media: TrackedMediaSummaryModel(
+              tmdbId: 42,
+              title: 'Test Show',
+              mediaType: MediaType.series,
+            ),
             addedAt: DateTime.now(),
             lastUpdated: DateTime.now(),
           ),
@@ -128,6 +152,7 @@ void main() {
       expect(state.series.title, 'Test Show');
       expect(state.tracking, isNotNull);
       expect(state.tracking!.status, 'WATCHING');
+      expect(trackingRepo.lastMediaType, MediaType.series);
     });
 
     test('build() with no matching tracking returns null tracking', () async {
@@ -135,10 +160,11 @@ void main() {
         ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
       final trackingRepo = FakeTrackingRepo()
         ..trackingResults = [
-          TrackedSeriesModel(
+          TrackedMediaModel(
             trackingId: 'track-99',
             userId: 'user-1',
-            seriesId: '99',
+            mediaType: MediaType.series,
+            mediaId: '99',
             status: 'WATCHING',
             addedAt: DateTime.now(),
             lastUpdated: DateTime.now(),
@@ -172,17 +198,22 @@ void main() {
       expect(state.tracking, isNull);
     });
 
-    test('build() matches tracking by nested series.tmdbId', () async {
+    test('build() matches tracking by nested media.tmdbId', () async {
       final seriesRepo = FakeSeriesRepo()
         ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
       final trackingRepo = FakeTrackingRepo()
         ..trackingResults = [
-          TrackedSeriesModel(
+          TrackedMediaModel(
             trackingId: 'track-not42',
             userId: 'user-1',
-            seriesId: 'not42',
+            mediaType: MediaType.series,
+            mediaId: 'not42',
             status: 'WATCHING',
-            series: const SeriesModel(tmdbId: 42, title: 'Test Show'),
+            media: TrackedMediaSummaryModel(
+              tmdbId: 42,
+              title: 'Test Show',
+              mediaType: MediaType.series,
+            ),
             addedAt: DateTime.now(),
             lastUpdated: DateTime.now(),
           ),
@@ -227,12 +258,12 @@ void main() {
       await container.read(seriesDetailViewModelProvider(42).future);
       await container
           .read(seriesDetailViewModelProvider(42).notifier)
-          .addTracking('WATCHING', seriesRating: 8, seriesReview: 'Great!');
+          .addTracking('WATCHING', rating: 8, review: 'Great!');
 
       expect(trackingRepo.lastStartedTracking, isNotNull);
       expect(trackingRepo.lastUpdatedFields, isNotNull);
-      expect(trackingRepo.lastUpdatedFields!['seriesRating'], 8);
-      expect(trackingRepo.lastUpdatedFields!['seriesReview'], 'Great!');
+      expect(trackingRepo.lastUpdatedFields!['rating'], 8);
+      expect(trackingRepo.lastUpdatedFields!['review'], 'Great!');
     });
 
     test('updateTracking() with rating calls repo', () async {
@@ -240,12 +271,17 @@ void main() {
         ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
       final trackingRepo = FakeTrackingRepo()
         ..trackingResults = [
-          TrackedSeriesModel(
+          TrackedMediaModel(
             trackingId: 'track-42',
             userId: 'user-1',
-            seriesId: '42',
+            mediaType: MediaType.series,
+            mediaId: '42',
             status: 'WATCHING',
-            series: const SeriesModel(tmdbId: 42, title: 'Test Show'),
+            media: TrackedMediaSummaryModel(
+              tmdbId: 42,
+              title: 'Test Show',
+              mediaType: MediaType.series,
+            ),
             addedAt: DateTime.now(),
             lastUpdated: DateTime.now(),
           ),
@@ -257,25 +293,30 @@ void main() {
       await container.read(seriesDetailViewModelProvider(42).future);
       await container
           .read(seriesDetailViewModelProvider(42).notifier)
-          .updateTracking(seriesRating: 8, seriesReview: 'Great');
+          .updateTracking(rating: 8, review: 'Great');
 
       expect(trackingRepo.lastUpdatedFields, isNotNull);
-      expect(trackingRepo.lastUpdatedFields!['seriesRating'], 8);
-      expect(trackingRepo.lastUpdatedFields!['seriesReview'], 'Great');
+      expect(trackingRepo.lastUpdatedFields!['rating'], 8);
+      expect(trackingRepo.lastUpdatedFields!['review'], 'Great');
     });
 
-    test('removeTracking() calls deleteTracking with correct seriesId',
+    test('removeTracking() calls deleteTracking with correct mediaId',
         () async {
       final seriesRepo = FakeSeriesRepo()
         ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
       final trackingRepo = FakeTrackingRepo()
         ..trackingResults = [
-          TrackedSeriesModel(
+          TrackedMediaModel(
             trackingId: 'track-42',
             userId: 'user-1',
-            seriesId: '42',
+            mediaType: MediaType.series,
+            mediaId: '42',
             status: 'WATCHING',
-            series: const SeriesModel(tmdbId: 42, title: 'Test Show'),
+            media: TrackedMediaSummaryModel(
+              tmdbId: 42,
+              title: 'Test Show',
+              mediaType: MediaType.series,
+            ),
             addedAt: DateTime.now(),
             lastUpdated: DateTime.now(),
           ),
@@ -289,7 +330,7 @@ void main() {
           .read(seriesDetailViewModelProvider(42).notifier)
           .removeTracking();
 
-      expect(trackingRepo.lastDeletedSeriesId, '42');
+      expect(trackingRepo.lastDeletedMediaId, '42');
     });
 
     test('updateTracking() no-ops when state is null', () async {
@@ -301,7 +342,7 @@ void main() {
 
       await container
           .read(seriesDetailViewModelProvider(42).notifier)
-          .updateTracking(seriesRating: 5);
+          .updateTracking(rating: 5);
 
       expect(trackingRepo.lastUpdatedFields, isNull);
     });
@@ -319,7 +360,7 @@ void main() {
           .read(seriesDetailViewModelProvider(42).notifier)
           .removeTracking();
 
-      expect(trackingRepo.lastDeletedSeriesId, isNull);
+      expect(trackingRepo.lastDeletedMediaId, isNull);
     });
 
     test('addTracking() no-ops when state is null', () async {
@@ -347,7 +388,7 @@ void main() {
       await container.read(seriesDetailViewModelProvider(42).future);
       await container
           .read(seriesDetailViewModelProvider(42).notifier)
-          .addTracking('WATCHING', seriesReview: '');
+          .addTracking('WATCHING', review: '');
 
       expect(trackingRepo.lastStartedTracking, isNotNull);
       expect(trackingRepo.lastUpdatedFields, isNull);
@@ -364,11 +405,11 @@ void main() {
       await container.read(seriesDetailViewModelProvider(42).future);
       await container
           .read(seriesDetailViewModelProvider(42).notifier)
-          .addTracking('WATCHING', seriesReview: 'Nice show');
+          .addTracking('WATCHING', review: 'Nice show');
 
       expect(trackingRepo.lastStartedTracking, isNotNull);
       expect(trackingRepo.lastUpdatedFields, isNotNull);
-      expect(trackingRepo.lastUpdatedFields!['seriesReview'], 'Nice show');
+      expect(trackingRepo.lastUpdatedFields!['review'], 'Nice show');
     });
   });
 }

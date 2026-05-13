@@ -2,23 +2,36 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/providers/core_providers.dart';
-import '../models/tracked_series_model.dart';
+import '../models/tracked_media_model.dart';
+import '../models/media_type.dart';
 
 abstract class TrackingRepository {
-  Future<List<TrackedSeriesModel>> getTracking({
+  Future<List<TrackedMediaModel>> getTracking({
     String? status,
+    MediaType? mediaType,
     int page = 1,
     int pageSize = 20,
   });
-  Future<TrackedSeriesModel> startTracking(String seriesId, String status);
-  Future<TrackedSeriesModel> updateTracking(
-    String seriesId, {
+
+  Future<TrackedMediaModel> startTracking(
+    String mediaId,
+    MediaType mediaType,
+    String status,
+  );
+
+  Future<TrackedMediaModel> updateTracking(
+    String mediaId, {
+    required MediaType mediaType,
     String? status,
-    int? seriesRating,
-    String? seriesReview,
+    int? rating,
+    String? review,
     List<Map<String, dynamic>>? seasonRatings,
   });
-  Future<void> deleteTracking(String seriesId);
+
+  Future<void> deleteTracking(
+    String mediaId, {
+    required MediaType mediaType,
+  });
 }
 
 class TrackingRepositoryImpl implements TrackingRepository {
@@ -27,8 +40,9 @@ class TrackingRepositoryImpl implements TrackingRepository {
   TrackingRepositoryImpl(this._dio);
 
   @override
-  Future<List<TrackedSeriesModel>> getTracking({
+  Future<List<TrackedMediaModel>> getTracking({
     String? status,
+    MediaType? mediaType,
     int page = 1,
     int pageSize = 20,
   }) async {
@@ -37,13 +51,14 @@ class TrackingRepositoryImpl implements TrackingRepository {
         '/tracking',
         queryParameters: {
           if (status != null) 'status': status,
+          if (mediaType != null) 'mediaType': mediaType.apiValue,
           'page': page,
           'pageSize': pageSize,
-          'includeSeries': true,
+          'includeMedia': true,
         },
       );
       final items = response.data['items'] as List;
-      return items.map((json) => TrackedSeriesModel.fromJson(json)).toList();
+      return items.map((json) => TrackedMediaModel.fromJson(json)).toList();
     } on DioException catch (e) {
       throw ServerException(
         message: e.message ?? 'Failed to load tracking',
@@ -53,16 +68,21 @@ class TrackingRepositoryImpl implements TrackingRepository {
   }
 
   @override
-  Future<TrackedSeriesModel> startTracking(String seriesId, String status) async {
+  Future<TrackedMediaModel> startTracking(
+    String mediaId,
+    MediaType mediaType,
+    String status,
+  ) async {
     try {
       final response = await _dio.post(
         '/tracking',
         data: {
-          'seriesId': seriesId,
+          'mediaId': mediaId,
+          'mediaType': mediaType.apiValue,
           'status': status,
         },
       );
-      return TrackedSeriesModel.fromJson(response.data);
+      return TrackedMediaModel.fromJson(response.data);
     } on DioException catch (e) {
       throw ServerException(
         message: e.message ?? 'Failed to start tracking',
@@ -72,25 +92,28 @@ class TrackingRepositoryImpl implements TrackingRepository {
   }
 
   @override
-  Future<TrackedSeriesModel> updateTracking(
-    String seriesId, {
+  Future<TrackedMediaModel> updateTracking(
+    String mediaId, {
+    required MediaType mediaType,
     String? status,
-    int? seriesRating,
-    String? seriesReview,
+    int? rating,
+    String? review,
     List<Map<String, dynamic>>? seasonRatings,
   }) async {
     try {
-      final data = <String, dynamic>{};
-      if (status != null) data['status'] = status;
-      if (seriesRating != null) data['seriesRating'] = seriesRating;
-      if (seriesReview != null) data['seriesReview'] = seriesReview;
-      if (seasonRatings != null) data['seasonRatings'] = seasonRatings;
+      final data = <String, dynamic>{
+        'mediaType': mediaType.apiValue,
+        if (status != null) 'status': status,
+        if (rating != null) 'rating': rating,
+        if (review != null) 'review': review,
+        if (seasonRatings != null) 'seasonRatings': seasonRatings,
+      };
 
       final response = await _dio.put(
-        '/tracking/$seriesId',
+        '/tracking/$mediaId',
         data: data,
       );
-      return TrackedSeriesModel.fromJson(response.data);
+      return TrackedMediaModel.fromJson(response.data);
     } on DioException catch (e) {
       throw ServerException(
         message: e.message ?? 'Failed to update tracking',
@@ -100,9 +123,12 @@ class TrackingRepositoryImpl implements TrackingRepository {
   }
 
   @override
-  Future<void> deleteTracking(String seriesId) async {
+  Future<void> deleteTracking(
+    String mediaId, {
+    required MediaType mediaType,
+  }) async {
     try {
-      await _dio.delete('/tracking/$seriesId');
+      await _dio.delete('/tracking/$mediaId', queryParameters: {'mediaType': mediaType.apiValue});
     } on DioException catch (e) {
       throw ServerException(
         message: e.message ?? 'Failed to delete tracking',

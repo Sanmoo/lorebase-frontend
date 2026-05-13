@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lorebase/features/tracking/data/repositories/tracking_repository.dart';
+import 'package:lorebase/features/tracking/data/models/media_type.dart';
 import 'package:lorebase/core/errors/exceptions.dart';
 import 'package:lorebase/core/providers/core_providers.dart';
 
@@ -31,22 +32,30 @@ ResponseBody _json(dynamic data) => ResponseBody.fromString(
 
 final now = DateTime.now().toIso8601String();
 
-Map<String, dynamic> _trackingJson(String id) => {
+Map<String, dynamic> _trackingJson(String id, String mediaType) => {
       'trackingId': id,
       'userId': 'user-1',
-      'seriesId': '123',
+      'mediaType': mediaType,
+      'mediaId': '123',
       'status': 'WATCHING',
+      'rating': 8,
+      'review': 'Great!',
       'addedAt': now,
       'lastUpdated': now,
+      'media': {
+        'tmdbId': 123,
+        'title': mediaType == 'movie' ? 'Movie 123' : 'Series 123',
+        'mediaType': mediaType,
+      },
     };
 
 void main() {
   group('TrackingRepositoryImpl', () {
-    test('getTracking() returns list of TrackedSeriesModel', () async {
+    test('getTracking() returns list of TrackedMediaModel', () async {
       final dio = Dio()
         ..httpClientAdapter = MockAdapter(
           onFetch: (options) => _json({
-            'items': [_trackingJson('t-1'), _trackingJson('t-2')],
+            'items': [_trackingJson('t-1', 'series'), _trackingJson('t-2', 'series')],
           }),
         );
       final repo = TrackingRepositoryImpl(dio);
@@ -57,7 +66,7 @@ void main() {
       expect(results[1].trackingId, 't-2');
     });
 
-    test('getTracking() passes status, page, pageSize, includeSeries as query params',
+    test('getTracking() passes status, mediaType, page, pageSize, includeMedia',
         () async {
       Map<String, dynamic>? capturedParams;
       final dio = Dio()
@@ -69,12 +78,18 @@ void main() {
         );
       final repo = TrackingRepositoryImpl(dio);
 
-      await repo.getTracking(status: 'WATCHING', page: 2, pageSize: 10);
-      expect(capturedParams, isNotNull);
+      await repo.getTracking(
+        status: 'WATCHING',
+        mediaType: MediaType.movie,
+        page: 2,
+        pageSize: 10,
+      );
+
       expect(capturedParams!['status'], 'WATCHING');
+      expect(capturedParams!['mediaType'], 'movie');
       expect(capturedParams!['page'], 2);
       expect(capturedParams!['pageSize'], 10);
-      expect(capturedParams!['includeSeries'], true);
+      expect(capturedParams!['includeMedia'], true);
     });
 
     test('getTracking() throws ServerException on DioException', () async {
@@ -93,14 +108,14 @@ void main() {
       );
     });
 
-    test('startTracking() POSTs and returns TrackedSeriesModel', () async {
+    test('startTracking() POSTs and returns TrackedMediaModel', () async {
       final dio = Dio()
         ..httpClientAdapter = MockAdapter(
-          onFetch: (options) => _json(_trackingJson('t-new')),
+          onFetch: (options) => _json(_trackingJson('t-new', 'series')),
         );
       final repo = TrackingRepositoryImpl(dio);
 
-      final result = await repo.startTracking('series-1', 'WATCHING');
+      final result = await repo.startTracking('series-1', MediaType.series, 'WATCHING');
       expect(result.trackingId, 't-new');
       expect(result.status, 'WATCHING');
     });
@@ -116,23 +131,24 @@ void main() {
       final repo = TrackingRepositoryImpl(dio);
 
       expect(
-        () => repo.startTracking('1', 'WATCHING'),
+        () => repo.startTracking('1', MediaType.series, 'WATCHING'),
         throwsA(isA<ServerException>()),
       );
     });
 
-    test('updateTracking() PUTs and returns TrackedSeriesModel', () async {
+    test('updateTracking() PUTs and returns TrackedMediaModel', () async {
       final dio = Dio()
         ..httpClientAdapter = MockAdapter(
-          onFetch: (options) => _json(_trackingJson('t-updated')),
+          onFetch: (options) => _json(_trackingJson('t-updated', 'series')),
         );
       final repo = TrackingRepositoryImpl(dio);
 
       final result = await repo.updateTracking(
         'series-1',
+        mediaType: MediaType.series,
         status: 'COMPLETED',
-        seriesRating: 8,
-        seriesReview: 'Great!',
+        rating: 8,
+        review: 'Great!',
       );
       expect(result.trackingId, 't-updated');
       expect(result.status, 'WATCHING'); // from _trackingJson default
@@ -149,20 +165,25 @@ void main() {
       final repo = TrackingRepositoryImpl(dio);
 
       expect(
-        () => repo.updateTracking('1'),
+        () => repo.updateTracking('1', mediaType: MediaType.series),
         throwsA(isA<ServerException>()),
       );
     });
 
-    test('deleteTracking() completes without error', () async {
+    test('deleteTracking() sends mediaType as query parameter', () async {
+      Map<String, dynamic>? capturedParams;
       final dio = Dio()
         ..httpClientAdapter = MockAdapter(
-          onFetch: (options) => ResponseBody.fromString('', 204),
+          onFetch: (options) {
+            capturedParams = options.queryParameters;
+            return ResponseBody.fromString('', 204);
+          },
         );
       final repo = TrackingRepositoryImpl(dio);
 
-      // Should complete without throwing
-      await repo.deleteTracking('series-1');
+      await repo.deleteTracking('series-1', mediaType: MediaType.series);
+
+      expect(capturedParams!['mediaType'], 'series');
     });
 
     test('deleteTracking() throws ServerException on DioException', () async {
@@ -176,7 +197,7 @@ void main() {
       final repo = TrackingRepositoryImpl(dio);
 
       expect(
-        () => repo.deleteTracking('1'),
+        () => repo.deleteTracking('1', mediaType: MediaType.series),
         throwsA(isA<ServerException>()),
       );
     });
@@ -187,13 +208,14 @@ void main() {
         ..httpClientAdapter = MockAdapter(
           onFetch: (options) {
             capturedData = options.data as Map<String, dynamic>?;
-            return _json(_trackingJson('t-updated'));
+            return _json(_trackingJson('t-updated', 'series'));
           },
         );
       final repo = TrackingRepositoryImpl(dio);
 
       await repo.updateTracking(
         'series-1',
+        mediaType: MediaType.series,
         status: 'WATCHING',
         seasonRatings: [
           {'seasonNumber': 1, 'rating': 8},

@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'tracked_series_model.dart';
+part of 'tracked_media_model.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -14,78 +14,83 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-TrackedSeriesModel _$TrackedSeriesModelFromJson(Map<String, dynamic> json) {
-  return _TrackedSeriesModel.fromJson(json);
+TrackedMediaModel _$TrackedMediaModelFromJson(Map<String, dynamic> json) {
+  return _TrackedMediaModel.fromJson(json);
 }
 
 /// @nodoc
-mixin _$TrackedSeriesModel {
+mixin _$TrackedMediaModel {
   String get trackingId => throw _privateConstructorUsedError;
   String get userId => throw _privateConstructorUsedError;
-  String get seriesId => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson)
+  MediaType get mediaType => throw _privateConstructorUsedError;
+  String get mediaId => throw _privateConstructorUsedError;
   String get status => throw _privateConstructorUsedError;
-  int? get seriesRating => throw _privateConstructorUsedError;
-  String? get seriesReview => throw _privateConstructorUsedError;
+  int? get rating => throw _privateConstructorUsedError;
+  String? get review => throw _privateConstructorUsedError;
   List<SeasonRatingModel> get seasonRatings =>
       throw _privateConstructorUsedError;
-  SeriesModel? get series => throw _privateConstructorUsedError;
+  TrackedMediaSummaryModel? get media => throw _privateConstructorUsedError;
   DateTime get addedAt => throw _privateConstructorUsedError;
   DateTime get lastUpdated => throw _privateConstructorUsedError;
 
-  /// Serializes this TrackedSeriesModel to a JSON map.
+  /// Serializes this TrackedMediaModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
-  /// Create a copy of TrackedSeriesModel
+  /// Create a copy of TrackedMediaModel
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $TrackedSeriesModelCopyWith<TrackedSeriesModel> get copyWith =>
+  $TrackedMediaModelCopyWith<TrackedMediaModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $TrackedSeriesModelCopyWith<$Res> {
-  factory $TrackedSeriesModelCopyWith(
-          TrackedSeriesModel value, $Res Function(TrackedSeriesModel) then) =
-      _$TrackedSeriesModelCopyWithImpl<$Res, TrackedSeriesModel>;
+abstract class $TrackedMediaModelCopyWith<$Res> {
+  factory $TrackedMediaModelCopyWith(
+          TrackedMediaModel value, $Res Function(TrackedMediaModel) then) =
+      _$TrackedMediaModelCopyWithImpl<$Res, TrackedMediaModel>;
   @useResult
   $Res call(
       {String trackingId,
       String userId,
-      String seriesId,
+      @JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson)
+      MediaType mediaType,
+      String mediaId,
       String status,
-      int? seriesRating,
-      String? seriesReview,
+      int? rating,
+      String? review,
       List<SeasonRatingModel> seasonRatings,
-      SeriesModel? series,
+      TrackedMediaSummaryModel? media,
       DateTime addedAt,
       DateTime lastUpdated});
 
-  $SeriesModelCopyWith<$Res>? get series;
+  $TrackedMediaSummaryModelCopyWith<$Res>? get media;
 }
 
 /// @nodoc
-class _$TrackedSeriesModelCopyWithImpl<$Res, $Val extends TrackedSeriesModel>
-    implements $TrackedSeriesModelCopyWith<$Res> {
-  _$TrackedSeriesModelCopyWithImpl(this._value, this._then);
+class _$TrackedMediaModelCopyWithImpl<$Res, $Val extends TrackedMediaModel>
+    implements $TrackedMediaModelCopyWith<$Res> {
+  _$TrackedMediaModelCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of TrackedSeriesModel
+  /// Create a copy of TrackedMediaModel
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? trackingId = null,
     Object? userId = null,
-    Object? seriesId = null,
+    Object? mediaType = null,
+    Object? mediaId = null,
     Object? status = null,
-    Object? seriesRating = freezed,
-    Object? seriesReview = freezed,
+    Object? rating = freezed,
+    Object? review = freezed,
     Object? seasonRatings = null,
-    Object? series = freezed,
+    Object? media = freezed,
     Object? addedAt = null,
     Object? lastUpdated = null,
   }) {
@@ -98,30 +103,34 @@ class _$TrackedSeriesModelCopyWithImpl<$Res, $Val extends TrackedSeriesModel>
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
               as String,
-      seriesId: null == seriesId
-          ? _value.seriesId
-          : seriesId // ignore: cast_nullable_to_non_nullable
+      mediaType: null == mediaType
+          ? _value.mediaType
+          : mediaType // ignore: cast_nullable_to_non_nullable
+              as MediaType,
+      mediaId: null == mediaId
+          ? _value.mediaId
+          : mediaId // ignore: cast_nullable_to_non_nullable
               as String,
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as String,
-      seriesRating: freezed == seriesRating
-          ? _value.seriesRating
-          : seriesRating // ignore: cast_nullable_to_non_nullable
+      rating: freezed == rating
+          ? _value.rating
+          : rating // ignore: cast_nullable_to_non_nullable
               as int?,
-      seriesReview: freezed == seriesReview
-          ? _value.seriesReview
-          : seriesReview // ignore: cast_nullable_to_non_nullable
+      review: freezed == review
+          ? _value.review
+          : review // ignore: cast_nullable_to_non_nullable
               as String?,
       seasonRatings: null == seasonRatings
           ? _value.seasonRatings
           : seasonRatings // ignore: cast_nullable_to_non_nullable
               as List<SeasonRatingModel>,
-      series: freezed == series
-          ? _value.series
-          : series // ignore: cast_nullable_to_non_nullable
-              as SeriesModel?,
+      media: freezed == media
+          ? _value.media
+          : media // ignore: cast_nullable_to_non_nullable
+              as TrackedMediaSummaryModel?,
       addedAt: null == addedAt
           ? _value.addedAt
           : addedAt // ignore: cast_nullable_to_non_nullable
@@ -133,70 +142,73 @@ class _$TrackedSeriesModelCopyWithImpl<$Res, $Val extends TrackedSeriesModel>
     ) as $Val);
   }
 
-  /// Create a copy of TrackedSeriesModel
+  /// Create a copy of TrackedMediaModel
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $SeriesModelCopyWith<$Res>? get series {
-    if (_value.series == null) {
+  $TrackedMediaSummaryModelCopyWith<$Res>? get media {
+    if (_value.media == null) {
       return null;
     }
 
-    return $SeriesModelCopyWith<$Res>(_value.series!, (value) {
-      return _then(_value.copyWith(series: value) as $Val);
+    return $TrackedMediaSummaryModelCopyWith<$Res>(_value.media!, (value) {
+      return _then(_value.copyWith(media: value) as $Val);
     });
   }
 }
 
 /// @nodoc
-abstract class _$$TrackedSeriesModelImplCopyWith<$Res>
-    implements $TrackedSeriesModelCopyWith<$Res> {
-  factory _$$TrackedSeriesModelImplCopyWith(_$TrackedSeriesModelImpl value,
-          $Res Function(_$TrackedSeriesModelImpl) then) =
-      __$$TrackedSeriesModelImplCopyWithImpl<$Res>;
+abstract class _$$TrackedMediaModelImplCopyWith<$Res>
+    implements $TrackedMediaModelCopyWith<$Res> {
+  factory _$$TrackedMediaModelImplCopyWith(_$TrackedMediaModelImpl value,
+          $Res Function(_$TrackedMediaModelImpl) then) =
+      __$$TrackedMediaModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
       {String trackingId,
       String userId,
-      String seriesId,
+      @JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson)
+      MediaType mediaType,
+      String mediaId,
       String status,
-      int? seriesRating,
-      String? seriesReview,
+      int? rating,
+      String? review,
       List<SeasonRatingModel> seasonRatings,
-      SeriesModel? series,
+      TrackedMediaSummaryModel? media,
       DateTime addedAt,
       DateTime lastUpdated});
 
   @override
-  $SeriesModelCopyWith<$Res>? get series;
+  $TrackedMediaSummaryModelCopyWith<$Res>? get media;
 }
 
 /// @nodoc
-class __$$TrackedSeriesModelImplCopyWithImpl<$Res>
-    extends _$TrackedSeriesModelCopyWithImpl<$Res, _$TrackedSeriesModelImpl>
-    implements _$$TrackedSeriesModelImplCopyWith<$Res> {
-  __$$TrackedSeriesModelImplCopyWithImpl(_$TrackedSeriesModelImpl _value,
-      $Res Function(_$TrackedSeriesModelImpl) _then)
+class __$$TrackedMediaModelImplCopyWithImpl<$Res>
+    extends _$TrackedMediaModelCopyWithImpl<$Res, _$TrackedMediaModelImpl>
+    implements _$$TrackedMediaModelImplCopyWith<$Res> {
+  __$$TrackedMediaModelImplCopyWithImpl(_$TrackedMediaModelImpl _value,
+      $Res Function(_$TrackedMediaModelImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of TrackedSeriesModel
+  /// Create a copy of TrackedMediaModel
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? trackingId = null,
     Object? userId = null,
-    Object? seriesId = null,
+    Object? mediaType = null,
+    Object? mediaId = null,
     Object? status = null,
-    Object? seriesRating = freezed,
-    Object? seriesReview = freezed,
+    Object? rating = freezed,
+    Object? review = freezed,
     Object? seasonRatings = null,
-    Object? series = freezed,
+    Object? media = freezed,
     Object? addedAt = null,
     Object? lastUpdated = null,
   }) {
-    return _then(_$TrackedSeriesModelImpl(
+    return _then(_$TrackedMediaModelImpl(
       trackingId: null == trackingId
           ? _value.trackingId
           : trackingId // ignore: cast_nullable_to_non_nullable
@@ -205,30 +217,34 @@ class __$$TrackedSeriesModelImplCopyWithImpl<$Res>
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
               as String,
-      seriesId: null == seriesId
-          ? _value.seriesId
-          : seriesId // ignore: cast_nullable_to_non_nullable
+      mediaType: null == mediaType
+          ? _value.mediaType
+          : mediaType // ignore: cast_nullable_to_non_nullable
+              as MediaType,
+      mediaId: null == mediaId
+          ? _value.mediaId
+          : mediaId // ignore: cast_nullable_to_non_nullable
               as String,
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as String,
-      seriesRating: freezed == seriesRating
-          ? _value.seriesRating
-          : seriesRating // ignore: cast_nullable_to_non_nullable
+      rating: freezed == rating
+          ? _value.rating
+          : rating // ignore: cast_nullable_to_non_nullable
               as int?,
-      seriesReview: freezed == seriesReview
-          ? _value.seriesReview
-          : seriesReview // ignore: cast_nullable_to_non_nullable
+      review: freezed == review
+          ? _value.review
+          : review // ignore: cast_nullable_to_non_nullable
               as String?,
       seasonRatings: null == seasonRatings
           ? _value._seasonRatings
           : seasonRatings // ignore: cast_nullable_to_non_nullable
               as List<SeasonRatingModel>,
-      series: freezed == series
-          ? _value.series
-          : series // ignore: cast_nullable_to_non_nullable
-              as SeriesModel?,
+      media: freezed == media
+          ? _value.media
+          : media // ignore: cast_nullable_to_non_nullable
+              as TrackedMediaSummaryModel?,
       addedAt: null == addedAt
           ? _value.addedAt
           : addedAt // ignore: cast_nullable_to_non_nullable
@@ -243,35 +259,40 @@ class __$$TrackedSeriesModelImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$TrackedSeriesModelImpl implements _TrackedSeriesModel {
-  const _$TrackedSeriesModelImpl(
+class _$TrackedMediaModelImpl implements _TrackedMediaModel {
+  const _$TrackedMediaModelImpl(
       {required this.trackingId,
       required this.userId,
-      required this.seriesId,
+      @JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson)
+      required this.mediaType,
+      required this.mediaId,
       required this.status,
-      this.seriesRating,
-      this.seriesReview,
+      this.rating,
+      this.review,
       final List<SeasonRatingModel> seasonRatings = const [],
-      this.series,
+      this.media,
       required this.addedAt,
       required this.lastUpdated})
       : _seasonRatings = seasonRatings;
 
-  factory _$TrackedSeriesModelImpl.fromJson(Map<String, dynamic> json) =>
-      _$$TrackedSeriesModelImplFromJson(json);
+  factory _$TrackedMediaModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$TrackedMediaModelImplFromJson(json);
 
   @override
   final String trackingId;
   @override
   final String userId;
   @override
-  final String seriesId;
+  @JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson)
+  final MediaType mediaType;
+  @override
+  final String mediaId;
   @override
   final String status;
   @override
-  final int? seriesRating;
+  final int? rating;
   @override
-  final String? seriesReview;
+  final String? review;
   final List<SeasonRatingModel> _seasonRatings;
   @override
   @JsonKey()
@@ -282,7 +303,7 @@ class _$TrackedSeriesModelImpl implements _TrackedSeriesModel {
   }
 
   @override
-  final SeriesModel? series;
+  final TrackedMediaSummaryModel? media;
   @override
   final DateTime addedAt;
   @override
@@ -290,27 +311,26 @@ class _$TrackedSeriesModelImpl implements _TrackedSeriesModel {
 
   @override
   String toString() {
-    return 'TrackedSeriesModel(trackingId: $trackingId, userId: $userId, seriesId: $seriesId, status: $status, seriesRating: $seriesRating, seriesReview: $seriesReview, seasonRatings: $seasonRatings, series: $series, addedAt: $addedAt, lastUpdated: $lastUpdated)';
+    return 'TrackedMediaModel(trackingId: $trackingId, userId: $userId, mediaType: $mediaType, mediaId: $mediaId, status: $status, rating: $rating, review: $review, seasonRatings: $seasonRatings, media: $media, addedAt: $addedAt, lastUpdated: $lastUpdated)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$TrackedSeriesModelImpl &&
+            other is _$TrackedMediaModelImpl &&
             (identical(other.trackingId, trackingId) ||
                 other.trackingId == trackingId) &&
             (identical(other.userId, userId) || other.userId == userId) &&
-            (identical(other.seriesId, seriesId) ||
-                other.seriesId == seriesId) &&
+            (identical(other.mediaType, mediaType) ||
+                other.mediaType == mediaType) &&
+            (identical(other.mediaId, mediaId) || other.mediaId == mediaId) &&
             (identical(other.status, status) || other.status == status) &&
-            (identical(other.seriesRating, seriesRating) ||
-                other.seriesRating == seriesRating) &&
-            (identical(other.seriesReview, seriesReview) ||
-                other.seriesReview == seriesReview) &&
+            (identical(other.rating, rating) || other.rating == rating) &&
+            (identical(other.review, review) || other.review == review) &&
             const DeepCollectionEquality()
                 .equals(other._seasonRatings, _seasonRatings) &&
-            (identical(other.series, series) || other.series == series) &&
+            (identical(other.media, media) || other.media == media) &&
             (identical(other.addedAt, addedAt) || other.addedAt == addedAt) &&
             (identical(other.lastUpdated, lastUpdated) ||
                 other.lastUpdated == lastUpdated));
@@ -322,73 +342,79 @@ class _$TrackedSeriesModelImpl implements _TrackedSeriesModel {
       runtimeType,
       trackingId,
       userId,
-      seriesId,
+      mediaType,
+      mediaId,
       status,
-      seriesRating,
-      seriesReview,
+      rating,
+      review,
       const DeepCollectionEquality().hash(_seasonRatings),
-      series,
+      media,
       addedAt,
       lastUpdated);
 
-  /// Create a copy of TrackedSeriesModel
+  /// Create a copy of TrackedMediaModel
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$TrackedSeriesModelImplCopyWith<_$TrackedSeriesModelImpl> get copyWith =>
-      __$$TrackedSeriesModelImplCopyWithImpl<_$TrackedSeriesModelImpl>(
+  _$$TrackedMediaModelImplCopyWith<_$TrackedMediaModelImpl> get copyWith =>
+      __$$TrackedMediaModelImplCopyWithImpl<_$TrackedMediaModelImpl>(
           this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$TrackedSeriesModelImplToJson(
+    return _$$TrackedMediaModelImplToJson(
       this,
     );
   }
 }
 
-abstract class _TrackedSeriesModel implements TrackedSeriesModel {
-  const factory _TrackedSeriesModel(
+abstract class _TrackedMediaModel implements TrackedMediaModel {
+  const factory _TrackedMediaModel(
       {required final String trackingId,
       required final String userId,
-      required final String seriesId,
+      @JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson)
+      required final MediaType mediaType,
+      required final String mediaId,
       required final String status,
-      final int? seriesRating,
-      final String? seriesReview,
+      final int? rating,
+      final String? review,
       final List<SeasonRatingModel> seasonRatings,
-      final SeriesModel? series,
+      final TrackedMediaSummaryModel? media,
       required final DateTime addedAt,
-      required final DateTime lastUpdated}) = _$TrackedSeriesModelImpl;
+      required final DateTime lastUpdated}) = _$TrackedMediaModelImpl;
 
-  factory _TrackedSeriesModel.fromJson(Map<String, dynamic> json) =
-      _$TrackedSeriesModelImpl.fromJson;
+  factory _TrackedMediaModel.fromJson(Map<String, dynamic> json) =
+      _$TrackedMediaModelImpl.fromJson;
 
   @override
   String get trackingId;
   @override
   String get userId;
   @override
-  String get seriesId;
+  @JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson)
+  MediaType get mediaType;
+  @override
+  String get mediaId;
   @override
   String get status;
   @override
-  int? get seriesRating;
+  int? get rating;
   @override
-  String? get seriesReview;
+  String? get review;
   @override
   List<SeasonRatingModel> get seasonRatings;
   @override
-  SeriesModel? get series;
+  TrackedMediaSummaryModel? get media;
   @override
   DateTime get addedAt;
   @override
   DateTime get lastUpdated;
 
-  /// Create a copy of TrackedSeriesModel
+  /// Create a copy of TrackedMediaModel
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$TrackedSeriesModelImplCopyWith<_$TrackedSeriesModelImpl> get copyWith =>
+  _$$TrackedMediaModelImplCopyWith<_$TrackedMediaModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

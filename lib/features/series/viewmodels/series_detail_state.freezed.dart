@@ -17,7 +17,7 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$SeriesDetailState {
   SeriesModel get series => throw _privateConstructorUsedError;
-  TrackedSeriesModel? get tracking => throw _privateConstructorUsedError;
+  TrackedMediaModel? get tracking => throw _privateConstructorUsedError;
 
   /// Create a copy of SeriesDetailState
   /// with the given fields replaced by the non-null parameter values.
@@ -32,10 +32,10 @@ abstract class $SeriesDetailStateCopyWith<$Res> {
           SeriesDetailState value, $Res Function(SeriesDetailState) then) =
       _$SeriesDetailStateCopyWithImpl<$Res, SeriesDetailState>;
   @useResult
-  $Res call({SeriesModel series, TrackedSeriesModel? tracking});
+  $Res call({SeriesModel series, TrackedMediaModel? tracking});
 
   $SeriesModelCopyWith<$Res> get series;
-  $TrackedSeriesModelCopyWith<$Res>? get tracking;
+  $TrackedMediaModelCopyWith<$Res>? get tracking;
 }
 
 /// @nodoc
@@ -64,7 +64,7 @@ class _$SeriesDetailStateCopyWithImpl<$Res, $Val extends SeriesDetailState>
       tracking: freezed == tracking
           ? _value.tracking
           : tracking // ignore: cast_nullable_to_non_nullable
-              as TrackedSeriesModel?,
+              as TrackedMediaModel?,
     ) as $Val);
   }
 
@@ -82,12 +82,12 @@ class _$SeriesDetailStateCopyWithImpl<$Res, $Val extends SeriesDetailState>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $TrackedSeriesModelCopyWith<$Res>? get tracking {
+  $TrackedMediaModelCopyWith<$Res>? get tracking {
     if (_value.tracking == null) {
       return null;
     }
 
-    return $TrackedSeriesModelCopyWith<$Res>(_value.tracking!, (value) {
+    return $TrackedMediaModelCopyWith<$Res>(_value.tracking!, (value) {
       return _then(_value.copyWith(tracking: value) as $Val);
     });
   }
@@ -101,12 +101,12 @@ abstract class _$$SeriesDetailStateImplCopyWith<$Res>
       __$$SeriesDetailStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({SeriesModel series, TrackedSeriesModel? tracking});
+  $Res call({SeriesModel series, TrackedMediaModel? tracking});
 
   @override
   $SeriesModelCopyWith<$Res> get series;
   @override
-  $TrackedSeriesModelCopyWith<$Res>? get tracking;
+  $TrackedMediaModelCopyWith<$Res>? get tracking;
 }
 
 /// @nodoc
@@ -133,7 +133,7 @@ class __$$SeriesDetailStateImplCopyWithImpl<$Res>
       tracking: freezed == tracking
           ? _value.tracking
           : tracking // ignore: cast_nullable_to_non_nullable
-              as TrackedSeriesModel?,
+              as TrackedMediaModel?,
     ));
   }
 }
@@ -146,7 +146,7 @@ class _$SeriesDetailStateImpl implements _SeriesDetailState {
   @override
   final SeriesModel series;
   @override
-  final TrackedSeriesModel? tracking;
+  final TrackedMediaModel? tracking;
 
   @override
   String toString() {
@@ -179,12 +179,12 @@ class _$SeriesDetailStateImpl implements _SeriesDetailState {
 abstract class _SeriesDetailState implements SeriesDetailState {
   const factory _SeriesDetailState(
       {required final SeriesModel series,
-      final TrackedSeriesModel? tracking}) = _$SeriesDetailStateImpl;
+      final TrackedMediaModel? tracking}) = _$SeriesDetailStateImpl;
 
   @override
   SeriesModel get series;
   @override
-  TrackedSeriesModel? get tracking;
+  TrackedMediaModel? get tracking;
 
   /// Create a copy of SeriesDetailState
   /// with the given fields replaced by the non-null parameter values.

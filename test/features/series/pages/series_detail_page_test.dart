@@ -8,7 +8,8 @@ import 'package:lorebase/features/series/pages/series_detail_page.dart';
 import 'package:lorebase/features/series/viewmodels/series_detail_viewmodel.dart';
 import 'package:lorebase/features/series/viewmodels/series_detail_state.dart';
 import 'package:lorebase/features/series/data/models/series_model.dart';
-import 'package:lorebase/features/tracking/data/models/tracked_series_model.dart';
+import 'package:lorebase/features/tracking/data/models/tracked_media_model.dart';
+import 'package:lorebase/features/tracking/data/models/media_type.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_viewmodel.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_state.dart';
 import 'package:lorebase/l10n/strings.g.dart';
@@ -34,13 +35,13 @@ class FakeDetailVM extends SeriesDetailViewModel {
   Future<SeriesDetailState> build(int tmdbId) async => data;
 
   @override
-  Future<void> addTracking(String status, {int? seriesRating, String? seriesReview}) async {
+  Future<void> addTracking(String status, {int? rating, String? review}) async {
     if (failAddTracking) throw Exception('Add failed');
     // success — no-op
   }
 
   @override
-  Future<void> updateTracking({String? status, int? seriesRating, String? seriesReview}) async {
+  Future<void> updateTracking({String? status, int? rating, String? review}) async {
     if (failAddTracking) throw Exception('Update failed');
   }
 
@@ -199,10 +200,11 @@ Future<void> main() async {
     });
 
     testWidgets('watch status chip renders when tracking', (tester) async {
-      final tracking = TrackedSeriesModel(
+      final tracking = TrackedMediaModel(
         trackingId: 't1',
         userId: 'u1',
-        seriesId: '1',
+        mediaType: MediaType.series,
+        mediaId: '1',
         status: 'WATCHING',
         addedAt: DateTime.now(),
         lastUpdated: DateTime.now(),
@@ -359,8 +361,8 @@ Future<void> main() async {
     });
 
     testWidgets('bottom sheet shows tracking edit mode and remove button', (tester) async {
-      final tracking = TrackedSeriesModel(
-        trackingId: 't1', userId: 'u1', seriesId: '1',
+      final tracking = TrackedMediaModel(
+        trackingId: 't1', userId: 'u1', mediaType: MediaType.series, mediaId: '1',
         status: 'WATCHING',
         addedAt: DateTime.now(), lastUpdated: DateTime.now(),
       );
@@ -386,8 +388,8 @@ Future<void> main() async {
     });
 
     testWidgets('bottom sheet remove button triggers confirmation dialog', (tester) async {
-      final tracking = TrackedSeriesModel(
-        trackingId: 't1', userId: 'u1', seriesId: '1',
+      final tracking = TrackedMediaModel(
+        trackingId: 't1', userId: 'u1', mediaType: MediaType.series, mediaId: '1',
         status: 'WATCHING',
         addedAt: DateTime.now(), lastUpdated: DateTime.now(),
       );
@@ -515,8 +517,8 @@ Future<void> main() async {
     });
 
     testWidgets('bottom sheet save in edit mode succeeds', (tester) async {
-      final tracking = TrackedSeriesModel(
-        trackingId: 't1', userId: 'u1', seriesId: '1',
+      final tracking = TrackedMediaModel(
+        trackingId: 't1', userId: 'u1', mediaType: MediaType.series, mediaId: '1',
         status: 'WATCHING',
         addedAt: DateTime.now(), lastUpdated: DateTime.now(),
       );
@@ -547,8 +549,8 @@ Future<void> main() async {
     });
 
     testWidgets('bottom sheet save in edit mode shows error snackbar', (tester) async {
-      final tracking = TrackedSeriesModel(
-        trackingId: 't1', userId: 'u1', seriesId: '1',
+      final tracking = TrackedMediaModel(
+        trackingId: 't1', userId: 'u1', mediaType: MediaType.series, mediaId: '1',
         status: 'WATCHING',
         addedAt: DateTime.now(), lastUpdated: DateTime.now(),
       );
@@ -579,8 +581,8 @@ Future<void> main() async {
     });
 
     testWidgets('remove dialog cancel does not remove', (tester) async {
-      final tracking = TrackedSeriesModel(
-        trackingId: 't1', userId: 'u1', seriesId: '1',
+      final tracking = TrackedMediaModel(
+        trackingId: 't1', userId: 'u1', mediaType: MediaType.series, mediaId: '1',
         status: 'WATCHING',
         addedAt: DateTime.now(), lastUpdated: DateTime.now(),
       );
@@ -614,8 +616,8 @@ Future<void> main() async {
     });
 
     testWidgets('remove dialog confirm removes and pops bottom sheet', (tester) async {
-      final tracking = TrackedSeriesModel(
-        trackingId: 't1', userId: 'u1', seriesId: '1',
+      final tracking = TrackedMediaModel(
+        trackingId: 't1', userId: 'u1', mediaType: MediaType.series, mediaId: '1',
         status: 'WATCHING',
         addedAt: DateTime.now(), lastUpdated: DateTime.now(),
       );
@@ -649,8 +651,8 @@ Future<void> main() async {
     });
 
     testWidgets('remove dialog with error shows snackbar', (tester) async {
-      final tracking = TrackedSeriesModel(
-        trackingId: 't1', userId: 'u1', seriesId: '1',
+      final tracking = TrackedMediaModel(
+        trackingId: 't1', userId: 'u1', mediaType: MediaType.series, mediaId: '1',
         status: 'WATCHING',
         addedAt: DateTime.now(), lastUpdated: DateTime.now(),
       );

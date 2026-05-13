@@ -5,36 +5,42 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lorebase/features/tracking/pages/tracking_list_page.dart';
 import 'package:lorebase/features/tracking/viewmodels/tracking_list_viewmodel.dart';
-import 'package:lorebase/features/tracking/data/models/tracked_series_model.dart';
-import 'package:lorebase/features/series/data/models/series_model.dart';
+import 'package:lorebase/features/tracking/data/models/tracked_media_model.dart';
+import 'package:lorebase/features/tracking/data/models/tracked_media_summary_model.dart';
+import 'package:lorebase/features/tracking/data/models/media_type.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_viewmodel.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_state.dart';
 import 'package:lorebase/l10n/strings.g.dart';
 
 final now = DateTime.now();
 
-TrackedSeriesModel _tracking(String id, String status, {SeriesModel? series, int? seriesRating}) => TrackedSeriesModel(
+TrackedMediaModel _tracking(String id, String status, {TrackedMediaSummaryModel? media, int? rating}) => TrackedMediaModel(
       trackingId: id,
       userId: 'user-1',
-      seriesId: '123',
+      mediaType: MediaType.series,
+      mediaId: '123',
       status: status,
-      seriesRating: seriesRating,
-      series: series,
+      rating: rating,
+      media: media,
       addedAt: now,
       lastUpdated: now,
     );
 
-SeriesModel _series(int id) => SeriesModel(tmdbId: id, title: 'Show $id');
+TrackedMediaSummaryModel _media(int id) => TrackedMediaSummaryModel(
+      tmdbId: id,
+      title: 'Show $id',
+      mediaType: MediaType.series,
+    );
 
 class FakeTrackingListVM extends TrackingListViewModel {
-  final AsyncValue<List<TrackedSeriesModel>> testState;
-  FakeTrackingListVM({AsyncValue<List<TrackedSeriesModel>>? state})
+  final AsyncValue<List<TrackedMediaModel>> testState;
+  FakeTrackingListVM({AsyncValue<List<TrackedMediaModel>>? state})
       : testState = state ?? const AsyncValue.data([]);
 
   @override
-  AsyncValue<List<TrackedSeriesModel>> build() => testState;
+  AsyncValue<List<TrackedMediaModel>> build() => testState;
   @override
-  Future<void> loadTracking({String? status}) async {}
+  Future<void> loadTracking({String? status, MediaType mediaType = MediaType.series}) async {}
   @override
   Future<void> loadMore() async {}
   @override
@@ -170,8 +176,8 @@ Future<void> main() async {
 
     testWidgets('renders series in grid when data available', (tester) async {
       final trackings = [
-        _tracking('t1', 'WATCHING', series: _series(1)),
-        _tracking('t2', 'WATCHING', series: _series(2)),
+        _tracking('t1', 'WATCHING', media: _media(1)),
+        _tracking('t2', 'WATCHING', media: _media(2)),
       ];
       final fakeVM = FakeTrackingListVM(state: AsyncValue.data(trackings));
       final container = createContainer(fakeVM);
@@ -184,9 +190,9 @@ Future<void> main() async {
       expect(find.text('Show 2'), findsOneWidget);
     });
 
-    testWidgets('shows tv icon when series is null', (tester) async {
+    testWidgets('shows tv icon when media is null', (tester) async {
       final trackings = [
-        _tracking('t1', 'WATCHING', series: null),
+        _tracking('t1', 'WATCHING', media: null),
       ];
       final fakeVM = FakeTrackingListVM(state: AsyncValue.data(trackings));
       final container = createContainer(fakeVM);
@@ -200,7 +206,7 @@ Future<void> main() async {
 
     testWidgets('shows rating stars per item', (tester) async {
       final trackings = [
-        _tracking('t1', 'WATCHING', series: _series(1), seriesRating: 8),
+        _tracking('t1', 'WATCHING', media: _media(1), rating: 8),
       ];
       final fakeVM = FakeTrackingListVM(state: AsyncValue.data(trackings));
       final container = createContainer(fakeVM);
@@ -214,10 +220,10 @@ Future<void> main() async {
       expect(find.byIcon(Icons.star_border), findsNWidgets(2));
     });
 
-    testWidgets('series with tmdbId 0 shows no navigation', (tester) async {
-      const series = SeriesModel(tmdbId: 0, title: 'Test');
+    testWidgets('media with tmdbId 0 shows no navigation', (tester) async {
+      final media = TrackedMediaSummaryModel(tmdbId: 0, title: 'Test', mediaType: MediaType.series);
       final trackings = [
-        _tracking('t1', 'WATCHING', series: series),
+        _tracking('t1', 'WATCHING', media: media),
       ];
       final fakeVM = FakeTrackingListVM(state: AsyncValue.data(trackings));
       final container = createContainer(fakeVM);
@@ -229,10 +235,10 @@ Future<void> main() async {
       expect(find.text('Test'), findsOneWidget);
     });
 
-    testWidgets('tracks state with series shows poster and title', (tester) async {
-      const series = SeriesModel(tmdbId: 5, title: 'Test');
+    testWidgets('tracks state with media shows poster and title', (tester) async {
+      final media = TrackedMediaSummaryModel(tmdbId: 5, title: 'Test', mediaType: MediaType.series);
       final trackings = [
-        _tracking('t1', 'WANT_TO_WATCH', series: series),
+        _tracking('t1', 'WANT_TO_WATCH', media: media),
       ];
       final fakeVM = FakeTrackingListVM(state: AsyncValue.data(trackings));
       final container = createContainer(fakeVM);

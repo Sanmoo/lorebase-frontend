@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../core/cache/cache_entry.dart';
 import '../../../core/cache/cache_providers.dart';
-import '../data/models/tracked_series_model.dart';
+import '../data/models/tracked_media_model.dart';
+import '../data/models/media_type.dart';
 import '../data/repositories/tracking_repository.dart';
 
 part 'tracking_list_viewmodel.g.dart';
@@ -10,16 +11,18 @@ part 'tracking_list_viewmodel.g.dart';
 @riverpod
 class TrackingListViewModel extends _$TrackingListViewModel {
   String? _currentStatus;
+  MediaType _currentMediaType = MediaType.series;
   int _page = 1;
   static const int _pageSize = 20;
 
   @override
-  AsyncValue<List<TrackedSeriesModel>> build() {
+  AsyncValue<List<TrackedMediaModel>> build() {
     return const AsyncValue.data([]);
   }
 
-  Future<void> loadTracking({String? status}) async {
+  Future<void> loadTracking({String? status, MediaType mediaType = MediaType.series}) async {
     _currentStatus = status;
+    _currentMediaType = mediaType;
     _page = 1;
 
     final cacheKey = _buildCacheKey();
@@ -58,6 +61,7 @@ class TrackingListViewModel extends _$TrackingListViewModel {
       final repository = ref.read(trackingRepositoryProvider);
       final items = await repository.getTracking(
         status: _currentStatus,
+        mediaType: _currentMediaType,
         page: _page,
         pageSize: _pageSize,
       );
@@ -85,6 +89,7 @@ class TrackingListViewModel extends _$TrackingListViewModel {
 
       final items = await repository.getTracking(
         status: _currentStatus,
+        mediaType: _currentMediaType,
         page: _page,
         pageSize: _pageSize,
       );
@@ -113,6 +118,7 @@ class TrackingListViewModel extends _$TrackingListViewModel {
         final cacheService = ref.read(cacheServiceProvider);
         final items = await repository.getTracking(
           status: _currentStatus,
+          mediaType: _currentMediaType,
           page: _page,
           pageSize: _pageSize,
         );
@@ -130,63 +136,12 @@ class TrackingListViewModel extends _$TrackingListViewModel {
     });
   }
 
-  Future<void> startTracking(String seriesId, String status) async {
-    await _invalidateCache();
-    try {
-      final repository = ref.read(trackingRepositoryProvider);
-      await repository.startTracking(seriesId, status);
-      await refresh();
-    } catch (error, stackTrace) {
-      state = AsyncValue.error(error, stackTrace);
-    }
-  }
+  String _buildCacheKey() => 'tracking:${_currentMediaType.apiValue}:${_currentStatus ?? "all"}:$_page';
 
-  Future<void> updateTracking(
-    String seriesId, {
-    String? status,
-    int? seriesRating,
-    String? seriesReview,
-    List<Map<String, dynamic>>? seasonRatings,
-  }) async {
-    await _invalidateCache();
-    try {
-      final repository = ref.read(trackingRepositoryProvider);
-      await repository.updateTracking(
-        seriesId,
-        status: status,
-        seriesRating: seriesRating,
-        seriesReview: seriesReview,
-        seasonRatings: seasonRatings,
-      );
-      await refresh();
-    } catch (error, stackTrace) {
-      state = AsyncValue.error(error, stackTrace);
-    }
-  }
-
-  Future<void> deleteTracking(String seriesId) async {
-    await _invalidateCache();
-    try {
-      final repository = ref.read(trackingRepositoryProvider);
-      await repository.deleteTracking(seriesId);
-      await refresh();
-    } catch (error, stackTrace) {
-      state = AsyncValue.error(error, stackTrace);
-    }
-  }
-
-  Future<void> _invalidateCache() async {
-    final cacheService = ref.read(cacheServiceProvider);
-    await cacheService.remove('dashboard');
-    await cacheService.removeByPrefix('tracking:');
-  }
-
-  String _buildCacheKey() => 'tracking:${_currentStatus ?? "all"}:$_page';
-
-  List<TrackedSeriesModel> _parseItems(String json) {
+  List<TrackedMediaModel> _parseItems(String json) {
     final list = jsonDecode(json) as List;
     return list
-        .map((e) => TrackedSeriesModel.fromJson(e as Map<String, dynamic>))
+        .map((e) => TrackedMediaModel.fromJson(e as Map<String, dynamic>))
         .toList();
   }
 }

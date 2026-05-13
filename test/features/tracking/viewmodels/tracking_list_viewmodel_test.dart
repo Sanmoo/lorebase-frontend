@@ -4,49 +4,63 @@ import 'package:lorebase/core/cache/cache_service.dart';
 import 'package:lorebase/core/cache/cache_providers.dart';
 import 'package:lorebase/features/tracking/viewmodels/tracking_list_viewmodel.dart';
 import 'package:lorebase/features/tracking/data/repositories/tracking_repository.dart';
-import 'package:lorebase/features/tracking/data/models/tracked_series_model.dart';
+import 'package:lorebase/features/tracking/data/models/tracked_media_model.dart';
+import 'package:lorebase/features/tracking/data/models/media_type.dart';
 
 final now = DateTime.now();
 
-TrackedSeriesModel _makeTracking(String id, String status) =>
-    TrackedSeriesModel(
+TrackedMediaModel _makeTracking(String id, String status) =>
+    TrackedMediaModel(
       trackingId: id,
       userId: 'user-1',
-      seriesId: '123',
+      mediaType: MediaType.series,
+      mediaId: '123',
       status: status,
       addedAt: now,
       lastUpdated: now,
     );
 
 class FakeTrackingRepo implements TrackingRepository {
-  List<TrackedSeriesModel>? results;
+  List<TrackedMediaModel>? results;
   bool shouldThrow = false;
+  MediaType? lastMediaType;
 
   @override
-  Future<List<TrackedSeriesModel>> getTracking({
+  Future<List<TrackedMediaModel>> getTracking({
     String? status,
+    MediaType? mediaType,
     int page = 1,
     int pageSize = 20,
   }) async {
+    lastMediaType = mediaType;
     if (shouldThrow) throw Exception('Failed');
     return results ?? [];
   }
 
   @override
-  Future<TrackedSeriesModel> startTracking(
-          String seriesId, String status) async =>
+  Future<TrackedMediaModel> startTracking(
+    String mediaId,
+    MediaType mediaType,
+    String status,
+  ) async =>
       _makeTracking('t-1', status);
 
   @override
-  Future<TrackedSeriesModel> updateTracking(String seriesId,
-          {String? status,
-          int? seriesRating,
-          String? seriesReview,
-          List<Map<String, dynamic>>? seasonRatings}) async =>
+  Future<TrackedMediaModel> updateTracking(
+    String mediaId, {
+    required MediaType mediaType,
+    String? status,
+    int? rating,
+    String? review,
+    List<Map<String, dynamic>>? seasonRatings,
+  }) async =>
       _makeTracking('t-1', status ?? 'WATCHING');
 
   @override
-  Future<void> deleteTracking(String seriesId) async {}
+  Future<void> deleteTracking(
+    String mediaId, {
+    required MediaType mediaType,
+  }) async {}
 }
 
 void main() {
@@ -138,6 +152,18 @@ void main() {
       ];
       await notifier.refresh();
       expect(container.read(trackingListViewModelProvider).value!.length, 2);
+    });
+
+    test('loadTracking() defaults to series media type', () async {
+      final repo = FakeTrackingRepo()..results = [_makeTracking('t-1', 'WATCHING')];
+      final container = createContainer(repo);
+      addTearDown(container.dispose);
+
+      await container.read(trackingListViewModelProvider.notifier).loadTracking(
+            status: 'WATCHING',
+          );
+
+      expect(repo.lastMediaType, MediaType.series);
     });
   });
 }
