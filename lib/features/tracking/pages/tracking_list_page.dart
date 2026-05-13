@@ -5,8 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/widgets/empty_state_widget.dart';
 import '../../../../core/widgets/error_widget.dart';
 import '../../../../core/widgets/loading_widget.dart';
+import '../../../../core/widgets/media_type_toggle.dart';
 import '../../../l10n/strings.g.dart';
 import '../data/tracking_status.dart';
+import '../data/models/media_type.dart';
+import '../data/models/tracked_media_summary_model.dart';
 import '../viewmodels/tracking_list_viewmodel.dart';
 import '../widgets/rating_stars.dart';
 import '../widgets/tracked_media_poster.dart';
@@ -22,6 +25,7 @@ class TrackingListPage extends ConsumerStatefulWidget {
 class _TrackingListPageState extends ConsumerState<TrackingListPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  MediaType _selectedType = MediaType.series;
 
   @override
   void initState() {
@@ -46,9 +50,19 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
     }
   }
 
+  void _onMediaTypeChanged(MediaType type) {
+    setState(() {
+      _selectedType = type;
+    });
+    _loadTrackingForTab(_tabController.index);
+  }
+
   void _loadTrackingForTab(int index) {
     final status = TrackingStatus.values[index].value;
-    ref.read(trackingListViewModelProvider.notifier).loadTracking(status: status);
+    ref.read(trackingListViewModelProvider.notifier).loadTracking(
+          status: status,
+          mediaType: _selectedType,
+        );
   }
 
   @override
@@ -71,6 +85,13 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
       ),
       body: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            child: MediaTypeToggle(
+              selectedType: _selectedType,
+              onChanged: _onMediaTypeChanged,
+            ),
+          ),
           Container(
             color: Theme.of(context).appBarTheme.backgroundColor ?? Theme.of(context).primaryColor,
             child: TabBar(
@@ -95,7 +116,9 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
                   data: (trackings) {
                     if (trackings.isEmpty) {
                       return EmptyStateWidget(
-                        message: t.tracking_empty.replaceFirst('{status}', TrackingStatus.values[index].label(t)),
+                        message: _selectedType == MediaType.series
+                            ? t.tracking_empty.replaceFirst('{status}', TrackingStatus.values[index].label(t))
+                            : t.tracking_empty_movies.replaceFirst('{status}', TrackingStatus.values[index].label(t)),
                         icon: Icons.tv_off,
                       );
                     }
@@ -124,7 +147,12 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
                                   media: media,
                                   width: constraints.maxWidth,
                                   onTap: media.tmdbId != 0
-                                      ? () => context.push('/series/${media.tmdbId}')
+                                      ? () {
+                                          final path = tracking.mediaType == MediaType.series
+                                              ? '/series/${media.tmdbId}'
+                                              : '/movies/${media.tmdbId}';
+                                          context.push(path);
+                                        }
                                       : null,
                                 ),
                               ),

@@ -32,6 +32,21 @@ TrackedMediaSummaryModel _media(int id) => TrackedMediaSummaryModel(
       mediaType: MediaType.series,
     );
 
+TrackedMediaModel _movieTracking(String id, String status) => TrackedMediaModel(
+      trackingId: id,
+      userId: 'user-1',
+      mediaType: MediaType.movie,
+      mediaId: '500',
+      status: status,
+      media: const TrackedMediaSummaryModel(
+        tmdbId: 500,
+        title: 'Movie 500',
+        mediaType: MediaType.movie,
+      ),
+      addedAt: now,
+      lastUpdated: now,
+    );
+
 class FakeTrackingListVM extends TrackingListViewModel {
   final AsyncValue<List<TrackedMediaModel>> testState;
   FakeTrackingListVM({AsyncValue<List<TrackedMediaModel>>? state})
@@ -248,6 +263,19 @@ Future<void> main() async {
       await tester.pump(const Duration(milliseconds: 100));
 
       expect(find.text('Test'), findsOneWidget);
+    });
+
+    testWidgets('switching to Movies shows movie empty state copy', (tester) async {
+      final container = createContainer(FakeTrackingListVM());
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.tap(find.text('Movies'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('No Want to Watch movies yet'), findsOneWidget);
     });
   });
 }
