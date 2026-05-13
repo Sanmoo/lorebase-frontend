@@ -10,6 +10,10 @@ import '../../../l10n/strings.g.dart';
 import '../viewmodels/series_search_viewmodel.dart';
 import '../widgets/series_card.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../movies/viewmodels/movie_search_viewmodel.dart';
+import '../../movies/widgets/movie_card.dart';
+import '../../../../core/widgets/media_type_toggle.dart';
+import '../../tracking/data/models/media_type.dart';
 
 class SeriesSearchPage extends ConsumerStatefulWidget {
   const SeriesSearchPage({super.key});
@@ -21,6 +25,7 @@ class SeriesSearchPage extends ConsumerStatefulWidget {
 class _SeriesSearchPageState extends ConsumerState<SeriesSearchPage> {
   Timer? _debounceTimer;
   final _searchController = TextEditingController();
+  MediaType _selectedType = MediaType.series;
 
   @override
   void dispose() {
@@ -29,20 +34,38 @@ class _SeriesSearchPageState extends ConsumerState<SeriesSearchPage> {
     super.dispose();
   }
 
+  void _onTypeChanged(MediaType type) {
+    setState(() {
+      _selectedType = type;
+    });
+    _searchController.clear();
+    ref.read(seriesSearchViewModelProvider.notifier).clear();
+    ref.read(movieSearchViewModelProvider.notifier).clear();
+  }
+
   void _onSearchChanged(String query) {
     _debounceTimer?.cancel();
     if (query.length >= 2) {
       _debounceTimer = Timer(AppConstants.kSearchDebounceDuration, () {
-        ref.read(seriesSearchViewModelProvider.notifier).search(query);
+        if (_selectedType == MediaType.series) {
+          ref.read(seriesSearchViewModelProvider.notifier).search(query);
+        } else {
+          ref.read(movieSearchViewModelProvider.notifier).search(query);
+        }
       });
     } else if (query.isEmpty) {
-      ref.read(seriesSearchViewModelProvider.notifier).clear();
+      if (_selectedType == MediaType.series) {
+        ref.read(seriesSearchViewModelProvider.notifier).clear();
+      } else {
+        ref.read(movieSearchViewModelProvider.notifier).clear();
+      }
     }
   }
 
   void _onClear() {
     _searchController.clear();
     ref.read(seriesSearchViewModelProvider.notifier).clear();
+    ref.read(movieSearchViewModelProvider.notifier).clear();
   }
 
   @override
@@ -53,7 +76,9 @@ class _SeriesSearchPageState extends ConsumerState<SeriesSearchPage> {
           controller: _searchController,
           autofocus: true,
           decoration: InputDecoration(
-            hintText: context.t.search_hint,
+            hintText: _selectedType == MediaType.series
+                ? context.t.search_hint
+                : context.t.search_hint_movies,
             border: InputBorder.none,
             suffixIcon: _searchController.text.isNotEmpty
                 ? IconButton(
@@ -65,61 +90,121 @@ class _SeriesSearchPageState extends ConsumerState<SeriesSearchPage> {
           onChanged: _onSearchChanged,
         ),
       ),
-      body: _SearchResultsBody(
-        query: _searchController.text,
-        onRetry: () => _onSearchChanged(_searchController.text),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            child: MediaTypeToggle(
+              selectedType: _selectedType,
+              onChanged: _onTypeChanged,
+            ),
+          ),
+          Expanded(
+            child: _SearchResultsBody(
+              mediaType: _selectedType,
+              query: _searchController.text,
+              onRetry: () => _onSearchChanged(_searchController.text),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
 class _SearchResultsBody extends ConsumerWidget {
+  final MediaType mediaType;
   final String query;
   final VoidCallback onRetry;
 
-  const _SearchResultsBody({required this.query, required this.onRetry});
+  const _SearchResultsBody({
+    required this.mediaType,
+    required this.query,
+    required this.onRetry,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = context.t;
-    final searchState = ref.watch(seriesSearchViewModelProvider);
+    final seriesState = ref.watch(seriesSearchViewModelProvider);
+    final movieState = ref.watch(movieSearchViewModelProvider);
 
-    return searchState.when(
-      loading: () => const LoadingWidget(),
-      error: (error, _) => AppErrorWidget(
-        message: error.toString(),
-        onRetry: onRetry,
-      ),
-      data: (series) {
-        if (series.isEmpty && query.isEmpty) {
-          return EmptyStateWidget(
-            message: t.search_empty,
-            icon: Icons.search,
-          );
-        }
-        if (series.isEmpty) {
-          return EmptyStateWidget(
-            message: t.search_no_results,
-            icon: Icons.search_off,
-          );
-        }
-        return ListView.builder(
-          padding: const EdgeInsets.all(16.0),
-          itemCount: series.length,
-          itemBuilder: (context, index) {
-            final item = series[index];
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 12.0),
-              child: SeriesCard(
-                series: item,
-                onTap: item.tmdbId != 0
-                    ? () => context.push('/series/${item.tmdbId}')
-                    : null,
-              ),
+    if (mediaType == MediaType.series) {
+      return seriesState.when(
+        loading: () => const LoadingWidget(),
+        error: (error, _) => AppErrorWidget(
+          message: error.toString(),
+          onRetry: onRetry,
+        ),
+        data: (series) {
+          if (series.isEmpty && query.isEmpty) {
+            return EmptyStateWidget(
+              message: t.search_empty,
+              icon: Icons.search,
             );
-          },
-        );
-      },
-    );
+          }
+          if (series.isEmpty) {
+            return EmptyStateWidget(
+              message: t.search_no_results,
+              icon: Icons.search_off,
+            );
+          }
+          return ListView.builder(
+            padding: const EdgeInsets.all(16.0),
+            itemCount: series.length,
+            itemBuilder: (context, index) {
+              final item = series[index];
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12.0),
+                child: SeriesCard(
+                  series: item,
+                  onTap: item.tmdbId != 0
+                      ? () => context.push('/series/${item.tmdbId}')
+                      : null,
+                ),
+              );
+            },
+          );
+        },
+      );
+    } else {
+      return movieState.when(
+        loading: () => const LoadingWidget(),
+        error: (error, _) => AppErrorWidget(
+          message: error.toString(),
+          onRetry: onRetry,
+        ),
+        data: (movies) {
+          if (movies.isEmpty && query.isEmpty) {
+            return EmptyStateWidget(
+              message: t.search_empty,
+              icon: Icons.search,
+            );
+          }
+          if (movies.isEmpty) {
+            return EmptyStateWidget(
+              message: t.search_no_results_movies,
+              icon: Icons.search_off,
+            );
+          }
+          return ListView.builder(
+            padding: const EdgeInsets.all(16.0),
+            itemCount: movies.length,
+            itemBuilder: (context, index) {
+              final item = movies[index];
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12.0),
+                child: MovieCard(
+                  movie: item,
+                  onTap: item.tmdbId != 0
+                      ? () => context.push('/movies/${item.tmdbId}')
+                      : null,
+                ),
+              );
+            },
+          );
+        },
+      );
+    }
   }
 }

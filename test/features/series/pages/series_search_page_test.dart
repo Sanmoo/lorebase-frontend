@@ -7,6 +7,8 @@ import 'package:lorebase/features/series/viewmodels/series_search_viewmodel.dart
 import 'package:lorebase/features/series/data/models/series_model.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_viewmodel.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_state.dart';
+import 'package:lorebase/features/movies/data/models/movie_model.dart';
+import 'package:lorebase/features/movies/viewmodels/movie_search_viewmodel.dart';
 import 'package:lorebase/l10n/strings.g.dart';
 
 class FakeSearchVM extends SeriesSearchViewModel {
@@ -19,6 +21,25 @@ class FakeSearchVM extends SeriesSearchViewModel {
   AsyncValue<List<SeriesModel>> build() => testState;
   @override
   Future<void> search(String query) async { retryCalled = true; }
+  @override
+  void clear() {}
+}
+
+class FakeMovieSearchVM extends MovieSearchViewModel {
+  final AsyncValue<List<MovieModel>> testState;
+  bool searchCalled = false;
+
+  FakeMovieSearchVM({AsyncValue<List<MovieModel>>? state})
+      : testState = state ?? const AsyncValue.data([]);
+
+  @override
+  AsyncValue<List<MovieModel>> build() => testState;
+
+  @override
+  Future<void> search(String query) async {
+    searchCalled = true;
+  }
+
   @override
   void clear() {}
 }
@@ -230,6 +251,23 @@ Future<void> main() async {
       await tester.pump();
 
       expect(find.text('Breaking Bad'), findsOneWidget);
+    });
+
+    testWidgets('switching to Movies shows the movie hint', (tester) async {
+      final container = ProviderContainer(overrides: [
+        seriesSearchViewModelProvider.overrideWith(() => FakeSearchVM()),
+        movieSearchViewModelProvider.overrideWith(() => FakeMovieSearchVM()),
+        authViewModelProvider.overrideWith(() => FakeAuthVM()),
+      ]);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.tap(find.text('Movies'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Search movies...'), findsOneWidget);
     });
   });
 }

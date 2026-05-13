@@ -83,5 +83,9 @@
   "error_network": "Network error. Check your connection.",
   "error_server": "Server error. Please try again later.",
   "error_session_expired": "Session expired. Please log in again.",
-  "error_resource_not_found": "Resource not found."
+  "error_resource_not_found": "Resource not found.",
+  "media_type_series": "Series",
+  "media_type_movies": "Movies",
+  "search_hint_movies": "Search movies...",
+  "search_no_results_movies": "No movies found"
 }
