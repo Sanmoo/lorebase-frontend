@@ -278,6 +278,36 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// pt-BR: 'Español'
 	String get locale_es => 'Español';
 
+	/// pt-BR: 'Séries'
+	String get media_type_series => 'Séries';
+
+	/// pt-BR: 'Filmes'
+	String get media_type_movies => 'Filmes';
+
+	/// pt-BR: 'Buscar filmes...'
+	String get search_hint_movies => 'Buscar filmes...';
+
+	/// pt-BR: 'Nenhum filme encontrado'
+	String get search_no_results_movies => 'Nenhum filme encontrado';
+
+	/// pt-BR: 'Nenhum filme {status} ainda'
+	String get tracking_empty_movies => 'Nenhum filme {status} ainda';
+
+	/// pt-BR: 'Nenhum filme registrado ainda. Busque e adicione seu primeiro filme!'
+	String get dashboard_empty_movies => 'Nenhum filme registrado ainda.\nBusque e adicione seu primeiro filme!';
+
+	/// pt-BR: 'Carregando detalhes do filme...'
+	String get movie_detail_loading => 'Carregando detalhes do filme...';
+
+	/// pt-BR: 'Data de Lançamento'
+	String get movie_detail_release_date => 'Data de Lançamento';
+
+	/// pt-BR: 'Duração'
+	String get movie_detail_runtime => 'Duração';
+
+	/// pt-BR: '{minutes} min'
+	String get movie_detail_runtime_minutes => '{minutes} min';
+
 	/// pt-BR: 'Recomendação'
 	String get recommend_title => 'Recomendação';
 
@@ -384,6 +414,16 @@ extension on Translations {
 			'locale_pt_BR' => 'Português',
 			'locale_en_US' => 'English',
 			'locale_es' => 'Español',
+			'media_type_series' => 'Séries',
+			'media_type_movies' => 'Filmes',
+			'search_hint_movies' => 'Buscar filmes...',
+			'search_no_results_movies' => 'Nenhum filme encontrado',
+			'tracking_empty_movies' => 'Nenhum filme {status} ainda',
+			'dashboard_empty_movies' => 'Nenhum filme registrado ainda.\nBusque e adicione seu primeiro filme!',
+			'movie_detail_loading' => 'Carregando detalhes do filme...',
+			'movie_detail_release_date' => 'Data de Lançamento',
+			'movie_detail_runtime' => 'Duração',
+			'movie_detail_runtime_minutes' => '{minutes} min',
 			'recommend_title' => 'Recomendação',
 			'recommend_coming_soon' => 'Funcionalidade de recomendação em breve!',
 			'error_network' => 'Erro de rede. Verifique sua conexão.',
