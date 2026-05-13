@@ -486,8 +486,8 @@ Future<void> main() async {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
 
-      // After sheet opens there are 2 "Add to List" — tap the one in the sheet (the filled button)
-      final saveButton = find.widgetWithText(FilledButton, 'Add to List');
+      // Tap "Save Changes" button in the sheet
+      final saveButton = find.widgetWithText(FilledButton, 'Save Changes');
       await tester.ensureVisible(saveButton);
       await tester.pump();
       await tester.tap(saveButton);
@@ -747,7 +747,7 @@ Future<void> main() async {
       await tester.enterText(find.byType(TextField), 'Great series!');
       await tester.pump();
 
-      final saveButton = find.widgetWithText(FilledButton, 'Add to List');
+      final saveButton = find.widgetWithText(FilledButton, 'Save Changes');
       await tester.ensureVisible(saveButton);
       await tester.pump();
       await tester.tap(saveButton);

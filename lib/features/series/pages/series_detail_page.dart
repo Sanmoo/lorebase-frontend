@@ -8,7 +8,7 @@ import '../../../../core/widgets/loading_widget.dart';
 import '../../../l10n/strings.g.dart';
 import '../../tracking/data/models/tracked_media_model.dart';
 import '../../tracking/data/tracking_status.dart';
-import '../../tracking/widgets/rating_stars.dart';
+import '../../tracking/widgets/tracking_editor_sheet.dart';
 import '../../tracking/widgets/tracking_status_chip.dart';
 import '../data/models/series_model.dart';
 import '../viewmodels/series_detail_viewmodel.dart';
@@ -52,166 +52,66 @@ class SeriesDetailPage extends ConsumerWidget {
     final series = detail.series;
     final tracking = detail.tracking;
     final isEditing = tracking != null;
-    String selectedStatus =
-        tracking?.status ?? TrackingStatus.wantToWatch.value;
-    int? selectedRating = tracking?.rating;
-    final reviewController =
-        TextEditingController(text: tracking?.review ?? '');
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setSheetState) => SafeArea(
-          child: Padding(
-            padding: EdgeInsets.only(
-              left: 24,
-              right: 24,
-              top: 24,
-              bottom: MediaQuery.of(ctx).viewInsets.bottom + 24,
-            ),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    isEditing ? ctx.t.series_detail_manage_tracking : ctx.t.series_detail_add_to_list,
-                    style: Theme.of(ctx).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                  const SizedBox(height: 16),
-                  ...TrackingStatus.values.map((status) {
-                    final isSelected = status.value == selectedStatus;
-                    return ListTile(
-                      leading: Icon(
-                        isSelected ? Icons.check_circle : Icons.circle_outlined,
-                        color: isSelected
-                            ? Theme.of(ctx).colorScheme.primary
-                            : null,
-                      ),
-                      title: Text(status.label(ctx.t)),
-                      onTap: () {
-                        setSheetState(() {
-                          selectedStatus = status.value;
-                        });
-                      },
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+      builder: (ctx) => TrackingEditorSheet(
+        title: isEditing
+            ? ctx.t.series_detail_manage_tracking
+            : ctx.t.series_detail_add_to_list,
+        initialStatus: tracking?.status ?? TrackingStatus.wantToWatch.value,
+        initialRating: tracking?.rating,
+        initialReview: tracking?.review ?? '',
+        onSave: ({required status, rating, review}) async {
+          final notifier =
+              ref.read(seriesDetailViewModelProvider(tmdbId).notifier);
+          try {
+            if (isEditing) {
+              await notifier.updateTracking(
+                status: status,
+                rating: rating,
+                review: review,
+              );
+            } else {
+              await notifier.addTracking(
+                status,
+                rating: rating,
+                review: review,
+              );
+            }
+            if (ctx.mounted) Navigator.pop(ctx);
+          } catch (e) {
+            if (ctx.mounted) {
+              ScaffoldMessenger.of(ctx).showSnackBar(
+                SnackBar(content: Text(ctx.t.error_server)),
+              );
+            }
+          }
+        },
+        onRemove: isEditing
+            ? () async {
+                try {
+                  await ref
+                      .read(seriesDetailViewModelProvider(tmdbId).notifier)
+                      .removeTracking();
+                  if (ctx.mounted) Navigator.pop(ctx);
+                } catch (e) {
+                  if (ctx.mounted) {
+                    ScaffoldMessenger.of(ctx).showSnackBar(
+                      SnackBar(content: Text(ctx.t.error_server)),
                     );
-                  }),
-                  const SizedBox(height: 24),
-                  Text(
-                    ctx.t.series_detail_rating,
-                    style: Theme.of(ctx).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 8),
-                  RatingStars(
-                    rating: selectedRating,
-                    maxRating: 10,
-                    onRatingChanged: (r) {
-                      setSheetState(() {
-                        selectedRating = r;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 24),
-                  TextField(
-                    controller: reviewController,
-                    maxLines: 3,
-                    decoration: InputDecoration(
-                      labelText: ctx.t.series_detail_review,
-                      border: const OutlineInputBorder(),
-                      alignLabelWithHint: true,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  FilledButton(
-                    onPressed: () async {
-                      final notifier = ref.read(
-                        seriesDetailViewModelProvider(tmdbId).notifier,
-                      );
-                      try {
-                        if (isEditing) {
-                          await notifier.updateTracking(
-                            status: selectedStatus,
-                            rating: selectedRating,
-                            review: reviewController.text.isNotEmpty
-                                ? reviewController.text
-                                : null,
-                          );
-                        } else {
-                          await notifier.addTracking(
-                            selectedStatus,
-                            rating: selectedRating,
-                            review: reviewController.text.isNotEmpty
-                                ? reviewController.text
-                                : null,
-                          );
-                        }
-                        if (ctx.mounted) Navigator.pop(ctx);
-                      } catch (e) {
-                        if (ctx.mounted) {
-                          ScaffoldMessenger.of(ctx).showSnackBar(
-                            SnackBar(content: Text(ctx.t.error_server)),
-                          );
-                        }
-                      }
-                    },
-                    child: Text(isEditing ? ctx.t.series_detail_save_changes : ctx.t.series_detail_add_to_list),
-                  ),
-                  if (isEditing) ...[
-                    const SizedBox(height: 12),
-                    OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Theme.of(ctx).colorScheme.error,
-                      ),
-                      onPressed: () async {
-                        final confirm = await showDialog<bool>(
-                          context: ctx,
-                          builder: (dctx) => AlertDialog(
-                            title: Text(ctx.t.series_detail_remove_from_list),
-                            content: Text(
-                              ctx.t.series_detail_remove_confirm.replaceFirst('{title}', series.title),
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(dctx, false),
-                                child: Text(ctx.t.series_detail_cancel),
-                              ),
-                              TextButton(
-                                onPressed: () => Navigator.pop(dctx, true),
-                                child: Text(ctx.t.series_detail_remove),
-                              ),
-                            ],
-                          ),
-                        );
-                        if (confirm == true && ctx.mounted) {
-                          try {
-                            await ref
-                                .read(seriesDetailViewModelProvider(tmdbId)
-                                    .notifier)
-                                .removeTracking();
-                            if (ctx.mounted) Navigator.pop(ctx);
-                          } catch (e) {
-                            if (ctx.mounted) {
-                              ScaffoldMessenger.of(ctx).showSnackBar(
-                                SnackBar(content: Text(ctx.t.error_server)),
-                              );
-                            }
-                          }
-                        }
-                      },
-                      child: Text(ctx.t.series_detail_remove_from_list),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ),
+                  }
+                }
+              }
+            : null,
+        removeLabel: ctx.t.series_detail_remove_from_list,
+        removeConfirmTitle: ctx.t.series_detail_remove_from_list,
+        removeConfirmMessage:
+            ctx.t.series_detail_remove_confirm.replaceFirst(
+          '{title}',
+          series.title,
         ),
       ),
     );

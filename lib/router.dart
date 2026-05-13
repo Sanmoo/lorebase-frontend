@@ -14,6 +14,7 @@ import 'features/recommendation/pages/recommendation_page.dart';
 import 'features/series/pages/series_search_page.dart';
 import 'features/tracking/pages/tracking_list_page.dart';
 import 'features/series/pages/series_detail_page.dart';
+import 'features/movies/pages/movie_detail_page.dart';
 
 @visibleForTesting
 String? authRedirect(AuthState authState, String location) {
@@ -60,6 +61,13 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) {
               final tmdbId = int.parse(state.pathParameters['tmdbId']!);
               return SeriesDetailPage(tmdbId: tmdbId);
+            },
+          ),
+          GoRoute(
+            path: '/movies/:tmdbId',
+            builder: (context, state) {
+              final tmdbId = int.parse(state.pathParameters['tmdbId']!);
+              return MovieDetailPage(tmdbId: tmdbId);
             },
           ),
           GoRoute(

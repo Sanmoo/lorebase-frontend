@@ -22,6 +22,7 @@ void main() {
         expect(authRedirect(unauthenticated, '/tracking'), '/login');
         expect(authRedirect(unauthenticated, '/recommend'), '/login');
         expect(authRedirect(unauthenticated, '/series/123'), '/login');
+        expect(authRedirect(unauthenticated, '/movies/123'), '/login');
       });
     });
 
@@ -34,6 +35,7 @@ void main() {
         expect(authRedirect(authenticated, '/tracking'), isNull);
         expect(authRedirect(authenticated, '/recommend'), isNull);
         expect(authRedirect(authenticated, '/series/123'), isNull);
+        expect(authRedirect(authenticated, '/movies/123'), isNull);
       });
 
       test('redirects to /dashboard on auth routes', () {
