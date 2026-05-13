@@ -10,7 +10,8 @@ _$DashboardSectionModelImpl _$$DashboardSectionModelImplFromJson(
         Map<String, dynamic> json) =>
     _$DashboardSectionModelImpl(
       items: (json['items'] as List<dynamic>?)
-              ?.map((e) => SeriesModel.fromJson(e as Map<String, dynamic>))
+              ?.map((e) =>
+                  TrackedMediaSummaryModel.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
       total: json['total'] as int? ?? 0,

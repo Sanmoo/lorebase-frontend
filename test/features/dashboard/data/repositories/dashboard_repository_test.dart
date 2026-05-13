@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lorebase/features/dashboard/data/repositories/dashboard_repository.dart';
 import 'package:lorebase/features/dashboard/data/models/dashboard_model.dart';
+import 'package:lorebase/features/tracking/data/models/media_type.dart';
 import 'package:lorebase/core/errors/exceptions.dart';
 import 'package:lorebase/core/providers/core_providers.dart';
 
@@ -41,6 +42,7 @@ Map<String, dynamic> _dashboardJson() => {
           {
             'tmdbId': 1,
             'title': 'Test Show',
+            'mediaType': 'series',
             'genres': <String>[],
             'networks': <String>[],
             'seasonCount': 3,
@@ -111,13 +113,30 @@ void main() {
       );
     });
 
-    test('_normalizeDashboardItems maps seriesId to tmdbId', () async {
+    test('getDashboard() sends mediaType to the API', () async {
+      Map<String, dynamic>? capturedParams;
+      final dio = Dio()
+        ..httpClientAdapter = MockAdapter(
+          onFetch: (options) {
+            capturedParams = options.queryParameters;
+            return _jsonBody(_dashboardJson());
+          },
+        );
+      final repo = DashboardRepositoryImpl(dio);
+
+      await repo.getDashboard(mediaType: MediaType.movie);
+
+      expect(capturedParams!['mediaType'], 'movie');
+    });
+
+    test('_normalizeDashboardItems maps mediaId to tmdbId', () async {
       final json = _dashboardJson();
       json['watching'] = {
         'items': [
           {
-            'seriesId': '123',
+            'mediaId': '123',
             'title': 'Test Show',
+            'mediaType': 'series',
             'genres': <String>[],
             'networks': <String>[],
           }

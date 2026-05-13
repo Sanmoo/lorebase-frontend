@@ -2,19 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lorebase/features/dashboard/data/models/dashboard_section_model.dart';
+import 'package:lorebase/features/tracking/data/models/tracked_media_summary_model.dart';
 
 void main() {
   group('DashboardSectionModel', () {
     final completeJson = {
       'items': [
-        {
-          'tmdbId': 1,
-          'title': 'Series A',
-        },
-        {
-          'tmdbId': 2,
-          'title': 'Series B',
-        },
+        {'tmdbId': 1, 'title': 'Series A', 'mediaType': 'series'},
+        {'tmdbId': 2, 'title': 'Movie B', 'mediaType': 'movie'},
       ],
       'total': 10,
       'hasMore': true,
@@ -26,10 +21,11 @@ void main() {
       final model = DashboardSectionModel.fromJson(completeJson);
 
       expect(model.items, hasLength(2));
+      expect(model.items[0], isA<TrackedMediaSummaryModel>());
       expect(model.items[0].tmdbId, 1);
       expect(model.items[0].title, 'Series A');
       expect(model.items[1].tmdbId, 2);
-      expect(model.items[1].title, 'Series B');
+      expect(model.items[1].title, 'Movie B');
       expect(model.total, 10);
       expect(model.hasMore, true);
     });

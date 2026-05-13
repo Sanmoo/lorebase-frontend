@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lorebase/features/dashboard/widgets/watching_section.dart';
-import 'package:lorebase/features/series/data/models/series_model.dart';
+import 'package:lorebase/features/tracking/data/models/tracked_media_summary_model.dart';
+import 'package:lorebase/features/tracking/data/models/media_type.dart';
 
 void main() {
   group('DashboardSection', () {
     testWidgets('renders title and series list', (tester) async {
-      final series = [
-        const SeriesModel(
+      final items = [
+        const TrackedMediaSummaryModel(
           tmdbId: 1,
           title: 'Test Show',
-          genres: [],
-          networks: [],
-          seasonCount: 10,
-          status: 'Ended',
+          mediaType: MediaType.series,
         ),
       ];
 
@@ -22,7 +20,7 @@ void main() {
           home: Scaffold(
             body: DashboardSection(
               title: 'Completed',
-              series: series,
+              items: items,
             ),
           ),
         ),
@@ -38,7 +36,7 @@ void main() {
           home: Scaffold(
             body: DashboardSection(
               title: 'Dropped',
-              series: [],
+              items: [],
             ),
           ),
         ),

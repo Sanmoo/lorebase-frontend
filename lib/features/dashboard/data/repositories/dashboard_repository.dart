@@ -2,10 +2,13 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/providers/core_providers.dart';
+import '../../../tracking/data/models/media_type.dart';
 import '../models/dashboard_model.dart';
 
 abstract class DashboardRepository {
-  Future<DashboardModel> getDashboard();
+  Future<DashboardModel> getDashboard({
+    MediaType mediaType = MediaType.series,
+  });
 }
 
 class DashboardRepositoryImpl implements DashboardRepository {
@@ -14,9 +17,14 @@ class DashboardRepositoryImpl implements DashboardRepository {
   DashboardRepositoryImpl(this._dio);
 
   @override
-  Future<DashboardModel> getDashboard() async {
+  Future<DashboardModel> getDashboard({
+    MediaType mediaType = MediaType.series,
+  }) async {
     try {
-      final response = await _dio.get('/dashboard');
+      final response = await _dio.get(
+        '/dashboard',
+        queryParameters: {'mediaType': mediaType.apiValue},
+      );
       final data = response.data as Map<String, dynamic>;
       _normalizeDashboardItems(data);
       return DashboardModel.fromJson(data);
@@ -39,9 +47,9 @@ class DashboardRepositoryImpl implements DashboardRepository {
         if (items is List) {
           for (final item in items) {
             if (item is Map<String, dynamic>) {
-              if (item['tmdbId'] == null && item['seriesId'] != null) {
+              if (item['tmdbId'] == null && item['mediaId'] != null) {
                 item['tmdbId'] =
-                    int.tryParse(item['seriesId'].toString()) ?? 0;
+                    int.tryParse(item['mediaId'].toString()) ?? 0;
               }
             }
           }

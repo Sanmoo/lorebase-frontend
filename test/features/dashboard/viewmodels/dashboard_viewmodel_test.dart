@@ -9,13 +9,16 @@ import 'package:lorebase/features/dashboard/data/repositories/dashboard_reposito
 import 'package:lorebase/features/dashboard/data/models/dashboard_model.dart';
 import 'package:lorebase/features/dashboard/data/models/dashboard_section_model.dart';
 import 'package:lorebase/features/dashboard/data/models/dashboard_stats_model.dart';
+import 'package:lorebase/features/tracking/data/models/media_type.dart';
 
 class FakeDashboardRepo implements DashboardRepository {
   DashboardModel? result;
   bool shouldThrow = false;
 
   @override
-  Future<DashboardModel> getDashboard() async {
+  Future<DashboardModel> getDashboard({
+    MediaType mediaType = MediaType.series,
+  }) async {
     if (shouldThrow) throw Exception('Failed');
     return result ?? _defaultDashboard();
   }
@@ -129,7 +132,7 @@ void main() {
 
     test('refresh() keeps stale data on network failure', () async {
       final cacheService = CacheService();
-      await cacheService.set('dashboard', CacheEntry(
+      await cacheService.set('dashboard:series', CacheEntry(
         json: jsonEncode(const DashboardModel(
           watching: DashboardSectionModel(),
           wantToWatch: DashboardSectionModel(),
@@ -155,7 +158,7 @@ void main() {
 
     test('build() returns cached data from memory', () async {
       final cacheService = CacheService();
-      await cacheService.set('dashboard', CacheEntry(
+      await cacheService.set('dashboard:series', CacheEntry(
         json: jsonEncode(const DashboardModel(
           watching: DashboardSectionModel(),
           wantToWatch: DashboardSectionModel(),

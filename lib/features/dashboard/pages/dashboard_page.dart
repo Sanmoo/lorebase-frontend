@@ -6,17 +6,33 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/empty_state_widget.dart';
 import '../../../../core/widgets/error_widget.dart';
 import '../../../../core/widgets/loading_widget.dart';
+import '../../../../core/widgets/media_type_toggle.dart';
 import '../../../l10n/strings.g.dart';
+import '../../tracking/data/models/media_type.dart';
 import '../../../core/cache/cache_providers.dart';
 import '../viewmodels/dashboard_viewmodel.dart';
 import '../widgets/stats_card.dart';
 import '../widgets/watching_section.dart';
 
-class DashboardPage extends ConsumerWidget {
+class DashboardPage extends ConsumerStatefulWidget {
   const DashboardPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DashboardPage> createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends ConsumerState<DashboardPage> {
+  MediaType _selectedType = MediaType.series;
+
+  void _onMediaTypeChanged(MediaType type) {
+    setState(() => _selectedType = type);
+    ref.read(dashboardViewModelProvider.notifier).loadDashboard(
+          mediaType: type,
+        );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final t = context.t;
     ref.listen<String?>(dashboardBackgroundErrorProvider, (prev, next) {
       if (next != null) {
@@ -41,6 +57,15 @@ class DashboardPage extends ConsumerWidget {
         ),
         data: (dashboard) => CustomScrollView(
           slivers: [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                child: MediaTypeToggle(
+                  selectedType: _selectedType,
+                  onChanged: _onMediaTypeChanged,
+                ),
+              ),
+            ),
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -97,10 +122,14 @@ class DashboardPage extends ConsumerWidget {
               SliverToBoxAdapter(
                 child: DashboardSection(
                   title: t.dashboard_watching,
-                  series: dashboard.watching.items,
-                  onTap: (series) {
-                    if (series.tmdbId != 0) {
-                      context.push('/series/${series.tmdbId}');
+                  items: dashboard.watching.items,
+                  onTap: (item) {
+                    if (item.tmdbId != 0) {
+                      context.push(
+                        item.mediaType == MediaType.series
+                            ? '/series/${item.tmdbId}'
+                            : '/movies/${item.tmdbId}',
+                      );
                     }
                   },
                 ),
@@ -111,10 +140,14 @@ class DashboardPage extends ConsumerWidget {
                   padding: const EdgeInsets.only(top: 24.0),
                   child: DashboardSection(
                     title: t.dashboard_want_to_watch,
-                    series: dashboard.wantToWatch.items,
-                    onTap: (series) {
-                      if (series.tmdbId != 0) {
-                        context.push('/series/${series.tmdbId}');
+                    items: dashboard.wantToWatch.items,
+                    onTap: (item) {
+                      if (item.tmdbId != 0) {
+                        context.push(
+                          item.mediaType == MediaType.series
+                              ? '/series/${item.tmdbId}'
+                              : '/movies/${item.tmdbId}',
+                        );
                       }
                     },
                   ),
@@ -126,10 +159,14 @@ class DashboardPage extends ConsumerWidget {
                   padding: const EdgeInsets.only(top: 24.0),
                   child: DashboardSection(
                     title: t.dashboard_completed,
-                    series: dashboard.completed.items,
-                    onTap: (series) {
-                      if (series.tmdbId != 0) {
-                        context.push('/series/${series.tmdbId}');
+                    items: dashboard.completed.items,
+                    onTap: (item) {
+                      if (item.tmdbId != 0) {
+                        context.push(
+                          item.mediaType == MediaType.series
+                              ? '/series/${item.tmdbId}'
+                              : '/movies/${item.tmdbId}',
+                        );
                       }
                     },
                   ),
@@ -141,10 +178,14 @@ class DashboardPage extends ConsumerWidget {
                   padding: const EdgeInsets.only(top: 24.0),
                   child: DashboardSection(
                     title: t.dashboard_dropped,
-                    series: dashboard.dropped.items,
-                    onTap: (series) {
-                      if (series.tmdbId != 0) {
-                        context.push('/series/${series.tmdbId}');
+                    items: dashboard.dropped.items,
+                    onTap: (item) {
+                      if (item.tmdbId != 0) {
+                        context.push(
+                          item.mediaType == MediaType.series
+                              ? '/series/${item.tmdbId}'
+                              : '/movies/${item.tmdbId}',
+                        );
                       }
                     },
                   ),
@@ -156,7 +197,9 @@ class DashboardPage extends ConsumerWidget {
                 dashboard.dropped.items.isEmpty)
               SliverFillRemaining(
                 child: EmptyStateWidget(
-                  message: t.dashboard_empty,
+                    message: _selectedType == MediaType.series
+                        ? t.dashboard_empty
+                        : t.dashboard_empty_movies,
                   icon: Icons.tv_off,
                 ),
               ),

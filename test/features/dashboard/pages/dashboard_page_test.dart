@@ -7,7 +7,8 @@ import 'package:lorebase/features/dashboard/viewmodels/dashboard_viewmodel.dart'
 import 'package:lorebase/features/dashboard/data/models/dashboard_model.dart';
 import 'package:lorebase/features/dashboard/data/models/dashboard_section_model.dart';
 import 'package:lorebase/features/dashboard/data/models/dashboard_stats_model.dart';
-import 'package:lorebase/features/series/data/models/series_model.dart';
+import 'package:lorebase/features/tracking/data/models/tracked_media_summary_model.dart';
+import 'package:lorebase/features/tracking/data/models/media_type.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_viewmodel.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_state.dart';
 import 'package:lorebase/l10n/strings.g.dart';
@@ -21,7 +22,10 @@ class FakeDashboardVM extends DashboardViewModel {
   AsyncValue<DashboardModel> build() => testState;
 
   @override
-  Future<void> refresh() async {} // no-op: test doesn't depend on state change
+  Future<void> refresh() async {}
+
+  @override
+  Future<void> loadDashboard({MediaType mediaType = MediaType.series}) async {}
 }
 
 DashboardModel _emptyDashboard() => const DashboardModel(
@@ -136,13 +140,14 @@ Future<void> main() async {
     });
 
     testWidgets('sections render when items are present', (tester) async {
-      const series = SeriesModel(
+      const media = TrackedMediaSummaryModel(
         tmdbId: 456,
         title: 'x',
+        mediaType: MediaType.series,
         posterPath: 'http://example.com/p.jpg',
       );
       const dashboard = DashboardModel(
-        watching: DashboardSectionModel(items: [series]),
+        watching: DashboardSectionModel(items: [media]),
         wantToWatch: DashboardSectionModel(),
         completed: DashboardSectionModel(),
         dropped: DashboardSectionModel(),
@@ -167,12 +172,12 @@ Future<void> main() async {
     });
 
     testWidgets('renders all four sections when items present', (tester) async {
-      const series = SeriesModel(tmdbId: 1, title: 'Series');
+      const media = TrackedMediaSummaryModel(tmdbId: 1, title: 'Series', mediaType: MediaType.series);
       const dashboard = DashboardModel(
-        watching: DashboardSectionModel(items: [series]),
-        wantToWatch: DashboardSectionModel(items: [series]),
-        completed: DashboardSectionModel(items: [series]),
-        dropped: DashboardSectionModel(items: [series]),
+        watching: DashboardSectionModel(items: [media]),
+        wantToWatch: DashboardSectionModel(items: [media]),
+        completed: DashboardSectionModel(items: [media]),
+        dropped: DashboardSectionModel(items: [media]),
         stats: DashboardStatsModel(
           watchingCount: 1, wantToWatchCount: 1,
           completedCount: 1, droppedCount: 1,
@@ -195,9 +200,9 @@ Future<void> main() async {
     });
 
     testWidgets('section with tmdbId 0 does not navigate', (tester) async {
-      const series = SeriesModel(tmdbId: 0, title: 'No nav');
+      const media = TrackedMediaSummaryModel(tmdbId: 0, title: 'No nav', mediaType: MediaType.series);
       const dashboard = DashboardModel(
-        watching: DashboardSectionModel(items: [series]),
+        watching: DashboardSectionModel(items: [media]),
         wantToWatch: DashboardSectionModel(),
         completed: DashboardSectionModel(),
         dropped: DashboardSectionModel(),
@@ -216,10 +221,10 @@ Future<void> main() async {
     });
 
     testWidgets('dashboard with wantToWatch section renders', (tester) async {
-      const series = SeriesModel(tmdbId: 2, title: 'Want');
+      const media = TrackedMediaSummaryModel(tmdbId: 2, title: 'Want', mediaType: MediaType.series);
       const dashboard = DashboardModel(
         watching: DashboardSectionModel(),
-        wantToWatch: DashboardSectionModel(items: [series]),
+        wantToWatch: DashboardSectionModel(items: [media]),
         completed: DashboardSectionModel(),
         dropped: DashboardSectionModel(),
         stats: DashboardStatsModel(wantToWatchCount: 1),
@@ -236,11 +241,11 @@ Future<void> main() async {
     });
 
     testWidgets('dashboard with completed section renders', (tester) async {
-      const series = SeriesModel(tmdbId: 3, title: 'Done');
+      const media = TrackedMediaSummaryModel(tmdbId: 3, title: 'Done', mediaType: MediaType.series);
       const dashboard = DashboardModel(
         watching: DashboardSectionModel(),
         wantToWatch: DashboardSectionModel(),
-        completed: DashboardSectionModel(items: [series]),
+        completed: DashboardSectionModel(items: [media]),
         dropped: DashboardSectionModel(),
         stats: DashboardStatsModel(completedCount: 1),
       );
@@ -256,12 +261,12 @@ Future<void> main() async {
     });
 
     testWidgets('dashboard with dropped section renders', (tester) async {
-      const series = SeriesModel(tmdbId: 4, title: 'Dropped');
+      const media = TrackedMediaSummaryModel(tmdbId: 4, title: 'Dropped', mediaType: MediaType.series);
       const dashboard = DashboardModel(
         watching: DashboardSectionModel(),
         wantToWatch: DashboardSectionModel(),
         completed: DashboardSectionModel(),
-        dropped: DashboardSectionModel(items: [series]),
+        dropped: DashboardSectionModel(items: [media]),
         stats: DashboardStatsModel(droppedCount: 1),
       );
       final fakeVM = FakeDashboardVM(testState: const AsyncValue.data(dashboard));
@@ -288,12 +293,12 @@ Future<void> main() async {
     });
 
     testWidgets('sections with tmdbId 0 do not navigate', (tester) async {
-      const series = SeriesModel(tmdbId: 0, title: 'No Nav');
+      const media = TrackedMediaSummaryModel(tmdbId: 0, title: 'No Nav', mediaType: MediaType.series);
       const dashboard = DashboardModel(
-        watching: DashboardSectionModel(items: [series]),
-        wantToWatch: DashboardSectionModel(items: [series]),
-        completed: DashboardSectionModel(items: [series]),
-        dropped: DashboardSectionModel(items: [series]),
+        watching: DashboardSectionModel(items: [media]),
+        wantToWatch: DashboardSectionModel(items: [media]),
+        completed: DashboardSectionModel(items: [media]),
+        dropped: DashboardSectionModel(items: [media]),
         stats: DashboardStatsModel(
           watchingCount: 1, wantToWatchCount: 1,
           completedCount: 1, droppedCount: 1,
@@ -327,12 +332,13 @@ Future<void> main() async {
     });
 
     testWidgets('tapping watching section series navigates', (tester) async {
-      const series = SeriesModel(
+      const media = TrackedMediaSummaryModel(
         tmdbId: 456, title: 'Series A',
+        mediaType: MediaType.series,
         posterPath: 'http://example.com/p.jpg',
       );
       const dashboard = DashboardModel(
-        watching: DashboardSectionModel(items: [series]),
+        watching: DashboardSectionModel(items: [media]),
         wantToWatch: DashboardSectionModel(),
         completed: DashboardSectionModel(),
         dropped: DashboardSectionModel(),
@@ -350,6 +356,20 @@ Future<void> main() async {
       await tester.pump();
 
       expect(find.text('Series A'), findsOneWidget);
+    });
+
+    testWidgets('switching to Movies shows movie empty state copy', (tester) async {
+      final fakeVM = FakeDashboardVM(testState: AsyncValue.data(_emptyDashboard()));
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.tap(find.text('Movies'));
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('No movies tracked'), findsOneWidget);
     });
   });
 }

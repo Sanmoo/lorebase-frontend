@@ -21,7 +21,8 @@ DashboardSectionModel _$DashboardSectionModelFromJson(
 
 /// @nodoc
 mixin _$DashboardSectionModel {
-  List<SeriesModel> get items => throw _privateConstructorUsedError;
+  List<TrackedMediaSummaryModel> get items =>
+      throw _privateConstructorUsedError;
   int get total => throw _privateConstructorUsedError;
   bool get hasMore => throw _privateConstructorUsedError;
 
@@ -41,7 +42,7 @@ abstract class $DashboardSectionModelCopyWith<$Res> {
           $Res Function(DashboardSectionModel) then) =
       _$DashboardSectionModelCopyWithImpl<$Res, DashboardSectionModel>;
   @useResult
-  $Res call({List<SeriesModel> items, int total, bool hasMore});
+  $Res call({List<TrackedMediaSummaryModel> items, int total, bool hasMore});
 }
 
 /// @nodoc
@@ -68,7 +69,7 @@ class _$DashboardSectionModelCopyWithImpl<$Res,
       items: null == items
           ? _value.items
           : items // ignore: cast_nullable_to_non_nullable
-              as List<SeriesModel>,
+              as List<TrackedMediaSummaryModel>,
       total: null == total
           ? _value.total
           : total // ignore: cast_nullable_to_non_nullable
@@ -90,7 +91,7 @@ abstract class _$$DashboardSectionModelImplCopyWith<$Res>
       __$$DashboardSectionModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({List<SeriesModel> items, int total, bool hasMore});
+  $Res call({List<TrackedMediaSummaryModel> items, int total, bool hasMore});
 }
 
 /// @nodoc
@@ -115,7 +116,7 @@ class __$$DashboardSectionModelImplCopyWithImpl<$Res>
       items: null == items
           ? _value._items
           : items // ignore: cast_nullable_to_non_nullable
-              as List<SeriesModel>,
+              as List<TrackedMediaSummaryModel>,
       total: null == total
           ? _value.total
           : total // ignore: cast_nullable_to_non_nullable
@@ -132,7 +133,7 @@ class __$$DashboardSectionModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$DashboardSectionModelImpl implements _DashboardSectionModel {
   const _$DashboardSectionModelImpl(
-      {final List<SeriesModel> items = const [],
+      {final List<TrackedMediaSummaryModel> items = const [],
       this.total = 0,
       this.hasMore = false})
       : _items = items;
@@ -140,10 +141,10 @@ class _$DashboardSectionModelImpl implements _DashboardSectionModel {
   factory _$DashboardSectionModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$DashboardSectionModelImplFromJson(json);
 
-  final List<SeriesModel> _items;
+  final List<TrackedMediaSummaryModel> _items;
   @override
   @JsonKey()
-  List<SeriesModel> get items {
+  List<TrackedMediaSummaryModel> get items {
     if (_items is EqualUnmodifiableListView) return _items;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_items);
@@ -195,7 +196,7 @@ class _$DashboardSectionModelImpl implements _DashboardSectionModel {
 
 abstract class _DashboardSectionModel implements DashboardSectionModel {
   const factory _DashboardSectionModel(
-      {final List<SeriesModel> items,
+      {final List<TrackedMediaSummaryModel> items,
       final int total,
       final bool hasMore}) = _$DashboardSectionModelImpl;
 
@@ -203,7 +204,7 @@ abstract class _DashboardSectionModel implements DashboardSectionModel {
       _$DashboardSectionModelImpl.fromJson;
 
   @override
-  List<SeriesModel> get items;
+  List<TrackedMediaSummaryModel> get items;
   @override
   int get total;
   @override

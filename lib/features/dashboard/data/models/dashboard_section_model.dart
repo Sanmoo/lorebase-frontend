@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import '../../../series/data/models/series_model.dart';
+import '../../../tracking/data/models/tracked_media_summary_model.dart';
 
 part 'dashboard_section_model.freezed.dart';
 part 'dashboard_section_model.g.dart';
@@ -7,7 +7,7 @@ part 'dashboard_section_model.g.dart';
 @freezed
 class DashboardSectionModel with _$DashboardSectionModel {
   const factory DashboardSectionModel({
-    @Default([]) List<SeriesModel> items,
+    @Default([]) List<TrackedMediaSummaryModel> items,
     @Default(0) int total,
     @Default(false) bool hasMore,
   }) = _DashboardSectionModel;

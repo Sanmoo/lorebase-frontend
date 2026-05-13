@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import '../../series/data/models/series_model.dart';
-import 'series_horizontal_list.dart';
+import '../../tracking/data/models/tracked_media_summary_model.dart';
+import 'tracked_media_horizontal_list.dart';
 
 class DashboardSection extends StatelessWidget {
   final String title;
-  final List<SeriesModel> series;
-  final ValueChanged<SeriesModel>? onTap;
+  final List<TrackedMediaSummaryModel> items;
+  final ValueChanged<TrackedMediaSummaryModel>? onTap;
 
   const DashboardSection({
     super.key,
     required this.title,
-    required this.series,
+    required this.items,
     this.onTap,
   });
 
@@ -29,7 +29,7 @@ class DashboardSection extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        SeriesHorizontalList(series: series, onTap: onTap),
+        TrackedMediaHorizontalList(items: items, onTap: onTap),
       ],
     );
   }

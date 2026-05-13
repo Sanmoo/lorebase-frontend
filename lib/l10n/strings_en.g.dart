@@ -124,10 +124,6 @@ class TranslationsEn extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get error_server => 'Server error. Please try again later.';
 	@override String get error_session_expired => 'Session expired. Please log in again.';
 	@override String get error_resource_not_found => 'Resource not found.';
-	@override String get media_type_series => 'Series';
-	@override String get media_type_movies => 'Movies';
-	@override String get search_hint_movies => 'Search movies...';
-	@override String get search_no_results_movies => 'No movies found';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -223,10 +219,6 @@ extension on TranslationsEn {
 			'error_server' => 'Server error. Please try again later.',
 			'error_session_expired' => 'Session expired. Please log in again.',
 			'error_resource_not_found' => 'Resource not found.',
-			'media_type_series' => 'Series',
-			'media_type_movies' => 'Movies',
-			'search_hint_movies' => 'Search movies...',
-			'search_no_results_movies' => 'No movies found',
 			_ => null,
 		};
 	}
