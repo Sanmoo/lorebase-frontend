@@ -180,5 +180,118 @@ void main() {
       expect(state.hasValue, true);
       expect(state.value!.stats.watchingCount, 3);
     });
+
+    test('build() triggers background refresh when cache is stale', () async {
+      final cacheService = CacheService();
+      await cacheService.set('dashboard:series', CacheEntry(
+        json: jsonEncode(const DashboardModel(
+          watching: DashboardSectionModel(),
+          wantToWatch: DashboardSectionModel(),
+          completed: DashboardSectionModel(),
+          dropped: DashboardSectionModel(),
+          stats: DashboardStatsModel(watchingCount: 3),
+        ).toJson()),
+        cachedAt: DateTime.now().subtract(const Duration(days: 1)),
+        ttl: const Duration(hours: 6),
+      ));
+      final dashboard = const DashboardModel(
+        watching: DashboardSectionModel(),
+        wantToWatch: DashboardSectionModel(),
+        completed: DashboardSectionModel(),
+        dropped: DashboardSectionModel(),
+        stats: DashboardStatsModel(watchingCount: 10),
+      );
+      final repo = FakeDashboardRepo()..result = dashboard;
+      final container = ProviderContainer(overrides: [
+        dashboardRepositoryProvider.overrideWith((ref) => repo),
+        cacheServiceProvider.overrideWith((ref) => cacheService),
+      ]);
+      addTearDown(container.dispose);
+
+      final state = container.read(dashboardViewModelProvider);
+      expect(state.hasValue, true);
+      expect(state.value!.stats.watchingCount, 3);
+
+      // Wait for background refresh to complete
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+
+      final updatedState = container.read(dashboardViewModelProvider);
+      expect(updatedState.hasValue, true);
+      expect(updatedState.value!.stats.watchingCount, 10);
+    });
+
+    test('build() handles background refresh failure on stale cache',
+        () async {
+      final cacheService = CacheService();
+      await cacheService.set('dashboard:series', CacheEntry(
+        json: jsonEncode(const DashboardModel(
+          watching: DashboardSectionModel(),
+          wantToWatch: DashboardSectionModel(),
+          completed: DashboardSectionModel(),
+          dropped: DashboardSectionModel(),
+          stats: DashboardStatsModel(watchingCount: 3),
+        ).toJson()),
+        cachedAt: DateTime.now().subtract(const Duration(days: 1)),
+        ttl: const Duration(hours: 6),
+      ));
+      final repo = FakeDashboardRepo()..shouldThrow = true;
+      final container = ProviderContainer(overrides: [
+        dashboardRepositoryProvider.overrideWith((ref) => repo),
+        cacheServiceProvider.overrideWith((ref) => cacheService),
+      ]);
+      addTearDown(container.dispose);
+
+      final state = container.read(dashboardViewModelProvider);
+      expect(state.hasValue, true);
+      expect(state.value!.stats.watchingCount, 3);
+
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+
+      final error = container.read(dashboardBackgroundErrorProvider);
+      expect(error, isNotNull);
+    });
+
+    test('loadDashboard() switches media type and reloads', () async {
+      final cacheService = CacheService();
+      final repo = FakeDashboardRepo()
+        ..result = const DashboardModel(
+          watching: DashboardSectionModel(),
+          wantToWatch: DashboardSectionModel(),
+          completed: DashboardSectionModel(),
+          dropped: DashboardSectionModel(),
+          stats: DashboardStatsModel(watchingCount: 5, totalTracked: 5),
+        );
+      final container = ProviderContainer(overrides: [
+        dashboardRepositoryProvider.overrideWith((ref) => repo),
+        cacheServiceProvider.overrideWith((ref) => cacheService),
+      ]);
+      addTearDown(container.dispose);
+
+      final sub = container.listen(dashboardViewModelProvider, (_, __) {});
+
+      await container
+          .read(dashboardViewModelProvider.notifier)
+          .loadDashboard(mediaType: MediaType.movie);
+
+      final state = container.read(dashboardViewModelProvider);
+      expect(state.hasValue, true);
+      expect(state.value!.stats.watchingCount, 5);
+
+      sub.close();
+    });
+
+    test('refresh() sets error when no stale cache is available', () async {
+      final repo = FakeDashboardRepo()..shouldThrow = true;
+      final container = ProviderContainer(overrides: [
+        dashboardRepositoryProvider.overrideWith((ref) => repo),
+        cacheServiceProvider.overrideWith((ref) => CacheService()),
+      ]);
+      addTearDown(container.dispose);
+
+      await container.read(dashboardViewModelProvider.notifier).refresh();
+
+      final state = container.read(dashboardViewModelProvider);
+      expect(state.hasError, true);
+    });
   });
 }

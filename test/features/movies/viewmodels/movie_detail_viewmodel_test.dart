@@ -29,6 +29,15 @@ class FakeMovieRepo implements MovieRepository {
 
 class FakeTrackingRepo implements TrackingRepository {
   List<TrackedMediaModel> trackingResults = [];
+  bool shouldThrow = false;
+  String? lastStatus;
+  String? lastMediaId;
+  MediaType? lastMediaType;
+  int? lastRating;
+  String? lastReview;
+  bool deleteCalled = false;
+  bool updateCalled = false;
+  bool startCalled = false;
 
   @override
   Future<List<TrackedMediaModel>> getTracking({
@@ -36,7 +45,10 @@ class FakeTrackingRepo implements TrackingRepository {
     MediaType? mediaType,
     int page = 1,
     int pageSize = 20,
-  }) async => trackingResults;
+  }) async {
+    if (shouldThrow) throw Exception('Failed');
+    return trackingResults;
+  }
 
   @override
   Future<TrackedMediaModel> startTracking(
@@ -44,7 +56,19 @@ class FakeTrackingRepo implements TrackingRepository {
     MediaType mediaType,
     String status,
   ) async {
-    throw UnimplementedError();
+    startCalled = true;
+    lastMediaId = mediaId;
+    lastMediaType = mediaType;
+    lastStatus = status;
+    return TrackedMediaModel(
+      trackingId: 'new-track',
+      userId: 'user-1',
+      mediaType: mediaType,
+      mediaId: mediaId,
+      status: status,
+      addedAt: DateTime.now(),
+      lastUpdated: DateTime.now(),
+    );
   }
 
   @override
@@ -56,14 +80,32 @@ class FakeTrackingRepo implements TrackingRepository {
     String? review,
     List<Map<String, dynamic>>? seasonRatings,
   }) async {
-    throw UnimplementedError();
+    updateCalled = true;
+    lastMediaId = mediaId;
+    lastMediaType = mediaType;
+    lastStatus = status;
+    lastRating = rating;
+    lastReview = review;
+    return TrackedMediaModel(
+      trackingId: mediaId,
+      userId: 'user-1',
+      mediaType: mediaType,
+      mediaId: '7',
+      status: status ?? 'WATCHING',
+      addedAt: DateTime.now(),
+      lastUpdated: DateTime.now(),
+    );
   }
 
   @override
   Future<void> deleteTracking(
     String mediaId, {
     required MediaType mediaType,
-  }) async {}
+  }) async {
+    deleteCalled = true;
+    lastMediaId = mediaId;
+    lastMediaType = mediaType;
+  }
 }
 
 void main() {
@@ -100,5 +142,184 @@ void main() {
     expect(state.movie.title, 'Se7en');
     expect(state.tracking, isNotNull);
     expect(state.tracking!.mediaType, MediaType.movie);
+  });
+
+  test('build() handles tracking fetch error gracefully', () async {
+    final movieRepo = FakeMovieRepo()
+      ..movieResult = const MovieModel(tmdbId: 7, title: 'Se7en');
+    final trackingRepo = FakeTrackingRepo()..shouldThrow = true;
+
+    final container = ProviderContainer(overrides: [
+      movieRepositoryProvider.overrideWith((ref) => movieRepo),
+      trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
+      cacheServiceProvider.overrideWith((ref) => CacheService()),
+    ]);
+    addTearDown(container.dispose);
+
+    final state = await container.read(movieDetailViewModelProvider(7).future);
+
+    expect(state.movie.title, 'Se7en');
+    expect(state.tracking, isNull);
+  });
+
+  test('addTracking() calls startTracking and invalidates', () async {
+    final movieRepo = FakeMovieRepo()
+      ..movieResult = const MovieModel(tmdbId: 7, title: 'Se7en');
+    final trackingRepo = FakeTrackingRepo();
+
+    final container = ProviderContainer(overrides: [
+      movieRepositoryProvider.overrideWith((ref) => movieRepo),
+      trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
+      cacheServiceProvider.overrideWith((ref) => CacheService()),
+    ]);
+    addTearDown(container.dispose);
+
+    await container.read(movieDetailViewModelProvider(7).future);
+    await container.read(movieDetailViewModelProvider(7).notifier)
+        .addTracking('WATCHING');
+
+    expect(trackingRepo.startCalled, true);
+    expect(trackingRepo.lastStatus, 'WATCHING');
+  });
+
+  test('addTracking() includes rating and review when provided', () async {
+    final movieRepo = FakeMovieRepo()
+      ..movieResult = const MovieModel(tmdbId: 7, title: 'Se7en');
+    final trackingRepo = FakeTrackingRepo();
+
+    final container = ProviderContainer(overrides: [
+      movieRepositoryProvider.overrideWith((ref) => movieRepo),
+      trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
+      cacheServiceProvider.overrideWith((ref) => CacheService()),
+    ]);
+    addTearDown(container.dispose);
+
+    await container.read(movieDetailViewModelProvider(7).future);
+    await container.read(movieDetailViewModelProvider(7).notifier)
+        .addTracking('WATCHING', rating: 5, review: 'Great!');
+
+    expect(trackingRepo.updateCalled, true);
+    expect(trackingRepo.lastRating, 5);
+    expect(trackingRepo.lastReview, 'Great!');
+  });
+
+  test('addTracking() does nothing when state has no value', () async {
+    final movieRepo = FakeMovieRepo()
+      ..movieResult = const MovieModel(tmdbId: 7, title: 'Se7en');
+    final trackingRepo = FakeTrackingRepo();
+
+    final container = ProviderContainer(overrides: [
+      movieRepositoryProvider.overrideWith((ref) => movieRepo),
+      trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
+      cacheServiceProvider.overrideWith((ref) => CacheService()),
+    ]);
+    addTearDown(container.dispose);
+
+    // Don't await build - state still loading
+    container.read(movieDetailViewModelProvider(7));
+    await container.read(movieDetailViewModelProvider(7).notifier)
+        .addTracking('WATCHING');
+
+    expect(trackingRepo.startCalled, false);
+  });
+
+  test('updateTracking() updates tracking data', () async {
+    final movieRepo = FakeMovieRepo()
+      ..movieResult = const MovieModel(tmdbId: 7, title: 'Se7en');
+    final trackingRepo = FakeTrackingRepo()
+      ..trackingResults = [
+        TrackedMediaModel(
+          trackingId: 'track-7',
+          userId: 'user-1',
+          mediaType: MediaType.movie,
+          mediaId: '7',
+          status: 'WATCHING',
+          addedAt: DateTime.now(),
+          lastUpdated: DateTime.now(),
+        ),
+      ];
+
+    final container = ProviderContainer(overrides: [
+      movieRepositoryProvider.overrideWith((ref) => movieRepo),
+      trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
+      cacheServiceProvider.overrideWith((ref) => CacheService()),
+    ]);
+    addTearDown(container.dispose);
+
+    await container.read(movieDetailViewModelProvider(7).future);
+    await container.read(movieDetailViewModelProvider(7).notifier)
+        .updateTracking(status: 'COMPLETED', rating: 4);
+
+    expect(trackingRepo.updateCalled, true);
+    expect(trackingRepo.lastStatus, 'COMPLETED');
+    expect(trackingRepo.lastRating, 4);
+  });
+
+  test('updateTracking() does nothing when no tracking exists', () async {
+    final movieRepo = FakeMovieRepo()
+      ..movieResult = const MovieModel(tmdbId: 7, title: 'Se7en');
+    final trackingRepo = FakeTrackingRepo();
+
+    final container = ProviderContainer(overrides: [
+      movieRepositoryProvider.overrideWith((ref) => movieRepo),
+      trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
+      cacheServiceProvider.overrideWith((ref) => CacheService()),
+    ]);
+    addTearDown(container.dispose);
+
+    await container.read(movieDetailViewModelProvider(7).future);
+    await container.read(movieDetailViewModelProvider(7).notifier)
+        .updateTracking(status: 'COMPLETED');
+
+    expect(trackingRepo.updateCalled, false);
+  });
+
+  test('removeTracking() deletes tracking', () async {
+    final movieRepo = FakeMovieRepo()
+      ..movieResult = const MovieModel(tmdbId: 7, title: 'Se7en');
+    final trackingRepo = FakeTrackingRepo()
+      ..trackingResults = [
+        TrackedMediaModel(
+          trackingId: 'track-7',
+          userId: 'user-1',
+          mediaType: MediaType.movie,
+          mediaId: '7',
+          status: 'WATCHING',
+          addedAt: DateTime.now(),
+          lastUpdated: DateTime.now(),
+        ),
+      ];
+
+    final container = ProviderContainer(overrides: [
+      movieRepositoryProvider.overrideWith((ref) => movieRepo),
+      trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
+      cacheServiceProvider.overrideWith((ref) => CacheService()),
+    ]);
+    addTearDown(container.dispose);
+
+    await container.read(movieDetailViewModelProvider(7).future);
+    await container.read(movieDetailViewModelProvider(7).notifier)
+        .removeTracking();
+
+    expect(trackingRepo.deleteCalled, true);
+  });
+
+  test('removeTracking() does nothing when no tracking exists', () async {
+    final movieRepo = FakeMovieRepo()
+      ..movieResult = const MovieModel(tmdbId: 7, title: 'Se7en');
+    final trackingRepo = FakeTrackingRepo();
+
+    final container = ProviderContainer(overrides: [
+      movieRepositoryProvider.overrideWith((ref) => movieRepo),
+      trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
+      cacheServiceProvider.overrideWith((ref) => CacheService()),
+    ]);
+    addTearDown(container.dispose);
+
+    await container.read(movieDetailViewModelProvider(7).future);
+    await container.read(movieDetailViewModelProvider(7).notifier)
+        .removeTracking();
+
+    expect(trackingRepo.deleteCalled, false);
   });
 }

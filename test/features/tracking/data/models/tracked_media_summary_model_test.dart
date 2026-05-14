@@ -17,5 +17,19 @@ void main() {
     expect(model.title, 'The Batman');
     expect(model.mediaType.apiValue, 'movie');
     expect(model.posterPath, '/poster.jpg');
+    expect(model.backdropPath, '/backdrop.jpg');
+  });
+
+  test('toJson fromJson roundtrip', () {
+    final original = TrackedMediaSummaryModel.fromJson(const {
+      'tmdbId': 10,
+      'title': 'The Batman',
+      'mediaType': 'movie',
+      'posterPath': '/poster.jpg',
+    });
+    final jsonMap = original.toJson();
+    final restored = TrackedMediaSummaryModel.fromJson(jsonMap);
+    expect(restored.tmdbId, 10);
+    expect(restored.title, 'The Batman');
   });
 }
