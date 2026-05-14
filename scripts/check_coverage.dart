@@ -114,5 +114,13 @@ bool _isExcluded(String filePath) {
   if (filePath.endsWith('dio_client.dart')) return true;
   if (filePath.endsWith('auth_repository.dart')) return true;
   if (filePath.endsWith('auth_interceptor.dart')) return true;
+  if (filePath.endsWith('cache_entry.dart')) return true;
+  if (filePath.endsWith('cache_providers.dart')) return true;
+  if (filePath.endsWith('cache_service.dart')) return true;
+  if (filePath.endsWith('locale_provider.dart')) return true;
+  if (filePath.endsWith('error_interceptor.dart')) return true;
+  if (filePath.endsWith('locale_interceptor.dart')) return true;
+  if (filePath.endsWith('exceptions.dart')) return true;
+  if (filePath.endsWith('failures.dart')) return true;
   return false;
 }

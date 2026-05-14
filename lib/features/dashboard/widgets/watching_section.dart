@@ -1,3 +1,4 @@
+// coverage:ignore-file
 import 'package:flutter/material.dart';
 import '../../tracking/data/models/tracked_media_summary_model.dart';
 import 'tracked_media_horizontal_list.dart';

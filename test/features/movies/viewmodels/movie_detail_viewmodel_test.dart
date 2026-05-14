@@ -182,6 +182,26 @@ void main() {
     expect(trackingRepo.lastStatus, 'WATCHING');
   });
 
+  test('addTracking() calls updateTracking with review only', () async {
+    final movieRepo = FakeMovieRepo()
+      ..movieResult = const MovieModel(tmdbId: 7, title: 'Se7en');
+    final trackingRepo = FakeTrackingRepo();
+
+    final container = ProviderContainer(overrides: [
+      movieRepositoryProvider.overrideWith((ref) => movieRepo),
+      trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
+      cacheServiceProvider.overrideWith((ref) => CacheService()),
+    ]);
+    addTearDown(container.dispose);
+
+    await container.read(movieDetailViewModelProvider(7).future);
+    await container.read(movieDetailViewModelProvider(7).notifier)
+        .addTracking('WATCHING', review: 'Nice movie');
+
+    expect(trackingRepo.updateCalled, true);
+    expect(trackingRepo.lastReview, 'Nice movie');
+  });
+
   test('addTracking() includes rating and review when provided', () async {
     final movieRepo = FakeMovieRepo()
       ..movieResult = const MovieModel(tmdbId: 7, title: 'Se7en');

@@ -48,7 +48,8 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
       MediaType.series,
       status,
     );
-    if (rating != null || (review != null && review.isNotEmpty)) {
+    final hasExtra = (rating != null) || (review != null && review.isNotEmpty);
+    if (hasExtra) {
       await trackingRepo.updateTracking(
         tracking.mediaId,
         mediaType: MediaType.series,

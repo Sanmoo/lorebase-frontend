@@ -44,7 +44,8 @@ class MovieDetailViewModel extends _$MovieDetailViewModel {
           MediaType.movie,
           status,
         );
-    if (rating != null || (review != null && review.isNotEmpty)) {
+    final hasExtra = (rating != null) || (review != null && review.isNotEmpty);
+    if (hasExtra) {
       await ref.read(trackingRepositoryProvider).updateTracking(
             tracking.mediaId,
             mediaType: MediaType.movie,

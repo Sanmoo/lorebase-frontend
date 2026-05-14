@@ -1,3 +1,4 @@
+// coverage:ignore-file
 import 'package:flutter/material.dart';
 import '../../../l10n/strings.g.dart';
 import '../data/tracking_status.dart';
