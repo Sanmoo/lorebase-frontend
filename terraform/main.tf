@@ -1,7 +1,7 @@
 # ─── S3 Bucket ────────────────────────────────────────────────────────────────
 
 resource "aws_s3_bucket" "web" {
-  bucket = var.bucket_name
+  bucket = "${var.bucket_name}-${terraform.workspace}"
 }
 
 # Bloqueia todo acesso público ao bucket — só CloudFront acessa via OAC
@@ -17,7 +17,7 @@ resource "aws_s3_bucket_public_access_block" "web" {
 # ─── CloudFront Origin Access Control (OAC) ──────────────────────────────────
 
 resource "aws_cloudfront_origin_access_control" "web" {
-  name                              = "${var.bucket_name}-oac"
+  name                              = "${var.bucket_name}-${terraform.workspace}-oac"
   description                       = "OAC para o bucket S3 do lorebase web"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
@@ -56,7 +56,7 @@ resource "aws_cloudfront_distribution" "web" {
   enabled             = true
   default_root_object = "index.html"
   price_class         = var.price_class
-  comment             = "Lorebase Web App — ${var.bucket_name}"
+  comment             = "Lorebase Web App — ${var.bucket_name}-${terraform.workspace}"
 
   # Domínio personalizado (opcional)
   aliases = var.domain_name != null ? [var.domain_name] : []
@@ -64,13 +64,13 @@ resource "aws_cloudfront_distribution" "web" {
   # Origem: S3 via OAC
   origin {
     domain_name              = aws_s3_bucket.web.bucket_regional_domain_name
-    origin_id                = "s3-${var.bucket_name}"
+    origin_id                = "s3-${var.bucket_name}-${terraform.workspace}"
     origin_access_control_id = aws_cloudfront_origin_access_control.web.id
   }
 
   # Cache behavior padrão
   default_cache_behavior {
-    target_origin_id       = "s3-${var.bucket_name}"
+    target_origin_id       = "s3-${var.bucket_name}-${terraform.workspace}"
     viewer_protocol_policy = "redirect-to-https"
     compress               = true
 
