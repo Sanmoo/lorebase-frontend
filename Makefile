@@ -1,4 +1,4 @@
-.PHONY: test test-coverage analyze check deploy build-web infra
+.PHONY: test test-coverage analyze check deploy build-web infra workspace-list workspace-show workspace-create
 
 # ─── Testing & Quality ─────────────────────────
 
@@ -21,11 +21,14 @@ build-web: check-deps
 
 # ─── Deploy (infra + build + upload) ───────────
 
-deploy: check-deps check-files
+deploy: check-deps deploy-env-check check-files
 	@echo "🏗️  Initializing Terraform..."
 	terraform -chdir=terraform init
+	@echo "🏗️  Selecting workspace '$(ENV)'..."
+	terraform -chdir=terraform workspace select $(ENV) 2>/dev/null || \
+		terraform -chdir=terraform workspace new $(ENV)
 	@echo "🏗️  Applying Terraform..."
-	terraform -chdir=terraform apply -auto-approve
+	terraform -chdir=terraform apply -auto-approve -var-file=$(ENV).tfvars
 	@echo "🔨 Building Flutter web..."
 	flutter build web --release
 	@echo "📦 Syncing to S3..."
@@ -37,16 +40,48 @@ deploy: check-deps check-files
 		--no-cli-pager
 	@echo ""
 	@echo "✅  Deploy completo!"
-	@echo "🌐  Acesse: https://$$(terraform -chdir=terraform output -raw cloudfront_domain)"
+	@echo "🌐  $(ENV): https://$$(terraform -chdir=terraform output -raw cloudfront_domain)"
 
 # ─── Infra (apenas Terraform) ──────────────────
 
-infra: check-deps
+infra: check-deps deploy-env-check
 	@echo "🏗️  Initializing Terraform..."
 	terraform -chdir=terraform init
+	@echo "🏗️  Selecting workspace '$(ENV)'..."
+	terraform -chdir=terraform workspace select $(ENV) 2>/dev/null || \
+		terraform -chdir=terraform workspace new $(ENV)
 	@echo "🏗️  Applying Terraform..."
-	terraform -chdir=terraform apply
-	@echo "✅  Infraestrutura aplicada!"
+	terraform -chdir=terraform apply -var-file=$(ENV).tfvars
+	@echo "✅  Infraestrutura do ambiente $(ENV) aplicada!"
+
+# ─── Environment Check ─────────────────────────
+
+deploy-env-check:
+	@if [ -z "$(ENV)" ]; then \
+		echo "❌ Defina ENV=dev|qa|prod"; \
+		echo "   Ex: make deploy ENV=dev"; \
+		exit 1; \
+	fi
+	@echo "$(ENV)" | grep -Eq '^(dev|qa|prod)$$' || { \
+		echo "❌ ENV inválida: '$(ENV)'. Use dev, qa ou prod."; \
+		exit 1; \
+	}
+	@echo "🌍 Ambiente: $(ENV)"
+
+# ─── Workspace Management ──────────────────────
+
+workspace-list:
+	@echo "📋 Workspaces disponíveis:"
+	terraform -chdir=terraform workspace list
+
+workspace-show:
+	@echo "📌 Workspace atual:"
+	terraform -chdir=terraform workspace show
+
+workspace-create: deploy-env-check
+	@echo "🏗️  Criando workspace '$(ENV)'..."
+	terraform -chdir=terraform workspace new $(ENV) || \
+		echo "⚠️  Workspace '$(ENV)' já existe."
 
 # ─── Helpers ───────────────────────────────────
 
