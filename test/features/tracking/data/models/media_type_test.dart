@@ -18,8 +18,8 @@ void main() {
       );
     });
 
-    test('label() returns correct translated labels', () {
-      final ptBr = AppLocale.ptBr.buildSync();
+    test('label() returns correct translated labels', () async {
+      final ptBr = await AppLocale.ptBr.build();
       expect(MediaType.series.label(ptBr), 'Séries');
       expect(MediaType.movie.label(ptBr), 'Filmes');
     });
