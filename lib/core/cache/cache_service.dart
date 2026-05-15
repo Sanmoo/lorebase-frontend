@@ -39,12 +39,12 @@ class CacheService {
       _memory.removeWhere((k, _) => k.startsWith(prefix));
       return;
     }
-    final keysToRemove = _hiveBox!.keys
+    final keysToRemove = _hiveBox.keys
         .where((k) => k.toString().startsWith(prefix))
         .toList();
     for (final key in keysToRemove) {
       _memory.remove(key);
-      await _hiveBox!.delete(key);
+      await _hiveBox.delete(key);
     }
   }
 

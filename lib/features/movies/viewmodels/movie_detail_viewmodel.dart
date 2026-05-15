@@ -17,13 +17,14 @@ class MovieDetailViewModel extends _$MovieDetailViewModel {
         );
     TrackedMediaModel? tracking;
     try {
-      final allTracking = await ref.read(trackingRepositoryProvider).getTracking(
-            mediaType: MediaType.movie,
-            pageSize: 1000,
-          );
+      final allTracking =
+          await ref.read(trackingRepositoryProvider).getTracking(
+                mediaType: MediaType.movie,
+                pageSize: 1000,
+              );
       tracking = allTracking.firstWhere(
         (t) =>
-            (t.media != null && t.media!.tmdbId == tmdbId) ||
+            (t.media != null && t.media!.mediaId == tmdbId.toString()) ||
             t.mediaId == tmdbId.toString(),
       );
     } catch (_) {

@@ -9,7 +9,7 @@ void main() {
     testWidgets('renders title and series list', (tester) async {
       final items = [
         const TrackedMediaSummaryModel(
-          tmdbId: 1,
+          mediaId: '1',
           title: 'Test Show',
           mediaType: MediaType.series,
         ),

@@ -78,8 +78,7 @@ Future<void> main() async {
     }
 
     testWidgets('loading state shows LoadingWidget', (tester) async {
-      final fakeVM =
-          FakeDashboardVM(testState: const AsyncValue.loading());
+      final fakeVM = FakeDashboardVM(testState: const AsyncValue.loading());
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
 
@@ -90,8 +89,8 @@ Future<void> main() async {
     });
 
     testWidgets('error state shows AppErrorWidget', (tester) async {
-      final fakeVM =
-          FakeDashboardVM(testState: AsyncValue.error('Error!', StackTrace.current));
+      final fakeVM = FakeDashboardVM(
+          testState: AsyncValue.error('Error!', StackTrace.current));
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
 
@@ -126,7 +125,8 @@ Future<void> main() async {
           droppedCount: 1,
         ),
       );
-      final fakeVM = FakeDashboardVM(testState: const AsyncValue.data(dashboard));
+      final fakeVM =
+          FakeDashboardVM(testState: const AsyncValue.data(dashboard));
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
 
@@ -141,7 +141,7 @@ Future<void> main() async {
 
     testWidgets('sections render when items are present', (tester) async {
       const media = TrackedMediaSummaryModel(
-        tmdbId: 456,
+        mediaId: '456',
         title: 'x',
         mediaType: MediaType.series,
         posterPath: 'http://example.com/p.jpg',
@@ -158,7 +158,8 @@ Future<void> main() async {
           droppedCount: 0,
         ),
       );
-      final fakeVM = FakeDashboardVM(testState: const AsyncValue.data(dashboard));
+      final fakeVM =
+          FakeDashboardVM(testState: const AsyncValue.data(dashboard));
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
 
@@ -172,18 +173,22 @@ Future<void> main() async {
     });
 
     testWidgets('renders all four sections when items present', (tester) async {
-      const media = TrackedMediaSummaryModel(tmdbId: 1, title: 'Series', mediaType: MediaType.series);
+      const media = TrackedMediaSummaryModel(
+          mediaId: '1', title: 'Series', mediaType: MediaType.series);
       const dashboard = DashboardModel(
         watching: DashboardSectionModel(items: [media]),
         wantToWatch: DashboardSectionModel(items: [media]),
         completed: DashboardSectionModel(items: [media]),
         dropped: DashboardSectionModel(items: [media]),
         stats: DashboardStatsModel(
-          watchingCount: 1, wantToWatchCount: 1,
-          completedCount: 1, droppedCount: 1,
+          watchingCount: 1,
+          wantToWatchCount: 1,
+          completedCount: 1,
+          droppedCount: 1,
         ),
       );
-      final fakeVM = FakeDashboardVM(testState: const AsyncValue.data(dashboard));
+      final fakeVM =
+          FakeDashboardVM(testState: const AsyncValue.data(dashboard));
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
 
@@ -199,8 +204,9 @@ Future<void> main() async {
       expect(find.text('Series'), findsAtLeast(1));
     });
 
-    testWidgets('section with tmdbId 0 does not navigate', (tester) async {
-      const media = TrackedMediaSummaryModel(tmdbId: 0, title: 'No nav', mediaType: MediaType.series);
+    testWidgets('section navigates to series detail', (tester) async {
+      const media = TrackedMediaSummaryModel(
+          mediaId: '0', title: 'No nav', mediaType: MediaType.series);
       const dashboard = DashboardModel(
         watching: DashboardSectionModel(items: [media]),
         wantToWatch: DashboardSectionModel(),
@@ -208,7 +214,8 @@ Future<void> main() async {
         dropped: DashboardSectionModel(),
         stats: DashboardStatsModel(watchingCount: 1),
       );
-      final fakeVM = FakeDashboardVM(testState: const AsyncValue.data(dashboard));
+      final fakeVM =
+          FakeDashboardVM(testState: const AsyncValue.data(dashboard));
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
 
@@ -221,7 +228,8 @@ Future<void> main() async {
     });
 
     testWidgets('dashboard with wantToWatch section renders', (tester) async {
-      const media = TrackedMediaSummaryModel(tmdbId: 2, title: 'Want', mediaType: MediaType.series);
+      const media = TrackedMediaSummaryModel(
+          mediaId: '2', title: 'Want', mediaType: MediaType.series);
       const dashboard = DashboardModel(
         watching: DashboardSectionModel(),
         wantToWatch: DashboardSectionModel(items: [media]),
@@ -229,7 +237,8 @@ Future<void> main() async {
         dropped: DashboardSectionModel(),
         stats: DashboardStatsModel(wantToWatchCount: 1),
       );
-      final fakeVM = FakeDashboardVM(testState: const AsyncValue.data(dashboard));
+      final fakeVM =
+          FakeDashboardVM(testState: const AsyncValue.data(dashboard));
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
 
@@ -241,7 +250,8 @@ Future<void> main() async {
     });
 
     testWidgets('dashboard with completed section renders', (tester) async {
-      const media = TrackedMediaSummaryModel(tmdbId: 3, title: 'Done', mediaType: MediaType.series);
+      const media = TrackedMediaSummaryModel(
+          mediaId: '3', title: 'Done', mediaType: MediaType.series);
       const dashboard = DashboardModel(
         watching: DashboardSectionModel(),
         wantToWatch: DashboardSectionModel(),
@@ -249,7 +259,8 @@ Future<void> main() async {
         dropped: DashboardSectionModel(),
         stats: DashboardStatsModel(completedCount: 1),
       );
-      final fakeVM = FakeDashboardVM(testState: const AsyncValue.data(dashboard));
+      final fakeVM =
+          FakeDashboardVM(testState: const AsyncValue.data(dashboard));
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
 
@@ -261,7 +272,8 @@ Future<void> main() async {
     });
 
     testWidgets('dashboard with dropped section renders', (tester) async {
-      const media = TrackedMediaSummaryModel(tmdbId: 4, title: 'Dropped', mediaType: MediaType.series);
+      const media = TrackedMediaSummaryModel(
+          mediaId: '4', title: 'Dropped', mediaType: MediaType.series);
       const dashboard = DashboardModel(
         watching: DashboardSectionModel(),
         wantToWatch: DashboardSectionModel(),
@@ -269,7 +281,8 @@ Future<void> main() async {
         dropped: DashboardSectionModel(items: [media]),
         stats: DashboardStatsModel(droppedCount: 1),
       );
-      final fakeVM = FakeDashboardVM(testState: const AsyncValue.data(dashboard));
+      final fakeVM =
+          FakeDashboardVM(testState: const AsyncValue.data(dashboard));
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
 
@@ -280,7 +293,8 @@ Future<void> main() async {
       expect(find.text('Dropped'), findsAtLeast(1));
     });
 
-    testWidgets('all sections with empty items shows empty state', (tester) async {
+    testWidgets('all sections with empty items shows empty state',
+        (tester) async {
       final dashboard = _emptyDashboard();
       final fakeVM = FakeDashboardVM(testState: AsyncValue.data(dashboard));
       final container = createContainer(fakeVM);
@@ -292,19 +306,23 @@ Future<void> main() async {
       expect(find.textContaining('No series tracked'), findsOneWidget);
     });
 
-    testWidgets('sections with tmdbId 0 do not navigate', (tester) async {
-      const media = TrackedMediaSummaryModel(tmdbId: 0, title: 'No Nav', mediaType: MediaType.series);
+    testWidgets('sections render with mediaId', (tester) async {
+      const media = TrackedMediaSummaryModel(
+          mediaId: '0', title: 'No Nav', mediaType: MediaType.series);
       const dashboard = DashboardModel(
         watching: DashboardSectionModel(items: [media]),
         wantToWatch: DashboardSectionModel(items: [media]),
         completed: DashboardSectionModel(items: [media]),
         dropped: DashboardSectionModel(items: [media]),
         stats: DashboardStatsModel(
-          watchingCount: 1, wantToWatchCount: 1,
-          completedCount: 1, droppedCount: 1,
+          watchingCount: 1,
+          wantToWatchCount: 1,
+          completedCount: 1,
+          droppedCount: 1,
         ),
       );
-      final fakeVM = FakeDashboardVM(testState: const AsyncValue.data(dashboard));
+      final fakeVM =
+          FakeDashboardVM(testState: const AsyncValue.data(dashboard));
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
 
@@ -317,8 +335,8 @@ Future<void> main() async {
     });
 
     testWidgets('retry button on error calls refresh', (tester) async {
-      final fakeVM =
-          FakeDashboardVM(testState: AsyncValue.error('Error!', StackTrace.current));
+      final fakeVM = FakeDashboardVM(
+          testState: AsyncValue.error('Error!', StackTrace.current));
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
 
@@ -333,7 +351,8 @@ Future<void> main() async {
 
     testWidgets('tapping watching section series navigates', (tester) async {
       const media = TrackedMediaSummaryModel(
-        tmdbId: 456, title: 'Series A',
+        mediaId: '456',
+        title: 'Series A',
         mediaType: MediaType.series,
         posterPath: 'http://example.com/p.jpg',
       );
@@ -344,7 +363,8 @@ Future<void> main() async {
         dropped: DashboardSectionModel(),
         stats: DashboardStatsModel(watchingCount: 1),
       );
-      final fakeVM = FakeDashboardVM(testState: const AsyncValue.data(dashboard));
+      final fakeVM =
+          FakeDashboardVM(testState: const AsyncValue.data(dashboard));
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
 
@@ -358,8 +378,10 @@ Future<void> main() async {
       expect(find.text('Series A'), findsOneWidget);
     });
 
-    testWidgets('switching to Movies shows movie empty state copy', (tester) async {
-      final fakeVM = FakeDashboardVM(testState: AsyncValue.data(_emptyDashboard()));
+    testWidgets('switching to Movies shows movie empty state copy',
+        (tester) async {
+      final fakeVM =
+          FakeDashboardVM(testState: AsyncValue.data(_emptyDashboard()));
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
 

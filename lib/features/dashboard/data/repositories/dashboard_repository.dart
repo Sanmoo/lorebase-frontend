@@ -26,7 +26,6 @@ class DashboardRepositoryImpl implements DashboardRepository {
         queryParameters: {'mediaType': mediaType.apiValue},
       );
       final data = response.data as Map<String, dynamic>;
-      _normalizeDashboardItems(data);
       return DashboardModel.fromJson(data);
     } on DioException catch (e) {
       if (e.error is ServerException) {
@@ -36,25 +35,6 @@ class DashboardRepositoryImpl implements DashboardRepository {
         message: e.message ?? 'Failed to load dashboard',
         statusCode: e.response?.statusCode,
       );
-    }
-  }
-
-  void _normalizeDashboardItems(Map<String, dynamic> data) {
-    for (final section in ['watching', 'wantToWatch', 'completed', 'dropped']) {
-      final sectionData = data[section];
-      if (sectionData is Map<String, dynamic>) {
-        final items = sectionData['items'];
-        if (items is List) {
-          for (final item in items) {
-            if (item is Map<String, dynamic>) {
-              if (item['tmdbId'] == null && item['mediaId'] != null) {
-                item['tmdbId'] =
-                    int.tryParse(item['mediaId'].toString()) ?? 0;
-              }
-            }
-          }
-        }
-      }
     }
   }
 }

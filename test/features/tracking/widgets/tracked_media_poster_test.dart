@@ -7,7 +7,7 @@ import 'package:lorebase/features/tracking/widgets/tracked_media_poster.dart';
 void main() {
   testWidgets('shows tracked media title', (tester) async {
     const media = TrackedMediaSummaryModel(
-      tmdbId: 1,
+      mediaId: '1',
       title: 'Movie Title',
       mediaType: MediaType.movie,
     );

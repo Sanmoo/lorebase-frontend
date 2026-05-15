@@ -14,7 +14,9 @@ import 'package:lorebase/l10n/strings.g.dart';
 
 final now = DateTime.now();
 
-TrackedMediaModel _tracking(String id, String status, {TrackedMediaSummaryModel? media, int? rating}) => TrackedMediaModel(
+TrackedMediaModel _tracking(String id, String status,
+        {TrackedMediaSummaryModel? media, int? rating}) =>
+    TrackedMediaModel(
       trackingId: id,
       userId: 'user-1',
       mediaType: MediaType.series,
@@ -27,7 +29,7 @@ TrackedMediaModel _tracking(String id, String status, {TrackedMediaSummaryModel?
     );
 
 TrackedMediaSummaryModel _media(int id) => TrackedMediaSummaryModel(
-      tmdbId: id,
+      mediaId: id.toString(),
       title: 'Show $id',
       mediaType: MediaType.series,
     );
@@ -39,7 +41,7 @@ TrackedMediaModel _movieTracking(String id, String status) => TrackedMediaModel(
       mediaId: '500',
       status: status,
       media: const TrackedMediaSummaryModel(
-        tmdbId: 500,
+        mediaId: '500',
         title: 'Movie 500',
         mediaType: MediaType.movie,
       ),
@@ -55,7 +57,8 @@ class FakeTrackingListVM extends TrackingListViewModel {
   @override
   AsyncValue<List<TrackedMediaModel>> build() => testState;
   @override
-  Future<void> loadTracking({String? status, MediaType mediaType = MediaType.series}) async {}
+  Future<void> loadTracking(
+      {String? status, MediaType mediaType = MediaType.series}) async {}
   @override
   Future<void> loadMore() async {}
   @override
@@ -134,8 +137,7 @@ Future<void> main() async {
     });
 
     testWidgets('shows loading indicator', (tester) async {
-      final fakeVM =
-          FakeTrackingListVM(state: const AsyncValue.loading());
+      final fakeVM = FakeTrackingListVM(state: const AsyncValue.loading());
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
       await tester.pumpWidget(_wrap(container));
@@ -236,7 +238,8 @@ Future<void> main() async {
     });
 
     testWidgets('media with tmdbId 0 shows no navigation', (tester) async {
-      final media = TrackedMediaSummaryModel(tmdbId: 0, title: 'Test', mediaType: MediaType.series);
+      const media = TrackedMediaSummaryModel(
+          mediaId: '0', title: 'Test', mediaType: MediaType.series);
       final trackings = [
         _tracking('t1', 'WATCHING', media: media),
       ];
@@ -250,8 +253,10 @@ Future<void> main() async {
       expect(find.text('Test'), findsOneWidget);
     });
 
-    testWidgets('tracks state with media shows poster and title', (tester) async {
-      final media = TrackedMediaSummaryModel(tmdbId: 5, title: 'Test', mediaType: MediaType.series);
+    testWidgets('tracks state with media shows poster and title',
+        (tester) async {
+      const media = TrackedMediaSummaryModel(
+          mediaId: '5', title: 'Test', mediaType: MediaType.series);
       final trackings = [
         _tracking('t1', 'WANT_TO_WATCH', media: media),
       ];
@@ -265,7 +270,8 @@ Future<void> main() async {
       expect(find.text('Test'), findsOneWidget);
     });
 
-    testWidgets('switching to Movies shows movie empty state copy', (tester) async {
+    testWidgets('switching to Movies shows movie empty state copy',
+        (tester) async {
       final container = createContainer(FakeTrackingListVM());
       addTearDown(container.dispose);
 

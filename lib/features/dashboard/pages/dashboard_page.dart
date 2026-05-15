@@ -48,8 +48,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     return RefreshIndicator(
       onRefresh: () => ref.read(dashboardViewModelProvider.notifier).refresh(),
       child: dashboardState.when(
-        loading: () =>
-            LoadingWidget(message: t.dashboard_loading),
+        loading: () => LoadingWidget(message: t.dashboard_loading),
         error: (error, _) => AppErrorWidget(
           message: error.toString(),
           onRetry: () =>
@@ -124,13 +123,11 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                   title: t.dashboard_watching,
                   items: dashboard.watching.items,
                   onTap: (item) {
-                    if (item.tmdbId != 0) {
-                      context.push(
-                        item.mediaType == MediaType.series
-                            ? '/series/${item.tmdbId}'
-                            : '/movies/${item.tmdbId}',
-                      );
-                    }
+                    context.push(
+                      item.mediaType == MediaType.series
+                          ? '/series/${item.mediaId}'
+                          : '/movies/${item.mediaId}',
+                    );
                   },
                 ),
               ),
@@ -142,13 +139,11 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                     title: t.dashboard_want_to_watch,
                     items: dashboard.wantToWatch.items,
                     onTap: (item) {
-                      if (item.tmdbId != 0) {
-                        context.push(
-                          item.mediaType == MediaType.series
-                              ? '/series/${item.tmdbId}'
-                              : '/movies/${item.tmdbId}',
-                        );
-                      }
+                      context.push(
+                        item.mediaType == MediaType.series
+                            ? '/series/${item.mediaId}'
+                            : '/movies/${item.mediaId}',
+                      );
                     },
                   ),
                 ),
@@ -161,13 +156,11 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                     title: t.dashboard_completed,
                     items: dashboard.completed.items,
                     onTap: (item) {
-                      if (item.tmdbId != 0) {
-                        context.push(
-                          item.mediaType == MediaType.series
-                              ? '/series/${item.tmdbId}'
-                              : '/movies/${item.tmdbId}',
-                        );
-                      }
+                      context.push(
+                        item.mediaType == MediaType.series
+                            ? '/series/${item.mediaId}'
+                            : '/movies/${item.mediaId}',
+                      );
                     },
                   ),
                 ),
@@ -180,13 +173,11 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                     title: t.dashboard_dropped,
                     items: dashboard.dropped.items,
                     onTap: (item) {
-                      if (item.tmdbId != 0) {
-                        context.push(
-                          item.mediaType == MediaType.series
-                              ? '/series/${item.tmdbId}'
-                              : '/movies/${item.tmdbId}',
-                        );
-                      }
+                      context.push(
+                        item.mediaType == MediaType.series
+                            ? '/series/${item.mediaId}'
+                            : '/movies/${item.mediaId}',
+                      );
                     },
                   ),
                 ),
@@ -197,9 +188,9 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                 dashboard.dropped.items.isEmpty)
               SliverFillRemaining(
                 child: EmptyStateWidget(
-                    message: _selectedType == MediaType.series
-                        ? t.dashboard_empty
-                        : t.dashboard_empty_movies,
+                  message: _selectedType == MediaType.series
+                      ? t.dashboard_empty
+                      : t.dashboard_empty_movies,
                   icon: Icons.tv_off,
                 ),
               ),

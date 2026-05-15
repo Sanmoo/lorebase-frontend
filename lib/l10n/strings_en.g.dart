@@ -5,25 +5,27 @@
 // ignore_for_file: type=lint, unused_import
 // dart format off
 
-import 'package:flutter/widgets.dart';
-import 'package:intl/intl.dart';
-import 'package:slang/generated.dart';
-import 'strings.g.dart';
+part of 'strings.g.dart';
 
 // Path: <root>
-class TranslationsEn extends Translations with BaseTranslations<AppLocale, Translations> {
+typedef TranslationsEn = Translations; // ignore: unused_element
+class Translations with BaseTranslations<AppLocale, Translations> {
+	/// Returns the current translations of the given [context].
+	///
+	/// Usage:
+	/// final t = Translations.of(context);
+	static Translations of(BuildContext context) => InheritedLocaleData.of<AppLocale, Translations>(context).translations;
+
 	/// You can call this constructor and build your own translation instance of this locale.
 	/// Constructing via the enum [AppLocale.build] is preferred.
-	TranslationsEn({Map<String, Node>? overrides, PluralResolver? cardinalResolver, PluralResolver? ordinalResolver, TranslationMetadata<AppLocale, Translations>? meta})
+	Translations({Map<String, Node>? overrides, PluralResolver? cardinalResolver, PluralResolver? ordinalResolver, TranslationMetadata<AppLocale, Translations>? meta})
 		: assert(overrides == null, 'Set "translation_overrides: true" in order to enable this feature.'),
 		  $meta = meta ?? TranslationMetadata(
 		    locale: AppLocale.en,
 		    overrides: overrides ?? {},
 		    cardinalResolver: cardinalResolver,
 		    ordinalResolver: ordinalResolver,
-		  ),
-		  super(cardinalResolver: cardinalResolver, ordinalResolver: ordinalResolver) {
-		super.$meta.setFlatMapFunction($meta.getTranslation); // copy base translations to super.$meta
+		  ) {
 		$meta.setFlatMapFunction(_flatMapFunction);
 	}
 
@@ -31,99 +33,268 @@ class TranslationsEn extends Translations with BaseTranslations<AppLocale, Trans
 	@override final TranslationMetadata<AppLocale, Translations> $meta;
 
 	/// Access flat map
-	@override dynamic operator[](String key) => $meta.getTranslation(key) ?? super.$meta.getTranslation(key);
+	dynamic operator[](String key) => $meta.getTranslation(key);
 
-	late final TranslationsEn _root = this; // ignore: unused_field
+	late final Translations _root = this; // ignore: unused_field
 
-	@override 
-	TranslationsEn $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsEn(meta: meta ?? this.$meta);
+	Translations $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => Translations(meta: meta ?? this.$meta);
 
 	// Translations
-	@override String get nav_home => 'Home';
-	@override String get nav_search => 'Search';
-	@override String get nav_my_lists => 'My Lists';
-	@override String get nav_recommend => 'Recommend';
-	@override String get app_title => 'Lorebase';
-	@override String get login_welcome => 'Welcome back';
-	@override String get login_subtitle => 'Sign in to continue your lists';
-	@override String get login_email_hint => 'Email';
-	@override String get login_password_hint => 'Password';
-	@override String get login_button => 'Sign in';
-	@override String get login_forgot_password => 'Forgot password?';
-	@override String get login_no_account => 'Don\'t have an account? ';
-	@override String get login_sign_up => 'Sign up';
-	@override String get login_or => 'or';
-	@override String get search_hint => 'Search series...';
-	@override String get search_empty => 'Type at least 2 characters to search';
-	@override String get search_no_results => 'No series found';
-	@override String get tracking_want_to_watch => 'Want to Watch';
-	@override String get tracking_watching => 'Watching';
-	@override String get tracking_completed => 'Completed';
-	@override String get tracking_dropped => 'Dropped';
-	@override String get tracking_empty => 'No {status} series yet';
-	@override String get tracking_list_title => 'My Lists';
-	@override String get series_detail_add_to_list => 'Add to List';
-	@override String get series_detail_manage_tracking => 'Manage Tracking';
-	@override String get series_detail_overview => 'Overview';
-	@override String get series_detail_no_description => 'No description available.';
-	@override String get series_detail_show_more => 'Show more';
-	@override String get series_detail_show_less => 'Show less';
-	@override String get series_detail_first_air_date => 'First Air Date';
-	@override String get series_detail_seasons => 'Seasons';
-	@override String get series_detail_networks => 'Networks';
-	@override String get series_detail_status => 'Status';
-	@override String get series_detail_rating => 'Rating';
-	@override String get series_detail_review => 'Review (optional)';
-	@override String get series_detail_save_changes => 'Save Changes';
-	@override String get series_detail_remove_from_list => 'Remove from List';
-	@override String get series_detail_remove_confirm => 'Remove "{title}" from your list?';
-	@override String get series_detail_cancel => 'Cancel';
-	@override String get series_detail_remove => 'Remove';
-	@override String get series_detail_loading => 'Loading series details...';
-	@override String get series_detail_season_count => '{count} {count, plural, one{season} other{seasons}}';
-	@override String get dashboard_loading => 'Loading your dashboard...';
-	@override String get dashboard_empty => 'No series tracked yet.\nSearch and add your first series!';
-	@override String get dashboard_watching => 'Watching';
-	@override String get dashboard_want_to_watch => 'Want to Watch';
-	@override String get dashboard_completed => 'Completed';
-	@override String get dashboard_dropped => 'Dropped';
-	@override String get auth_create_account => 'Create account';
-	@override String get auth_confirm_email => 'Confirm your email';
-	@override String get auth_code_sent_to => 'Enter code sent to {email}';
-	@override String get auth_confirmation_code => 'Confirmation code';
-	@override String get auth_confirm_and_login => 'Confirm & Sign in';
-	@override String get auth_resend_code => 'Resend code';
-	@override String get auth_password_weak => 'Weak';
-	@override String get auth_password_medium => 'Medium';
-	@override String get auth_password_strong => 'Strong';
-	@override String get auth_accept_terms => 'I accept the Terms of Use';
-	@override String get auth_already_have_account => 'Already have an account? ';
-	@override String get auth_sign_in => 'Sign in';
-	@override String get auth_recover_password => 'Recover password';
-	@override String get auth_new_password_title => 'New password';
-	@override String get auth_email_hint => 'Email';
-	@override String get auth_password_hint => 'Password';
-	@override String get auth_confirm_password_hint => 'Confirm password';
-	@override String get auth_send_code => 'Send code';
-	@override String get auth_verification_code_hint => 'Verification code';
-	@override String get auth_new_password_hint => 'New password';
-	@override String get auth_confirm_new_password_hint => 'Confirm new password';
-	@override String get auth_reset_password => 'Reset password';
-	@override String get auth_code_sent_success => 'Code sent to your email';
-	@override String get auth_password_reset_success => 'Password reset successfully';
-	@override String get auth_back_to_login => 'Back to login';
-	@override String get auth_sign_up => 'Sign up';
-	@override String get auth_forgot_subtitle_request => 'Enter your email to receive a verification code';
-	@override String get auth_forgot_subtitle_reset => 'Enter the code sent to your email and your new password';
-	@override String get locale_pt_BR => 'Português';
-	@override String get locale_en_US => 'English';
-	@override String get locale_es => 'Español';
-	@override String get recommend_title => 'Recommendation';
-	@override String get recommend_coming_soon => 'Recommendation feature coming soon!';
-	@override String get error_network => 'Network error. Check your connection.';
-	@override String get error_server => 'Server error. Please try again later.';
-	@override String get error_session_expired => 'Session expired. Please log in again.';
-	@override String get error_resource_not_found => 'Resource not found.';
+
+	/// en: 'Home'
+	String get nav_home => 'Home';
+
+	/// en: 'Search'
+	String get nav_search => 'Search';
+
+	/// en: 'My Lists'
+	String get nav_my_lists => 'My Lists';
+
+	/// en: 'Recommend'
+	String get nav_recommend => 'Recommend';
+
+	/// en: 'Lorebase'
+	String get app_title => 'Lorebase';
+
+	/// en: 'Welcome back'
+	String get login_welcome => 'Welcome back';
+
+	/// en: 'Sign in to continue your lists'
+	String get login_subtitle => 'Sign in to continue your lists';
+
+	/// en: 'Email'
+	String get login_email_hint => 'Email';
+
+	/// en: 'Password'
+	String get login_password_hint => 'Password';
+
+	/// en: 'Sign in'
+	String get login_button => 'Sign in';
+
+	/// en: 'Forgot password?'
+	String get login_forgot_password => 'Forgot password?';
+
+	/// en: 'Don't have an account? '
+	String get login_no_account => 'Don\'t have an account? ';
+
+	/// en: 'Sign up'
+	String get login_sign_up => 'Sign up';
+
+	/// en: 'or'
+	String get login_or => 'or';
+
+	/// en: 'Search series...'
+	String get search_hint => 'Search series...';
+
+	/// en: 'Type at least 2 characters to search'
+	String get search_empty => 'Type at least 2 characters to search';
+
+	/// en: 'No series found'
+	String get search_no_results => 'No series found';
+
+	/// en: 'Want to Watch'
+	String get tracking_want_to_watch => 'Want to Watch';
+
+	/// en: 'Watching'
+	String get tracking_watching => 'Watching';
+
+	/// en: 'Completed'
+	String get tracking_completed => 'Completed';
+
+	/// en: 'Dropped'
+	String get tracking_dropped => 'Dropped';
+
+	/// en: 'No {status} series yet'
+	String get tracking_empty => 'No {status} series yet';
+
+	/// en: 'My Lists'
+	String get tracking_list_title => 'My Lists';
+
+	/// en: 'Add to List'
+	String get series_detail_add_to_list => 'Add to List';
+
+	/// en: 'Manage Tracking'
+	String get series_detail_manage_tracking => 'Manage Tracking';
+
+	/// en: 'Overview'
+	String get series_detail_overview => 'Overview';
+
+	/// en: 'No description available.'
+	String get series_detail_no_description => 'No description available.';
+
+	/// en: 'Show more'
+	String get series_detail_show_more => 'Show more';
+
+	/// en: 'Show less'
+	String get series_detail_show_less => 'Show less';
+
+	/// en: 'First Air Date'
+	String get series_detail_first_air_date => 'First Air Date';
+
+	/// en: 'Seasons'
+	String get series_detail_seasons => 'Seasons';
+
+	/// en: 'Networks'
+	String get series_detail_networks => 'Networks';
+
+	/// en: 'Status'
+	String get series_detail_status => 'Status';
+
+	/// en: 'Rating'
+	String get series_detail_rating => 'Rating';
+
+	/// en: 'Review (optional)'
+	String get series_detail_review => 'Review (optional)';
+
+	/// en: 'Save Changes'
+	String get series_detail_save_changes => 'Save Changes';
+
+	/// en: 'Remove from List'
+	String get series_detail_remove_from_list => 'Remove from List';
+
+	/// en: 'Remove "{title}" from your list?'
+	String get series_detail_remove_confirm => 'Remove "{title}" from your list?';
+
+	/// en: 'Cancel'
+	String get series_detail_cancel => 'Cancel';
+
+	/// en: 'Remove'
+	String get series_detail_remove => 'Remove';
+
+	/// en: 'Loading series details...'
+	String get series_detail_loading => 'Loading series details...';
+
+	/// en: '{count} {count, plural, one{season} other{seasons}}'
+	String get series_detail_season_count => '{count} {count, plural, one{season} other{seasons}}';
+
+	/// en: 'Loading your dashboard...'
+	String get dashboard_loading => 'Loading your dashboard...';
+
+	/// en: 'No series tracked yet. Search and add your first series!'
+	String get dashboard_empty => 'No series tracked yet.\nSearch and add your first series!';
+
+	/// en: 'Watching'
+	String get dashboard_watching => 'Watching';
+
+	/// en: 'Want to Watch'
+	String get dashboard_want_to_watch => 'Want to Watch';
+
+	/// en: 'Completed'
+	String get dashboard_completed => 'Completed';
+
+	/// en: 'Dropped'
+	String get dashboard_dropped => 'Dropped';
+
+	/// en: 'Create account'
+	String get auth_create_account => 'Create account';
+
+	/// en: 'Confirm your email'
+	String get auth_confirm_email => 'Confirm your email';
+
+	/// en: 'Enter code sent to {email}'
+	String get auth_code_sent_to => 'Enter code sent to {email}';
+
+	/// en: 'Confirmation code'
+	String get auth_confirmation_code => 'Confirmation code';
+
+	/// en: 'Confirm & Sign in'
+	String get auth_confirm_and_login => 'Confirm & Sign in';
+
+	/// en: 'Resend code'
+	String get auth_resend_code => 'Resend code';
+
+	/// en: 'Weak'
+	String get auth_password_weak => 'Weak';
+
+	/// en: 'Medium'
+	String get auth_password_medium => 'Medium';
+
+	/// en: 'Strong'
+	String get auth_password_strong => 'Strong';
+
+	/// en: 'I accept the Terms of Use'
+	String get auth_accept_terms => 'I accept the Terms of Use';
+
+	/// en: 'Already have an account? '
+	String get auth_already_have_account => 'Already have an account? ';
+
+	/// en: 'Sign in'
+	String get auth_sign_in => 'Sign in';
+
+	/// en: 'Recover password'
+	String get auth_recover_password => 'Recover password';
+
+	/// en: 'New password'
+	String get auth_new_password_title => 'New password';
+
+	/// en: 'Email'
+	String get auth_email_hint => 'Email';
+
+	/// en: 'Password'
+	String get auth_password_hint => 'Password';
+
+	/// en: 'Confirm password'
+	String get auth_confirm_password_hint => 'Confirm password';
+
+	/// en: 'Send code'
+	String get auth_send_code => 'Send code';
+
+	/// en: 'Verification code'
+	String get auth_verification_code_hint => 'Verification code';
+
+	/// en: 'New password'
+	String get auth_new_password_hint => 'New password';
+
+	/// en: 'Confirm new password'
+	String get auth_confirm_new_password_hint => 'Confirm new password';
+
+	/// en: 'Reset password'
+	String get auth_reset_password => 'Reset password';
+
+	/// en: 'Code sent to your email'
+	String get auth_code_sent_success => 'Code sent to your email';
+
+	/// en: 'Password reset successfully'
+	String get auth_password_reset_success => 'Password reset successfully';
+
+	/// en: 'Back to login'
+	String get auth_back_to_login => 'Back to login';
+
+	/// en: 'Sign up'
+	String get auth_sign_up => 'Sign up';
+
+	/// en: 'Enter your email to receive a verification code'
+	String get auth_forgot_subtitle_request => 'Enter your email to receive a verification code';
+
+	/// en: 'Enter the code sent to your email and your new password'
+	String get auth_forgot_subtitle_reset => 'Enter the code sent to your email and your new password';
+
+	/// en: 'Português'
+	String get locale_pt_BR => 'Português';
+
+	/// en: 'English'
+	String get locale_en_US => 'English';
+
+	/// en: 'Español'
+	String get locale_es => 'Español';
+
+	/// en: 'Recommendation'
+	String get recommend_title => 'Recommendation';
+
+	/// en: 'Recommendation feature coming soon!'
+	String get recommend_coming_soon => 'Recommendation feature coming soon!';
+
+	/// en: 'Network error. Check your connection.'
+	String get error_network => 'Network error. Check your connection.';
+
+	/// en: 'Server error. Please try again later.'
+	String get error_server => 'Server error. Please try again later.';
+
+	/// en: 'Session expired. Please log in again.'
+	String get error_session_expired => 'Session expired. Please log in again.';
+
+	/// en: 'Resource not found.'
+	String get error_resource_not_found => 'Resource not found.';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -131,7 +302,7 @@ class TranslationsEn extends Translations with BaseTranslations<AppLocale, Trans
 ///
 /// The Dart AOT compiler has issues with very large switch statements,
 /// so the map is split into smaller functions (512 entries each).
-extension on TranslationsEn {
+extension on Translations {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
 			'nav_home' => 'Home',

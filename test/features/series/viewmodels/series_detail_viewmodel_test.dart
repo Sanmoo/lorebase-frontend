@@ -131,8 +131,8 @@ void main() {
             mediaType: MediaType.series,
             mediaId: '42',
             status: 'WATCHING',
-            media: TrackedMediaSummaryModel(
-              tmdbId: 42,
+            media: const TrackedMediaSummaryModel(
+              mediaId: '42',
               title: 'Test Show',
               mediaType: MediaType.series,
             ),
@@ -209,8 +209,8 @@ void main() {
             mediaType: MediaType.series,
             mediaId: 'not42',
             status: 'WATCHING',
-            media: TrackedMediaSummaryModel(
-              tmdbId: 42,
+            media: const TrackedMediaSummaryModel(
+              mediaId: '42',
               title: 'Test Show',
               mediaType: MediaType.series,
             ),
@@ -277,8 +277,8 @@ void main() {
             mediaType: MediaType.series,
             mediaId: '42',
             status: 'WATCHING',
-            media: TrackedMediaSummaryModel(
-              tmdbId: 42,
+            media: const TrackedMediaSummaryModel(
+              mediaId: '42',
               title: 'Test Show',
               mediaType: MediaType.series,
             ),
@@ -312,8 +312,8 @@ void main() {
             mediaType: MediaType.series,
             mediaId: '42',
             status: 'WATCHING',
-            media: TrackedMediaSummaryModel(
-              tmdbId: 42,
+            media: const TrackedMediaSummaryModel(
+              mediaId: '42',
               title: 'Test Show',
               mediaType: MediaType.series,
             ),

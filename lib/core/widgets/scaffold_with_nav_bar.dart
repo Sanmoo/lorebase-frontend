@@ -70,23 +70,23 @@ class ScaffoldWithNavBar extends ConsumerWidget {
         onTap: (index) => _onItemTapped(index, context),
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard_outlined),
-            activeIcon: Icon(Icons.dashboard),
+            icon: const Icon(Icons.dashboard_outlined),
+            activeIcon: const Icon(Icons.dashboard),
             label: t.nav_home,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search_outlined),
-            activeIcon: Icon(Icons.search),
+            icon: const Icon(Icons.search_outlined),
+            activeIcon: const Icon(Icons.search),
             label: t.nav_search,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.format_list_bulleted),
-            activeIcon: Icon(Icons.format_list_bulleted),
+            icon: const Icon(Icons.format_list_bulleted),
+            activeIcon: const Icon(Icons.format_list_bulleted),
             label: t.nav_my_lists,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.recommend_outlined),
-            activeIcon: Icon(Icons.recommend),
+            icon: const Icon(Icons.recommend_outlined),
+            activeIcon: const Icon(Icons.recommend),
             label: t.nav_recommend,
           ),
         ],

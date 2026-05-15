@@ -7,12 +7,16 @@ part 'tracked_media_summary_model.g.dart';
 @freezed
 class TrackedMediaSummaryModel with _$TrackedMediaSummaryModel {
   const factory TrackedMediaSummaryModel({
-    required int tmdbId,
+    required String mediaId,
     required String title,
     @JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson)
     required MediaType mediaType,
+    String? overview,
     String? posterPath,
-    String? backdropPath,
+    String? status,
+    int? trackingRating,
+    int? seasonCount,
+    DateTime? addedAt,
   }) = _TrackedMediaSummaryModel;
 
   factory TrackedMediaSummaryModel.fromJson(Map<String, dynamic> json) =>

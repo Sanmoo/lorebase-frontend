@@ -194,7 +194,7 @@ void main() {
         cachedAt: DateTime.now().subtract(const Duration(days: 1)),
         ttl: const Duration(hours: 6),
       ));
-      final dashboard = const DashboardModel(
+      const dashboard = DashboardModel(
         watching: DashboardSectionModel(),
         wantToWatch: DashboardSectionModel(),
         completed: DashboardSectionModel(),

@@ -21,7 +21,7 @@ enum MediaType {
 extension MediaTypeX on MediaType {
   static MediaType fromApiValue(String value) {
     return MediaType.values.firstWhere(
-      (type) => type.apiValue == value,
+      (type) => type.apiValue.toLowerCase() == value.toLowerCase(),
       orElse: () => throw ArgumentError.value(
         value,
         'value',

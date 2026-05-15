@@ -9,7 +9,6 @@ import '../../../../core/widgets/media_type_toggle.dart';
 import '../../../l10n/strings.g.dart';
 import '../data/tracking_status.dart';
 import '../data/models/media_type.dart';
-import '../data/models/tracked_media_summary_model.dart';
 import '../viewmodels/tracking_list_viewmodel.dart';
 import '../widgets/rating_stars.dart';
 import '../widgets/tracked_media_poster.dart';
@@ -93,7 +92,8 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
             ),
           ),
           Container(
-            color: Theme.of(context).appBarTheme.backgroundColor ?? Theme.of(context).primaryColor,
+            color: Theme.of(context).appBarTheme.backgroundColor ??
+                Theme.of(context).primaryColor,
             child: TabBar(
               controller: _tabController,
               isScrollable: true,
@@ -117,14 +117,17 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
                     if (trackings.isEmpty) {
                       return EmptyStateWidget(
                         message: _selectedType == MediaType.series
-                            ? t.tracking_empty.replaceFirst('{status}', TrackingStatus.values[index].label(t))
-                            : t.tracking_empty_movies.replaceFirst('{status}', TrackingStatus.values[index].label(t)),
+                            ? t.tracking_empty.replaceFirst('{status}',
+                                TrackingStatus.values[index].label(t))
+                            : t.tracking_empty_movies.replaceFirst('{status}',
+                                TrackingStatus.values[index].label(t)),
                         icon: Icons.tv_off,
                       );
                     }
                     return GridView.builder(
                       padding: const EdgeInsets.all(16.0),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 3,
                         childAspectRatio: 0.55,
                         crossAxisSpacing: 12,
@@ -143,17 +146,17 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
                           children: [
                             Expanded(
                               child: LayoutBuilder(
-                                builder: (context, constraints) => TrackedMediaPoster(
+                                builder: (context, constraints) =>
+                                    TrackedMediaPoster(
                                   media: media,
                                   width: constraints.maxWidth,
-                                  onTap: media.tmdbId != 0
-                                      ? () {
-                                          final path = tracking.mediaType == MediaType.series
-                                              ? '/series/${media.tmdbId}'
-                                              : '/movies/${media.tmdbId}';
-                                          context.push(path);
-                                        }
-                                      : null,
+                                  onTap: () {
+                                    final path =
+                                        tracking.mediaType == MediaType.series
+                                            ? '/series/${media.mediaId}'
+                                            : '/movies/${media.mediaId}';
+                                    context.push(path);
+                                  },
                                 ),
                               ),
                             ),

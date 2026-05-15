@@ -28,7 +28,7 @@ Future<void> main() async {
     testWidgets('recommendation page uses non-const constructor', (tester) async {
       await tester.pumpWidget(
         TranslationProvider(
-          child: MaterialApp(
+          child: const MaterialApp(
             // ignore: prefer_const_constructors
             home: RecommendationPage(),
           ),

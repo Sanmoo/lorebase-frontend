@@ -121,7 +121,7 @@ void main() {
           mediaId: '7',
           status: 'WATCHING',
           media: const TrackedMediaSummaryModel(
-            tmdbId: 7,
+            mediaId: '7',
             title: 'Se7en',
             mediaType: MediaType.movie,
           ),
@@ -175,7 +175,8 @@ void main() {
     addTearDown(container.dispose);
 
     await container.read(movieDetailViewModelProvider(7).future);
-    await container.read(movieDetailViewModelProvider(7).notifier)
+    await container
+        .read(movieDetailViewModelProvider(7).notifier)
         .addTracking('WATCHING');
 
     expect(trackingRepo.startCalled, true);
@@ -195,7 +196,8 @@ void main() {
     addTearDown(container.dispose);
 
     await container.read(movieDetailViewModelProvider(7).future);
-    await container.read(movieDetailViewModelProvider(7).notifier)
+    await container
+        .read(movieDetailViewModelProvider(7).notifier)
         .addTracking('WATCHING', review: 'Nice movie');
 
     expect(trackingRepo.updateCalled, true);
@@ -215,7 +217,8 @@ void main() {
     addTearDown(container.dispose);
 
     await container.read(movieDetailViewModelProvider(7).future);
-    await container.read(movieDetailViewModelProvider(7).notifier)
+    await container
+        .read(movieDetailViewModelProvider(7).notifier)
         .addTracking('WATCHING', rating: 5, review: 'Great!');
 
     expect(trackingRepo.updateCalled, true);
@@ -237,7 +240,8 @@ void main() {
 
     // Don't await build - state still loading
     container.read(movieDetailViewModelProvider(7));
-    await container.read(movieDetailViewModelProvider(7).notifier)
+    await container
+        .read(movieDetailViewModelProvider(7).notifier)
         .addTracking('WATCHING');
 
     expect(trackingRepo.startCalled, false);
@@ -267,7 +271,8 @@ void main() {
     addTearDown(container.dispose);
 
     await container.read(movieDetailViewModelProvider(7).future);
-    await container.read(movieDetailViewModelProvider(7).notifier)
+    await container
+        .read(movieDetailViewModelProvider(7).notifier)
         .updateTracking(status: 'COMPLETED', rating: 4);
 
     expect(trackingRepo.updateCalled, true);
@@ -288,7 +293,8 @@ void main() {
     addTearDown(container.dispose);
 
     await container.read(movieDetailViewModelProvider(7).future);
-    await container.read(movieDetailViewModelProvider(7).notifier)
+    await container
+        .read(movieDetailViewModelProvider(7).notifier)
         .updateTracking(status: 'COMPLETED');
 
     expect(trackingRepo.updateCalled, false);
@@ -318,7 +324,8 @@ void main() {
     addTearDown(container.dispose);
 
     await container.read(movieDetailViewModelProvider(7).future);
-    await container.read(movieDetailViewModelProvider(7).notifier)
+    await container
+        .read(movieDetailViewModelProvider(7).notifier)
         .removeTracking();
 
     expect(trackingRepo.deleteCalled, true);
@@ -337,7 +344,8 @@ void main() {
     addTearDown(container.dispose);
 
     await container.read(movieDetailViewModelProvider(7).future);
-    await container.read(movieDetailViewModelProvider(7).notifier)
+    await container
+        .read(movieDetailViewModelProvider(7).notifier)
         .removeTracking();
 
     expect(trackingRepo.deleteCalled, false);

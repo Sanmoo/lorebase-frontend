@@ -108,7 +108,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           onPressed: () => context.push('/forgot-password'),
           child: Text(
             t.login_forgot_password,
-            style: TextStyle(color: Colors.white70),
+            style: const TextStyle(color: Colors.white70),
           ),
         ),
         const SizedBox(height: 16),
@@ -131,11 +131,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           child: Text.rich(
             TextSpan(
               text: t.login_no_account,
-              style: TextStyle(color: Colors.white70),
+              style: const TextStyle(color: Colors.white70),
               children: [
                 TextSpan(
                   text: t.login_sign_up,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),

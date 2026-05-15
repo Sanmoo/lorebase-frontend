@@ -155,7 +155,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
           onPressed: () => context.go('/login'),
           child: Text(
             t.auth_back_to_login,
-            style: TextStyle(color: Colors.white70),
+            style: const TextStyle(color: Colors.white70),
           ),
         ),
       ],

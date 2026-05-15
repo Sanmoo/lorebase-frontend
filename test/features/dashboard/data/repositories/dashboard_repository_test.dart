@@ -29,24 +29,21 @@ class MockAdapter implements HttpClientAdapter {
   void close({bool force = false}) {}
 }
 
-ResponseBody _jsonBody(Map<String, dynamic> json) =>
-    ResponseBody.fromString(
+ResponseBody _jsonBody(Map<String, dynamic> json) => ResponseBody.fromString(
       jsonEncode(json),
       200,
-      headers: {Headers.contentTypeHeader: [Headers.jsonContentType]},
+      headers: {
+        Headers.contentTypeHeader: [Headers.jsonContentType]
+      },
     );
 
 Map<String, dynamic> _dashboardJson() => {
       'watching': {
         'items': [
           {
-            'tmdbId': 1,
+            'mediaId': '1',
             'title': 'Test Show',
-            'mediaType': 'series',
-            'genres': <String>[],
-            'networks': <String>[],
-            'seasonCount': 3,
-            'status': 'Returning Series',
+            'mediaType': 'SERIES',
           }
         ],
         'total': 1,
@@ -127,32 +124,6 @@ void main() {
       await repo.getDashboard(mediaType: MediaType.movie);
 
       expect(capturedParams!['mediaType'], 'movie');
-    });
-
-    test('_normalizeDashboardItems maps mediaId to tmdbId', () async {
-      final json = _dashboardJson();
-      json['watching'] = {
-        'items': [
-          {
-            'mediaId': '123',
-            'title': 'Test Show',
-            'mediaType': 'series',
-            'genres': <String>[],
-            'networks': <String>[],
-          }
-        ],
-        'total': 1,
-        'hasMore': false,
-      };
-
-      final dio = Dio()
-        ..httpClientAdapter = MockAdapter(
-          onFetch: (options) => _jsonBody(json),
-        );
-      final repo = DashboardRepositoryImpl(dio);
-
-      final result = await repo.getDashboard();
-      expect(result.watching.items[0].tmdbId, 123);
     });
 
     test('getDashboard() re-throws ServerException from DioException.error',

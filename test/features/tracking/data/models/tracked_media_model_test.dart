@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lorebase/features/tracking/data/models/tracked_media_model.dart';
-import 'package:lorebase/features/tracking/data/models/tracked_media_summary_model.dart';
 import 'package:lorebase/features/tracking/data/models/media_type.dart';
 
 void main() {

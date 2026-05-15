@@ -10,14 +10,18 @@ void main() {
     final completeJson = {
       'watching': {
         'items': [
-          {'tmdbId': 1, 'title': 'Watching Series', 'mediaType': 'series'},
+          {'mediaId': '1', 'title': 'Watching Series', 'mediaType': 'series'},
         ],
         'total': 5,
         'hasMore': false,
       },
       'wantToWatch': {
         'items': [
-          {'tmdbId': 2, 'title': 'Want To Watch Series', 'mediaType': 'series'},
+          {
+            'mediaId': '2',
+            'title': 'Want To Watch Series',
+            'mediaType': 'series'
+          },
         ],
         'total': 10,
         'hasMore': true,
@@ -74,8 +78,8 @@ void main() {
           jsonDecode(jsonString) as Map<String, dynamic>);
 
       expect(restored.watching.total, original.watching.total);
-      expect(restored.watching.items[0].tmdbId,
-          original.watching.items[0].tmdbId);
+      expect(restored.watching.items[0].mediaId,
+          original.watching.items[0].mediaId);
       expect(restored.wantToWatch.total, original.wantToWatch.total);
       expect(restored.wantToWatch.hasMore, original.wantToWatch.hasMore);
       expect(restored.completed.total, original.completed.total);

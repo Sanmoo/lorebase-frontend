@@ -8,8 +8,8 @@ void main() {
   group('DashboardSectionModel', () {
     final completeJson = {
       'items': [
-        {'tmdbId': 1, 'title': 'Series A', 'mediaType': 'series'},
-        {'tmdbId': 2, 'title': 'Movie B', 'mediaType': 'movie'},
+        {'mediaId': '1', 'title': 'Series A', 'mediaType': 'series'},
+        {'mediaId': '2', 'title': 'Movie B', 'mediaType': 'movie'},
       ],
       'total': 10,
       'hasMore': true,
@@ -22,9 +22,9 @@ void main() {
 
       expect(model.items, hasLength(2));
       expect(model.items[0], isA<TrackedMediaSummaryModel>());
-      expect(model.items[0].tmdbId, 1);
+      expect(model.items[0].mediaId, '1');
       expect(model.items[0].title, 'Series A');
-      expect(model.items[1].tmdbId, 2);
+      expect(model.items[1].mediaId, '2');
       expect(model.items[1].title, 'Movie B');
       expect(model.total, 10);
       expect(model.hasMore, true);
@@ -45,7 +45,7 @@ void main() {
           jsonDecode(jsonString) as Map<String, dynamic>);
 
       expect(restored.items, hasLength(original.items.length));
-      expect(restored.items[0].tmdbId, original.items[0].tmdbId);
+      expect(restored.items[0].mediaId, original.items[0].mediaId);
       expect(restored.items[0].title, original.items[0].title);
       expect(restored.total, original.total);
       expect(restored.hasMore, original.hasMore);

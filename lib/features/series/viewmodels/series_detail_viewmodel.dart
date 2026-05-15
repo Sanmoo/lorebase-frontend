@@ -25,7 +25,7 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
       );
       tracking = allTracking.firstWhere(
         (t) =>
-            (t.media != null && t.media!.tmdbId == tmdbId) ||
+            (t.media != null && t.media!.mediaId == tmdbId.toString()) ||
             t.mediaId == tmdbId.toString(),
       );
     } catch (_) {

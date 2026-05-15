@@ -125,7 +125,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             onPressed: () => ref.read(registerViewModelProvider.notifier).resendCode(),
             child: Text(
               t.auth_resend_code,
-              style: TextStyle(color: Colors.white70),
+              style: const TextStyle(color: Colors.white70),
             ),
           ),
         ] else ...[
@@ -226,11 +226,11 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
           child: Text.rich(
             TextSpan(
               text: t.auth_already_have_account,
-              style: TextStyle(color: Colors.white70),
+              style: const TextStyle(color: Colors.white70),
               children: [
                 TextSpan(
                   text: t.auth_sign_in,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
