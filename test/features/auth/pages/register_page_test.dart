@@ -95,7 +95,9 @@ Future<void> _scrollToSubmitButton(WidgetTester tester) async {
   await tester.pump();
 }
 
-void main() {
+Future<void> main() async {
+  await LocaleSettings.setLocale(AppLocale.ptBr);
+
   group('RegisterPage', () {
     ProviderContainer createContainer(FakeRegisterVM fakeVM) {
       return ProviderContainer(overrides: [
