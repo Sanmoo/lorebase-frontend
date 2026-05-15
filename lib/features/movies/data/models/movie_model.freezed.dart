@@ -20,6 +20,7 @@ MovieModel _$MovieModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$MovieModel {
+  @JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
   int get tmdbId => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
   String? get overview => throw _privateConstructorUsedError;
@@ -47,7 +48,8 @@ abstract class $MovieModelCopyWith<$Res> {
       _$MovieModelCopyWithImpl<$Res, MovieModel>;
   @useResult
   $Res call(
-      {int tmdbId,
+      {@JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
+      int tmdbId,
       String title,
       String? overview,
       String? posterPath,
@@ -133,7 +135,8 @@ abstract class _$$MovieModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {int tmdbId,
+      {@JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
+      int tmdbId,
       String title,
       String? overview,
       String? posterPath,
@@ -212,7 +215,8 @@ class __$$MovieModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$MovieModelImpl implements _MovieModel {
   const _$MovieModelImpl(
-      {required this.tmdbId,
+      {@JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
+      required this.tmdbId,
       required this.title,
       this.overview,
       this.posterPath,
@@ -227,6 +231,7 @@ class _$MovieModelImpl implements _MovieModel {
       _$$MovieModelImplFromJson(json);
 
   @override
+  @JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
   final int tmdbId;
   @override
   final String title;
@@ -310,7 +315,8 @@ class _$MovieModelImpl implements _MovieModel {
 
 abstract class _MovieModel implements MovieModel {
   const factory _MovieModel(
-      {required final int tmdbId,
+      {@JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
+      required final int tmdbId,
       required final String title,
       final String? overview,
       final String? posterPath,
@@ -324,6 +330,7 @@ abstract class _MovieModel implements MovieModel {
       _$MovieModelImpl.fromJson;
 
   @override
+  @JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
   int get tmdbId;
   @override
   String get title;

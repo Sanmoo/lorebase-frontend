@@ -20,6 +20,7 @@ SeriesModel _$SeriesModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$SeriesModel {
+  @JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
   int get tmdbId => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
   String? get overview => throw _privateConstructorUsedError;
@@ -48,7 +49,8 @@ abstract class $SeriesModelCopyWith<$Res> {
       _$SeriesModelCopyWithImpl<$Res, SeriesModel>;
   @useResult
   $Res call(
-      {int tmdbId,
+      {@JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
+      int tmdbId,
       String title,
       String? overview,
       String? posterPath,
@@ -140,7 +142,8 @@ abstract class _$$SeriesModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {int tmdbId,
+      {@JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
+      int tmdbId,
       String title,
       String? overview,
       String? posterPath,
@@ -225,7 +228,8 @@ class __$$SeriesModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$SeriesModelImpl implements _SeriesModel {
   const _$SeriesModelImpl(
-      {required this.tmdbId,
+      {@JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
+      required this.tmdbId,
       required this.title,
       this.overview,
       this.posterPath,
@@ -242,6 +246,7 @@ class _$SeriesModelImpl implements _SeriesModel {
       _$$SeriesModelImplFromJson(json);
 
   @override
+  @JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
   final int tmdbId;
   @override
   final String title;
@@ -337,7 +342,8 @@ class _$SeriesModelImpl implements _SeriesModel {
 
 abstract class _SeriesModel implements SeriesModel {
   const factory _SeriesModel(
-      {required final int tmdbId,
+      {@JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
+      required final int tmdbId,
       required final String title,
       final String? overview,
       final String? posterPath,
@@ -352,6 +358,7 @@ abstract class _SeriesModel implements SeriesModel {
       _$SeriesModelImpl.fromJson;
 
   @override
+  @JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
   int get tmdbId;
   @override
   String get title;
