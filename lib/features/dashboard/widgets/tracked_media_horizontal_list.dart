@@ -15,8 +15,9 @@ class TrackedMediaHorizontalList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Altura do TrackedMediaPoster default: (120 * 1.5) + 4 + texto(~48)
     return SizedBox(
-      height: 240,
+      height: 232,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
