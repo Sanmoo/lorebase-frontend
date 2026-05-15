@@ -63,5 +63,23 @@ void main() {
       expect(restored.runtimeMinutes, original.runtimeMinutes);
       expect(restored.status, original.status);
     });
+
+    test('fromJson accepts tmdbId as String', () {
+      const jsonWithStringId = {
+        'tmdbId': '550',
+        'title': 'Fight Club',
+        'overview': 'A film about an underground fight club',
+        'posterPath': '/fight.jpg',
+        'backdropPath': '/fight-bg.jpg',
+        'releaseDate': '1999-10-15',
+        'genres': ['Drama'],
+        'runtimeMinutes': 139,
+        'status': 'Released',
+      };
+      final movie = MovieModel.fromJson(jsonWithStringId);
+
+      expect(movie.tmdbId, 550);
+      expect(movie.title, 'Fight Club');
+    });
   });
 }

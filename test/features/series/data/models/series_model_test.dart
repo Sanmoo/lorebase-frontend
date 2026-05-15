@@ -67,5 +67,24 @@ void main() {
       expect(restored.seasonCount, original.seasonCount);
       expect(restored.status, original.status);
     });
+
+    test('fromJson accepts tmdbId as String', () {
+      const jsonWithStringId = {
+        'tmdbId': '123',
+        'title': 'Test Series',
+        'overview': 'A test',
+        'posterPath': '/p.jpg',
+        'backdropPath': '/b.jpg',
+        'firstAirDate': '2024-01-01',
+        'genres': ['Drama'],
+        'networks': ['HBO'],
+        'seasonCount': 3,
+        'status': 'Ended',
+      };
+      final model = SeriesModel.fromJson(jsonWithStringId);
+
+      expect(model.tmdbId, 123);
+      expect(model.title, 'Test Series');
+    });
   });
 }
