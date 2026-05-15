@@ -8,7 +8,7 @@ part of 'movie_model.dart';
 
 _$MovieModelImpl _$$MovieModelImplFromJson(Map<String, dynamic> json) =>
     _$MovieModelImpl(
-      tmdbId: json['tmdbId'] as int,
+      tmdbId: flexibleIntFromJson(json['tmdbId']),
       title: json['title'] as String,
       overview: json['overview'] as String?,
       posterPath: json['posterPath'] as String?,
@@ -24,7 +24,7 @@ _$MovieModelImpl _$$MovieModelImplFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$$MovieModelImplToJson(_$MovieModelImpl instance) =>
     <String, dynamic>{
-      'tmdbId': instance.tmdbId,
+      'tmdbId': flexibleIntToJson(instance.tmdbId),
       'title': instance.title,
       'overview': instance.overview,
       'posterPath': instance.posterPath,
