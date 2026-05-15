@@ -14,6 +14,7 @@ After adding i18n (slang) with deferred loading, 24 tests in 3 auth page test fi
 Auth page tests use hardcoded Portuguese strings (`find.text('Entrar')`, `find.text('Esqueceu a senha?')`, etc.), but the i18n system defaults to `AppLocale.en` (English) in tests because `LocaleSettings.setLocale` is never called. The `TranslationProvider` wraps the widget tree but serves English translations.
 
 Affected files:
+
 - `test/features/auth/pages/login_page_test.dart`
 - `test/features/auth/pages/forgot_password_page_test.dart`
 - `test/features/auth/pages/register_page_test.dart`
@@ -29,6 +30,7 @@ Stale `flutter_tools.*` directories in `/tmp` (tmpfs 7.7G) accumulated ~4GB, cau
 In each of the 3 test files, add `LocaleSettings.setLocaleSync(AppLocale.ptBr)` inside the `_wrap()` / `_wrapLoginPage()` helper, before constructing the widget tree.
 
 **Example:**
+
 ```dart
 Widget _wrap(ProviderContainer container) {
   LocaleSettings.setLocaleSync(AppLocale.ptBr);
@@ -52,15 +54,16 @@ Widget _wrap(ProviderContainer container) {
 
 ### Files changed
 
-| File | Change |
-|---|---|
-| `test/features/auth/pages/login_page_test.dart` | Add `LocaleSettings.setLocaleSync(AppLocale.ptBr)` in `_wrapLoginPage()` |
-| `test/features/auth/pages/forgot_password_page_test.dart` | Add `LocaleSettings.setLocaleSync(AppLocale.ptBr)` in `_wrap()` |
-| `test/features/auth/pages/register_page_test.dart` | Add `LocaleSettings.setLocaleSync(AppLocale.ptBr)` in `_wrap()` |
+| File                                                      | Change                                                                   |
+| --------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `test/features/auth/pages/login_page_test.dart`           | Add `LocaleSettings.setLocaleSync(AppLocale.ptBr)` in `_wrapLoginPage()` |
+| `test/features/auth/pages/forgot_password_page_test.dart` | Add `LocaleSettings.setLocaleSync(AppLocale.ptBr)` in `_wrap()`          |
+| `test/features/auth/pages/register_page_test.dart`        | Add `LocaleSettings.setLocaleSync(AppLocale.ptBr)` in `_wrap()`          |
 
 ## Verification
 
 After changes:
+
 1. `flutter test test/features/auth/pages/login_page_test.dart` — all 12 tests pass
 2. `flutter test test/features/auth/pages/forgot_password_page_test.dart` — all tests pass
 3. `flutter test test/features/auth/pages/register_page_test.dart` — all tests pass

@@ -13,9 +13,10 @@
 ### Task 1: Fix login_page_test.dart
 
 **Files:**
+
 - Modify: `test/features/auth/pages/login_page_test.dart` — função `_wrapLoginPage()`
 
-- [ ] **Step 1: Adicionar setLocaleSync no _wrapLoginPage**
+- [ ] **Step 1: Adicionar setLocaleSync no \_wrapLoginPage**
 
 No arquivo `test/features/auth/pages/login_page_test.dart`, localizar a função `_wrapLoginPage` e adicionar a linha `LocaleSettings.setLocaleSync(AppLocale.ptBr);` logo no início do corpo:
 
@@ -73,9 +74,10 @@ git commit -m "test: set pt_BR locale in login_page tests"
 ### Task 2: Fix forgot_password_page_test.dart
 
 **Files:**
+
 - Modify: `test/features/auth/pages/forgot_password_page_test.dart` — função `_wrap()`
 
-- [ ] **Step 1: Adicionar setLocaleSync no _wrap**
+- [ ] **Step 1: Adicionar setLocaleSync no \_wrap**
 
 No arquivo `test/features/auth/pages/forgot_password_page_test.dart`, localizar a função `_wrap` e adicionar `LocaleSettings.setLocaleSync(AppLocale.ptBr);`:
 
@@ -127,9 +129,10 @@ git commit -m "test: set pt_BR locale in forgot_password_page tests"
 ### Task 3: Fix register_page_test.dart
 
 **Files:**
+
 - Modify: `test/features/auth/pages/register_page_test.dart` — função `_wrap()`
 
-- [ ] **Step 1: Adicionar setLocaleSync no _wrap**
+- [ ] **Step 1: Adicionar setLocaleSync no \_wrap**
 
 No arquivo `test/features/auth/pages/register_page_test.dart`, localizar a função `_wrap` e adicionar `LocaleSettings.setLocaleSync(AppLocale.ptBr);`:
 
