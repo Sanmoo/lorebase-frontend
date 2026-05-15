@@ -50,7 +50,6 @@ class FakeAuthVM extends AuthViewModel {
 }
 
 Widget _wrapLoginPage(ProviderContainer container) {
-  LocaleSettings.setLocaleSync(AppLocale.ptBr);
   return UncontrolledProviderScope(
     container: container,
     child: TranslationProvider(
@@ -81,10 +80,8 @@ Widget _wrapLoginPage(ProviderContainer container) {
   );
 }
 
-void main() {
-  setUpAll(() async {
-    await LocaleSettings.instance.loadLocale(AppLocale.ptBr);
-  });
+Future<void> main() async {
+  await LocaleSettings.setLocale(AppLocale.ptBr);
 
   group('LoginPage', () {
     testWidgets('renders email and password fields', (tester) async {
