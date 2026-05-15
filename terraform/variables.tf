@@ -5,7 +5,7 @@ variable "aws_region" {
 }
 
 variable "bucket_name" {
-  description = "Nome do bucket S3 para o web app (deve ser globalmente único)"
+  description = "Prefixo do bucket S3 (o workspace é adicionado automaticamente)"
   type        = string
   default     = "lorebase-web"
 }
