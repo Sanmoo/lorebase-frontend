@@ -132,7 +132,7 @@ void main() {
 
     test('refresh() keeps stale data on network failure', () async {
       final cacheService = CacheService();
-      await cacheService.set('dashboard:series', CacheEntry(
+      await cacheService.set('dashboard:SERIES', CacheEntry(
         json: jsonEncode(const DashboardModel(
           watching: DashboardSectionModel(),
           wantToWatch: DashboardSectionModel(),
@@ -158,7 +158,7 @@ void main() {
 
     test('build() returns cached data from memory', () async {
       final cacheService = CacheService();
-      await cacheService.set('dashboard:series', CacheEntry(
+      await cacheService.set('dashboard:SERIES', CacheEntry(
         json: jsonEncode(const DashboardModel(
           watching: DashboardSectionModel(),
           wantToWatch: DashboardSectionModel(),
@@ -183,7 +183,7 @@ void main() {
 
     test('build() triggers background refresh when cache is stale', () async {
       final cacheService = CacheService();
-      await cacheService.set('dashboard:series', CacheEntry(
+      await cacheService.set('dashboard:SERIES', CacheEntry(
         json: jsonEncode(const DashboardModel(
           watching: DashboardSectionModel(),
           wantToWatch: DashboardSectionModel(),
@@ -223,7 +223,7 @@ void main() {
     test('build() handles background refresh failure on stale cache',
         () async {
       final cacheService = CacheService();
-      await cacheService.set('dashboard:series', CacheEntry(
+      await cacheService.set('dashboard:SERIES', CacheEntry(
         json: jsonEncode(const DashboardModel(
           watching: DashboardSectionModel(),
           wantToWatch: DashboardSectionModel(),

@@ -5,7 +5,7 @@ void main() {
   const json = {
     'mediaId': '10',
     'title': 'The Batman',
-    'mediaType': 'movie',
+    'mediaType': 'MOVIE',
     'posterPath': '/poster.jpg',
   };
 
@@ -14,7 +14,7 @@ void main() {
 
     expect(model.mediaId, '10');
     expect(model.title, 'The Batman');
-    expect(model.mediaType.apiValue, 'movie');
+    expect(model.mediaType.apiValue, 'MOVIE');
     expect(model.posterPath, '/poster.jpg');
   });
 
@@ -22,7 +22,7 @@ void main() {
     final original = TrackedMediaSummaryModel.fromJson(const {
       'mediaId': '10',
       'title': 'The Batman',
-      'mediaType': 'movie',
+      'mediaType': 'MOVIE',
       'posterPath': '/poster.jpg',
     });
     final jsonMap = original.toJson();

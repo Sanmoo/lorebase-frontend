@@ -1,8 +1,8 @@
 import '../../../../l10n/strings.g.dart';
 
 enum MediaType {
-  series('series'),
-  movie('movie');
+  series('SERIES'),
+  movie('MOVIE');
 
   const MediaType(this.apiValue);
 

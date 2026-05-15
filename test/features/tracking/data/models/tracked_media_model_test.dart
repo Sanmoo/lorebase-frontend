@@ -9,7 +9,7 @@ void main() {
   final json = {
     'trackingId': 'trk-1',
     'userId': 'user-1',
-    'mediaType': 'series',
+    'mediaType': 'SERIES',
     'mediaId': '42',
     'status': 'WATCHING',
     'rating': 8,
@@ -20,7 +20,7 @@ void main() {
     'media': {
       'mediaId': '42',
       'title': 'Test Show',
-      'mediaType': 'series',
+      'mediaType': 'SERIES',
     },
     'addedAt': now,
     'lastUpdated': now,
@@ -29,7 +29,7 @@ void main() {
   test('fromJson parses nested media payload', () {
     final model = TrackedMediaModel.fromJson(json);
 
-    expect(model.mediaType.apiValue, 'series');
+    expect(model.mediaType.apiValue, 'SERIES');
     expect(model.mediaId, '42');
     expect(model.rating, 8);
     expect(model.review, 'Great');
@@ -55,7 +55,7 @@ void main() {
     final model = TrackedMediaModel.fromJson({
       'trackingId': 'trk-2',
       'userId': 'user-1',
-      'mediaType': 'movie',
+      'mediaType': 'MOVIE',
       'mediaId': '99',
       'status': 'WATCHING',
       'addedAt': now,
@@ -63,7 +63,7 @@ void main() {
     });
 
     expect(model.media, isNull);
-    expect(model.mediaType.apiValue, 'movie');
+    expect(model.mediaType.apiValue, 'MOVIE');
     expect(model.rating, isNull);
     expect(model.seasonRatings, isEmpty);
   });
