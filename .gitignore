@@ -76,3 +76,8 @@ coverage/
 # Environment files
 .env
 .superpowers/
+
+# Terraform
+terraform/.terraform*
+terraform/terraform.tfstate*
+terraform/*.tfplan

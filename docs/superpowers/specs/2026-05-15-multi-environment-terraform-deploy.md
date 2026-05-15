@@ -12,11 +12,11 @@ Adapt the existing S3 + CloudFront Terraform deployment to support three environ
 
 ### Environments
 
-| Environment | Terraform Workspace | Bucket Name                | CloudFront Domain             |
-|-------------|---------------------|----------------------------|-------------------------------|
-| dev         | `dev`               | `lorebase-web-dev`         | `dxxx.cloudfront.net`         |
-| qa          | `qa`                | `lorebase-web-qa`          | `dxxx.cloudfront.net`         |
-| prod        | `prod`              | `lorebase-web-prod`        | `dxxx.cloudfront.net`         |
+| Environment | Terraform Workspace | Bucket Name         | CloudFront Domain     |
+| ----------- | ------------------- | ------------------- | --------------------- |
+| dev         | `dev`               | `lorebase-web-dev`  | `dxxx.cloudfront.net` |
+| qa          | `qa`                | `lorebase-web-qa`   | `dxxx.cloudfront.net` |
+| prod        | `prod`              | `lorebase-web-prod` | `dxxx.cloudfront.net` |
 
 All three environments live in the same AWS account, same region (`us-east-1`).
 None use custom domains — all serve via the default `cloudfront.net` URL.
@@ -31,12 +31,12 @@ Remote backend in S3 (already existing bucket):
 - **Locking:** None (DynamoDB not used)
 - **Workspace isolation:** Automatic — Terraform appends `env:/<workspace>/` to the key
 
-| Workspace | S3 Path                                                     |
-|-----------|-------------------------------------------------------------|
-| `default` | `experience-web-app/terraform.tfstate`                      |
-| `dev`     | `experience-web-app/env:/dev/terraform.tfstate`             |
-| `qa`      | `experience-web-app/env:/qa/terraform.tfstate`              |
-| `prod`    | `experience-web-app/env:/prod/terraform.tfstate`            |
+| Workspace | S3 Path                                          |
+| --------- | ------------------------------------------------ |
+| `default` | `experience-web-app/terraform.tfstate`           |
+| `dev`     | `experience-web-app/env:/dev/terraform.tfstate`  |
+| `qa`      | `experience-web-app/env:/qa/terraform.tfstate`   |
+| `prod`    | `experience-web-app/env:/prod/terraform.tfstate` |
 
 ## File Changes
 
@@ -135,14 +135,14 @@ price_class = "PriceClass_200"
 
 ### Targets
 
-| Command                      | Action                                                       |
-|------------------------------|--------------------------------------------------------------|
-| `make deploy ENV=dev`        | Full pipeline: init → workspace → apply → build → sync → inv |
-| `make infra ENV=prod`        | Terraform init + apply only (no build/deploy)                |
-| `make build-web`             | Build Flutter web only (unchanged)                           |
-| `make workspace-list`        | List Terraform workspaces                                    |
-| `make workspace-show`        | Show current workspace                                       |
-| `make workspace-create ENV=x`| Create a new workspace                                       |
+| Command                       | Action                                                       |
+| ----------------------------- | ------------------------------------------------------------ |
+| `make deploy ENV=dev`         | Full pipeline: init → workspace → apply → build → sync → inv |
+| `make infra ENV=prod`         | Terraform init + apply only (no build/deploy)                |
+| `make build-web`              | Build Flutter web only (unchanged)                           |
+| `make workspace-list`         | List Terraform workspaces                                    |
+| `make workspace-show`         | Show current workspace                                       |
+| `make workspace-create ENV=x` | Create a new workspace                                       |
 
 ### Deploy Flow (`make deploy ENV=dev`)
 
@@ -174,6 +174,7 @@ make deploy ENV=dev
 ```
 
 On first run:
+
 1. `terraform init` detects no existing S3 backend, creates it
 2. Terraform prompts to migrate local state → S3 (answer "yes")
 3. `terraform workspace new dev` creates the dev workspace
