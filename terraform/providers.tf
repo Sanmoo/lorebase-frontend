@@ -6,6 +6,12 @@ terraform {
       version = "~> 5.0"
     }
   }
+
+  backend "s3" {
+    bucket = "lorebase-terraform-state-148417961447"
+    key    = "experience-web-app/terraform.tfstate"
+    region = "us-east-1"
+  }
 }
 
 provider "aws" {
