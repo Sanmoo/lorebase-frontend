@@ -91,7 +91,7 @@ void main() {
       );
 
       expect(capturedParams!['status'], 'WATCHING');
-      expect(capturedParams!['mediaType'], 'movie');
+      expect(capturedParams!['mediaType'], 'MOVIE');
       expect(capturedParams!['page'], 2);
       expect(capturedParams!['pageSize'], 10);
       expect(capturedParams!['includeMedia'], true);
@@ -189,7 +189,7 @@ void main() {
 
       await repo.deleteTracking('series-1', mediaType: MediaType.series);
 
-      expect(capturedParams!['mediaType'], 'series');
+      expect(capturedParams!['mediaType'], 'SERIES');
     });
 
     test('deleteTracking() throws ServerException on DioException', () async {

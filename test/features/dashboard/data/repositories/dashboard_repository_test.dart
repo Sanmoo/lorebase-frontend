@@ -123,7 +123,7 @@ void main() {
 
       await repo.getDashboard(mediaType: MediaType.movie);
 
-      expect(capturedParams!['mediaType'], 'movie');
+      expect(capturedParams!['mediaType'], 'MOVIE');
     });
 
     test('getDashboard() re-throws ServerException from DioException.error',
