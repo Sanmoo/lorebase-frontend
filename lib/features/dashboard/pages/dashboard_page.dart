@@ -134,7 +134,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
             if (dashboard.wantToWatch.items.isNotEmpty)
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 24.0),
+                  padding: const EdgeInsets.only(top: 12.0),
                   child: DashboardSection(
                     title: t.dashboard_want_to_watch,
                     items: dashboard.wantToWatch.items,
@@ -151,7 +151,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
             if (dashboard.completed.items.isNotEmpty)
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 24.0),
+                  padding: const EdgeInsets.only(top: 12.0),
                   child: DashboardSection(
                     title: t.dashboard_completed,
                     items: dashboard.completed.items,
@@ -168,7 +168,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
             if (dashboard.dropped.items.isNotEmpty)
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 24.0),
+                  padding: const EdgeInsets.only(top: 12.0),
                   child: DashboardSection(
                     title: t.dashboard_dropped,
                     items: dashboard.dropped.items,
