@@ -91,7 +91,9 @@ Widget _wrap(ProviderContainer container) {
   );
 }
 
-void main() {
+Future<void> main() async {
+  await LocaleSettings.setLocale(AppLocale.ptBr);
+
   group('ForgotPasswordPage', () {
     ProviderContainer createContainer(FakeForgotPasswordVM fakeVM) {
       return ProviderContainer(overrides: [
