@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import '../../../../core/utils/json_converters.dart';
 
 part 'series_model.freezed.dart';
 part 'series_model.g.dart';
@@ -6,6 +7,7 @@ part 'series_model.g.dart';
 @freezed
 class SeriesModel with _$SeriesModel {
   const factory SeriesModel({
+    @JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
     required int tmdbId,
     required String title,
     String? overview,

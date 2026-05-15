@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import '../../../../core/utils/json_converters.dart';
 
 part 'movie_model.freezed.dart';
 part 'movie_model.g.dart';
@@ -6,6 +7,7 @@ part 'movie_model.g.dart';
 @freezed
 class MovieModel with _$MovieModel {
   const factory MovieModel({
+    @JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
     required int tmdbId,
     required String title,
     String? overview,
