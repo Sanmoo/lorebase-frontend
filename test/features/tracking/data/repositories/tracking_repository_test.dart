@@ -27,7 +27,9 @@ class MockAdapter implements HttpClientAdapter {
 ResponseBody _json(dynamic data) => ResponseBody.fromString(
       jsonEncode(data),
       200,
-      headers: {Headers.contentTypeHeader: [Headers.jsonContentType]},
+      headers: {
+        Headers.contentTypeHeader: [Headers.jsonContentType]
+      },
     );
 
 final now = DateTime.now().toIso8601String();
@@ -55,7 +57,10 @@ void main() {
       final dio = Dio()
         ..httpClientAdapter = MockAdapter(
           onFetch: (options) => _json({
-            'items': [_trackingJson('t-1', 'series'), _trackingJson('t-2', 'series')],
+            'items': [
+              _trackingJson('t-1', 'series'),
+              _trackingJson('t-2', 'series')
+            ],
           }),
         );
       final repo = TrackingRepositoryImpl(dio);
@@ -115,7 +120,8 @@ void main() {
         );
       final repo = TrackingRepositoryImpl(dio);
 
-      final result = await repo.startTracking('series-1', MediaType.series, 'WATCHING');
+      final result =
+          await repo.startTracking('series-1', MediaType.series, 'WATCHING');
       expect(result.trackingId, 't-new');
       expect(result.status, 'WATCHING');
     });
