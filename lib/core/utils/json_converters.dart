@@ -1,0 +1,17 @@
+/// Parses a [value] that may be either [int] or [String] into an [int].
+///
+/// Throws [FormatException] if [value] is neither [int] nor [String],
+/// or if the String cannot be parsed as an integer.
+int flexibleIntFromJson(dynamic value) {
+  if (value is int) return value;
+  if (value is String) return int.parse(value);
+  throw FormatException(
+    'Cannot convert $value (${value.runtimeType}) to int',
+  );
+}
+
+/// Returns the [int] value unchanged for JSON serialization.
+///
+/// Exists so the `@JsonKey` annotation has a symmetric toJson companion
+/// for the fromJson converter.
+int flexibleIntToJson(int value) => value;
