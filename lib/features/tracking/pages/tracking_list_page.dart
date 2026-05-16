@@ -142,32 +142,29 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
                             child: Icon(Icons.tv_off, color: Colors.grey),
                           );
                         }
-                        return Column(
-                          children: [
-                            Expanded(
-                              child: LayoutBuilder(
-                                builder: (context, constraints) =>
-                                    TrackedMediaPoster(
-                                  media: media,
-                                  width: constraints.maxWidth,
-                                  onTap: () {
-                                    if (media.mediaId.isEmpty) return;
-                                    final path =
-                                        tracking.mediaType == MediaType.series
-                                            ? '/series/${media.mediaId}'
-                                            : '/movies/${media.mediaId}';
-                                    context.push(path);
-                                  },
-                                ),
+                        return LayoutBuilder(
+                          builder: (context, constraints) => Column(
+                            children: [
+                              TrackedMediaPoster(
+                                media: media,
+                                width: constraints.maxWidth,
+                                onTap: () {
+                                  if (media.mediaId.isEmpty) return;
+                                  final path =
+                                      tracking.mediaType == MediaType.series
+                                          ? '/series/${media.mediaId}'
+                                          : '/movies/${media.mediaId}';
+                                  context.push(path);
+                                },
                               ),
-                            ),
-                            const SizedBox(height: 4),
-                            RatingStars(
-                              rating: tracking.rating,
-                              size: 10,
-                              maxRating: 10,
-                            ),
-                          ],
+                              const SizedBox(height: 4),
+                              RatingStars(
+                                rating: tracking.rating,
+                                size: 10,
+                                maxRating: 10,
+                              ),
+                            ],
+                          ),
                         );
                       },
                     );
