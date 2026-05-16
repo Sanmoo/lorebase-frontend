@@ -140,23 +140,29 @@ class _MovieDetailLoaded extends StatelessWidget {
                 children: [
                   if (hasBackdrop)
                     Positioned.fill(
-                      child: ClipRect(
+                      child: ClipRRect(
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(1),
+                        ),
                         key: const ValueKey('backdrop_clip'),
-                        child: OverflowBox(
-                          minWidth: MediaQuery.of(context).size.width,
-                          maxWidth: MediaQuery.of(context).size.width,
-                          minHeight: 262,
-                          maxHeight: 262,
-                          alignment: Alignment.bottomCenter,
-                          child: CachedNetworkImage(
-                            imageUrl: movie.backdropPath!,
-                            imageRenderMethodForWeb:
-                                ImageRenderMethodForWeb.HttpGet,
-                            width: MediaQuery.of(context).size.width,
-                            height: 262,
-                            fit: BoxFit.cover,
-                            errorWidget: (context, url, error) => Container(
-                              color: theme.colorScheme.surfaceContainerHighest,
+                        child: SizedBox.expand(
+                          child: OverflowBox(
+                            minWidth: MediaQuery.of(context).size.width,
+                            maxWidth: MediaQuery.of(context).size.width,
+                            minHeight: 274,
+                            maxHeight: 274,
+                            alignment: Alignment.bottomCenter,
+                            child: CachedNetworkImage(
+                              imageUrl: movie.backdropPath!,
+                              imageRenderMethodForWeb:
+                                  ImageRenderMethodForWeb.HttpGet,
+                              width: MediaQuery.of(context).size.width,
+                              height: 274,
+                              fit: BoxFit.cover,
+                              errorWidget: (context, url, error) => Container(
+                                color:
+                                    theme.colorScheme.surfaceContainerHighest,
+                              ),
                             ),
                           ),
                         ),

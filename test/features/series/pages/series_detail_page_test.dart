@@ -773,7 +773,7 @@ Future<void> main() async {
       expect(find.text('Completed'), findsAtLeast(1));
     });
 
-    testWidgets('backdrop OverflowBox is wrapped in ClipRect', (tester) async {
+    testWidgets('backdrop OverflowBox is wrapped in ClipRRect', (tester) async {
       final series = _testSeries().copyWith(
         backdropPath: '/test-backdrop.jpg',
       );
