@@ -6,7 +6,7 @@
 
 **Architecture:** New `test/visual/` directory with `flutter_test_config.dart` for Alchemist global config, `helpers/golden_helpers.dart` for centralized mock overrides, `golden_files/` for git-tracked reference PNGs, and `pages/` for one golden test per page. Each test renders a page with mocked Riverpod providers under light and dark themes.
 
-**Tech Stack:** Flutter test, Alchemist 1.x, Riverpod overrides (existing pattern), Material 3 theming
+**Tech Stack:** Flutter test, Alchemist 0.x, Riverpod overrides (existing pattern), Material 3 theming
 
 ---
 
@@ -20,13 +20,14 @@
 
 ```yaml
 # In dev_dependencies, add:
-alchemist: ^1.3.0
+alchemist: ^0.11.0
 ```
 
 The full dev_dependencies block becomes:
 
 ```yaml
 dev_dependencies:
+  alchemist: ^0.11.0
   slang_build_runner: 4.11.0
   flutter_test:
     sdk: flutter
@@ -40,7 +41,7 @@ dev_dependencies:
   riverpod_lint: ^2.3.0
   custom_lint: ^0.7.0
   flutter_launcher_icons: ^0.13.1
-  alchemist: ^1.3.0
+  alchemist: ^0.11.0
 ```
 
 - [ ] **Step 2: Run pub get**
@@ -67,7 +68,6 @@ git commit -m "chore: add alchemist dependency for golden tests"
 
 ```dart
 import 'dart:async';
-import 'dart:io';
 
 import 'package:alchemist/alchemist.dart';
 import 'package:flutter/material.dart';
@@ -77,7 +77,6 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
     config: AlchemistConfig(
       platformGoldensConfig: PlatformGoldensConfig(
         enabled: true,
-        platform: Platform.operatingSystem,
       ),
       theme: ThemeData.light(),
       ciGoldensConfig: CiGoldensConfig(
