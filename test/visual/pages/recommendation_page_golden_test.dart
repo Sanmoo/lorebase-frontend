@@ -20,16 +20,20 @@ Future<void> main() async {
         children: [
           GoldenTestScenario(
             name: 'light_default',
-            child: MaterialApp(
-              theme: ThemeData.light(useMaterial3: true),
-              home: const RecommendationPage(),
+            child: IgnorePointer(
+              child: MaterialApp(
+                theme: ThemeData.light(useMaterial3: true),
+                home: const RecommendationPage(),
+              ),
             ),
           ),
           GoldenTestScenario(
             name: 'dark_default',
-            child: MaterialApp(
-              theme: ThemeData.dark(useMaterial3: true),
-              home: const RecommendationPage(),
+            child: IgnorePointer(
+              child: MaterialApp(
+                theme: ThemeData.dark(useMaterial3: true),
+                home: const RecommendationPage(),
+              ),
             ),
           ),
         ],

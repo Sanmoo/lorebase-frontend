@@ -23,21 +23,25 @@ Future<void> main() async {
         children: [
           GoldenTestScenario(
             name: 'light_default',
-            child: ProviderScope(
-              overrides: dashboardGoldenOverrides(),
-              child: MaterialApp(
-                theme: ThemeData.light(useMaterial3: true),
-                home: const DashboardPage(),
+            child: IgnorePointer(
+              child: ProviderScope(
+                overrides: dashboardGoldenOverrides(),
+                child: MaterialApp(
+                  theme: ThemeData.light(useMaterial3: true),
+                  home: const DashboardPage(),
+                ),
               ),
             ),
           ),
           GoldenTestScenario(
             name: 'dark_default',
-            child: ProviderScope(
-              overrides: dashboardGoldenOverrides(),
-              child: MaterialApp(
-                theme: ThemeData.dark(useMaterial3: true),
-                home: const DashboardPage(),
+            child: IgnorePointer(
+              child: ProviderScope(
+                overrides: dashboardGoldenOverrides(),
+                child: MaterialApp(
+                  theme: ThemeData.dark(useMaterial3: true),
+                  home: const DashboardPage(),
+                ),
               ),
             ),
           ),
