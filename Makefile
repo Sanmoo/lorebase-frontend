@@ -11,7 +11,15 @@ test-coverage:
 analyze:
 	dart analyze --fatal-infos; s=$$?; if [ $$s -ne 0 ] && [ $$s -ne 2 ]; then exit $$s; fi
 
-check: analyze test-coverage
+check: analyze test-coverage golden-test
+
+# ─── Visual Regression ──────────────────────
+
+golden-test:
+	flutter test test/visual/
+
+golden-update:
+	flutter test test/visual/ --update-goldens
 
 # ─── Web Build ─────────────────────────────────
 
