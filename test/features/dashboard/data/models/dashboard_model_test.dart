@@ -17,11 +17,7 @@ void main() {
       },
       'wantToWatch': {
         'items': [
-          {
-            'tmdbId': 2,
-            'title': 'Want To Watch Series',
-            'mediaType': 'series'
-          },
+          {'tmdbId': 2, 'title': 'Want To Watch Series', 'mediaType': 'series'},
         ],
         'total': 10,
         'hasMore': true,
