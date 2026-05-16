@@ -28,6 +28,15 @@ void main() {
     expect(model.mediaType, isNull);
   });
 
+  test('fromJson defaults mediaId to empty string when tmdbId is absent', () {
+    final model = TrackedMediaSummaryModel.fromJson(const {
+      'title': 'No ID Show',
+    });
+
+    expect(model.mediaId, '');
+    expect(model.title, 'No ID Show');
+  });
+
   test('toJson fromJson roundtrip', () {
     const original = TrackedMediaSummaryModel(
       mediaId: '10',

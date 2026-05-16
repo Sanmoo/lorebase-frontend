@@ -22,6 +22,7 @@ int flexibleIntToJson(int value) => value;
 String flexibleStringFromJson(dynamic value) {
   if (value is String) return value;
   if (value is int) return value.toString();
+  if (value == null) return '';
   throw FormatException(
     'Cannot convert $value (${value.runtimeType}) to String',
   );

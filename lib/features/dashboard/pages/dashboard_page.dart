@@ -123,6 +123,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                   title: t.dashboard_watching,
                   items: dashboard.watching.items,
                   onTap: (item) {
+                    if (item.mediaId.isEmpty) return;
                     context.push(
                       item.mediaType == MediaType.series
                           ? '/series/${item.mediaId}'
@@ -139,6 +140,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                     title: t.dashboard_want_to_watch,
                     items: dashboard.wantToWatch.items,
                     onTap: (item) {
+                      if (item.mediaId.isEmpty) return;
                       context.push(
                         item.mediaType == MediaType.series
                             ? '/series/${item.mediaId}'
@@ -156,6 +158,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                     title: t.dashboard_completed,
                     items: dashboard.completed.items,
                     onTap: (item) {
+                      if (item.mediaId.isEmpty) return;
                       context.push(
                         item.mediaType == MediaType.series
                             ? '/series/${item.mediaId}'
@@ -173,6 +176,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                     title: t.dashboard_dropped,
                     items: dashboard.dropped.items,
                     onTap: (item) {
+                      if (item.mediaId.isEmpty) return;
                       context.push(
                         item.mediaType == MediaType.series
                             ? '/series/${item.mediaId}'

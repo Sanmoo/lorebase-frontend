@@ -241,7 +241,7 @@ class _$TrackedMediaSummaryModelImpl implements _TrackedMediaSummaryModel {
           name: 'tmdbId',
           fromJson: flexibleStringFromJson,
           toJson: flexibleStringToJson)
-      required this.mediaId,
+      this.mediaId = '',
       required this.title,
       @JsonKey(
           fromJson: _nullableMediaTypeFromJson,
@@ -336,7 +336,7 @@ abstract class _TrackedMediaSummaryModel implements TrackedMediaSummaryModel {
           name: 'tmdbId',
           fromJson: flexibleStringFromJson,
           toJson: flexibleStringToJson)
-      required final String mediaId,
+      final String mediaId,
       required final String title,
       @JsonKey(
           fromJson: _nullableMediaTypeFromJson,

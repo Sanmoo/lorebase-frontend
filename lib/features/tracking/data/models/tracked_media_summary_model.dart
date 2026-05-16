@@ -23,7 +23,8 @@ class TrackedMediaSummaryModel with _$TrackedMediaSummaryModel {
       fromJson: flexibleStringFromJson,
       toJson: flexibleStringToJson,
     )
-    required String mediaId,
+    @Default('')
+    String mediaId,
     required String title,
     @JsonKey(
       fromJson: _nullableMediaTypeFromJson,

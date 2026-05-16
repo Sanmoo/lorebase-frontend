@@ -57,11 +57,11 @@ void main() {
       expect(flexibleStringFromJson(-1), '-1');
     });
 
+    test('returns empty string for null input', () {
+      expect(flexibleStringFromJson(null), '');
+    });
+
     test('throws FormatException for unsupported types', () {
-      expect(
-        () => flexibleStringFromJson(null),
-        throwsA(isA<FormatException>()),
-      );
       expect(
         () => flexibleStringFromJson(true),
         throwsA(isA<FormatException>()),
