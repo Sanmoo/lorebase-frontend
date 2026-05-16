@@ -40,16 +40,16 @@ Change the `@JsonKey` annotation to read from the correct key:
 
 ## Files changed
 
-| File | Action |
-|------|--------|
-| `lib/features/tracking/data/models/tracked_media_summary_model.dart` | `name: 'tmdbId'` → `name: 'mediaId'` |
-| `test/features/dashboard/data/models/dashboard_model_test.dart` | Fixture keys `'tmdbId'` → `'mediaId'` |
-| `test/features/dashboard/data/models/dashboard_section_model_test.dart` | Fixture keys `'tmdbId'` → `'mediaId'` |
-| `test/features/dashboard/data/repositories/dashboard_repository_test.dart` | Fixture keys `'tmdbId'` → `'mediaId'` |
+| File                                                                       | Action                                                                         |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `lib/features/tracking/data/models/tracked_media_summary_model.dart`       | `name: 'tmdbId'` → `name: 'mediaId'`                                           |
+| `test/features/dashboard/data/models/dashboard_model_test.dart`            | Fixture keys `'tmdbId'` → `'mediaId'`                                          |
+| `test/features/dashboard/data/models/dashboard_section_model_test.dart`    | Fixture keys `'tmdbId'` → `'mediaId'`                                          |
+| `test/features/dashboard/data/repositories/dashboard_repository_test.dart` | Fixture keys `'tmdbId'` → `'mediaId'`                                          |
 | `test/features/tracking/data/models/tracked_media_summary_model_test.dart` | Fixture keys `'tmdbId'` → `'mediaId'` (where testing TrackedMediaSummaryModel) |
-| `test/features/tracking/data/models/tracked_media_model_test.dart` | Fixture keys `'tmdbId'` → `'mediaId'` (where testing TrackedMediaSummaryModel) |
-| `test/features/tracking/data/repositories/tracking_repository_test.dart` | Fixture keys `'tmdbId'` → `'mediaId'` |
-| `*.freezed.dart` / `*.g.dart` | Regenerated via `build_runner` |
+| `test/features/tracking/data/models/tracked_media_model_test.dart`         | Fixture keys `'tmdbId'` → `'mediaId'` (where testing TrackedMediaSummaryModel) |
+| `test/features/tracking/data/repositories/tracking_repository_test.dart`   | Fixture keys `'tmdbId'` → `'mediaId'`                                          |
+| `*.freezed.dart` / `*.g.dart`                                              | Regenerated via `build_runner`                                                 |
 
 ## What stays unchanged
 

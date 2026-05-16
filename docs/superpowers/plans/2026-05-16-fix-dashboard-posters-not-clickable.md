@@ -13,6 +13,7 @@
 ### Task 1: Fix the model — align JSON key
 
 **Files:**
+
 - Modify: `lib/features/tracking/data/models/tracked_media_summary_model.dart`
 
 - [ ] **Step 1: Change `@JsonKey(name: 'tmdbId')` to `@JsonKey(name: 'mediaId')`**
@@ -34,6 +35,7 @@ Read the file; line 22 should now read `name: 'mediaId'`.
 ### Task 2: Update test fixtures — Dashboard tests
 
 **Files:**
+
 - Modify: `test/features/dashboard/data/models/dashboard_model_test.dart`
 - Modify: `test/features/dashboard/data/models/dashboard_section_model_test.dart`
 - Modify: `test/features/dashboard/data/repositories/dashboard_repository_test.dart`
@@ -72,6 +74,7 @@ Two fixtures use `'tmdbId'` — change key to `'mediaId'`:
 ### Task 3: Update test fixtures — Tracking tests
 
 **Files:**
+
 - Modify: `test/features/tracking/data/models/tracked_media_summary_model_test.dart`
 - Modify: `test/features/tracking/data/models/tracked_media_model_test.dart`
 - Modify: `test/features/tracking/data/repositories/tracking_repository_test.dart`
