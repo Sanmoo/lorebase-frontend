@@ -19,7 +19,7 @@ dynamic _nullableMediaTypeToJson(MediaType? value) => value?.apiValue;
 class TrackedMediaSummaryModel with _$TrackedMediaSummaryModel {
   const factory TrackedMediaSummaryModel({
     @JsonKey(
-      name: 'tmdbId',
+      name: 'mediaId',
       fromJson: flexibleStringFromJson,
       toJson: flexibleStringToJson,
     )

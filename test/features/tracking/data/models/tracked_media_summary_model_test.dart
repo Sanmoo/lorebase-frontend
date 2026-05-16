@@ -3,9 +3,9 @@ import 'package:lorebase/features/tracking/data/models/tracked_media_summary_mod
 import 'package:lorebase/features/tracking/data/models/media_type.dart';
 
 void main() {
-  test('fromJson parses summary payload with tmdbId as int (API shape)', () {
+  test('fromJson parses summary payload with mediaId as int (API shape)', () {
     final model = TrackedMediaSummaryModel.fromJson(const {
-      'tmdbId': 10,
+      'mediaId': 10,
       'title': 'The Batman',
       'mediaType': 'MOVIE',
       'posterPath': '/poster.jpg',
@@ -19,7 +19,7 @@ void main() {
 
   test('fromJson handles missing mediaType', () {
     final model = TrackedMediaSummaryModel.fromJson(const {
-      'tmdbId': 42,
+      'mediaId': 42,
       'title': 'Test Show',
     });
 
@@ -28,7 +28,7 @@ void main() {
     expect(model.mediaType, isNull);
   });
 
-  test('fromJson defaults mediaId to empty string when tmdbId is absent', () {
+  test('fromJson defaults mediaId to empty string when mediaId is absent', () {
     final model = TrackedMediaSummaryModel.fromJson(const {
       'title': 'No ID Show',
     });
@@ -66,7 +66,7 @@ void main() {
   test('fromJson throws FormatException for invalid mediaType type', () {
     expect(
       () => TrackedMediaSummaryModel.fromJson(const {
-        'tmdbId': 1,
+        'mediaId': 1,
         'title': 'Test',
         'mediaType': 123,
       }),

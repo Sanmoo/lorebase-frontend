@@ -10,14 +10,14 @@ void main() {
     final completeJson = {
       'watching': {
         'items': [
-          {'tmdbId': 1, 'title': 'Watching Series', 'mediaType': 'series'},
+          {'mediaId': 1, 'title': 'Watching Series', 'mediaType': 'series'},
         ],
         'total': 5,
         'hasMore': false,
       },
       'wantToWatch': {
         'items': [
-          {'tmdbId': 2, 'title': 'Want To Watch Series', 'mediaType': 'series'},
+          {'mediaId': 2, 'title': 'Want To Watch Series', 'mediaType': 'series'},
         ],
         'total': 10,
         'hasMore': true,
