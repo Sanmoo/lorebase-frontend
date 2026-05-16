@@ -1,4 +1,4 @@
-.PHONY: test test-coverage analyze check deploy build-web infra workspace-list workspace-show workspace-create
+.PHONY: test test-coverage analyze check-disk check clean-tmp golden-test golden-update deploy build-web infra workspace-list workspace-show workspace-create
 
 # ─── Testing & Quality ─────────────────────────
 
@@ -11,7 +11,13 @@ test-coverage:
 analyze:
 	dart analyze --fatal-infos; s=$$?; if [ $$s -ne 0 ] && [ $$s -ne 2 ]; then exit $$s; fi
 
-check: analyze test-coverage golden-test
+check-disk:
+	@usage=$$(df -P /tmp | awk 'NR==2{gsub(/%/,""); print $$5}'); \
+	if [ -n "$$usage" ] && [ "$$usage" -gt 70 ]; then \
+		echo "⚠️  /tmp is $$usage% full. Consider 'make clean-tmp' for faster tests."; \
+	fi || true
+
+check: analyze check-disk test-coverage golden-test
 
 # ─── Visual Regression ──────────────────────
 
@@ -20,6 +26,12 @@ golden-test:
 
 golden-update:
 	flutter test test/visual/ --update-goldens
+
+clean-tmp:
+	@echo "🧹 Cleaning stale Flutter temp directories..."
+	find /tmp -maxdepth 1 -name 'flutter_tools.*' -type d -mmin +60 \
+	  -exec rm -rf {} + 2>/dev/null || true
+	@echo "✅ Done. /tmp usage: $$(df -h /tmp | tail -1 | awk '{print $$5}')" || true
 
 # ─── Web Build ─────────────────────────────────
 
