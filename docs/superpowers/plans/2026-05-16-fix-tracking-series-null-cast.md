@@ -13,6 +13,7 @@
 ### Task 1: Add flexible JSON converters
 
 **Files:**
+
 - Modify: `lib/core/utils/json_converters.dart`
 
 - [ ] **Step 1: Add converter functions**
@@ -91,6 +92,7 @@ Expected: no errors.
 ### Task 2: Update TrackedMediaSummaryModel annotations
 
 **Files:**
+
 - Modify: `lib/features/tracking/data/models/tracked_media_summary_model.dart`
 
 - [ ] **Step 1: Add nullable mediaType converters and update model fields**
@@ -164,6 +166,7 @@ Expected: no errors.
 ### Task 3: Update fromJson test fixtures
 
 **Files:**
+
 - Modify: `test/features/tracking/data/models/tracked_media_summary_model_test.dart`
 - Modify: `test/features/tracking/data/models/tracked_media_model_test.dart`
 
@@ -235,6 +238,7 @@ void main() {
 In `test/features/tracking/data/models/tracked_media_model_test.dart`, change the nested `'media'` object's key from `'mediaId'` to `'tmdbId'` (int):
 
 Old:
+
 ```dart
 'media': {
   'mediaId': '42',
@@ -244,6 +248,7 @@ Old:
 ```
 
 New:
+
 ```dart
 'media': {
   'tmdbId': 42,

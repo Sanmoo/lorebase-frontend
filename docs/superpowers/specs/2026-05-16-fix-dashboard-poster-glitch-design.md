@@ -38,6 +38,7 @@ apresentar pixels corrompidos no canto superior esquerdo. A solução usa `Overf
 **Arquivo:** `lib/features/tracking/widgets/tracked_media_poster.dart`
 
 **Antes:**
+
 ```dart
 ClipRRect(
   borderRadius: BorderRadius.circular(8),
@@ -59,6 +60,7 @@ ClipRRect(
 ```
 
 **Depois:**
+
 ```dart
 ClipRRect(
   borderRadius: BorderRadius.circular(8),
@@ -98,8 +100,8 @@ ClipRRect(
 
 ## Arquivos alterados
 
-| Arquivo | Ação |
-|-|-|
+| Arquivo                                                   | Ação                                                      |
+| --------------------------------------------------------- | --------------------------------------------------------- |
 | `lib/features/tracking/widgets/tracked_media_poster.dart` | Adicionar `OverflowBox` envolvendo o `CachedNetworkImage` |
 
 Nenhum `.g.dart` ou `.freezed.dart` precisa ser regenerado.
