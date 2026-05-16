@@ -8,8 +8,8 @@ void main() {
   group('DashboardSectionModel', () {
     final completeJson = {
       'items': [
-        {'mediaId': '1', 'title': 'Series A', 'mediaType': 'series'},
-        {'mediaId': '2', 'title': 'Movie B', 'mediaType': 'movie'},
+        {'tmdbId': 1, 'title': 'Series A', 'mediaType': 'series'},
+        {'tmdbId': 2, 'title': 'Movie B', 'mediaType': 'movie'},
       ],
       'total': 10,
       'hasMore': true,

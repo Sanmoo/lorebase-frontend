@@ -44,4 +44,39 @@ void main() {
       expect(flexibleIntToJson(0), 0);
     });
   });
+
+  group('flexibleStringFromJson', () {
+    test('returns String when input is String', () {
+      expect(flexibleStringFromJson('hello'), 'hello');
+      expect(flexibleStringFromJson(''), '');
+    });
+
+    test('converts int to String when input is int', () {
+      expect(flexibleStringFromJson(42), '42');
+      expect(flexibleStringFromJson(0), '0');
+      expect(flexibleStringFromJson(-1), '-1');
+    });
+
+    test('throws FormatException for unsupported types', () {
+      expect(
+        () => flexibleStringFromJson(null),
+        throwsA(isA<FormatException>()),
+      );
+      expect(
+        () => flexibleStringFromJson(true),
+        throwsA(isA<FormatException>()),
+      );
+      expect(
+        () => flexibleStringFromJson(3.14),
+        throwsA(isA<FormatException>()),
+      );
+    });
+  });
+
+  group('flexibleStringToJson', () {
+    test('returns the String unchanged', () {
+      expect(flexibleStringToJson('hello'), 'hello');
+      expect(flexibleStringToJson(''), '');
+    });
+  });
 }

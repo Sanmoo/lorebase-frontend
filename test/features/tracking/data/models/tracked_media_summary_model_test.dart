@@ -53,4 +53,15 @@ void main() {
     expect(restored.title, 'Test Show');
     expect(restored.mediaType, isNull);
   });
+
+  test('fromJson throws FormatException for invalid mediaType type', () {
+    expect(
+      () => TrackedMediaSummaryModel.fromJson(const {
+        'tmdbId': 1,
+        'title': 'Test',
+        'mediaType': 123,
+      }),
+      throwsA(isA<FormatException>()),
+    );
+  });
 }

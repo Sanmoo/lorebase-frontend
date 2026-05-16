@@ -10,7 +10,7 @@ void main() {
     final completeJson = {
       'watching': {
         'items': [
-          {'mediaId': '1', 'title': 'Watching Series', 'mediaType': 'series'},
+          {'tmdbId': 1, 'title': 'Watching Series', 'mediaType': 'series'},
         ],
         'total': 5,
         'hasMore': false,
@@ -18,7 +18,7 @@ void main() {
       'wantToWatch': {
         'items': [
           {
-            'mediaId': '2',
+            'tmdbId': 2,
             'title': 'Want To Watch Series',
             'mediaType': 'series'
           },

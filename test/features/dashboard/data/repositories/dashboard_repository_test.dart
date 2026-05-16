@@ -41,7 +41,7 @@ Map<String, dynamic> _dashboardJson() => {
       'watching': {
         'items': [
           {
-            'mediaId': '1',
+            'tmdbId': 1,
             'title': 'Test Show',
             'mediaType': 'SERIES',
           }
