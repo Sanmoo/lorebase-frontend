@@ -173,7 +173,7 @@ void main() {
     test('loadTracking() returns cached data from memory', () async {
       final cache = CacheService();
       final items = [_makeTracking('t-1', 'WATCHING')];
-      await cache.set('tracking:${MediaType.series.apiValue}:WATCHING:1', CacheEntry(
+      await cache.set('tracking:v2:${MediaType.series.apiValue}:WATCHING:1', CacheEntry(
         json: jsonEncode(items.map((e) => e.toJson()).toList()),
         cachedAt: DateTime.now(),
         ttl: const Duration(hours: 6),
@@ -195,7 +195,7 @@ void main() {
         () async {
       final cache = CacheService();
       final items = [_makeTracking('t-1', 'WATCHING')];
-      await cache.set('tracking:${MediaType.series.apiValue}:WATCHING:1', CacheEntry(
+      await cache.set('tracking:v2:${MediaType.series.apiValue}:WATCHING:1', CacheEntry(
         json: jsonEncode(items.map((e) => e.toJson()).toList()),
         cachedAt: DateTime.now().subtract(const Duration(days: 1)),
         ttl: const Duration(hours: 6),
@@ -236,7 +236,7 @@ void main() {
         () async {
       final cache = CacheService();
       final items = [_makeTracking('t-1', 'WATCHING')];
-      await cache.set('tracking:${MediaType.series.apiValue}:WATCHING:1', CacheEntry(
+      await cache.set('tracking:v2:${MediaType.series.apiValue}:WATCHING:1', CacheEntry(
         json: jsonEncode(items.map((e) => e.toJson()).toList()),
         cachedAt: DateTime.now().subtract(const Duration(days: 1)),
         ttl: const Duration(hours: 6),
@@ -277,7 +277,7 @@ void main() {
     test('refresh() reuses stale cache on network failure', () async {
       final cache = CacheService();
       final items = [_makeTracking('t-2', 'COMPLETED')];
-      await cache.set('tracking:series:COMPLETED:1', CacheEntry(
+      await cache.set('tracking:v2:${MediaType.series.apiValue}:COMPLETED:1', CacheEntry(
         json: jsonEncode(items.map((e) => e.toJson()).toList()),
         cachedAt: DateTime.now(),
         ttl: const Duration(hours: 6),
