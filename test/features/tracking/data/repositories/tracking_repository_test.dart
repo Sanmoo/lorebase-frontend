@@ -45,7 +45,7 @@ Map<String, dynamic> _trackingJson(String id, String mediaType) => {
       'addedAt': now,
       'lastUpdated': now,
       'media': {
-        'mediaId': '123',
+        'tmdbId': 123,
         'title': mediaType == 'movie' ? 'Movie 123' : 'Series 123',
         'mediaType': mediaType,
       },

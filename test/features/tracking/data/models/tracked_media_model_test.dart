@@ -18,7 +18,7 @@ void main() {
       {'seasonNumber': 1, 'rating': 8, 'ratedAt': now},
     ],
     'media': {
-      'mediaId': '42',
+      'tmdbId': 42,
       'title': 'Test Show',
       'mediaType': 'SERIES',
     },
