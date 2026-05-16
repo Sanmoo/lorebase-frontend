@@ -108,8 +108,7 @@ class SeriesDetailPage extends ConsumerWidget {
             : null,
         removeLabel: ctx.t.series_detail_remove_from_list,
         removeConfirmTitle: ctx.t.series_detail_remove_from_list,
-        removeConfirmMessage:
-            ctx.t.series_detail_remove_confirm.replaceFirst(
+        removeConfirmMessage: ctx.t.series_detail_remove_confirm.replaceFirst(
           '{title}',
           series.title,
         ),
@@ -148,7 +147,9 @@ class _SeriesDetailLoaded extends StatelessWidget {
           child: FilledButton.icon(
             onPressed: onTrackingAction,
             icon: Icon(tracking != null ? Icons.edit : Icons.add),
-            label: Text(tracking != null ? t.series_detail_manage_tracking : t.series_detail_add_to_list),
+            label: Text(tracking != null
+                ? t.series_detail_manage_tracking
+                : t.series_detail_add_to_list),
           ),
         ),
       ),
@@ -163,20 +164,24 @@ class _SeriesDetailLoaded extends StatelessWidget {
                 children: [
                   if (hasBackdrop)
                     Positioned.fill(
-                      child: OverflowBox(
-                        minWidth: MediaQuery.of(context).size.width,
-                        maxWidth: MediaQuery.of(context).size.width,
-                        minHeight: 262,
-                        maxHeight: 262,
-                        alignment: Alignment.bottomCenter,
-                        child: CachedNetworkImage(
-                          imageUrl: series.backdropPath!,
-                          imageRenderMethodForWeb: ImageRenderMethodForWeb.HttpGet,
-                          width: MediaQuery.of(context).size.width,
-                          height: 262,
-                          fit: BoxFit.cover,
-                          errorWidget: (context, url, error) => Container(
-                            color: theme.colorScheme.surfaceContainerHighest,
+                      child: ClipRect(
+                        key: const ValueKey('backdrop_clip'),
+                        child: OverflowBox(
+                          minWidth: MediaQuery.of(context).size.width,
+                          maxWidth: MediaQuery.of(context).size.width,
+                          minHeight: 262,
+                          maxHeight: 262,
+                          alignment: Alignment.bottomCenter,
+                          child: CachedNetworkImage(
+                            imageUrl: series.backdropPath!,
+                            imageRenderMethodForWeb:
+                                ImageRenderMethodForWeb.HttpGet,
+                            width: MediaQuery.of(context).size.width,
+                            height: 262,
+                            fit: BoxFit.cover,
+                            errorWidget: (context, url, error) => Container(
+                              color: theme.colorScheme.surfaceContainerHighest,
+                            ),
                           ),
                         ),
                       ),
@@ -226,7 +231,8 @@ class _SeriesDetailLoaded extends StatelessWidget {
                             ? Container(
                                 width: 120,
                                 height: 180,
-                                color: theme.colorScheme.surfaceContainerHighest,
+                                color:
+                                    theme.colorScheme.surfaceContainerHighest,
                                 child: OverflowBox(
                                   minWidth: 120,
                                   maxWidth: 120,
@@ -241,7 +247,8 @@ class _SeriesDetailLoaded extends StatelessWidget {
                                     height: 192,
                                     fit: BoxFit.cover,
                                     errorWidget: (context, url, error) =>
-                                        const Icon(Icons.broken_image, size: 40),
+                                        const Icon(Icons.broken_image,
+                                            size: 40),
                                   ),
                                 ),
                               )
@@ -291,7 +298,6 @@ class _SeriesDetailLoaded extends StatelessWidget {
                       if (series.seasonCount > 0)
                         Text(
                           '${series.seasonCount} ${series.seasonCount == 1 ? 'season' : 'seasons'}',
-
                           style: theme.textTheme.bodyMedium,
                         ),
                       if (tracking != null) ...[
@@ -326,7 +332,9 @@ class _SeriesDetailLoaded extends StatelessWidget {
                         child: _InfoCard(
                           icon: Icons.collections,
                           label: t.series_detail_seasons,
-                          value: series.seasonCount > 0 ? '${series.seasonCount}' : '—',
+                          value: series.seasonCount > 0
+                              ? '${series.seasonCount}'
+                              : '—',
                         ),
                       ),
                     ],

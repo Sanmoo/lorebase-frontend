@@ -111,8 +111,7 @@ class _MovieDetailLoaded extends StatelessWidget {
     final theme = Theme.of(context);
     final hasBackdrop =
         movie.backdropPath != null && movie.backdropPath!.isNotEmpty;
-    final hasPoster =
-        movie.posterPath != null && movie.posterPath!.isNotEmpty;
+    final hasPoster = movie.posterPath != null && movie.posterPath!.isNotEmpty;
 
     return Scaffold(
       appBar: AppBar(
@@ -141,21 +140,24 @@ class _MovieDetailLoaded extends StatelessWidget {
                 children: [
                   if (hasBackdrop)
                     Positioned.fill(
-                      child: OverflowBox(
-                        minWidth: MediaQuery.of(context).size.width,
-                        maxWidth: MediaQuery.of(context).size.width,
-                        minHeight: 262,
-                        maxHeight: 262,
-                        alignment: Alignment.bottomCenter,
-                        child: CachedNetworkImage(
-                          imageUrl: movie.backdropPath!,
-                          imageRenderMethodForWeb:
-                              ImageRenderMethodForWeb.HttpGet,
-                          width: MediaQuery.of(context).size.width,
-                          height: 262,
-                          fit: BoxFit.cover,
-                          errorWidget: (context, url, error) => Container(
-                            color: theme.colorScheme.surfaceContainerHighest,
+                      child: ClipRect(
+                        key: const ValueKey('backdrop_clip'),
+                        child: OverflowBox(
+                          minWidth: MediaQuery.of(context).size.width,
+                          maxWidth: MediaQuery.of(context).size.width,
+                          minHeight: 262,
+                          maxHeight: 262,
+                          alignment: Alignment.bottomCenter,
+                          child: CachedNetworkImage(
+                            imageUrl: movie.backdropPath!,
+                            imageRenderMethodForWeb:
+                                ImageRenderMethodForWeb.HttpGet,
+                            width: MediaQuery.of(context).size.width,
+                            height: 262,
+                            fit: BoxFit.cover,
+                            errorWidget: (context, url, error) => Container(
+                              color: theme.colorScheme.surfaceContainerHighest,
+                            ),
                           ),
                         ),
                       ),
@@ -221,7 +223,8 @@ class _MovieDetailLoaded extends StatelessWidget {
                                     height: 192,
                                     fit: BoxFit.cover,
                                     errorWidget: (context, url, error) =>
-                                        const Icon(Icons.broken_image, size: 40),
+                                        const Icon(Icons.broken_image,
+                                            size: 40),
                                   ),
                                 ),
                               )

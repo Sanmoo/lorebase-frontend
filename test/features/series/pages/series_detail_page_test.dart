@@ -41,7 +41,8 @@ class FakeDetailVM extends SeriesDetailViewModel {
   }
 
   @override
-  Future<void> updateTracking({String? status, int? rating, String? review}) async {
+  Future<void> updateTracking(
+      {String? status, int? rating, String? review}) async {
     if (failAddTracking) throw Exception('Update failed');
   }
 
@@ -103,8 +104,7 @@ Future<void> main() async {
   group('SeriesDetailPage', () {
     testWidgets('renders with Add to List button when not tracking',
         (tester) async {
-      final detail =
-          SeriesDetailState(series: _testSeries(), tracking: null);
+      final detail = SeriesDetailState(series: _testSeries(), tracking: null);
       final container = ProviderContainer(overrides: [
         seriesDetailViewModelProvider(1)
             .overrideWith(() => FakeDetailVM(data: detail)),
@@ -121,8 +121,7 @@ Future<void> main() async {
 
     testWidgets('loading state shows LoadingWidget', (tester) async {
       final container = ProviderContainer(overrides: [
-        seriesDetailViewModelProvider(1)
-            .overrideWith(() => _LoadingDetailVM()),
+        seriesDetailViewModelProvider(1).overrideWith(() => _LoadingDetailVM()),
         authViewModelProvider.overrideWith(() => FakeAuthVM()),
       ]);
       addTearDown(container.dispose);
@@ -135,8 +134,7 @@ Future<void> main() async {
 
     testWidgets('error state shows error message and retry', (tester) async {
       final container = ProviderContainer(overrides: [
-        seriesDetailViewModelProvider(1)
-            .overrideWith(() => _ErrorDetailVM()),
+        seriesDetailViewModelProvider(1).overrideWith(() => _ErrorDetailVM()),
         authViewModelProvider.overrideWith(() => FakeAuthVM()),
       ]);
       addTearDown(container.dispose);
@@ -150,8 +148,7 @@ Future<void> main() async {
     });
 
     testWidgets('detail content renders correctly', (tester) async {
-      final detail =
-          SeriesDetailState(series: _testSeries(), tracking: null);
+      final detail = SeriesDetailState(series: _testSeries(), tracking: null);
       final container = ProviderContainer(overrides: [
         seriesDetailViewModelProvider(1)
             .overrideWith(() => FakeDetailVM(data: detail)),
@@ -178,8 +175,7 @@ Future<void> main() async {
     });
 
     testWidgets('tracking bottom sheet opens on button tap', (tester) async {
-      final detail =
-          SeriesDetailState(series: _testSeries(), tracking: null);
+      final detail = SeriesDetailState(series: _testSeries(), tracking: null);
       final container = ProviderContainer(overrides: [
         seriesDetailViewModelProvider(1)
             .overrideWith(() => FakeDetailVM(data: detail)),
@@ -226,7 +222,8 @@ Future<void> main() async {
       expect(find.text('Watching'), findsOneWidget);
     });
 
-    testWidgets('overview with null overview shows no description', (tester) async {
+    testWidgets('overview with null overview shows no description',
+        (tester) async {
       final series = _testSeries().copyWith(overview: null);
       final detail = SeriesDetailState(series: series, tracking: null);
       final container = ProviderContainer(overrides: [
@@ -243,7 +240,8 @@ Future<void> main() async {
       expect(find.text('No description available.'), findsOneWidget);
     });
 
-    testWidgets('overview with empty overview shows no description', (tester) async {
+    testWidgets('overview with empty overview shows no description',
+        (tester) async {
       final series = _testSeries().copyWith(overview: '');
       final detail = SeriesDetailState(series: series, tracking: null);
       final container = ProviderContainer(overrides: [
@@ -324,7 +322,8 @@ Future<void> main() async {
       expect(find.byIcon(Icons.tv), findsOneWidget);
     });
 
-    testWidgets('detail with no genres does not show chip area', (tester) async {
+    testWidgets('detail with no genres does not show chip area',
+        (tester) async {
       final series = _testSeries().copyWith(genres: []);
       final detail = SeriesDetailState(series: series, tracking: null);
       final container = ProviderContainer(overrides: [
@@ -342,7 +341,8 @@ Future<void> main() async {
       expect(find.text('Add to List'), findsOneWidget);
     });
 
-    testWidgets('detail with seasonCount 0 does not show season text', (tester) async {
+    testWidgets('detail with seasonCount 0 does not show season text',
+        (tester) async {
       final series = _testSeries().copyWith(seasonCount: 0);
       final detail = SeriesDetailState(series: series, tracking: null);
       final container = ProviderContainer(overrides: [
@@ -360,13 +360,19 @@ Future<void> main() async {
       expect(find.textContaining('seasons'), findsNothing);
     });
 
-    testWidgets('bottom sheet shows tracking edit mode and remove button', (tester) async {
+    testWidgets('bottom sheet shows tracking edit mode and remove button',
+        (tester) async {
       final tracking = TrackedMediaModel(
-        trackingId: 't1', userId: 'u1', mediaType: MediaType.series, mediaId: '1',
+        trackingId: 't1',
+        userId: 'u1',
+        mediaType: MediaType.series,
+        mediaId: '1',
         status: 'WATCHING',
-        addedAt: DateTime.now(), lastUpdated: DateTime.now(),
+        addedAt: DateTime.now(),
+        lastUpdated: DateTime.now(),
       );
-      final detail = SeriesDetailState(series: _testSeries(), tracking: tracking);
+      final detail =
+          SeriesDetailState(series: _testSeries(), tracking: tracking);
       final container = ProviderContainer(overrides: [
         seriesDetailViewModelProvider(1)
             .overrideWith(() => FakeDetailVM(data: detail)),
@@ -387,13 +393,19 @@ Future<void> main() async {
       expect(find.text('Remove from List'), findsOneWidget);
     });
 
-    testWidgets('bottom sheet remove button triggers confirmation dialog', (tester) async {
+    testWidgets('bottom sheet remove button triggers confirmation dialog',
+        (tester) async {
       final tracking = TrackedMediaModel(
-        trackingId: 't1', userId: 'u1', mediaType: MediaType.series, mediaId: '1',
+        trackingId: 't1',
+        userId: 'u1',
+        mediaType: MediaType.series,
+        mediaId: '1',
         status: 'WATCHING',
-        addedAt: DateTime.now(), lastUpdated: DateTime.now(),
+        addedAt: DateTime.now(),
+        lastUpdated: DateTime.now(),
       );
-      final detail = SeriesDetailState(series: _testSeries(), tracking: tracking);
+      final detail =
+          SeriesDetailState(series: _testSeries(), tracking: tracking);
       final container = ProviderContainer(overrides: [
         seriesDetailViewModelProvider(1)
             .overrideWith(() => FakeDetailVM(data: detail)),
@@ -418,7 +430,8 @@ Future<void> main() async {
       expect(find.textContaining('Remove'), findsWidgets);
     });
 
-    testWidgets('detail with empty backdrop path renders fallback', (tester) async {
+    testWidgets('detail with empty backdrop path renders fallback',
+        (tester) async {
       final series = _testSeries().copyWith(backdropPath: '');
       final detail = SeriesDetailState(series: series, tracking: null);
       final container = ProviderContainer(overrides: [
@@ -435,7 +448,8 @@ Future<void> main() async {
       expect(find.text('Add to List'), findsOneWidget);
     });
 
-    testWidgets('detail with empty poster path renders fallback', (tester) async {
+    testWidgets('detail with empty poster path renders fallback',
+        (tester) async {
       final series = _testSeries().copyWith(posterPath: '');
       final detail = SeriesDetailState(series: series, tracking: null);
       final container = ProviderContainer(overrides: [
@@ -452,7 +466,8 @@ Future<void> main() async {
       expect(find.text('Add to List'), findsOneWidget);
     });
 
-    testWidgets('detail with 0 seasons shows dash in info card', (tester) async {
+    testWidgets('detail with 0 seasons shows dash in info card',
+        (tester) async {
       final series = _testSeries().copyWith(seasonCount: 0, firstAirDate: null);
       final detail = SeriesDetailState(series: series, tracking: null);
       final container = ProviderContainer(overrides: [
@@ -469,7 +484,8 @@ Future<void> main() async {
       expect(find.text('—'), findsWidgets);
     });
 
-    testWidgets('bottom sheet save when tracking fails shows snackbar', (tester) async {
+    testWidgets('bottom sheet save when tracking fails shows snackbar',
+        (tester) async {
       final detail = SeriesDetailState(series: _testSeries(), tracking: null);
       final fakeVM = FakeDetailVM(data: detail)..failAddTracking = true;
       final container = ProviderContainer(overrides: [
@@ -494,13 +510,14 @@ Future<void> main() async {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      expect(find.text('Server error. Please try again later.'), findsOneWidget);
+      expect(
+          find.text('Server error. Please try again later.'), findsOneWidget);
     });
 
-    testWidgets('error state retry button triggers ref.invalidate', (tester) async {
+    testWidgets('error state retry button triggers ref.invalidate',
+        (tester) async {
       final container = ProviderContainer(overrides: [
-        seriesDetailViewModelProvider(1)
-            .overrideWith(() => _ErrorDetailVM()),
+        seriesDetailViewModelProvider(1).overrideWith(() => _ErrorDetailVM()),
         authViewModelProvider.overrideWith(() => FakeAuthVM()),
       ]);
       addTearDown(container.dispose);
@@ -518,11 +535,16 @@ Future<void> main() async {
 
     testWidgets('bottom sheet save in edit mode succeeds', (tester) async {
       final tracking = TrackedMediaModel(
-        trackingId: 't1', userId: 'u1', mediaType: MediaType.series, mediaId: '1',
+        trackingId: 't1',
+        userId: 'u1',
+        mediaType: MediaType.series,
+        mediaId: '1',
         status: 'WATCHING',
-        addedAt: DateTime.now(), lastUpdated: DateTime.now(),
+        addedAt: DateTime.now(),
+        lastUpdated: DateTime.now(),
       );
-      final detail = SeriesDetailState(series: _testSeries(), tracking: tracking);
+      final detail =
+          SeriesDetailState(series: _testSeries(), tracking: tracking);
       final container = ProviderContainer(overrides: [
         seriesDetailViewModelProvider(1)
             .overrideWith(() => FakeDetailVM(data: detail)),
@@ -548,13 +570,19 @@ Future<void> main() async {
       expect(find.text('Manage Tracking'), findsAtLeast(1));
     });
 
-    testWidgets('bottom sheet save in edit mode shows error snackbar', (tester) async {
+    testWidgets('bottom sheet save in edit mode shows error snackbar',
+        (tester) async {
       final tracking = TrackedMediaModel(
-        trackingId: 't1', userId: 'u1', mediaType: MediaType.series, mediaId: '1',
+        trackingId: 't1',
+        userId: 'u1',
+        mediaType: MediaType.series,
+        mediaId: '1',
         status: 'WATCHING',
-        addedAt: DateTime.now(), lastUpdated: DateTime.now(),
+        addedAt: DateTime.now(),
+        lastUpdated: DateTime.now(),
       );
-      final detail = SeriesDetailState(series: _testSeries(), tracking: tracking);
+      final detail =
+          SeriesDetailState(series: _testSeries(), tracking: tracking);
       final fakeVM = FakeDetailVM(data: detail)..failAddTracking = true;
       final container = ProviderContainer(overrides: [
         seriesDetailViewModelProvider(1).overrideWith(() => fakeVM),
@@ -577,16 +605,22 @@ Future<void> main() async {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      expect(find.text('Server error. Please try again later.'), findsOneWidget);
+      expect(
+          find.text('Server error. Please try again later.'), findsOneWidget);
     });
 
     testWidgets('remove dialog cancel does not remove', (tester) async {
       final tracking = TrackedMediaModel(
-        trackingId: 't1', userId: 'u1', mediaType: MediaType.series, mediaId: '1',
+        trackingId: 't1',
+        userId: 'u1',
+        mediaType: MediaType.series,
+        mediaId: '1',
         status: 'WATCHING',
-        addedAt: DateTime.now(), lastUpdated: DateTime.now(),
+        addedAt: DateTime.now(),
+        lastUpdated: DateTime.now(),
       );
-      final detail = SeriesDetailState(series: _testSeries(), tracking: tracking);
+      final detail =
+          SeriesDetailState(series: _testSeries(), tracking: tracking);
       final container = ProviderContainer(overrides: [
         seriesDetailViewModelProvider(1)
             .overrideWith(() => FakeDetailVM(data: detail)),
@@ -615,13 +649,19 @@ Future<void> main() async {
       expect(find.text('Save Changes'), findsOneWidget);
     });
 
-    testWidgets('remove dialog confirm removes and pops bottom sheet', (tester) async {
+    testWidgets('remove dialog confirm removes and pops bottom sheet',
+        (tester) async {
       final tracking = TrackedMediaModel(
-        trackingId: 't1', userId: 'u1', mediaType: MediaType.series, mediaId: '1',
+        trackingId: 't1',
+        userId: 'u1',
+        mediaType: MediaType.series,
+        mediaId: '1',
         status: 'WATCHING',
-        addedAt: DateTime.now(), lastUpdated: DateTime.now(),
+        addedAt: DateTime.now(),
+        lastUpdated: DateTime.now(),
       );
-      final detail = SeriesDetailState(series: _testSeries(), tracking: tracking);
+      final detail =
+          SeriesDetailState(series: _testSeries(), tracking: tracking);
       final container = ProviderContainer(overrides: [
         seriesDetailViewModelProvider(1)
             .overrideWith(() => FakeDetailVM(data: detail)),
@@ -652,11 +692,16 @@ Future<void> main() async {
 
     testWidgets('remove dialog with error shows snackbar', (tester) async {
       final tracking = TrackedMediaModel(
-        trackingId: 't1', userId: 'u1', mediaType: MediaType.series, mediaId: '1',
+        trackingId: 't1',
+        userId: 'u1',
+        mediaType: MediaType.series,
+        mediaId: '1',
         status: 'WATCHING',
-        addedAt: DateTime.now(), lastUpdated: DateTime.now(),
+        addedAt: DateTime.now(),
+        lastUpdated: DateTime.now(),
       );
-      final detail = SeriesDetailState(series: _testSeries(), tracking: tracking);
+      final detail =
+          SeriesDetailState(series: _testSeries(), tracking: tracking);
       final fakeVM = FakeDetailVM(data: detail)..failRemoveTracking = true;
       final container = ProviderContainer(overrides: [
         seriesDetailViewModelProvider(1).overrideWith(() => fakeVM),
@@ -682,7 +727,8 @@ Future<void> main() async {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      expect(find.text('Server error. Please try again later.'), findsOneWidget);
+      expect(
+          find.text('Server error. Please try again later.'), findsOneWidget);
     });
 
     testWidgets('networks empty shows dash', (tester) async {
@@ -702,7 +748,8 @@ Future<void> main() async {
       expect(find.text('—'), findsWidgets);
     });
 
-    testWidgets('bottom sheet status selection and rating change work', (tester) async {
+    testWidgets('bottom sheet status selection and rating change work',
+        (tester) async {
       final detail = SeriesDetailState(series: _testSeries(), tracking: null);
       final container = ProviderContainer(overrides: [
         seriesDetailViewModelProvider(1)
@@ -726,7 +773,28 @@ Future<void> main() async {
       expect(find.text('Completed'), findsAtLeast(1));
     });
 
-    testWidgets('bottom sheet save with review text covers ternary branches', (tester) async {
+    testWidgets('backdrop OverflowBox is wrapped in ClipRect', (tester) async {
+      final series = _testSeries().copyWith(
+        backdropPath: '/test-backdrop.jpg',
+      );
+      final detail = SeriesDetailState(series: series, tracking: null);
+      final container = ProviderContainer(overrides: [
+        seriesDetailViewModelProvider(1)
+            .overrideWith(() => FakeDetailVM(data: detail)),
+        authViewModelProvider.overrideWith(() => FakeAuthVM()),
+      ]);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      // Verify the backdrop ClipRect wrapper is present (key: backdrop_clip)
+      expect(find.byKey(const ValueKey('backdrop_clip')), findsOneWidget);
+    });
+
+    testWidgets('bottom sheet save with review text covers ternary branches',
+        (tester) async {
       final detail = SeriesDetailState(series: _testSeries(), tracking: null);
       final container = ProviderContainer(overrides: [
         seriesDetailViewModelProvider(1)

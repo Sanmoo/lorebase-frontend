@@ -84,8 +84,7 @@ Future<void> main() async {
 
   group('MovieDetailPage', () {
     testWidgets('renders Add to List and movie metadata', (tester) async {
-      final detail =
-          MovieDetailState(movie: _testMovie(), tracking: null);
+      final detail = MovieDetailState(movie: _testMovie(), tracking: null);
       final container = ProviderContainer(overrides: [
         movieDetailViewModelProvider(7)
             .overrideWith(() => FakeMovieDetailVM(detail)),
@@ -136,8 +135,7 @@ Future<void> main() async {
     });
 
     testWidgets('overview section renders', (tester) async {
-      final detail =
-          MovieDetailState(movie: _testMovie(), tracking: null);
+      final detail = MovieDetailState(movie: _testMovie(), tracking: null);
       final container = ProviderContainer(overrides: [
         movieDetailViewModelProvider(7)
             .overrideWith(() => FakeMovieDetailVM(detail)),
@@ -169,6 +167,26 @@ Future<void> main() async {
       await tester.pump(const Duration(milliseconds: 100));
 
       expect(find.text('No description available.'), findsOneWidget);
+    });
+
+    testWidgets('backdrop OverflowBox is wrapped in ClipRect', (tester) async {
+      final movie = _testMovie().copyWith(
+        backdropPath: '/test-backdrop.jpg',
+      );
+      final detail = MovieDetailState(movie: movie, tracking: null);
+      final container = ProviderContainer(overrides: [
+        movieDetailViewModelProvider(7)
+            .overrideWith(() => FakeMovieDetailVM(detail)),
+        authViewModelProvider.overrideWith(() => FakeAuthVM()),
+      ]);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      // Verify the backdrop ClipRect wrapper is present (key: backdrop_clip)
+      expect(find.byKey(const ValueKey('backdrop_clip')), findsOneWidget);
     });
 
     testWidgets('overview with empty overview shows no description',
