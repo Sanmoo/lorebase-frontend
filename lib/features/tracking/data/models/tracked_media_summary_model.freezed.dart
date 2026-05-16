@@ -21,10 +21,15 @@ TrackedMediaSummaryModel _$TrackedMediaSummaryModelFromJson(
 
 /// @nodoc
 mixin _$TrackedMediaSummaryModel {
+  @JsonKey(
+      name: 'tmdbId',
+      fromJson: flexibleStringFromJson,
+      toJson: flexibleStringToJson)
   String get mediaId => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
-  @JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson)
-  MediaType get mediaType => throw _privateConstructorUsedError;
+  @JsonKey(
+      fromJson: _nullableMediaTypeFromJson, toJson: _nullableMediaTypeToJson)
+  MediaType? get mediaType => throw _privateConstructorUsedError;
   String? get overview => throw _privateConstructorUsedError;
   String? get posterPath => throw _privateConstructorUsedError;
   String? get status => throw _privateConstructorUsedError;
@@ -49,10 +54,16 @@ abstract class $TrackedMediaSummaryModelCopyWith<$Res> {
       _$TrackedMediaSummaryModelCopyWithImpl<$Res, TrackedMediaSummaryModel>;
   @useResult
   $Res call(
-      {String mediaId,
+      {@JsonKey(
+          name: 'tmdbId',
+          fromJson: flexibleStringFromJson,
+          toJson: flexibleStringToJson)
+      String mediaId,
       String title,
-      @JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson)
-      MediaType mediaType,
+      @JsonKey(
+          fromJson: _nullableMediaTypeFromJson,
+          toJson: _nullableMediaTypeToJson)
+      MediaType? mediaType,
       String? overview,
       String? posterPath,
       String? status,
@@ -79,7 +90,7 @@ class _$TrackedMediaSummaryModelCopyWithImpl<$Res,
   $Res call({
     Object? mediaId = null,
     Object? title = null,
-    Object? mediaType = null,
+    Object? mediaType = freezed,
     Object? overview = freezed,
     Object? posterPath = freezed,
     Object? status = freezed,
@@ -96,10 +107,10 @@ class _$TrackedMediaSummaryModelCopyWithImpl<$Res,
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
               as String,
-      mediaType: null == mediaType
+      mediaType: freezed == mediaType
           ? _value.mediaType
           : mediaType // ignore: cast_nullable_to_non_nullable
-              as MediaType,
+              as MediaType?,
       overview: freezed == overview
           ? _value.overview
           : overview // ignore: cast_nullable_to_non_nullable
@@ -138,10 +149,16 @@ abstract class _$$TrackedMediaSummaryModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String mediaId,
+      {@JsonKey(
+          name: 'tmdbId',
+          fromJson: flexibleStringFromJson,
+          toJson: flexibleStringToJson)
+      String mediaId,
       String title,
-      @JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson)
-      MediaType mediaType,
+      @JsonKey(
+          fromJson: _nullableMediaTypeFromJson,
+          toJson: _nullableMediaTypeToJson)
+      MediaType? mediaType,
       String? overview,
       String? posterPath,
       String? status,
@@ -167,7 +184,7 @@ class __$$TrackedMediaSummaryModelImplCopyWithImpl<$Res>
   $Res call({
     Object? mediaId = null,
     Object? title = null,
-    Object? mediaType = null,
+    Object? mediaType = freezed,
     Object? overview = freezed,
     Object? posterPath = freezed,
     Object? status = freezed,
@@ -184,10 +201,10 @@ class __$$TrackedMediaSummaryModelImplCopyWithImpl<$Res>
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
               as String,
-      mediaType: null == mediaType
+      mediaType: freezed == mediaType
           ? _value.mediaType
           : mediaType // ignore: cast_nullable_to_non_nullable
-              as MediaType,
+              as MediaType?,
       overview: freezed == overview
           ? _value.overview
           : overview // ignore: cast_nullable_to_non_nullable
@@ -220,10 +237,16 @@ class __$$TrackedMediaSummaryModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$TrackedMediaSummaryModelImpl implements _TrackedMediaSummaryModel {
   const _$TrackedMediaSummaryModelImpl(
-      {required this.mediaId,
+      {@JsonKey(
+          name: 'tmdbId',
+          fromJson: flexibleStringFromJson,
+          toJson: flexibleStringToJson)
+      required this.mediaId,
       required this.title,
-      @JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson)
-      required this.mediaType,
+      @JsonKey(
+          fromJson: _nullableMediaTypeFromJson,
+          toJson: _nullableMediaTypeToJson)
+      this.mediaType,
       this.overview,
       this.posterPath,
       this.status,
@@ -235,12 +258,17 @@ class _$TrackedMediaSummaryModelImpl implements _TrackedMediaSummaryModel {
       _$$TrackedMediaSummaryModelImplFromJson(json);
 
   @override
+  @JsonKey(
+      name: 'tmdbId',
+      fromJson: flexibleStringFromJson,
+      toJson: flexibleStringToJson)
   final String mediaId;
   @override
   final String title;
   @override
-  @JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson)
-  final MediaType mediaType;
+  @JsonKey(
+      fromJson: _nullableMediaTypeFromJson, toJson: _nullableMediaTypeToJson)
+  final MediaType? mediaType;
   @override
   final String? overview;
   @override
@@ -304,10 +332,16 @@ class _$TrackedMediaSummaryModelImpl implements _TrackedMediaSummaryModel {
 
 abstract class _TrackedMediaSummaryModel implements TrackedMediaSummaryModel {
   const factory _TrackedMediaSummaryModel(
-      {required final String mediaId,
+      {@JsonKey(
+          name: 'tmdbId',
+          fromJson: flexibleStringFromJson,
+          toJson: flexibleStringToJson)
+      required final String mediaId,
       required final String title,
-      @JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson)
-      required final MediaType mediaType,
+      @JsonKey(
+          fromJson: _nullableMediaTypeFromJson,
+          toJson: _nullableMediaTypeToJson)
+      final MediaType? mediaType,
       final String? overview,
       final String? posterPath,
       final String? status,
@@ -319,12 +353,17 @@ abstract class _TrackedMediaSummaryModel implements TrackedMediaSummaryModel {
       _$TrackedMediaSummaryModelImpl.fromJson;
 
   @override
+  @JsonKey(
+      name: 'tmdbId',
+      fromJson: flexibleStringFromJson,
+      toJson: flexibleStringToJson)
   String get mediaId;
   @override
   String get title;
   @override
-  @JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson)
-  MediaType get mediaType;
+  @JsonKey(
+      fromJson: _nullableMediaTypeFromJson, toJson: _nullableMediaTypeToJson)
+  MediaType? get mediaType;
   @override
   String? get overview;
   @override
