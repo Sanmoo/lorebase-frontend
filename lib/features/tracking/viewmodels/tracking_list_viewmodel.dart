@@ -136,7 +136,7 @@ class TrackingListViewModel extends _$TrackingListViewModel {
     });
   }
 
-  String _buildCacheKey() => 'tracking:${_currentMediaType.apiValue}:${_currentStatus ?? "all"}:$_page';
+  String _buildCacheKey() => 'tracking:v2:${_currentMediaType.apiValue}:${_currentStatus ?? "all"}:$_page';
 
   List<TrackedMediaModel> _parseItems(String json) {
     final list = jsonDecode(json) as List;

@@ -34,7 +34,7 @@ class DashboardViewModel extends _$DashboardViewModel {
     return const AsyncValue.loading();
   }
 
-  String get _cacheKey => 'dashboard:${_currentMediaType.apiValue}';
+  String get _cacheKey => 'dashboard:v2:${_currentMediaType.apiValue}';
 
   Future<void> loadDashboard({
     MediaType mediaType = MediaType.series,
