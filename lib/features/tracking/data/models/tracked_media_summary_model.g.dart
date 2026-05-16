@@ -9,8 +9,9 @@ part of 'tracked_media_summary_model.dart';
 _$TrackedMediaSummaryModelImpl _$$TrackedMediaSummaryModelImplFromJson(
         Map<String, dynamic> json) =>
     _$TrackedMediaSummaryModelImpl(
-      mediaId:
-          json['tmdbId'] == null ? '' : flexibleStringFromJson(json['tmdbId']),
+      mediaId: json['mediaId'] == null
+          ? ''
+          : flexibleStringFromJson(json['mediaId']),
       title: json['title'] as String,
       mediaType: _nullableMediaTypeFromJson(json['mediaType']),
       overview: json['overview'] as String?,
@@ -26,7 +27,7 @@ _$TrackedMediaSummaryModelImpl _$$TrackedMediaSummaryModelImplFromJson(
 Map<String, dynamic> _$$TrackedMediaSummaryModelImplToJson(
         _$TrackedMediaSummaryModelImpl instance) =>
     <String, dynamic>{
-      'tmdbId': flexibleStringToJson(instance.mediaId),
+      'mediaId': flexibleStringToJson(instance.mediaId),
       'title': instance.title,
       'mediaType': _nullableMediaTypeToJson(instance.mediaType),
       'overview': instance.overview,

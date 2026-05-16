@@ -22,7 +22,7 @@ TrackedMediaSummaryModel _$TrackedMediaSummaryModelFromJson(
 /// @nodoc
 mixin _$TrackedMediaSummaryModel {
   @JsonKey(
-      name: 'tmdbId',
+      name: 'mediaId',
       fromJson: flexibleStringFromJson,
       toJson: flexibleStringToJson)
   String get mediaId => throw _privateConstructorUsedError;
@@ -55,7 +55,7 @@ abstract class $TrackedMediaSummaryModelCopyWith<$Res> {
   @useResult
   $Res call(
       {@JsonKey(
-          name: 'tmdbId',
+          name: 'mediaId',
           fromJson: flexibleStringFromJson,
           toJson: flexibleStringToJson)
       String mediaId,
@@ -150,7 +150,7 @@ abstract class _$$TrackedMediaSummaryModelImplCopyWith<$Res>
   @useResult
   $Res call(
       {@JsonKey(
-          name: 'tmdbId',
+          name: 'mediaId',
           fromJson: flexibleStringFromJson,
           toJson: flexibleStringToJson)
       String mediaId,
@@ -238,7 +238,7 @@ class __$$TrackedMediaSummaryModelImplCopyWithImpl<$Res>
 class _$TrackedMediaSummaryModelImpl implements _TrackedMediaSummaryModel {
   const _$TrackedMediaSummaryModelImpl(
       {@JsonKey(
-          name: 'tmdbId',
+          name: 'mediaId',
           fromJson: flexibleStringFromJson,
           toJson: flexibleStringToJson)
       this.mediaId = '',
@@ -259,7 +259,7 @@ class _$TrackedMediaSummaryModelImpl implements _TrackedMediaSummaryModel {
 
   @override
   @JsonKey(
-      name: 'tmdbId',
+      name: 'mediaId',
       fromJson: flexibleStringFromJson,
       toJson: flexibleStringToJson)
   final String mediaId;
@@ -333,7 +333,7 @@ class _$TrackedMediaSummaryModelImpl implements _TrackedMediaSummaryModel {
 abstract class _TrackedMediaSummaryModel implements TrackedMediaSummaryModel {
   const factory _TrackedMediaSummaryModel(
       {@JsonKey(
-          name: 'tmdbId',
+          name: 'mediaId',
           fromJson: flexibleStringFromJson,
           toJson: flexibleStringToJson)
       final String mediaId,
@@ -354,7 +354,7 @@ abstract class _TrackedMediaSummaryModel implements TrackedMediaSummaryModel {
 
   @override
   @JsonKey(
-      name: 'tmdbId',
+      name: 'mediaId',
       fromJson: flexibleStringFromJson,
       toJson: flexibleStringToJson)
   String get mediaId;
