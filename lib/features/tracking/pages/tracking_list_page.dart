@@ -129,7 +129,7 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 3,
-                        childAspectRatio: 0.55,
+                        childAspectRatio: 0.50,
                         crossAxisSpacing: 12,
                         mainAxisSpacing: 12,
                       ),
