@@ -173,15 +173,15 @@ class _SeriesDetailLoaded extends StatelessWidget {
                           child: OverflowBox(
                             minWidth: MediaQuery.of(context).size.width,
                             maxWidth: MediaQuery.of(context).size.width,
-                            minHeight: 274,
-                            maxHeight: 274,
+                            minHeight: 298,
+                            maxHeight: 298,
                             alignment: Alignment.bottomCenter,
                             child: CachedNetworkImage(
                               imageUrl: series.backdropPath!,
                               imageRenderMethodForWeb:
                                   ImageRenderMethodForWeb.HttpGet,
                               width: MediaQuery.of(context).size.width,
-                              height: 274,
+                              height: 298,
                               fit: BoxFit.cover,
                               errorWidget: (context, url, error) => Container(
                                 color:
