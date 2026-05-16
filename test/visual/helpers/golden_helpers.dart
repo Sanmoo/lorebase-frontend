@@ -92,10 +92,12 @@ class FakeSeriesDetailVM extends SeriesDetailViewModel {
       );
 
   @override
-  Future<void> addTracking(String status, {int? rating, String? review}) async {}
+  Future<void> addTracking(String status,
+      {int? rating, String? review}) async {}
 
   @override
-  Future<void> updateTracking({String? status, int? rating, String? review}) async {}
+  Future<void> updateTracking(
+      {String? status, int? rating, String? review}) async {}
 
   @override
   Future<void> removeTracking() async {}
@@ -118,10 +120,12 @@ class FakeMovieDetailVM extends MovieDetailViewModel {
       );
 
   @override
-  Future<void> addTracking(String status, {int? rating, String? review}) async {}
+  Future<void> addTracking(String status,
+      {int? rating, String? review}) async {}
 
   @override
-  Future<void> updateTracking({String? status, int? rating, String? review}) async {}
+  Future<void> updateTracking(
+      {String? status, int? rating, String? review}) async {}
 
   @override
   Future<void> removeTracking() async {}
