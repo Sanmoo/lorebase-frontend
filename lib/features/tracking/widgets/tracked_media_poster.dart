@@ -30,12 +30,22 @@ class TrackedMediaPoster extends StatelessWidget {
               height: width * 1.5,
               color: Colors.grey[300],
               child: media.posterPath != null && media.posterPath!.isNotEmpty
-                  ? CachedNetworkImage(
-                      imageUrl: media.posterPath!,
-                      imageRenderMethodForWeb: ImageRenderMethodForWeb.HttpGet,
-                      fit: BoxFit.cover,
-                      errorWidget: (context, url, error) =>
-                          const Icon(Icons.broken_image),
+                  ? OverflowBox(
+                      minWidth: width,
+                      maxWidth: width,
+                      minHeight: width * 1.5 + 12,
+                      maxHeight: width * 1.5 + 12,
+                      alignment: Alignment.bottomCenter,
+                      child: CachedNetworkImage(
+                        imageUrl: media.posterPath!,
+                        imageRenderMethodForWeb:
+                            ImageRenderMethodForWeb.HttpGet,
+                        width: width,
+                        height: width * 1.5 + 12,
+                        fit: BoxFit.cover,
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.broken_image),
+                      ),
                     )
                   : const Icon(Icons.broken_image),
             ),
