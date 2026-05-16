@@ -90,6 +90,15 @@ class FakeSeriesDetailVM extends SeriesDetailViewModel {
         ),
         tracking: null,
       );
+
+  @override
+  Future<void> addTracking(String status, {int? rating, String? review}) async {}
+
+  @override
+  Future<void> updateTracking({String? status, int? rating, String? review}) async {}
+
+  @override
+  Future<void> removeTracking() async {}
 }
 
 class FakeMovieDetailVM extends MovieDetailViewModel {
@@ -107,6 +116,15 @@ class FakeMovieDetailVM extends MovieDetailViewModel {
         ),
         tracking: null,
       );
+
+  @override
+  Future<void> addTracking(String status, {int? rating, String? review}) async {}
+
+  @override
+  Future<void> updateTracking({String? status, int? rating, String? review}) async {}
+
+  @override
+  Future<void> removeTracking() async {}
 }
 
 class FakeSeriesSearchVM extends SeriesSearchViewModel {
@@ -175,7 +193,7 @@ List<SeriesModel> _searchResults() => const [
       SeriesModel(tmdbId: 3, title: 'Stranger Things'),
     ];
 
-final _now = DateTime.now();
+final _now = DateTime(2025, 1, 1);
 
 List<TrackedMediaModel> _trackingItems() => [
       TrackedMediaModel(
@@ -185,7 +203,9 @@ List<TrackedMediaModel> _trackingItems() => [
         mediaId: '1',
         status: 'WATCHING',
         media: const TrackedMediaSummaryModel(
-          mediaId: '1', title: 'Breaking Bad', mediaType: MediaType.series,
+          mediaId: '1',
+          title: 'Breaking Bad',
+          mediaType: MediaType.series,
         ),
         rating: 9,
         addedAt: _now,
@@ -198,7 +218,9 @@ List<TrackedMediaModel> _trackingItems() => [
         mediaId: '2',
         status: 'WATCHING',
         media: const TrackedMediaSummaryModel(
-          mediaId: '2', title: 'Better Call Saul', mediaType: MediaType.series,
+          mediaId: '2',
+          title: 'Better Call Saul',
+          mediaType: MediaType.series,
         ),
         rating: 8,
         addedAt: _now,
@@ -211,7 +233,8 @@ List<TrackedMediaModel> _trackingItems() => [
         mediaId: '3',
         status: 'WATCHING',
         media: const TrackedMediaSummaryModel(
-            mediaId: '3', title: 'Stranger Things',
+            mediaId: '3',
+            title: 'Stranger Things',
             mediaType: MediaType.series),
         rating: 7,
         addedAt: _now,
@@ -245,8 +268,7 @@ List<Override> registerGoldenOverrides() => [
     ];
 
 List<Override> seriesDetailGoldenOverrides() => [
-      seriesDetailViewModelProvider(1)
-          .overrideWith(() => FakeSeriesDetailVM()),
+      seriesDetailViewModelProvider(1).overrideWith(() => FakeSeriesDetailVM()),
       ...authOverride(),
     ];
 
@@ -257,8 +279,7 @@ List<Override> seriesSearchGoldenOverrides() => [
     ];
 
 List<Override> movieDetailGoldenOverrides() => [
-      movieDetailViewModelProvider(7)
-          .overrideWith(() => FakeMovieDetailVM()),
+      movieDetailViewModelProvider(7).overrideWith(() => FakeMovieDetailVM()),
       ...authOverride(),
     ];
 
