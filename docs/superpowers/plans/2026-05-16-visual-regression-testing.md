@@ -13,13 +13,14 @@
 ### Task 1: Add alchemist dependency
 
 **Files:**
+
 - Modify: `pubspec.yaml` (dev_dependencies block)
 
 - [ ] **Step 1: Add alchemist to pubspec.yaml**
 
 ```yaml
 # In dev_dependencies, add:
-  alchemist: ^1.3.0
+alchemist: ^1.3.0
 ```
 
 The full dev_dependencies block becomes:
@@ -59,6 +60,7 @@ git commit -m "chore: add alchemist dependency for golden tests"
 ### Task 2: Create Alchemist global config
 
 **Files:**
+
 - Create: `test/visual/flutter_test_config.dart`
 
 - [ ] **Step 1: Write flutter_test_config.dart**
@@ -104,6 +106,7 @@ git commit -m "feat: add Alchemist global config for golden tests"
 ### Task 3: Create centralized golden helpers with mock overrides
 
 **Files:**
+
 - Create: `test/visual/helpers/golden_helpers.dart`
 
 This file defines all `List<Override>` functions that each golden test imports. Each function creates fake ViewModels returning pre-filled data so pages render meaningfully.
@@ -400,6 +403,7 @@ git commit -m "feat: add golden test mock overrides and fake VMs"
 ### Task 4: Dashboard page golden test
 
 **Files:**
+
 - Create: `test/visual/pages/dashboard_page_golden_test.dart`
 
 - [ ] **Step 1: Write failing golden test (no reference file yet)**
@@ -474,6 +478,7 @@ git commit -m "test: add dashboard page golden test (light + dark)"
 ### Task 5: Login page golden test
 
 **Files:**
+
 - Create: `test/visual/pages/login_page_golden_test.dart`
 
 - [ ] **Step 1: Write failing golden test**
@@ -547,6 +552,7 @@ git commit -m "test: add login page golden test (light + dark)"
 ### Task 6: Register page golden test
 
 **Files:**
+
 - Create: `test/visual/pages/register_page_golden_test.dart`
 
 - [ ] **Step 1: Write failing golden test**
@@ -620,6 +626,7 @@ git commit -m "test: add register page golden test (light + dark)"
 ### Task 7: Series Detail page golden test
 
 **Files:**
+
 - Create: `test/visual/pages/series_detail_page_golden_test.dart`
 
 The SeriesDetailPage requires an `int tmdbId` constructor parameter.
@@ -695,6 +702,7 @@ git commit -m "test: add series detail page golden test (light + dark)"
 ### Task 8: Series Search page golden test
 
 **Files:**
+
 - Create: `test/visual/pages/series_search_page_golden_test.dart`
 
 - [ ] **Step 1: Write failing golden test**
@@ -768,6 +776,7 @@ git commit -m "test: add series search page golden test (light + dark)"
 ### Task 9: Movie Detail page golden test
 
 **Files:**
+
 - Create: `test/visual/pages/movie_detail_page_golden_test.dart`
 
 - [ ] **Step 1: Write failing golden test**
@@ -841,6 +850,7 @@ git commit -m "test: add movie detail page golden test (light + dark)"
 ### Task 10: Tracking List page golden test
 
 **Files:**
+
 - Create: `test/visual/pages/tracking_list_page_golden_test.dart`
 
 - [ ] **Step 1: Write failing golden test**
@@ -914,6 +924,7 @@ git commit -m "test: add tracking list page golden test (light + dark)"
 ### Task 11: Recommendation page golden test
 
 **Files:**
+
 - Create: `test/visual/pages/recommendation_page_golden_test.dart`
 
 The Recommendation page is a simple `ConsumerWidget` with no meaningful providers — it just shows a "coming soon" message. No overrides needed.
@@ -998,6 +1009,7 @@ git status
 ### Task 13: Update Makefile with golden test targets
 
 **Files:**
+
 - Modify: `Makefile` (check target and new golden targets)
 
 - [ ] **Step 1: Add golden-test and golden-update targets**
@@ -1045,6 +1057,7 @@ git commit -m "feat: add golden-test and golden-update targets, integrate into m
 ### Task 14: Add .gitattributes for golden PNGs
 
 **Files:**
+
 - Create/Modify: `.gitattributes`
 
 - [ ] **Step 1: Check if .gitattributes exists**
@@ -1078,6 +1091,7 @@ git commit -m "chore: mark golden PNGs as binary in gitattributes"
 
 Run: `make check`
 Expected:
+
 - `dart analyze --fatal-infos` passes (or warns-only → exit 0 via Makefile logic)
 - `flutter test --coverage` passes, coverage gate at 100% line + branch
 - `flutter test test/visual/` passes, all 16 golden scenarios match
