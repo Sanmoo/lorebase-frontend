@@ -113,7 +113,9 @@ void main() {
       );
 
       await Future<void>.delayed(const Duration(milliseconds: 50));
-      expect(container.read(dashboardViewModelProvider).value!.stats.totalTracked, 0);
+      expect(
+          container.read(dashboardViewModelProvider).value!.stats.totalTracked,
+          0);
 
       // Change repo data and refresh
       repo.result = const DashboardModel(
@@ -125,24 +127,28 @@ void main() {
       );
 
       await container.read(dashboardViewModelProvider.notifier).refresh();
-      expect(container.read(dashboardViewModelProvider).value!.stats.totalTracked, 42);
+      expect(
+          container.read(dashboardViewModelProvider).value!.stats.totalTracked,
+          42);
 
       subscription.close();
     });
 
     test('refresh() keeps stale data on network failure', () async {
       final cacheService = CacheService();
-      await cacheService.set('dashboard:v2:SERIES', CacheEntry(
-        json: jsonEncode(const DashboardModel(
-          watching: DashboardSectionModel(),
-          wantToWatch: DashboardSectionModel(),
-          completed: DashboardSectionModel(),
-          dropped: DashboardSectionModel(),
-          stats: DashboardStatsModel(watchingCount: 3),
-        ).toJson()),
-        cachedAt: DateTime.now(),
-        ttl: const Duration(hours: 6),
-      ));
+      await cacheService.set(
+          'dashboard:v2:SERIES',
+          CacheEntry(
+            json: jsonEncode(const DashboardModel(
+              watching: DashboardSectionModel(),
+              wantToWatch: DashboardSectionModel(),
+              completed: DashboardSectionModel(),
+              dropped: DashboardSectionModel(),
+              stats: DashboardStatsModel(watchingCount: 3),
+            ).toJson()),
+            cachedAt: DateTime.now(),
+            ttl: const Duration(hours: 6),
+          ));
       final repo = FakeDashboardRepo()..shouldThrow = true;
       final container = ProviderContainer(overrides: [
         dashboardRepositoryProvider.overrideWith((ref) => repo),
@@ -158,17 +164,19 @@ void main() {
 
     test('build() returns cached data from memory', () async {
       final cacheService = CacheService();
-      await cacheService.set('dashboard:v2:SERIES', CacheEntry(
-        json: jsonEncode(const DashboardModel(
-          watching: DashboardSectionModel(),
-          wantToWatch: DashboardSectionModel(),
-          completed: DashboardSectionModel(),
-          dropped: DashboardSectionModel(),
-          stats: DashboardStatsModel(watchingCount: 3),
-        ).toJson()),
-        cachedAt: DateTime.now(),
-        ttl: const Duration(hours: 6),
-      ));
+      await cacheService.set(
+          'dashboard:v2:SERIES',
+          CacheEntry(
+            json: jsonEncode(const DashboardModel(
+              watching: DashboardSectionModel(),
+              wantToWatch: DashboardSectionModel(),
+              completed: DashboardSectionModel(),
+              dropped: DashboardSectionModel(),
+              stats: DashboardStatsModel(watchingCount: 3),
+            ).toJson()),
+            cachedAt: DateTime.now(),
+            ttl: const Duration(hours: 6),
+          ));
       final repo = FakeDashboardRepo();
       final container = ProviderContainer(overrides: [
         dashboardRepositoryProvider.overrideWith((ref) => repo),
@@ -183,17 +191,19 @@ void main() {
 
     test('build() triggers background refresh when cache is stale', () async {
       final cacheService = CacheService();
-      await cacheService.set('dashboard:v2:SERIES', CacheEntry(
-        json: jsonEncode(const DashboardModel(
-          watching: DashboardSectionModel(),
-          wantToWatch: DashboardSectionModel(),
-          completed: DashboardSectionModel(),
-          dropped: DashboardSectionModel(),
-          stats: DashboardStatsModel(watchingCount: 3),
-        ).toJson()),
-        cachedAt: DateTime.now().subtract(const Duration(days: 1)),
-        ttl: const Duration(hours: 6),
-      ));
+      await cacheService.set(
+          'dashboard:v2:SERIES',
+          CacheEntry(
+            json: jsonEncode(const DashboardModel(
+              watching: DashboardSectionModel(),
+              wantToWatch: DashboardSectionModel(),
+              completed: DashboardSectionModel(),
+              dropped: DashboardSectionModel(),
+              stats: DashboardStatsModel(watchingCount: 3),
+            ).toJson()),
+            cachedAt: DateTime.now().subtract(const Duration(days: 1)),
+            ttl: const Duration(hours: 6),
+          ));
       const dashboard = DashboardModel(
         watching: DashboardSectionModel(),
         wantToWatch: DashboardSectionModel(),
@@ -220,20 +230,21 @@ void main() {
       expect(updatedState.value!.stats.watchingCount, 10);
     });
 
-    test('build() handles background refresh failure on stale cache',
-        () async {
+    test('build() handles background refresh failure on stale cache', () async {
       final cacheService = CacheService();
-      await cacheService.set('dashboard:v2:SERIES', CacheEntry(
-        json: jsonEncode(const DashboardModel(
-          watching: DashboardSectionModel(),
-          wantToWatch: DashboardSectionModel(),
-          completed: DashboardSectionModel(),
-          dropped: DashboardSectionModel(),
-          stats: DashboardStatsModel(watchingCount: 3),
-        ).toJson()),
-        cachedAt: DateTime.now().subtract(const Duration(days: 1)),
-        ttl: const Duration(hours: 6),
-      ));
+      await cacheService.set(
+          'dashboard:v2:SERIES',
+          CacheEntry(
+            json: jsonEncode(const DashboardModel(
+              watching: DashboardSectionModel(),
+              wantToWatch: DashboardSectionModel(),
+              completed: DashboardSectionModel(),
+              dropped: DashboardSectionModel(),
+              stats: DashboardStatsModel(watchingCount: 3),
+            ).toJson()),
+            cachedAt: DateTime.now().subtract(const Duration(days: 1)),
+            ttl: const Duration(hours: 6),
+          ));
       final repo = FakeDashboardRepo()..shouldThrow = true;
       final container = ProviderContainer(overrides: [
         dashboardRepositoryProvider.overrideWith((ref) => repo),

@@ -11,8 +11,7 @@ import 'package:lorebase/features/tracking/data/models/media_type.dart';
 
 final now = DateTime.now();
 
-TrackedMediaModel _makeTracking(String id, String status) =>
-    TrackedMediaModel(
+TrackedMediaModel _makeTracking(String id, String status) => TrackedMediaModel(
       trackingId: id,
       userId: 'user-1',
       mediaType: MediaType.series,
@@ -69,7 +68,8 @@ class FakeTrackingRepo implements TrackingRepository {
 
 void main() {
   group('TrackingListViewModel', () {
-    ProviderContainer createContainer(FakeTrackingRepo repo, {CacheService? cache}) {
+    ProviderContainer createContainer(FakeTrackingRepo repo,
+        {CacheService? cache}) {
       return ProviderContainer(overrides: [
         trackingRepositoryProvider.overrideWith((ref) => repo),
         cacheServiceProvider.overrideWith((ref) => cache ?? CacheService()),
@@ -129,9 +129,7 @@ void main() {
 
       // Set page 2 results
       repo.results = [_makeTracking('t-2', 'WATCHING')];
-      await container
-          .read(trackingListViewModelProvider.notifier)
-          .loadMore();
+      await container.read(trackingListViewModelProvider.notifier).loadMore();
 
       expect(container.read(trackingListViewModelProvider).value!.length, 2);
     });
@@ -159,7 +157,8 @@ void main() {
     });
 
     test('loadTracking() defaults to series media type', () async {
-      final repo = FakeTrackingRepo()..results = [_makeTracking('t-1', 'WATCHING')];
+      final repo = FakeTrackingRepo()
+        ..results = [_makeTracking('t-1', 'WATCHING')];
       final container = createContainer(repo);
       addTearDown(container.dispose);
 
@@ -173,17 +172,20 @@ void main() {
     test('loadTracking() returns cached data from memory', () async {
       final cache = CacheService();
       final items = [_makeTracking('t-1', 'WATCHING')];
-      await cache.set('tracking:v2:${MediaType.series.apiValue}:WATCHING:1', CacheEntry(
-        json: jsonEncode(items.map((e) => e.toJson()).toList()),
-        cachedAt: DateTime.now(),
-        ttl: const Duration(hours: 6),
-      ));
+      await cache.set(
+          'tracking:v2:${MediaType.series.apiValue}:WATCHING:1',
+          CacheEntry(
+            json: jsonEncode(items.map((e) => e.toJson()).toList()),
+            cachedAt: DateTime.now(),
+            ttl: const Duration(hours: 6),
+          ));
 
       final repo = FakeTrackingRepo();
       final container = createContainer(repo, cache: cache);
       addTearDown(container.dispose);
 
-      await container.read(trackingListViewModelProvider.notifier)
+      await container
+          .read(trackingListViewModelProvider.notifier)
           .loadTracking(status: 'WATCHING');
 
       final state = container.read(trackingListViewModelProvider);
@@ -195,11 +197,13 @@ void main() {
         () async {
       final cache = CacheService();
       final items = [_makeTracking('t-1', 'WATCHING')];
-      await cache.set('tracking:v2:${MediaType.series.apiValue}:WATCHING:1', CacheEntry(
-        json: jsonEncode(items.map((e) => e.toJson()).toList()),
-        cachedAt: DateTime.now().subtract(const Duration(days: 1)),
-        ttl: const Duration(hours: 6),
-      ));
+      await cache.set(
+          'tracking:v2:${MediaType.series.apiValue}:WATCHING:1',
+          CacheEntry(
+            json: jsonEncode(items.map((e) => e.toJson()).toList()),
+            cachedAt: DateTime.now().subtract(const Duration(days: 1)),
+            ttl: const Duration(hours: 6),
+          ));
 
       final newItems = [
         _makeTracking('t-1', 'WATCHING'),
@@ -214,7 +218,8 @@ void main() {
         (_, __) {},
       );
 
-      await container.read(trackingListViewModelProvider.notifier)
+      await container
+          .read(trackingListViewModelProvider.notifier)
           .loadTracking(status: 'WATCHING');
 
       expect(container.read(trackingListViewModelProvider).value!.length, 1);
@@ -236,17 +241,20 @@ void main() {
         () async {
       final cache = CacheService();
       final items = [_makeTracking('t-1', 'WATCHING')];
-      await cache.set('tracking:v2:${MediaType.series.apiValue}:WATCHING:1', CacheEntry(
-        json: jsonEncode(items.map((e) => e.toJson()).toList()),
-        cachedAt: DateTime.now().subtract(const Duration(days: 1)),
-        ttl: const Duration(hours: 6),
-      ));
+      await cache.set(
+          'tracking:v2:${MediaType.series.apiValue}:WATCHING:1',
+          CacheEntry(
+            json: jsonEncode(items.map((e) => e.toJson()).toList()),
+            cachedAt: DateTime.now().subtract(const Duration(days: 1)),
+            ttl: const Duration(hours: 6),
+          ));
 
       final repo = FakeTrackingRepo()..shouldThrow = true;
       final container = createContainer(repo, cache: cache);
       addTearDown(container.dispose);
 
-      await container.read(trackingListViewModelProvider.notifier)
+      await container
+          .read(trackingListViewModelProvider.notifier)
           .loadTracking(status: 'WATCHING');
 
       await Future<void>.delayed(const Duration(milliseconds: 50));
@@ -261,7 +269,8 @@ void main() {
       final container = createContainer(repo);
       addTearDown(container.dispose);
 
-      await container.read(trackingListViewModelProvider.notifier)
+      await container
+          .read(trackingListViewModelProvider.notifier)
           .loadTracking(status: 'WATCHING');
 
       // Clear cache so no stale entry exists for refresh
@@ -277,17 +286,20 @@ void main() {
     test('refresh() reuses stale cache on network failure', () async {
       final cache = CacheService();
       final items = [_makeTracking('t-2', 'COMPLETED')];
-      await cache.set('tracking:v2:${MediaType.series.apiValue}:COMPLETED:1', CacheEntry(
-        json: jsonEncode(items.map((e) => e.toJson()).toList()),
-        cachedAt: DateTime.now(),
-        ttl: const Duration(hours: 6),
-      ));
+      await cache.set(
+          'tracking:v2:${MediaType.series.apiValue}:COMPLETED:1',
+          CacheEntry(
+            json: jsonEncode(items.map((e) => e.toJson()).toList()),
+            cachedAt: DateTime.now(),
+            ttl: const Duration(hours: 6),
+          ));
 
       final repo = FakeTrackingRepo()..results = items;
       final container = createContainer(repo, cache: cache);
       addTearDown(container.dispose);
 
-      await container.read(trackingListViewModelProvider.notifier)
+      await container
+          .read(trackingListViewModelProvider.notifier)
           .loadTracking(status: 'COMPLETED');
 
       expect(container.read(trackingListViewModelProvider).value!.length, 1);
@@ -301,11 +313,13 @@ void main() {
     });
 
     test('loadMore() skips when already loading', () async {
-      final repo = FakeTrackingRepo()..results = [_makeTracking('t-1', 'WATCHING')];
+      final repo = FakeTrackingRepo()
+        ..results = [_makeTracking('t-1', 'WATCHING')];
       final container = createContainer(repo);
       addTearDown(container.dispose);
 
-      await container.read(trackingListViewModelProvider.notifier)
+      await container
+          .read(trackingListViewModelProvider.notifier)
           .loadTracking(status: 'WATCHING');
 
       // loadMore checks state.isLoading - should skip since not loading

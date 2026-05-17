@@ -20,7 +20,8 @@ class TrackingListViewModel extends _$TrackingListViewModel {
     return const AsyncValue.data([]);
   }
 
-  Future<void> loadTracking({String? status, MediaType mediaType = MediaType.series}) async {
+  Future<void> loadTracking(
+      {String? status, MediaType mediaType = MediaType.series}) async {
     _currentStatus = status;
     _currentMediaType = mediaType;
     _page = 1;
@@ -136,7 +137,8 @@ class TrackingListViewModel extends _$TrackingListViewModel {
     });
   }
 
-  String _buildCacheKey() => 'tracking:v2:${_currentMediaType.apiValue}:${_currentStatus ?? "all"}:$_page';
+  String _buildCacheKey() =>
+      'tracking:v2:${_currentMediaType.apiValue}:${_currentStatus ?? "all"}:$_page';
 
   List<TrackedMediaModel> _parseItems(String json) {
     final list = jsonDecode(json) as List;
