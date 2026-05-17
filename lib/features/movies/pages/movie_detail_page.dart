@@ -140,29 +140,25 @@ class _MovieDetailLoaded extends StatelessWidget {
                 children: [
                   if (hasBackdrop)
                     Positioned.fill(
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(1),
-                        ),
+                      child: PhysicalModel(
+                        color: Colors.transparent,
+                        clipBehavior: Clip.hardEdge,
                         key: const ValueKey('backdrop_clip'),
-                        child: SizedBox.expand(
-                          child: OverflowBox(
-                            minWidth: MediaQuery.of(context).size.width,
-                            maxWidth: MediaQuery.of(context).size.width,
-                            minHeight: 298,
-                            maxHeight: 298,
-                            alignment: Alignment.bottomCenter,
-                            child: CachedNetworkImage(
-                              imageUrl: movie.backdropPath!,
-                              imageRenderMethodForWeb:
-                                  ImageRenderMethodForWeb.HttpGet,
-                              width: MediaQuery.of(context).size.width,
-                              height: 298,
-                              fit: BoxFit.cover,
-                              errorWidget: (context, url, error) => Container(
-                                color:
-                                    theme.colorScheme.surfaceContainerHighest,
-                              ),
+                        child: OverflowBox(
+                          minWidth: MediaQuery.of(context).size.width,
+                          maxWidth: MediaQuery.of(context).size.width,
+                          minHeight: 274,
+                          maxHeight: 274,
+                          alignment: Alignment.bottomCenter,
+                          child: CachedNetworkImage(
+                            imageUrl: movie.backdropPath!,
+                            imageRenderMethodForWeb:
+                                ImageRenderMethodForWeb.HttpGet,
+                            width: MediaQuery.of(context).size.width,
+                            height: 274,
+                            fit: BoxFit.cover,
+                            errorWidget: (context, url, error) => Container(
+                              color: theme.colorScheme.surfaceContainerHighest,
                             ),
                           ),
                         ),
