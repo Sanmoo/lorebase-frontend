@@ -149,11 +149,14 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
                                 media: media,
                                 width: constraints.maxWidth,
                                 onTap: () {
-                                  if (media.mediaId.isEmpty) return;
+                                  final id = media.mediaId.isNotEmpty
+                                      ? media.mediaId
+                                      : tracking.mediaId;
+                                  if (id.isEmpty) return;
                                   final path =
                                       tracking.mediaType == MediaType.series
-                                          ? '/series/${media.mediaId}'
-                                          : '/movies/${media.mediaId}';
+                                          ? '/series/$id'
+                                          : '/movies/$id';
                                   context.push(path);
                                 },
                               ),
