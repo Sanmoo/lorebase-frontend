@@ -62,7 +62,6 @@
   "nav_recommend": "Recommend",
   "nav_search": "Search",
   "recommend_coming_soon": "Recommendation feature coming soon!",
-  "recommend_title": "Recommendation",
   "search_empty": "Type at least 2 characters to search",
   "search_hint": "Search series...",
   "search_hint_movies": "Search movies...",
@@ -91,7 +90,6 @@
   "tracking_dropped": "Dropped",
   "tracking_empty": "No {status} series yet",
   "tracking_empty_movies": "No {status} movies yet",
-  "tracking_list_title": "My Lists",
   "tracking_want_to_watch": "Want to Watch",
   "tracking_watching": "Watching"
 }
