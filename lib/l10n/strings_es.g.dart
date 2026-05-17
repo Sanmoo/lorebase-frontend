@@ -11,7 +11,7 @@ import 'package:slang/generated.dart';
 import 'strings.g.dart';
 
 // Path: <root>
-class TranslationsEs with BaseTranslations<AppLocale, Translations> implements Translations {
+class TranslationsEs extends Translations with BaseTranslations<AppLocale, Translations> {
 	/// You can call this constructor and build your own translation instance of this locale.
 	/// Constructing via the enum [AppLocale.build] is preferred.
 	TranslationsEs({Map<String, Node>? overrides, PluralResolver? cardinalResolver, PluralResolver? ordinalResolver, TranslationMetadata<AppLocale, Translations>? meta})
@@ -21,7 +21,9 @@ class TranslationsEs with BaseTranslations<AppLocale, Translations> implements T
 		    overrides: overrides ?? {},
 		    cardinalResolver: cardinalResolver,
 		    ordinalResolver: ordinalResolver,
-		  ) {
+		  ),
+		  super(cardinalResolver: cardinalResolver, ordinalResolver: ordinalResolver) {
+		super.$meta.setFlatMapFunction($meta.getTranslation); // copy base translations to super.$meta
 		$meta.setFlatMapFunction(_flatMapFunction);
 	}
 
@@ -29,7 +31,7 @@ class TranslationsEs with BaseTranslations<AppLocale, Translations> implements T
 	@override final TranslationMetadata<AppLocale, Translations> $meta;
 
 	/// Access flat map
-	@override dynamic operator[](String key) => $meta.getTranslation(key);
+	@override dynamic operator[](String key) => $meta.getTranslation(key) ?? super.$meta.getTranslation(key);
 
 	late final TranslationsEs _root = this; // ignore: unused_field
 
@@ -59,7 +61,6 @@ class TranslationsEs with BaseTranslations<AppLocale, Translations> implements T
 	@override String get tracking_completed => 'Completado';
 	@override String get tracking_dropped => 'Abandonado';
 	@override String get tracking_empty => 'No hay series {status} todavía';
-	@override String get tracking_list_title => 'Mis Listas';
 	@override String get series_detail_add_to_list => 'Añadir a Lista';
 	@override String get series_detail_manage_tracking => 'Gestionar';
 	@override String get series_detail_overview => 'Resumen';
@@ -126,7 +127,6 @@ class TranslationsEs with BaseTranslations<AppLocale, Translations> implements T
 	@override String get movie_detail_release_date => 'Fecha de estreno';
 	@override String get movie_detail_runtime => 'Duración';
 	@override String get movie_detail_runtime_minutes => '{minutes} min';
-	@override String get recommend_title => 'Recomendación';
 	@override String get recommend_coming_soon => '¡Función de recomendación próximamente!';
 	@override String get error_network => 'Error de red. Verifica tu conexión.';
 	@override String get error_server => 'Error del servidor. Inténtalo de nuevo más tarde.';
@@ -164,7 +164,6 @@ extension on TranslationsEs {
 			'tracking_completed' => 'Completado',
 			'tracking_dropped' => 'Abandonado',
 			'tracking_empty' => 'No hay series {status} todavía',
-			'tracking_list_title' => 'Mis Listas',
 			'series_detail_add_to_list' => 'Añadir a Lista',
 			'series_detail_manage_tracking' => 'Gestionar',
 			'series_detail_overview' => 'Resumen',
@@ -231,7 +230,6 @@ extension on TranslationsEs {
 			'movie_detail_release_date' => 'Fecha de estreno',
 			'movie_detail_runtime' => 'Duración',
 			'movie_detail_runtime_minutes' => '{minutes} min',
-			'recommend_title' => 'Recomendación',
 			'recommend_coming_soon' => '¡Función de recomendación próximamente!',
 			'error_network' => 'Error de red. Verifica tu conexión.',
 			'error_server' => 'Error del servidor. Inténtalo de nuevo más tarde.',

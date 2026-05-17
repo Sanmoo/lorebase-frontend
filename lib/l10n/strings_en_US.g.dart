@@ -11,7 +11,7 @@ import 'package:slang/generated.dart';
 import 'strings.g.dart';
 
 // Path: <root>
-class TranslationsEnUs with BaseTranslations<AppLocale, Translations> implements Translations {
+class TranslationsEnUs extends Translations with BaseTranslations<AppLocale, Translations> {
 	/// You can call this constructor and build your own translation instance of this locale.
 	/// Constructing via the enum [AppLocale.build] is preferred.
 	TranslationsEnUs({Map<String, Node>? overrides, PluralResolver? cardinalResolver, PluralResolver? ordinalResolver, TranslationMetadata<AppLocale, Translations>? meta})
@@ -21,7 +21,9 @@ class TranslationsEnUs with BaseTranslations<AppLocale, Translations> implements
 		    overrides: overrides ?? {},
 		    cardinalResolver: cardinalResolver,
 		    ordinalResolver: ordinalResolver,
-		  ) {
+		  ),
+		  super(cardinalResolver: cardinalResolver, ordinalResolver: ordinalResolver) {
+		super.$meta.setFlatMapFunction($meta.getTranslation); // copy base translations to super.$meta
 		$meta.setFlatMapFunction(_flatMapFunction);
 	}
 
@@ -29,7 +31,7 @@ class TranslationsEnUs with BaseTranslations<AppLocale, Translations> implements
 	@override final TranslationMetadata<AppLocale, Translations> $meta;
 
 	/// Access flat map
-	@override dynamic operator[](String key) => $meta.getTranslation(key);
+	@override dynamic operator[](String key) => $meta.getTranslation(key) ?? super.$meta.getTranslation(key);
 
 	late final TranslationsEnUs _root = this; // ignore: unused_field
 
@@ -59,7 +61,6 @@ class TranslationsEnUs with BaseTranslations<AppLocale, Translations> implements
 	@override String get tracking_completed => 'Completed';
 	@override String get tracking_dropped => 'Dropped';
 	@override String get tracking_empty => 'No {status} series yet';
-	@override String get tracking_list_title => 'My Lists';
 	@override String get series_detail_add_to_list => 'Add to List';
 	@override String get series_detail_manage_tracking => 'Manage Tracking';
 	@override String get series_detail_overview => 'Overview';
@@ -126,7 +127,6 @@ class TranslationsEnUs with BaseTranslations<AppLocale, Translations> implements
 	@override String get movie_detail_release_date => 'Release Date';
 	@override String get movie_detail_runtime => 'Runtime';
 	@override String get movie_detail_runtime_minutes => '{minutes} min';
-	@override String get recommend_title => 'Recommendation';
 	@override String get recommend_coming_soon => 'Recommendation feature coming soon!';
 	@override String get error_network => 'Network error. Check your connection.';
 	@override String get error_server => 'Server error. Please try again later.';
@@ -164,7 +164,6 @@ extension on TranslationsEnUs {
 			'tracking_completed' => 'Completed',
 			'tracking_dropped' => 'Dropped',
 			'tracking_empty' => 'No {status} series yet',
-			'tracking_list_title' => 'My Lists',
 			'series_detail_add_to_list' => 'Add to List',
 			'series_detail_manage_tracking' => 'Manage Tracking',
 			'series_detail_overview' => 'Overview',
@@ -231,7 +230,6 @@ extension on TranslationsEnUs {
 			'movie_detail_release_date' => 'Release Date',
 			'movie_detail_runtime' => 'Runtime',
 			'movie_detail_runtime_minutes' => '{minutes} min',
-			'recommend_title' => 'Recommendation',
 			'recommend_coming_soon' => 'Recommendation feature coming soon!',
 			'error_network' => 'Network error. Check your connection.',
 			'error_server' => 'Server error. Please try again later.',
