@@ -118,15 +118,6 @@ Future<void> main() async {
       expect(find.text('Dropped'), findsOneWidget);
     });
 
-    testWidgets('shows AppBar with title', (tester) async {
-      final container = createContainer(FakeTrackingListVM());
-      addTearDown(container.dispose);
-      await tester.pumpWidget(_wrap(container));
-      await tester.pump();
-
-      expect(find.text('My Lists'), findsOneWidget);
-    });
-
     testWidgets('shows empty state when list is empty', (tester) async {
       final container = createContainer(FakeTrackingListVM());
       addTearDown(container.dispose);

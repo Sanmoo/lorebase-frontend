@@ -78,11 +78,10 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
 
     final trackingState = ref.watch(trackingListViewModelProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(t.tracking_list_title),
-      ),
-      body: Column(
+    return Material(
+      type: MaterialType.transparency,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
