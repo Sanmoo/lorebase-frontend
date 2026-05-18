@@ -67,21 +67,43 @@ class MovieDetailPage extends ConsumerWidget {
         onSave: ({required status, rating, review}) async {
           final notifier =
               ref.read(movieDetailViewModelProvider(tmdbId).notifier);
-          if (isEditing) {
-            await notifier.updateTracking(
-              status: status,
-              rating: rating,
-              review: review,
-            );
-          } else {
-            await notifier.addTracking(status, rating: rating, review: review);
+          try {
+            if (isEditing) {
+              await notifier.updateTracking(
+                status: status,
+                rating: rating,
+                review: review,
+              );
+            } else {
+              await notifier.addTracking(status,
+                  rating: rating, review: review);
+            }
+            if (ctx.mounted) Navigator.pop(ctx);
+          } catch (e, st) {
+            debugPrint('[MOVIE_TRACKING] onSave failed: $e\n$st');
+            if (ctx.mounted) {
+              ScaffoldMessenger.of(ctx).showSnackBar(
+                SnackBar(content: Text('Error: $e')),
+              );
+            }
           }
-          if (ctx.mounted) Navigator.pop(ctx);
         },
         onRemove: isEditing
-            ? () => ref
-                .read(movieDetailViewModelProvider(tmdbId).notifier)
-                .removeTracking()
+            ? () async {
+                try {
+                  await ref
+                      .read(movieDetailViewModelProvider(tmdbId).notifier)
+                      .removeTracking();
+                  if (ctx.mounted) Navigator.pop(ctx);
+                } catch (e, st) {
+                  debugPrint('[MOVIE_TRACKING] onRemove failed: $e\n$st');
+                  if (ctx.mounted) {
+                    ScaffoldMessenger.of(ctx).showSnackBar(
+                      SnackBar(content: Text('Error: $e')),
+                    );
+                  }
+                }
+              }
             : null,
         removeLabel: ctx.t.series_detail_remove_from_list,
         removeConfirmTitle: ctx.t.series_detail_remove_from_list,
@@ -147,15 +169,15 @@ class _MovieDetailLoaded extends StatelessWidget {
                         child: OverflowBox(
                           minWidth: MediaQuery.of(context).size.width,
                           maxWidth: MediaQuery.of(context).size.width,
-                          minHeight: 274,
-                          maxHeight: 274,
+                          minHeight: 286,
+                          maxHeight: 286,
                           alignment: Alignment.bottomCenter,
                           child: CachedNetworkImage(
                             imageUrl: movie.backdropPath!,
                             imageRenderMethodForWeb:
                                 ImageRenderMethodForWeb.HttpGet,
                             width: MediaQuery.of(context).size.width,
-                            height: 274,
+                            height: 286,
                             fit: BoxFit.cover,
                             errorWidget: (context, url, error) => Container(
                               color: theme.colorScheme.surfaceContainerHighest,
