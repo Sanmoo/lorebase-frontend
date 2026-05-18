@@ -164,15 +164,27 @@ class _SeriesDetailLoaded extends StatelessWidget {
                 children: [
                   if (hasBackdrop)
                     Positioned.fill(
-                      child: CachedNetworkImage(
-                        imageUrl: series.backdropPath!,
-                        imageRenderMethodForWeb:
-                            ImageRenderMethodForWeb.HttpGet,
-                        width: MediaQuery.of(context).size.width,
-                        height: 250,
-                        fit: BoxFit.cover,
-                        errorWidget: (context, url, error) => Container(
-                          color: theme.colorScheme.surfaceContainerHighest,
+                      child: PhysicalModel(
+                        color: Colors.transparent,
+                        clipBehavior: Clip.hardEdge,
+                        key: const ValueKey('backdrop_clip'),
+                        child: OverflowBox(
+                          minWidth: MediaQuery.of(context).size.width,
+                          maxWidth: MediaQuery.of(context).size.width,
+                          minHeight: 286,
+                          maxHeight: 286,
+                          alignment: Alignment.bottomCenter,
+                          child: CachedNetworkImage(
+                            imageUrl: series.backdropPath!,
+                            imageRenderMethodForWeb:
+                                ImageRenderMethodForWeb.HttpGet,
+                            width: MediaQuery.of(context).size.width,
+                            height: 286,
+                            fit: BoxFit.cover,
+                            errorWidget: (context, url, error) => Container(
+                              color: theme.colorScheme.surfaceContainerHighest,
+                            ),
+                          ),
                         ),
                       ),
                     )

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../core/cache/cache_providers.dart';
 import '../../tracking/data/models/media_type.dart';
@@ -12,6 +13,7 @@ part 'movie_detail_viewmodel.g.dart';
 class MovieDetailViewModel extends _$MovieDetailViewModel {
   @override
   Future<MovieDetailState> build(int tmdbId) async {
+    debugPrint('[MOVIE_VM] build() started for tmdbId=$tmdbId');
     final movie = await ref.read(movieRepositoryProvider).getMovieById(
           tmdbId.toString(),
         );
@@ -22,12 +24,17 @@ class MovieDetailViewModel extends _$MovieDetailViewModel {
                 mediaType: MediaType.movie,
                 pageSize: 1000,
               );
+      debugPrint(
+          '[MOVIE_VM] build() got ${allTracking.length} tracking entries');
       tracking = allTracking.firstWhere(
         (t) =>
             (t.media != null && t.media!.mediaId == tmdbId.toString()) ||
             t.mediaId == tmdbId.toString(),
       );
-    } catch (_) {
+      debugPrint(
+          '[MOVIE_VM] build() found tracking: rating=${tracking.rating} status=${tracking.status}');
+    } catch (e) {
+      debugPrint('[MOVIE_VM] build() tracking lookup failed: $e');
       tracking = null;
     }
     return MovieDetailState(movie: movie, tracking: tracking);
@@ -39,24 +46,36 @@ class MovieDetailViewModel extends _$MovieDetailViewModel {
     String? review,
   }) async {
     final currentState = state.valueOrNull;
-    if (currentState == null) return;
-    final tracking = await ref.read(trackingRepositoryProvider).startTracking(
-          currentState.movie.tmdbId.toString(),
-          MediaType.movie,
-          status,
-        );
-    final hasExtra = (rating != null) || (review != null && review.isNotEmpty);
-    if (hasExtra) {
-      await ref.read(trackingRepositoryProvider).updateTracking(
-            tracking.mediaId,
-            mediaType: MediaType.movie,
-            rating: rating,
-            review: review,
-          );
+    if (currentState == null) {
+      debugPrint('[MOVIE_VM] addTracking aborted: state.valueOrNull is null');
+      return;
     }
-    await ref.read(cacheServiceProvider).remove('dashboard:movie');
-    await ref.read(cacheServiceProvider).removeByPrefix('tracking:');
-    ref.invalidateSelf();
+    try {
+      final tracking = await ref.read(trackingRepositoryProvider).startTracking(
+            currentState.movie.tmdbId.toString(),
+            MediaType.movie,
+            status,
+          );
+      debugPrint(
+          '[MOVIE_VM] startTracking succeeded: mediaId=${tracking.mediaId}');
+      final hasExtra =
+          (rating != null) || (review != null && review.isNotEmpty);
+      if (hasExtra) {
+        await ref.read(trackingRepositoryProvider).updateTracking(
+              tracking.mediaId,
+              mediaType: MediaType.movie,
+              rating: rating,
+              review: review,
+            );
+        debugPrint('[MOVIE_VM] updateTracking (post-start) succeeded');
+      }
+      await ref.read(cacheServiceProvider).remove('dashboard:movie');
+      await ref.read(cacheServiceProvider).removeByPrefix('tracking:');
+      ref.invalidateSelf();
+    } catch (e, st) {
+      debugPrint('[MOVIE_VM] addTracking failed: $e\n$st');
+      rethrow;
+    }
   }
 
   Future<void> updateTracking({
@@ -65,17 +84,27 @@ class MovieDetailViewModel extends _$MovieDetailViewModel {
     String? review,
   }) async {
     final current = state.valueOrNull?.tracking;
-    if (current == null) return;
-    await ref.read(trackingRepositoryProvider).updateTracking(
-          current.mediaId,
-          mediaType: MediaType.movie,
-          status: status,
-          rating: rating,
-          review: review,
-        );
-    await ref.read(cacheServiceProvider).remove('dashboard:movie');
-    await ref.read(cacheServiceProvider).removeByPrefix('tracking:');
-    ref.invalidateSelf();
+    if (current == null) {
+      debugPrint('[MOVIE_VM] updateTracking aborted: tracking is null');
+      return;
+    }
+    try {
+      await ref.read(trackingRepositoryProvider).updateTracking(
+            current.mediaId,
+            mediaType: MediaType.movie,
+            status: status,
+            rating: rating,
+            review: review,
+          );
+      debugPrint(
+          '[MOVIE_VM] updateTracking succeeded: mediaId=${current.mediaId} status=$status rating=$rating');
+      await ref.read(cacheServiceProvider).remove('dashboard:movie');
+      await ref.read(cacheServiceProvider).removeByPrefix('tracking:');
+      ref.invalidateSelf();
+    } catch (e, st) {
+      debugPrint('[MOVIE_VM] updateTracking failed: $e\n$st');
+      rethrow;
+    }
   }
 
   Future<void> removeTracking() async {

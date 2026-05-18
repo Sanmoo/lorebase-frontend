@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../core/cache/cache_providers.dart';
 import '../data/repositories/series_repository.dart';
@@ -12,6 +13,7 @@ part 'series_detail_viewmodel.g.dart';
 class SeriesDetailViewModel extends _$SeriesDetailViewModel {
   @override
   Future<SeriesDetailState> build(int tmdbId) async {
+    debugPrint('[SERIES_VM] build() started for tmdbId=$tmdbId');
     final seriesRepo = ref.read(seriesRepositoryProvider);
     final trackingRepo = ref.read(trackingRepositoryProvider);
 
@@ -23,12 +25,17 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
         pageSize: 1000,
         mediaType: MediaType.series,
       );
+      debugPrint(
+          '[SERIES_VM] build() got ${allTracking.length} tracking entries');
       tracking = allTracking.firstWhere(
         (t) =>
             (t.media != null && t.media!.mediaId == tmdbId.toString()) ||
             t.mediaId == tmdbId.toString(),
       );
-    } catch (_) {
+      debugPrint(
+          '[SERIES_VM] build() found tracking: rating=${tracking.rating} status=${tracking.status}');
+    } catch (e) {
+      debugPrint('[SERIES_VM] build() tracking lookup failed: $e');
       tracking = null;
     }
 
@@ -68,21 +75,37 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
     String? review,
   }) async {
     final currentState = state.valueOrNull;
-    if (currentState == null) return;
+    if (currentState == null) {
+      debugPrint(
+          '[SERIES_VM] updateTracking aborted: state.valueOrNull is null');
+      return;
+    }
     final current = currentState.tracking;
-    if (current == null) return;
+    if (current == null) {
+      debugPrint('[SERIES_VM] updateTracking aborted: tracking is null');
+      return;
+    }
 
     final trackingRepo = ref.read(trackingRepositoryProvider);
-    await trackingRepo.updateTracking(
-      current.mediaId,
-      mediaType: MediaType.series,
-      status: status,
-      rating: rating,
-      review: review,
-    );
-    await ref.read(cacheServiceProvider).remove('dashboard');
-    await ref.read(cacheServiceProvider).removeByPrefix('tracking:');
-    ref.invalidateSelf();
+    try {
+      debugPrint(
+          '[SERIES_VM] updateTracking calling API: mediaId=${current.mediaId} status=$status rating=$rating review=$review');
+      await trackingRepo.updateTracking(
+        current.mediaId,
+        mediaType: MediaType.series,
+        status: status,
+        rating: rating,
+        review: review,
+      );
+      debugPrint('[SERIES_VM] updateTracking API call succeeded');
+      await ref.read(cacheServiceProvider).remove('dashboard');
+      await ref.read(cacheServiceProvider).removeByPrefix('tracking:');
+      debugPrint('[SERIES_VM] cache cleared, invalidating self');
+      ref.invalidateSelf();
+    } catch (e, st) {
+      debugPrint('[SERIES_VM] updateTracking failed: $e\n$st');
+      rethrow;
+    }
   }
 
   Future<void> removeTracking() async {
