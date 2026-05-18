@@ -91,6 +91,7 @@ class _SeriesSearchPageState extends ConsumerState<SeriesSearchPage> {
         ),
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
