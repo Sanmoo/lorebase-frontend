@@ -162,26 +162,17 @@ class _MovieDetailLoaded extends StatelessWidget {
                 children: [
                   if (hasBackdrop)
                     Positioned.fill(
-                      child: PhysicalModel(
-                        color: Colors.transparent,
-                        clipBehavior: Clip.hardEdge,
+                      child: ClipRect(
                         key: const ValueKey('backdrop_clip'),
-                        child: OverflowBox(
-                          minWidth: MediaQuery.of(context).size.width,
-                          maxWidth: MediaQuery.of(context).size.width,
-                          minHeight: 286,
-                          maxHeight: 286,
+                        child: CachedNetworkImage(
+                          imageUrl: movie.backdropPath!,
+                          imageRenderMethodForWeb:
+                              ImageRenderMethodForWeb.HttpGet,
+                          height: 250,
+                          fit: BoxFit.fitHeight,
                           alignment: Alignment.bottomCenter,
-                          child: CachedNetworkImage(
-                            imageUrl: movie.backdropPath!,
-                            imageRenderMethodForWeb:
-                                ImageRenderMethodForWeb.HttpGet,
-                            width: MediaQuery.of(context).size.width,
-                            height: 286,
-                            fit: BoxFit.cover,
-                            errorWidget: (context, url, error) => Container(
-                              color: theme.colorScheme.surfaceContainerHighest,
-                            ),
+                          errorWidget: (context, url, error) => Container(
+                            color: theme.colorScheme.surfaceContainerHighest,
                           ),
                         ),
                       ),
