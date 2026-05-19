@@ -7,7 +7,7 @@ part of 'movie_detail_viewmodel.dart';
 // **************************************************************************
 
 String _$movieDetailViewModelHash() =>
-    r'ce1e1da37d9b112a95718469918f75eb5b046a6a';
+    r'7f6d3196e734cbacb815843cd8de43fe754af5f1';
 
 /// Copied from Dart SDK
 class _SystemHash {
