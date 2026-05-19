@@ -9,13 +9,8 @@ class RecommendationPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = context.t;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(t.recommend_title),
-      ),
-      body: Center(
-        child: Text(t.recommend_coming_soon),
-      ),
+    return Center(
+      child: Text(t.recommend_coming_soon),
     );
   }
 }

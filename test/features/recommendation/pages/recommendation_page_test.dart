@@ -16,15 +16,6 @@ Future<void> main() async {
       expect(find.text('Recommendation feature coming soon!'), findsOneWidget);
     });
 
-    testWidgets('has AppBar with title', (tester) async {
-      await tester.pumpWidget(
-        TranslationProvider(
-          child: const MaterialApp(home: RecommendationPage()),
-        ),
-      );
-      expect(find.text('Recommendation'), findsOneWidget);
-    });
-
     testWidgets('recommendation page uses non-const constructor', (tester) async {
       await tester.pumpWidget(
         TranslationProvider(

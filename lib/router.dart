@@ -50,11 +50,17 @@ final routerProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(
             path: '/dashboard',
-            builder: (context, state) => const DashboardPage(),
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const DashboardPage(),
+            ),
           ),
           GoRoute(
             path: '/search',
-            builder: (context, state) => const SeriesSearchPage(),
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const SeriesSearchPage(),
+            ),
           ),
           GoRoute(
             path: '/series/:tmdbId',
@@ -72,11 +78,17 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/tracking',
-            builder: (context, state) => const TrackingListPage(),
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const TrackingListPage(),
+            ),
           ),
           GoRoute(
             path: '/recommend',
-            builder: (context, state) => const RecommendationPage(),
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const RecommendationPage(),
+            ),
           ),
         ],
       ),
