@@ -138,6 +138,12 @@ class TranslationsEs extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get social_empty_feed_title => 'Tu feed está vacío';
 	@override String get social_empty_feed_body => 'Sigue personas para ver su actividad aquí.';
 	@override String get social_discover_people => 'Descubrir personas';
+	@override String get dashboard_social_preview_title => 'Actividad social';
+	@override String get dashboard_social_preview_body => 'Mira qué están viendo y calificando otros fans.';
+	@override String get dashboard_social_preview_cta => 'Abrir Social';
+	@override String get dashboard_recommendation_title => 'Recomendaciones para ti';
+	@override String get dashboard_recommendation_body => 'Encuentra algo personalizado para ver después.';
+	@override String get dashboard_recommendation_cta => 'Obtener recomendaciones';
 }
 
 /// The flat map containing all translations for locale <es>.
@@ -247,6 +253,12 @@ extension on TranslationsEs {
 			'social_empty_feed_title' => 'Tu feed está vacío',
 			'social_empty_feed_body' => 'Sigue personas para ver su actividad aquí.',
 			'social_discover_people' => 'Descubrir personas',
+			'dashboard_social_preview_title' => 'Actividad social',
+			'dashboard_social_preview_body' => 'Mira qué están viendo y calificando otros fans.',
+			'dashboard_social_preview_cta' => 'Abrir Social',
+			'dashboard_recommendation_title' => 'Recomendaciones para ti',
+			'dashboard_recommendation_body' => 'Encuentra algo personalizado para ver después.',
+			'dashboard_recommendation_cta' => 'Obtener recomendaciones',
 			_ => null,
 		};
 	}

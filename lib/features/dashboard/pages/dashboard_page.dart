@@ -17,6 +17,14 @@ import '../viewmodels/dashboard_viewmodel.dart';
 import '../widgets/stats_card.dart';
 import '../widgets/watching_section.dart';
 
+Future<void> refreshDashboardAndSocialFeed({
+  required DashboardViewModel dashboardViewModel,
+  required SocialFeedViewModel socialFeedViewModel,
+}) async {
+  await dashboardViewModel.refresh();
+  await socialFeedViewModel.refresh();
+}
+
 class DashboardPage extends ConsumerStatefulWidget {
   const DashboardPage({super.key});
 
@@ -32,6 +40,13 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     ref
         .read(dashboardViewModelProvider.notifier)
         .loadDashboard(mediaType: type);
+  }
+
+  Future<void> _refreshDashboardAndSocialFeed() {
+    return refreshDashboardAndSocialFeed(
+      dashboardViewModel: ref.read(dashboardViewModelProvider.notifier),
+      socialFeedViewModel: ref.read(socialFeedViewModelProvider.notifier),
+    );
   }
 
   @override
@@ -50,7 +65,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     final socialFeedState = ref.watch(socialFeedViewModelProvider);
 
     return RefreshIndicator(
-      onRefresh: () => ref.read(dashboardViewModelProvider.notifier).refresh(),
+      onRefresh: _refreshDashboardAndSocialFeed,
       child: dashboardState.when(
         loading: () => LoadingWidget(message: t.dashboard_loading),
         error: (error, _) => AppErrorWidget(
@@ -59,6 +74,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               ref.read(dashboardViewModelProvider.notifier).refresh(),
         ),
         data: (dashboard) => CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
             SliverToBoxAdapter(
               child: Padding(
@@ -235,6 +251,7 @@ class _SocialPreviewSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
     final activities = feedState.asData?.value.items.take(3).toList() ?? [];
 
     return Padding(
@@ -250,7 +267,7 @@ class _SocialPreviewSection extends StatelessWidget {
                   const Icon(Icons.groups_outlined),
                   const SizedBox(width: 8),
                   Text(
-                    'Social activity',
+                    t.dashboard_social_preview_title,
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ],
@@ -258,7 +275,7 @@ class _SocialPreviewSection extends StatelessWidget {
               const SizedBox(height: 12),
               if (activities.isEmpty)
                 Text(
-                  'See what other fans are watching and rating.',
+                  t.dashboard_social_preview_body,
                   style: Theme.of(context).textTheme.bodyMedium,
                 )
               else
@@ -268,7 +285,7 @@ class _SocialPreviewSection extends StatelessWidget {
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () => context.go('/social'),
-                  child: const Text('Open Social'),
+                  child: Text(t.dashboard_social_preview_cta),
                 ),
               ),
             ],
@@ -312,14 +329,19 @@ class _RecommendationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
       child: Card(
         child: ListTile(
           leading: const Icon(Icons.auto_awesome_outlined),
-          title: const Text('Get recommendations'),
-          subtitle: const Text('Find something tailored to watch next.'),
-          trailing: const Icon(Icons.chevron_right),
+          title: Text(t.dashboard_recommendation_title),
+          subtitle: Text(t.dashboard_recommendation_body),
+          trailing: TextButton(
+            onPressed: onTap,
+            child: Text(t.dashboard_recommendation_cta),
+          ),
           onTap: onTap,
         ),
       ),

@@ -20,6 +20,7 @@ import 'package:lorebase/l10n/strings.g.dart';
 
 class FakeDashboardVM extends DashboardViewModel {
   final AsyncValue<DashboardModel> testState;
+  int refreshCount = 0;
 
   FakeDashboardVM({required this.testState});
 
@@ -27,7 +28,9 @@ class FakeDashboardVM extends DashboardViewModel {
   AsyncValue<DashboardModel> build() => testState;
 
   @override
-  Future<void> refresh() async {}
+  Future<void> refresh() async {
+    refreshCount++;
+  }
 
   @override
   Future<void> loadDashboard({MediaType mediaType = MediaType.series}) async {}
@@ -54,6 +57,7 @@ class FakeAuthVM extends AuthViewModel {
 
 class FakeSocialFeedVM extends SocialFeedViewModel {
   final AsyncValue<PaginatedSocialResponse<ActivityEventModel>> testState;
+  int refreshCount = 0;
 
   FakeSocialFeedVM({required this.testState});
 
@@ -65,6 +69,11 @@ class FakeSocialFeedVM extends SocialFeedViewModel {
           nextCursor: null,
           hasMore: false,
         );
+  }
+
+  @override
+  Future<void> refresh() async {
+    refreshCount++;
   }
 }
 
@@ -429,6 +438,23 @@ Future<void> main() async {
       expect(find.text('Retry'), findsOneWidget);
     });
 
+    test('refresh helper refreshes dashboard and social feed', () async {
+      final fakeVM = FakeDashboardVM(
+        testState: AsyncValue.data(_emptyDashboard()),
+      );
+      final fakeSocialVM = FakeSocialFeedVM(
+        testState: AsyncValue.data(_feed()),
+      );
+
+      await refreshDashboardAndSocialFeed(
+        dashboardViewModel: fakeVM,
+        socialFeedViewModel: fakeSocialVM,
+      );
+
+      expect(fakeVM.refreshCount, 1);
+      expect(fakeSocialVM.refreshCount, 1);
+    });
+
     testWidgets('tapping watching section series navigates', (tester) async {
       const media = TrackedMediaSummaryModel(
         mediaId: '456',
@@ -452,8 +478,9 @@ Future<void> main() async {
       await tester.pumpWidget(_wrap(container));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
+      await tester.ensureVisible(find.text('Series A'));
 
-      await tester.tap(find.text('Series A'));
+      await tester.tap(find.text('Series A'), warnIfMissed: false);
       await tester.pump();
 
       expect(find.text('Series A'), findsOneWidget);

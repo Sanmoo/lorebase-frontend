@@ -138,6 +138,12 @@ class TranslationsEnUs extends Translations with BaseTranslations<AppLocale, Tra
 	@override String get social_empty_feed_title => 'Your feed is empty';
 	@override String get social_empty_feed_body => 'Follow people to see their activity here.';
 	@override String get social_discover_people => 'Discover people';
+	@override String get dashboard_social_preview_title => 'Social activity';
+	@override String get dashboard_social_preview_body => 'See what other fans are watching and rating.';
+	@override String get dashboard_social_preview_cta => 'Open Social';
+	@override String get dashboard_recommendation_title => 'Recommendations for you';
+	@override String get dashboard_recommendation_body => 'Find something tailored to watch next.';
+	@override String get dashboard_recommendation_cta => 'Get recommendations';
 }
 
 /// The flat map containing all translations for locale <en-US>.
@@ -247,6 +253,12 @@ extension on TranslationsEnUs {
 			'social_empty_feed_title' => 'Your feed is empty',
 			'social_empty_feed_body' => 'Follow people to see their activity here.',
 			'social_discover_people' => 'Discover people',
+			'dashboard_social_preview_title' => 'Social activity',
+			'dashboard_social_preview_body' => 'See what other fans are watching and rating.',
+			'dashboard_social_preview_cta' => 'Open Social',
+			'dashboard_recommendation_title' => 'Recommendations for you',
+			'dashboard_recommendation_body' => 'Find something tailored to watch next.',
+			'dashboard_recommendation_cta' => 'Get recommendations',
 			_ => null,
 		};
 	}

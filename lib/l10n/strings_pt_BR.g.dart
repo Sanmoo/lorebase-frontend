@@ -337,6 +337,24 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// pt-BR: 'Descobrir pessoas'
 	String get social_discover_people => 'Descobrir pessoas';
+
+	/// pt-BR: 'Atividade social'
+	String get dashboard_social_preview_title => 'Atividade social';
+
+	/// pt-BR: 'Veja o que outros fãs estão assistindo e avaliando.'
+	String get dashboard_social_preview_body => 'Veja o que outros fãs estão assistindo e avaliando.';
+
+	/// pt-BR: 'Abrir Social'
+	String get dashboard_social_preview_cta => 'Abrir Social';
+
+	/// pt-BR: 'Recomendações para você'
+	String get dashboard_recommendation_title => 'Recomendações para você';
+
+	/// pt-BR: 'Encontre algo personalizado para assistir em seguida.'
+	String get dashboard_recommendation_body => 'Encontre algo personalizado para assistir em seguida.';
+
+	/// pt-BR: 'Receber recomendações'
+	String get dashboard_recommendation_cta => 'Receber recomendações';
 }
 
 /// The flat map containing all translations for locale <pt-BR>.
@@ -446,6 +464,12 @@ extension on Translations {
 			'social_empty_feed_title' => 'Seu feed ainda está quieto',
 			'social_empty_feed_body' => 'Siga pessoas para ver avaliações, reviews e atividades recentes.',
 			'social_discover_people' => 'Descobrir pessoas',
+			'dashboard_social_preview_title' => 'Atividade social',
+			'dashboard_social_preview_body' => 'Veja o que outros fãs estão assistindo e avaliando.',
+			'dashboard_social_preview_cta' => 'Abrir Social',
+			'dashboard_recommendation_title' => 'Recomendações para você',
+			'dashboard_recommendation_body' => 'Encontre algo personalizado para assistir em seguida.',
+			'dashboard_recommendation_cta' => 'Receber recomendações',
 			_ => null,
 		};
 	}
