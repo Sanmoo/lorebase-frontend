@@ -11,6 +11,11 @@ import 'package:lorebase/features/tracking/data/models/tracked_media_summary_mod
 import 'package:lorebase/features/tracking/data/models/media_type.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_viewmodel.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_state.dart';
+import 'package:lorebase/features/social/data/models/activity_event_model.dart';
+import 'package:lorebase/features/social/data/models/paginated_social_response.dart';
+import 'package:lorebase/features/social/data/models/social_media_model.dart';
+import 'package:lorebase/features/social/data/models/social_user_model.dart';
+import 'package:lorebase/features/social/viewmodels/social_feed_viewmodel.dart';
 import 'package:lorebase/l10n/strings.g.dart';
 
 class FakeDashboardVM extends DashboardViewModel {
@@ -47,6 +52,42 @@ class FakeAuthVM extends AuthViewModel {
   Future<void> signOut() async {}
 }
 
+class FakeSocialFeedVM extends SocialFeedViewModel {
+  final AsyncValue<PaginatedSocialResponse<ActivityEventModel>> testState;
+
+  FakeSocialFeedVM({required this.testState});
+
+  @override
+  Future<PaginatedSocialResponse<ActivityEventModel>> build() async {
+    return testState.value ??
+        const PaginatedSocialResponse<ActivityEventModel>(
+          items: [],
+          nextCursor: null,
+          hasMore: false,
+        );
+  }
+}
+
+PaginatedSocialResponse<ActivityEventModel> _feed([
+  List<ActivityEventModel> items = const [],
+]) => PaginatedSocialResponse<ActivityEventModel>(
+  items: items,
+  nextCursor: null,
+  hasMore: false,
+);
+
+ActivityEventModel _activity(String id, String title) => ActivityEventModel(
+  eventId: id,
+  user: const SocialUserModel(userId: 'user-1', displayName: 'Fulano'),
+  activityType: 'COMPLETED',
+  media: SocialMediaModel(
+    mediaId: id,
+    mediaType: 'SERIES',
+    title: title,
+  ),
+  createdAt: DateTime.utc(2026, 5, 20),
+);
+
 Widget _wrap(ProviderContainer container) {
   return UncontrolledProviderScope(
     container: container,
@@ -58,6 +99,14 @@ Widget _wrap(ProviderContainer container) {
             GoRoute(
               path: '/dashboard',
               builder: (_, _) => const DashboardPage(),
+            ),
+            GoRoute(
+              path: '/social',
+              builder: (_, _) => const Scaffold(body: Text('Social page')),
+            ),
+            GoRoute(
+              path: '/recommend',
+              builder: (_, _) => const Scaffold(body: Text('Recommend page')),
             ),
           ],
         ),
@@ -74,6 +123,9 @@ Future<void> main() async {
       return ProviderContainer(
         overrides: [
           dashboardViewModelProvider.overrideWith(() => fakeVM),
+          socialFeedViewModelProvider.overrideWith(
+            () => FakeSocialFeedVM(testState: AsyncValue.data(_feed())),
+          ),
           authViewModelProvider.overrideWith(() => FakeAuthVM()),
         ],
       );
@@ -427,6 +479,92 @@ Future<void> main() async {
       await tester.pumpAndSettle();
 
       expect(find.textContaining('No movies tracked'), findsOneWidget);
+    });
+
+    testWidgets('renders a social preview section title', (tester) async {
+      final fakeVM = FakeDashboardVM(
+        testState: AsyncValue.data(_emptyDashboard()),
+      );
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      expect(find.text('Social activity'), findsOneWidget);
+    });
+
+    testWidgets('social preview CTA navigates to social', (tester) async {
+      final fakeVM = FakeDashboardVM(
+        testState: AsyncValue.data(_emptyDashboard()),
+      );
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.drag(find.byType(Scrollable), const Offset(0, -400));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Open Social'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Social page'), findsOneWidget);
+    });
+
+    testWidgets('recommendation content is reachable from dashboard', (
+      tester,
+    ) async {
+      final fakeVM = FakeDashboardVM(
+        testState: AsyncValue.data(_emptyDashboard()),
+      );
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.drag(find.byType(Scrollable), const Offset(0, -500));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Get recommendations'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Recommend page'), findsOneWidget);
+    });
+
+    testWidgets('social preview shows up to three activity rows', (
+      tester,
+    ) async {
+      final fakeVM = FakeDashboardVM(
+        testState: AsyncValue.data(_emptyDashboard()),
+      );
+      final container = ProviderContainer(
+        overrides: [
+          dashboardViewModelProvider.overrideWith(() => fakeVM),
+          socialFeedViewModelProvider.overrideWith(
+            () => FakeSocialFeedVM(
+              testState: AsyncValue.data(
+                _feed([
+                  _activity('1', 'One Piece'),
+                  _activity('2', 'Frieren'),
+                  _activity('3', 'Dungeon Meshi'),
+                  _activity('4', 'Hidden'),
+                ]),
+              ),
+            ),
+          ),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      expect(find.textContaining('One Piece'), findsOneWidget);
+      expect(find.textContaining('Frieren'), findsOneWidget);
+      expect(find.textContaining('Dungeon Meshi'), findsOneWidget);
+      expect(find.textContaining('Hidden'), findsNothing);
     });
   });
 }

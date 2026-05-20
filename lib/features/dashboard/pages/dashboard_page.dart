@@ -9,6 +9,9 @@ import '../../../../core/widgets/loading_widget.dart';
 import '../../../../core/widgets/media_type_toggle.dart';
 import '../../../l10n/strings.g.dart';
 import '../../tracking/data/models/media_type.dart';
+import '../../social/data/models/activity_event_model.dart';
+import '../../social/data/models/paginated_social_response.dart';
+import '../../social/viewmodels/social_feed_viewmodel.dart';
 import '../../../core/cache/cache_providers.dart';
 import '../viewmodels/dashboard_viewmodel.dart';
 import '../widgets/stats_card.dart';
@@ -44,6 +47,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     });
 
     final dashboardState = ref.watch(dashboardViewModelProvider);
+    final socialFeedState = ref.watch(socialFeedViewModelProvider);
 
     return RefreshIndicator(
       onRefresh: () => ref.read(dashboardViewModelProvider.notifier).refresh(),
@@ -190,15 +194,136 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                 dashboard.wantToWatch.items.isEmpty &&
                 dashboard.completed.items.isEmpty &&
                 dashboard.dropped.items.isEmpty)
-              SliverFillRemaining(
-                child: EmptyStateWidget(
-                  message: _selectedType == MediaType.series
-                      ? t.dashboard_empty
-                      : t.dashboard_empty_movies,
-                  icon: Icons.tv_off,
+              SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 260,
+                      child: EmptyStateWidget(
+                        message: _selectedType == MediaType.series
+                            ? t.dashboard_empty
+                            : t.dashboard_empty_movies,
+                        icon: Icons.tv_off,
+                      ),
+                    ),
+                    _SocialPreviewSection(feedState: socialFeedState),
+                    _RecommendationCard(
+                      onTap: () => context.go('/recommend'),
+                    ),
+                  ],
+                ),
+              )
+            else ...[
+              SliverToBoxAdapter(
+                child: _SocialPreviewSection(feedState: socialFeedState),
+              ),
+              SliverToBoxAdapter(
+                child: _RecommendationCard(
+                  onTap: () => context.go('/recommend'),
                 ),
               ),
+            ],
+
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SocialPreviewSection extends StatelessWidget {
+  final AsyncValue<PaginatedSocialResponse<ActivityEventModel>> feedState;
+
+  const _SocialPreviewSection({required this.feedState});
+
+  @override
+  Widget build(BuildContext context) {
+    final activities = feedState.asData?.value.items.take(3).toList() ?? [];
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.groups_outlined),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Social activity',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              if (activities.isEmpty)
+                Text(
+                  'See what other fans are watching and rating.',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                )
+              else
+                ...activities.map(_SocialActivityRow.new),
+              const SizedBox(height: 12),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () => context.go('/social'),
+                  child: const Text('Open Social'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SocialActivityRow extends StatelessWidget {
+  final ActivityEventModel activity;
+
+  const _SocialActivityRow(this.activity);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          const Icon(Icons.bolt_outlined, size: 18),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              '${activity.user.displayName} ${activity.activityType.toLowerCase()} ${activity.media.title}',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RecommendationCard extends StatelessWidget {
+  final VoidCallback onTap;
+
+  const _RecommendationCard({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+      child: Card(
+        child: ListTile(
+          leading: const Icon(Icons.auto_awesome_outlined),
+          title: const Text('Get recommendations'),
+          subtitle: const Text('Find something tailored to watch next.'),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: onTap,
         ),
       ),
     );
