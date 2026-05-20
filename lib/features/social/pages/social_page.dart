@@ -81,7 +81,8 @@ class _FeedTab extends ConsumerWidget {
             final event = data.items[index];
             return SocialActivityCard(
               event: event,
-              onUserTap: () => context.go('/social/profile/${event.user.userId}'),
+              onUserTap: () =>
+                  context.go('/social/profile/${event.user.userId}'),
               onMediaTap: () => context.go(
                 event.media.mediaType == 'SERIES'
                     ? '/series/${event.media.mediaId}'
