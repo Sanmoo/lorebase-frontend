@@ -41,11 +41,12 @@ class SocialProfileHeader extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 16,
+            runSpacing: 4,
             children: [
               Text('${profile.followerCount} seguidores'),
-              const SizedBox(width: 16),
               Text('${profile.followingCount} seguindo'),
             ],
           ),
@@ -59,8 +60,8 @@ class SocialProfileHeader extends StatelessWidget {
             SocialFollowButton(
               isFollowedByMe: profile.isFollowedByMe,
               isLoading: isLoading,
-              onFollow: onFollow ?? () {},
-              onUnfollow: onUnfollow ?? () {},
+              onFollow: onFollow,
+              onUnfollow: onUnfollow,
             ),
         ],
       ),
