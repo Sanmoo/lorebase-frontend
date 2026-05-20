@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lorebase/features/social/data/models/activity_event_model.dart';
@@ -53,6 +55,84 @@ void main() {
   );
 
   test(
+    'follow is idempotent when already followed',
+    () async {
+      final repo = _FakeSocialRepository(initiallyFollowed: true);
+      final container = ProviderContainer(
+        overrides: [socialRepositoryProvider.overrideWithValue(repo)],
+      );
+      addTearDown(container.dispose);
+      await container.read(socialProfileViewModelProvider('user-1').future);
+
+      await container
+          .read(socialProfileViewModelProvider('user-1').notifier)
+          .follow();
+
+      final state = container
+          .read(socialProfileViewModelProvider('user-1'))
+          .value!;
+      expect(repo.followCalls, isEmpty);
+      expect(state.profile.isFollowedByMe, isTrue);
+      expect(state.profile.followerCount, 2);
+    },
+  );
+
+  test(
+    'duplicate in-flight follow calls are ignored and count increments once',
+    () async {
+      final repo = _FakeSocialRepository(followCompleter: Completer<void>());
+      final container = ProviderContainer(
+        overrides: [socialRepositoryProvider.overrideWithValue(repo)],
+      );
+      addTearDown(container.dispose);
+      await container.read(socialProfileViewModelProvider('user-1').future);
+
+      final notifier = container.read(
+        socialProfileViewModelProvider('user-1').notifier,
+      );
+      final first = notifier.follow();
+      await notifier.follow();
+
+      repo.followCompleter!.complete();
+      await first;
+
+      final state = container
+          .read(socialProfileViewModelProvider('user-1'))
+          .value!;
+      expect(repo.followCalls, ['user-1']);
+      expect(state.isFollowActionInProgress, isFalse);
+      expect(state.profile.isFollowedByMe, isTrue);
+      expect(state.profile.followerCount, 3);
+    },
+  );
+
+  test(
+    'follow failure resets in-progress state without drifting count',
+    () async {
+      final repo = _FakeSocialRepository(followError: Exception('boom'));
+      final container = ProviderContainer(
+        overrides: [socialRepositoryProvider.overrideWithValue(repo)],
+      );
+      addTearDown(container.dispose);
+      await container.read(socialProfileViewModelProvider('user-1').future);
+
+      await expectLater(
+        container
+            .read(socialProfileViewModelProvider('user-1').notifier)
+            .follow(),
+        throwsA(isA<Exception>()),
+      );
+
+      final state = container
+          .read(socialProfileViewModelProvider('user-1'))
+          .value!;
+      expect(state.isFollowActionInProgress, isFalse);
+      expect(state.profile.isFollowedByMe, isFalse);
+      expect(state.profile.followerCount, 2);
+    },
+  );
+
+  test(
     'unfollow toggles false and decrements without going below zero',
     () async {
       final repo = _FakeSocialRepository(
@@ -77,15 +157,42 @@ void main() {
       expect(state.profile.followerCount, 0);
     },
   );
+
+  test(
+    'unfollow is idempotent when already not followed',
+    () async {
+      final repo = _FakeSocialRepository(initiallyFollowed: false);
+      final container = ProviderContainer(
+        overrides: [socialRepositoryProvider.overrideWithValue(repo)],
+      );
+      addTearDown(container.dispose);
+      await container.read(socialProfileViewModelProvider('user-1').future);
+
+      await container
+          .read(socialProfileViewModelProvider('user-1').notifier)
+          .unfollow();
+
+      final state = container
+          .read(socialProfileViewModelProvider('user-1'))
+          .value!;
+      expect(repo.unfollowCalls, isEmpty);
+      expect(state.profile.isFollowedByMe, isFalse);
+      expect(state.profile.followerCount, 2);
+    },
+  );
 }
 
 class _FakeSocialRepository implements SocialRepository {
   _FakeSocialRepository({
     this.initialFollowerCount = 2,
     this.initiallyFollowed = false,
+    this.followCompleter,
+    this.followError,
   });
   final int initialFollowerCount;
   final bool initiallyFollowed;
+  final Completer<void>? followCompleter;
+  final Object? followError;
   final profileUserIds = <String>[];
   final activityUserIds = <String>[];
   final publicListUserIds = <String>[];
@@ -146,6 +253,12 @@ class _FakeSocialRepository implements SocialRepository {
   @override
   Future<void> followUser(String userId) async {
     followCalls.add(userId);
+    if (followError != null) {
+      throw followError!;
+    }
+    if (followCompleter != null) {
+      await followCompleter!.future;
+    }
   }
 
   @override

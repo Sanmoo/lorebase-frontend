@@ -40,9 +40,34 @@ void main() {
   );
 
   test(
+    'repository failure resets saving and exposes error message',
+    () async {
+      final repo = _FakeSocialRepository(updateError: Exception('boom'));
+      final container = ProviderContainer(
+        overrides: [socialRepositoryProvider.overrideWithValue(repo)],
+      );
+      addTearDown(container.dispose);
+
+      await container
+          .read(socialOnboardingViewModelProvider.notifier)
+          .saveProfile(
+            displayName: 'Fulano',
+            avatarUrl: null,
+            privacy: SocialPrivacy.private,
+          );
+
+      final state = container.read(socialOnboardingViewModelProvider);
+      expect(repo.updateMyProfileCalls, 1);
+      expect(state.isSaving, isFalse);
+      expect(state.errorMessage, 'Failed to save profile');
+      expect(state.validationError, isNull);
+    },
+  );
+
+  test(
     'blank displayName sets validation error and does not call repository',
     () async {
-      final repo = _FakeSocialRepository();
+      final repo = _FakeSocialRepository(updateError: Exception('boom'));
       final container = ProviderContainer(
         overrides: [socialRepositoryProvider.overrideWithValue(repo)],
       );
@@ -64,6 +89,9 @@ void main() {
 }
 
 class _FakeSocialRepository implements SocialRepository {
+  _FakeSocialRepository({this.updateError});
+
+  final Object? updateError;
   int updateMyProfileCalls = 0;
   String? lastDisplayName;
   String? lastAvatarUrl;
@@ -77,6 +105,9 @@ class _FakeSocialRepository implements SocialRepository {
     required bool isPublic,
   }) async {
     updateMyProfileCalls++;
+    if (updateError != null) {
+      throw updateError!;
+    }
     lastDisplayName = displayName;
     lastAvatarUrl = avatarUrl;
     lastIsPublic = isPublic;

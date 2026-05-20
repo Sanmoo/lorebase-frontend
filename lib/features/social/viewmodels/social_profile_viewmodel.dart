@@ -14,22 +14,27 @@ class SocialProfileDetailState {
   final SocialProfileModel profile;
   final PaginatedSocialResponse<ActivityEventModel> activity;
   final PaginatedSocialResponse<PublicListItemModel> publicLists;
+  final bool isFollowActionInProgress;
 
   const SocialProfileDetailState({
     required this.profile,
     required this.activity,
     required this.publicLists,
+    this.isFollowActionInProgress = false,
   });
 
   SocialProfileDetailState copyWith({
     SocialProfileModel? profile,
     PaginatedSocialResponse<ActivityEventModel>? activity,
     PaginatedSocialResponse<PublicListItemModel>? publicLists,
+    bool? isFollowActionInProgress,
   }) {
     return SocialProfileDetailState(
       profile: profile ?? this.profile,
       activity: activity ?? this.activity,
       publicLists: publicLists ?? this.publicLists,
+      isFollowActionInProgress:
+          isFollowActionInProgress ?? this.isFollowActionInProgress,
     );
   }
 }
@@ -53,33 +58,71 @@ class SocialProfileViewModel extends _$SocialProfileViewModel {
   }
 
   Future<void> follow() async {
-    await ref.read(socialRepositoryProvider).followUser(userId);
-    _updateProfile(
-      (profile) => profile.copyWith(
-        isFollowedByMe: true,
-        followerCount: profile.followerCount + 1,
-      ),
-    );
+    final latest = _latestValue();
+    if (latest == null ||
+        latest.isFollowActionInProgress ||
+        latest.profile.isFollowedByMe) {
+      return;
+    }
+
+    _setFollowActionInProgress(true);
+    try {
+      await ref.read(socialRepositoryProvider).followUser(userId);
+      _updateProfile(
+        (profile) => profile.copyWith(
+          isFollowedByMe: true,
+          followerCount: profile.followerCount + 1,
+        ),
+      );
+    } finally {
+      _setFollowActionInProgress(false);
+    }
   }
 
   Future<void> unfollow() async {
-    await ref.read(socialRepositoryProvider).unfollowUser(userId);
-    _updateProfile(
-      (profile) => profile.copyWith(
-        isFollowedByMe: false,
-        followerCount: math.max(0, profile.followerCount - 1),
-      ),
-    );
+    final latest = _latestValue();
+    if (latest == null ||
+        latest.isFollowActionInProgress ||
+        !latest.profile.isFollowedByMe) {
+      return;
+    }
+
+    _setFollowActionInProgress(true);
+    try {
+      await ref.read(socialRepositoryProvider).unfollowUser(userId);
+      _updateProfile(
+        (profile) => profile.copyWith(
+          isFollowedByMe: false,
+          followerCount: math.max(0, profile.followerCount - 1),
+        ),
+      );
+    } finally {
+      _setFollowActionInProgress(false);
+    }
   }
 
   void _updateProfile(SocialProfileModel Function(SocialProfileModel) update) {
-    final latest = switch (state) {
-      AsyncData(:final value) => value,
-      _ => null,
-    };
+    final latest = _latestValue();
     if (latest == null) {
       return;
     }
     state = AsyncData(latest.copyWith(profile: update(latest.profile)));
+  }
+
+  void _setFollowActionInProgress(bool isInProgress) {
+    final latest = _latestValue();
+    if (latest == null) {
+      return;
+    }
+    state = AsyncData(
+      latest.copyWith(isFollowActionInProgress: isInProgress),
+    );
+  }
+
+  SocialProfileDetailState? _latestValue() {
+    return switch (state) {
+      AsyncData(:final value) => value,
+      _ => null,
+    };
   }
 }
