@@ -89,7 +89,7 @@ class SocialRepositoryImpl implements SocialRepository {
       );
       return SocialProfileModel.fromJson(_responseMap(response.data));
     } on DioException catch (e) {
-      throw _serverException(e, 'Failed to update profile');
+      throw _repositoryException(e, 'Failed to update profile');
     }
   }
 
@@ -103,7 +103,7 @@ class SocialRepositoryImpl implements SocialRepository {
     try {
       await _dio.post('/follows/$userId');
     } on DioException catch (e) {
-      throw _serverException(e, 'Failed to follow user');
+      throw _repositoryException(e, 'Failed to follow user');
     }
   }
 
@@ -112,7 +112,7 @@ class SocialRepositoryImpl implements SocialRepository {
     try {
       await _dio.delete('/follows/$userId');
     } on DioException catch (e) {
-      throw _serverException(e, 'Failed to unfollow user');
+      throw _repositoryException(e, 'Failed to unfollow user');
     }
   }
 
@@ -219,7 +219,7 @@ class SocialRepositoryImpl implements SocialRepository {
       final response = await _dio.get(path);
       return SocialProfileModel.fromJson(_responseMap(response.data));
     } on DioException catch (e) {
-      throw _serverException(e, fallbackMessage);
+      throw _repositoryException(e, fallbackMessage);
     }
   }
 
@@ -236,7 +236,7 @@ class SocialRepositoryImpl implements SocialRepository {
         fromJson,
       );
     } on DioException catch (e) {
-      throw _serverException(e, fallbackMessage);
+      throw _repositoryException(e, fallbackMessage);
     }
   }
 
@@ -248,9 +248,16 @@ class SocialRepositoryImpl implements SocialRepository {
     return Map<String, dynamic>.from(data as Map);
   }
 
-  ServerException _serverException(DioException exception, String message) {
-    if (exception.error is ServerException) {
-      return exception.error as ServerException;
+  Exception _repositoryException(DioException exception, String message) {
+    final error = exception.error;
+    if (error is ServerException) {
+      return error;
+    }
+    if (error is AuthException) {
+      return error;
+    }
+    if (error is NetworkException) {
+      return error;
     }
     return ServerException(
       message: exception.message ?? message,

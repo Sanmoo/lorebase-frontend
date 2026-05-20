@@ -268,6 +268,54 @@ void main() {
       );
     });
 
+    test('getMyProfile propagates Dio AuthException error', () async {
+      final dio = Dio()
+        ..httpClientAdapter = MockAdapter(
+          onFetch: (options) {
+            throw DioException(
+              requestOptions: options,
+              error: const AuthException(message: 'Unauthorized'),
+            );
+          },
+        );
+      final repo = SocialRepositoryImpl(dio);
+
+      await expectLater(
+        repo.getMyProfile(),
+        throwsA(
+          isA<AuthException>().having(
+            (exception) => exception.message,
+            'message',
+            'Unauthorized',
+          ),
+        ),
+      );
+    });
+
+    test('getFeed propagates Dio NetworkException error', () async {
+      final dio = Dio()
+        ..httpClientAdapter = MockAdapter(
+          onFetch: (options) {
+            throw DioException(
+              requestOptions: options,
+              error: const NetworkException(message: 'No internet'),
+            );
+          },
+        );
+      final repo = SocialRepositoryImpl(dio);
+
+      await expectLater(
+        repo.getFeed(),
+        throwsA(
+          isA<NetworkException>().having(
+            (exception) => exception.message,
+            'message',
+            'No internet',
+          ),
+        ),
+      );
+    });
+
     test(
       'getUserActivity calls profile activity endpoint and parses events',
       () async {
