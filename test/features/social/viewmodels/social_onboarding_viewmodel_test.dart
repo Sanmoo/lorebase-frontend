@@ -13,6 +13,15 @@ import 'package:lorebase/features/social/data/repositories/social_repository.dar
 import 'package:lorebase/features/social/viewmodels/social_onboarding_viewmodel.dart';
 
 void main() {
+  test('copyWith preserves isSaving when omitted', () {
+    const state = SocialOnboardingState(isSaving: true);
+
+    final copied = state.copyWith(validationError: 'Required');
+
+    expect(copied.isSaving, isTrue);
+    expect(copied.validationError, 'Required');
+  });
+
   test(
     'saveProfile sends displayName, avatarUrl, and privacy.isPublic',
     () async {

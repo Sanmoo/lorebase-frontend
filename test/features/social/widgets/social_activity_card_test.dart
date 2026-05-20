@@ -48,10 +48,34 @@ void main() {
     expect(find.text('⭐ 8/10'), findsOneWidget);
   });
 
-  testWidgets('COMPLETED renders "completou"', (tester) async {
-    await pumpCard(tester, event(type: 'COMPLETED', metadata: const {}));
+  testWidgets('renders all activity verbs and review metadata fallbacks', (
+    tester,
+  ) async {
+    for (final entry in {
+      'REVIEWED': 'escreveu uma review de',
+      'COMPLETED': 'completou',
+      'STARTED_WATCHING': 'começou',
+      'DROPPED': 'abandonou',
+      'ADDED_TO_LIST': 'adicionou à lista',
+      'UNKNOWN': 'interagiu com',
+    }.entries) {
+      await pumpCard(
+        tester,
+        event(
+          type: entry.key,
+          metadata: const {'reviewSnippet': 'Gostei bastante'},
+        ),
+      );
 
-    expect(find.textContaining('completou'), findsOneWidget);
+      expect(find.textContaining(entry.value), findsOneWidget);
+      expect(find.text('Gostei bastante'), findsOneWidget);
+    }
+  });
+
+  testWidgets('does not render empty review text', (tester) async {
+    await pumpCard(tester, event(metadata: const {'review': ''}));
+
+    expect(find.text(''), findsNothing);
   });
 
   testWidgets('tapping user invokes onUserTap', (tester) async {

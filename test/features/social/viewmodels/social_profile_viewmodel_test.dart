@@ -31,6 +31,23 @@ void main() {
     expect(repo.publicListUserIds, ['user-1']);
   });
 
+  test('follow and unfollow while loading leave loading state intact', () async {
+    final repo = _FakeSocialRepository();
+    final container = ProviderContainer(
+      overrides: [socialRepositoryProvider.overrideWithValue(repo)],
+    );
+    addTearDown(container.dispose);
+    final notifier = container.read(
+      socialProfileViewModelProvider('user-1').notifier,
+    );
+
+    await notifier.follow();
+    await notifier.unfollow();
+
+    expect(repo.followCalls, isEmpty);
+    expect(repo.unfollowCalls, isEmpty);
+  });
+
   test(
     'follow toggles profile followed and increments followerCount',
     () async {

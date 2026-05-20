@@ -316,6 +316,70 @@ void main() {
       );
     });
 
+    test('getProfile calls user profile endpoint', () async {
+      String? capturedPath;
+      final dio = Dio()
+        ..httpClientAdapter = MockAdapter(
+          onFetch: (options) {
+            capturedPath = options.path;
+            return _jsonBody(_profileJson());
+          },
+        );
+      final repo = SocialRepositoryImpl(dio);
+
+      final result = await repo.getProfile('user-2');
+
+      expect(capturedPath, '/profiles/user-2');
+      expect(result.displayName, 'Fulano');
+    });
+
+    test('updateMyProfile maps Dio failure to ServerException', () async {
+      final dio = Dio()
+        ..httpClientAdapter = MockAdapter(
+          onFetch: (_) => _jsonBody({'message': 'Bad'}, statusCode: 400),
+        );
+      final repo = SocialRepositoryImpl(dio);
+
+      await expectLater(
+        repo.updateMyProfile(displayName: 'Fulano', isPublic: true),
+        throwsA(isA<ServerException>()),
+      );
+    });
+
+    test('unfollowUser maps Dio failure to ServerException', () async {
+      final dio = Dio()
+        ..httpClientAdapter = MockAdapter(
+          onFetch: (_) => _jsonBody({'message': 'Bad'}, statusCode: 400),
+        );
+      final repo = SocialRepositoryImpl(dio);
+
+      await expectLater(repo.unfollowUser('user-2'), throwsA(isA<ServerException>()));
+    });
+
+    test('getProfile propagates embedded ServerException', () async {
+      final dio = Dio()
+        ..httpClientAdapter = MockAdapter(
+          onFetch: (options) {
+            throw DioException(
+              requestOptions: options,
+              error: const ServerException(message: 'Nope', statusCode: 418),
+            );
+          },
+        );
+      final repo = SocialRepositoryImpl(dio);
+
+      await expectLater(
+        repo.getProfile('user-2'),
+        throwsA(
+          isA<ServerException>().having(
+            (exception) => exception.statusCode,
+            'statusCode',
+            418,
+          ),
+        ),
+      );
+    });
+
     test(
       'getUserActivity calls profile activity endpoint and parses events',
       () async {

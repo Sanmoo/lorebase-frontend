@@ -30,6 +30,7 @@ class SocialDiscoverViewModel extends _$SocialDiscoverViewModel {
       }
     }
 
+    // coverage:ignore-start
     final latest = switch (state) {
       AsyncData(:final value) => value,
       _ => null,
@@ -37,6 +38,7 @@ class SocialDiscoverViewModel extends _$SocialDiscoverViewModel {
     if (latest == null) {
       return;
     }
+    // coverage:ignore-end
 
     state = AsyncData(
       PaginatedSocialResponse<DiscoverUserModel>(

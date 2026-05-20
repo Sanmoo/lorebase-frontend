@@ -5,17 +5,20 @@ import 'package:lorebase/features/social/data/models/social_media_model.dart';
 import 'package:lorebase/features/social/widgets/public_media_list_section.dart';
 
 void main() {
-  PublicListItemModel item({int? rating}) => PublicListItemModel(
-    mediaId: 'media-1',
-    mediaType: 'tv',
-    status: 'completed',
-    rating: rating,
-    media: const SocialMediaModel(
-      mediaId: 'media-1',
-      mediaType: 'tv',
-      title: 'One Piece',
-    ),
-  );
+  PublicListItemModel item({int? rating, bool hasMedia = true}) =>
+      PublicListItemModel(
+        mediaId: 'media-1',
+        mediaType: 'tv',
+        status: 'completed',
+        rating: rating,
+        media: hasMedia
+            ? const SocialMediaModel(
+                mediaId: 'media-1',
+                mediaType: 'tv',
+                title: 'One Piece',
+              )
+            : null,
+      );
 
   Future<void> pumpSection(
     WidgetTester tester, {
@@ -44,12 +47,13 @@ void main() {
     expect(find.byType(ListTile), findsNothing);
   });
 
-  testWidgets('renders rating when present', (tester) async {
-    await pumpSection(tester, items: [item(rating: 9)]);
+  testWidgets('renders rating and separators when present', (tester) async {
+    await pumpSection(tester, items: [item(rating: 9), item(rating: 8)]);
 
-    expect(find.text('One Piece'), findsOneWidget);
-    expect(find.text('completed'), findsOneWidget);
+    expect(find.text('One Piece'), findsNWidgets(2));
+    expect(find.text('completed'), findsNWidgets(2));
     expect(find.text('⭐ 9/10'), findsOneWidget);
+    expect(find.byType(Divider), findsOneWidget);
   });
 
   testWidgets('omits rating when absent and handles taps', (tester) async {
@@ -65,5 +69,14 @@ void main() {
 
     expect(find.text('⭐ 9/10'), findsNothing);
     expect(tapped, listItem);
+  });
+
+  testWidgets('item without tap callback is disabled but visible', (tester) async {
+    await pumpSection(tester, items: [item(hasMedia: false)]);
+
+    final tile = tester.widget<ListTile>(find.byType(ListTile));
+
+    expect(tile.onTap, isNull);
+    expect(find.text('media-1'), findsOneWidget);
   });
 }

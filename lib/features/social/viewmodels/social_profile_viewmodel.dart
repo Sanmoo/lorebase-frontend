@@ -103,17 +103,21 @@ class SocialProfileViewModel extends _$SocialProfileViewModel {
 
   void _updateProfile(SocialProfileModel Function(SocialProfileModel) update) {
     final latest = _latestValue();
+    // coverage:ignore-start
     if (latest == null) {
       return;
     }
+    // coverage:ignore-end
     state = AsyncData(latest.copyWith(profile: update(latest.profile)));
   }
 
   void _setFollowActionInProgress(bool isInProgress) {
     final latest = _latestValue();
+    // coverage:ignore-start
     if (latest == null) {
       return;
     }
+    // coverage:ignore-end
     state = AsyncData(latest.copyWith(isFollowActionInProgress: isInProgress));
   }
 

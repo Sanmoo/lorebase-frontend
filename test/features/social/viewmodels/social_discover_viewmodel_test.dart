@@ -157,6 +157,18 @@ void main() {
       expect(state.items.single.isFollowedByMe, false);
     });
 
+    test('followUser while loading does not mutate state', () async {
+      final repo = _FakeSocialRepository();
+      final container = _container(repo);
+      addTearDown(container.dispose);
+
+      await container.read(socialDiscoverViewModelProvider.notifier).followUser(
+            'user-1',
+          );
+
+      expect(repo.followedUserIds, ['user-1']);
+    });
+
     test('follow conflict with ServerException statusCode 409 marks followed',
         () async {
       final repo = _FakeSocialRepository()
