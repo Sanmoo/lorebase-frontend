@@ -54,28 +54,25 @@ void main() {
     },
   );
 
-  test(
-    'follow is idempotent when already followed',
-    () async {
-      final repo = _FakeSocialRepository(initiallyFollowed: true);
-      final container = ProviderContainer(
-        overrides: [socialRepositoryProvider.overrideWithValue(repo)],
-      );
-      addTearDown(container.dispose);
-      await container.read(socialProfileViewModelProvider('user-1').future);
+  test('follow is idempotent when already followed', () async {
+    final repo = _FakeSocialRepository(initiallyFollowed: true);
+    final container = ProviderContainer(
+      overrides: [socialRepositoryProvider.overrideWithValue(repo)],
+    );
+    addTearDown(container.dispose);
+    await container.read(socialProfileViewModelProvider('user-1').future);
 
-      await container
-          .read(socialProfileViewModelProvider('user-1').notifier)
-          .follow();
+    await container
+        .read(socialProfileViewModelProvider('user-1').notifier)
+        .follow();
 
-      final state = container
-          .read(socialProfileViewModelProvider('user-1'))
-          .value!;
-      expect(repo.followCalls, isEmpty);
-      expect(state.profile.isFollowedByMe, isTrue);
-      expect(state.profile.followerCount, 2);
-    },
-  );
+    final state = container
+        .read(socialProfileViewModelProvider('user-1'))
+        .value!;
+    expect(repo.followCalls, isEmpty);
+    expect(state.profile.isFollowedByMe, isTrue);
+    expect(state.profile.followerCount, 2);
+  });
 
   test(
     'duplicate in-flight follow calls are ignored and count increments once',
@@ -158,28 +155,25 @@ void main() {
     },
   );
 
-  test(
-    'unfollow is idempotent when already not followed',
-    () async {
-      final repo = _FakeSocialRepository(initiallyFollowed: false);
-      final container = ProviderContainer(
-        overrides: [socialRepositoryProvider.overrideWithValue(repo)],
-      );
-      addTearDown(container.dispose);
-      await container.read(socialProfileViewModelProvider('user-1').future);
+  test('unfollow is idempotent when already not followed', () async {
+    final repo = _FakeSocialRepository(initiallyFollowed: false);
+    final container = ProviderContainer(
+      overrides: [socialRepositoryProvider.overrideWithValue(repo)],
+    );
+    addTearDown(container.dispose);
+    await container.read(socialProfileViewModelProvider('user-1').future);
 
-      await container
-          .read(socialProfileViewModelProvider('user-1').notifier)
-          .unfollow();
+    await container
+        .read(socialProfileViewModelProvider('user-1').notifier)
+        .unfollow();
 
-      final state = container
-          .read(socialProfileViewModelProvider('user-1'))
-          .value!;
-      expect(repo.unfollowCalls, isEmpty);
-      expect(state.profile.isFollowedByMe, isFalse);
-      expect(state.profile.followerCount, 2);
-    },
-  );
+    final state = container
+        .read(socialProfileViewModelProvider('user-1'))
+        .value!;
+    expect(repo.unfollowCalls, isEmpty);
+    expect(state.profile.isFollowedByMe, isFalse);
+    expect(state.profile.followerCount, 2);
+  });
 }
 
 class _FakeSocialRepository implements SocialRepository {

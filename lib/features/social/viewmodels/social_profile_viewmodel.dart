@@ -114,9 +114,7 @@ class SocialProfileViewModel extends _$SocialProfileViewModel {
     if (latest == null) {
       return;
     }
-    state = AsyncData(
-      latest.copyWith(isFollowActionInProgress: isInProgress),
-    );
+    state = AsyncData(latest.copyWith(isFollowActionInProgress: isInProgress));
   }
 
   SocialProfileDetailState? _latestValue() {

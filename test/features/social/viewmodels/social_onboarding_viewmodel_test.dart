@@ -63,46 +63,41 @@ void main() {
     expect(state.validationError, isNull);
   });
 
-  test(
-    'concurrent save while saving calls repository once',
-    () async {
-      final completer = Completer<SocialProfileModel>();
-      final repo = _FakeSocialRepository(updateCompleter: completer);
-      final container = ProviderContainer(
-        overrides: [socialRepositoryProvider.overrideWithValue(repo)],
-      );
-      addTearDown(container.dispose);
+  test('concurrent save while saving calls repository once', () async {
+    final completer = Completer<SocialProfileModel>();
+    final repo = _FakeSocialRepository(updateCompleter: completer);
+    final container = ProviderContainer(
+      overrides: [socialRepositoryProvider.overrideWithValue(repo)],
+    );
+    addTearDown(container.dispose);
 
-      final notifier = container.read(
-        socialOnboardingViewModelProvider.notifier,
-      );
-      final firstSave = notifier.saveProfile(
-        displayName: 'First',
-        avatarUrl: null,
-        privacy: SocialPrivacy.public,
-      );
+    final notifier = container.read(socialOnboardingViewModelProvider.notifier);
+    final firstSave = notifier.saveProfile(
+      displayName: 'First',
+      avatarUrl: null,
+      privacy: SocialPrivacy.public,
+    );
 
-      expect(container.read(socialOnboardingViewModelProvider).isSaving, isTrue);
+    expect(container.read(socialOnboardingViewModelProvider).isSaving, isTrue);
 
-      await notifier.saveProfile(
-        displayName: 'Second',
-        avatarUrl: 'https://example.com/second.jpg',
-        privacy: SocialPrivacy.private,
-      );
+    await notifier.saveProfile(
+      displayName: 'Second',
+      avatarUrl: 'https://example.com/second.jpg',
+      privacy: SocialPrivacy.private,
+    );
 
-      expect(repo.updateMyProfileCalls, 1);
-      expect(repo.lastDisplayName, 'First');
+    expect(repo.updateMyProfileCalls, 1);
+    expect(repo.lastDisplayName, 'First');
 
-      completer.complete(repo.profile.copyWith(displayName: 'First'));
-      await firstSave;
+    completer.complete(repo.profile.copyWith(displayName: 'First'));
+    await firstSave;
 
-      final state = container.read(socialOnboardingViewModelProvider);
-      expect(repo.updateMyProfileCalls, 1);
-      expect(state.profile?.displayName, 'First');
-      expect(state.errorMessage, isNull);
-      expect(state.isSaving, isFalse);
-    },
-  );
+    final state = container.read(socialOnboardingViewModelProvider);
+    expect(repo.updateMyProfileCalls, 1);
+    expect(state.profile?.displayName, 'First');
+    expect(state.errorMessage, isNull);
+    expect(state.isSaving, isFalse);
+  });
 
   test(
     'blank displayName sets validation error and does not call repository',
