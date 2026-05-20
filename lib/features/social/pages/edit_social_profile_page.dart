@@ -110,5 +110,14 @@ class _EditSocialProfilePageState extends ConsumerState<EditSocialProfilePage> {
               : _avatarUrlController.text.trim(),
           privacy: _privacy,
         );
+    if (!mounted) {
+      return;
+    }
+    final saveState = ref.read(socialOnboardingViewModelProvider);
+    if (saveState.profile != null &&
+        saveState.errorMessage == null &&
+        saveState.validationError == null) {
+      ref.invalidate(mySocialProfileProvider);
+    }
   }
 }

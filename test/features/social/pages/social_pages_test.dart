@@ -115,6 +115,7 @@ void main() {
     expect(repository.savedDisplayName, 'Beltrano');
     expect(repository.savedAvatarUrl, 'https://example.com/avatar.png');
     expect(repository.savedIsPublic, isFalse);
+    expect(repository.getMyProfileCallCount, 2);
   });
 
   testWidgets(
@@ -171,12 +172,14 @@ class _FakeSocialRepository implements SocialRepository {
   final bool unavailableProfile;
   final SocialProfileModel? profile;
   bool savedProfile = false;
+  int getMyProfileCallCount = 0;
   String? savedDisplayName;
   String? savedAvatarUrl;
   bool? savedIsPublic;
 
   @override
   Future<SocialProfileModel> getMyProfile() async {
+    getMyProfileCallCount += 1;
     if (missingProfile) {
       throw const ServerException(message: 'Missing', statusCode: 404);
     }
