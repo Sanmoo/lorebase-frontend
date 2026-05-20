@@ -23,6 +23,14 @@ void main() {
         expect(authRedirect(unauthenticated, '/recommend'), '/login');
         expect(authRedirect(unauthenticated, '/social'), '/login');
         expect(authRedirect(unauthenticated, '/social/profile/user-1'), '/login');
+        expect(
+          authRedirect(unauthenticated, '/social/profile/user-1/followers'),
+          '/login',
+        );
+        expect(
+          authRedirect(unauthenticated, '/social/profile/user-1/following'),
+          '/login',
+        );
         expect(authRedirect(unauthenticated, '/series/123'), '/login');
         expect(authRedirect(unauthenticated, '/movies/123'), '/login');
       });
@@ -38,6 +46,14 @@ void main() {
         expect(authRedirect(authenticated, '/recommend'), isNull);
         expect(authRedirect(authenticated, '/social'), isNull);
         expect(authRedirect(authenticated, '/social/profile/user-1'), isNull);
+        expect(
+          authRedirect(authenticated, '/social/profile/user-1/followers'),
+          isNull,
+        );
+        expect(
+          authRedirect(authenticated, '/social/profile/user-1/following'),
+          isNull,
+        );
         expect(authRedirect(authenticated, '/series/123'), isNull);
         expect(authRedirect(authenticated, '/movies/123'), isNull);
       });
@@ -91,21 +107,30 @@ void main() {
     });
 
     test('social profile route is registered', () {
-      final container = ProviderContainer(overrides: [
-        authViewModelProvider.overrideWith(
-          () => _FakeAuthVM(const AuthState.authenticated('user1')),
-        ),
-      ]);
-      addTearDown(container.dispose);
-
-      final router = container.read(routerProvider);
-      final matches = router.configuration.findMatch(
-        Uri.parse('/social/profile/user-1'),
-      );
-      final shellMatch = matches.matches.last as dynamic;
-      final routeMatch = shellMatch.matches.last as RouteMatch;
+      final router = _routerForTest();
+      final routeMatch = _lastRouteMatch(router, '/social/profile/user-1');
 
       expect(routeMatch.route.path, '/social/profile/:userId');
+    });
+
+    test('social followers route is registered', () {
+      final router = _routerForTest();
+      final routeMatch = _lastRouteMatch(
+        router,
+        '/social/profile/user-1/followers',
+      );
+
+      expect(routeMatch.route.path, '/social/profile/:userId/followers');
+    });
+
+    test('social following route is registered', () {
+      final router = _routerForTest();
+      final routeMatch = _lastRouteMatch(
+        router,
+        '/social/profile/user-1/following',
+      );
+
+      expect(routeMatch.route.path, '/social/profile/:userId/following');
     });
   });
 
@@ -130,6 +155,22 @@ void main() {
       expect(authRedirect(authenticated, '/'), isNull);
     });
   });
+}
+
+GoRouter _routerForTest() {
+  final container = ProviderContainer(overrides: [
+    authViewModelProvider.overrideWith(
+      () => _FakeAuthVM(const AuthState.authenticated('user1')),
+    ),
+  ]);
+  addTearDown(container.dispose);
+  return container.read(routerProvider);
+}
+
+RouteMatch _lastRouteMatch(GoRouter router, String path) {
+  final matches = router.configuration.findMatch(Uri.parse(path));
+  final shellMatch = matches.matches.last as dynamic;
+  return shellMatch.matches.last as RouteMatch;
 }
 
 class _FakeAuthVM extends AuthViewModel {

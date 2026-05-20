@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../viewmodels/social_follow_list_viewmodel.dart';
 import '../viewmodels/social_profile_viewmodel.dart';
@@ -34,7 +35,7 @@ class SocialProfilePage extends ConsumerWidget {
               onUnfollow: () => ref
                   .read(socialProfileViewModelProvider(userId).notifier)
                   .unfollow(),
-              onEdit: () {},
+              onEdit: () => context.go('/social/profile/edit'),
             ),
             const TabBar(
               isScrollable: true,
@@ -87,11 +88,18 @@ class _ActivityTab extends StatelessWidget {
     }
     return ListView.builder(
       itemCount: state.activity.items.length,
-      itemBuilder: (context, index) => SocialActivityCard(
-        event: state.activity.items[index],
-        onUserTap: () {},
-        onMediaTap: () {},
-      ),
+      itemBuilder: (context, index) {
+        final event = state.activity.items[index];
+        return SocialActivityCard(
+          event: event,
+          onUserTap: () => context.go('/social/profile/${event.user.userId}'),
+          onMediaTap: () => context.go(
+            event.media.mediaType == 'SERIES'
+                ? '/series/${event.media.mediaId}'
+                : '/movies/${event.media.mediaId}',
+          ),
+        );
+      },
     );
   }
 }

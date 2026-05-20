@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/errors/exceptions.dart';
 import '../data/models/social_profile_model.dart';
@@ -76,11 +77,18 @@ class _FeedTab extends ConsumerWidget {
         }
         return ListView.builder(
           itemCount: data.items.length,
-          itemBuilder: (context, index) => SocialActivityCard(
-            event: data.items[index],
-            onUserTap: () {},
-            onMediaTap: () {},
-          ),
+          itemBuilder: (context, index) {
+            final event = data.items[index];
+            return SocialActivityCard(
+              event: event,
+              onUserTap: () => context.go('/social/profile/${event.user.userId}'),
+              onMediaTap: () => context.go(
+                event.media.mediaType == 'SERIES'
+                    ? '/series/${event.media.mediaId}'
+                    : '/movies/${event.media.mediaId}',
+              ),
+            );
+          },
         );
       },
       error: (_, _) => const Center(child: Text('Erro ao carregar feed.')),
@@ -109,7 +117,7 @@ class _DiscoverTab extends ConsumerWidget {
               onFollow: () => ref
                   .read(socialDiscoverViewModelProvider.notifier)
                   .followUser(user.userId),
-              onUserTap: () {},
+              onUserTap: () => context.go('/social/profile/${user.userId}'),
             );
           },
         );

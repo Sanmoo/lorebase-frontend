@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/models/social_privacy.dart';
+import '../viewmodels/social_discover_viewmodel.dart';
 import '../viewmodels/social_onboarding_viewmodel.dart';
+import '../widgets/discover_user_card.dart';
 
 class SocialOnboardingPage extends ConsumerStatefulWidget {
   const SocialOnboardingPage({super.key, this.onProfileCreated});
@@ -22,6 +24,7 @@ class _SocialOnboardingPageState extends ConsumerState<SocialOnboardingPage> {
   final _avatarUrlController = TextEditingController();
   SocialPrivacy? _privacy;
   bool _showPrivacyError = false;
+  bool _showSuggestions = false;
 
   @override
   void dispose() {
@@ -33,6 +36,12 @@ class _SocialOnboardingPageState extends ConsumerState<SocialOnboardingPage> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(socialOnboardingViewModelProvider);
+
+    if (_showSuggestions) {
+      return _OnboardingSuggestions(
+        onFinish: () => widget.onProfileCreated?.call(),
+      );
+    }
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
@@ -118,7 +127,65 @@ class _SocialOnboardingPageState extends ConsumerState<SocialOnboardingPage> {
           privacy: privacy,
         );
     if (ref.read(socialOnboardingViewModelProvider).profile != null) {
-      widget.onProfileCreated?.call();
+      setState(() => _showSuggestions = true);
     }
+  }
+}
+
+class _OnboardingSuggestions extends ConsumerWidget {
+  const _OnboardingSuggestions({required this.onFinish});
+
+  final VoidCallback onFinish;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final suggestions = ref.watch(socialDiscoverViewModelProvider);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(24),
+          child: Text(
+            'Sugestões para seguir',
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
+        ),
+        Expanded(
+          child: suggestions.when(
+            data: (data) {
+              if (data.items.isEmpty) {
+                return const Center(
+                  child: Text('Nenhuma sugestão por enquanto.'),
+                );
+              }
+              return ListView.builder(
+                itemCount: data.items.length,
+                itemBuilder: (context, index) {
+                  final user = data.items[index];
+                  return DiscoverUserCard(
+                    user: user,
+                    onFollow: () => ref
+                        .read(socialDiscoverViewModelProvider.notifier)
+                        .followUser(user.userId),
+                  );
+                },
+              );
+            },
+            error: (_, _) => const Center(
+              child: Text('Erro ao descobrir pessoas.'),
+            ),
+            loading: () => const Center(child: CircularProgressIndicator()),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(24),
+          child: FilledButton(
+            onPressed: onFinish,
+            child: const Text('Finalizar'),
+          ),
+        ),
+      ],
+    );
   }
 }

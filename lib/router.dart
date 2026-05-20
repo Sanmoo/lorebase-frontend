@@ -16,8 +16,10 @@ import 'features/tracking/pages/tracking_list_page.dart';
 import 'features/series/pages/series_detail_page.dart';
 import 'features/movies/pages/movie_detail_page.dart';
 import 'features/social/pages/edit_social_profile_page.dart';
+import 'features/social/pages/social_follow_list_page.dart';
 import 'features/social/pages/social_page.dart';
 import 'features/social/pages/social_profile_page.dart';
+import 'features/social/viewmodels/social_follow_list_viewmodel.dart';
 
 @visibleForTesting
 String? authRedirect(AuthState authState, String location) {
@@ -105,6 +107,26 @@ final routerProvider = Provider<GoRouter>((ref) {
             pageBuilder: (context, state) => NoTransitionPage(
               key: state.pageKey,
               child: const EditSocialProfilePage(),
+            ),
+          ),
+          GoRoute(
+            path: '/social/profile/:userId/followers',
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: SocialFollowListPage(
+                userId: state.pathParameters['userId']!,
+                kind: SocialFollowListKind.followers,
+              ),
+            ),
+          ),
+          GoRoute(
+            path: '/social/profile/:userId/following',
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: SocialFollowListPage(
+                userId: state.pathParameters['userId']!,
+                kind: SocialFollowListKind.following,
+              ),
             ),
           ),
           GoRoute(
