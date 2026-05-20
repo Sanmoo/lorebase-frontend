@@ -13,6 +13,7 @@ class TrackingListViewModel extends _$TrackingListViewModel {
   String? _currentStatus;
   MediaType _currentMediaType = MediaType.series;
   int _page = 1;
+  bool _isFetching = false;
   static const int _pageSize = 20;
 
   @override
@@ -42,13 +43,23 @@ class TrackingListViewModel extends _$TrackingListViewModel {
     }
 
     state = const AsyncValue.loading();
-    await _fetch(append: false);
+    _isFetching = true;
+    try {
+      await _fetch(append: false);
+    } finally {
+      _isFetching = false;
+    }
   }
 
   Future<void> loadMore() async {
-    if (state.isLoading) return;
+    if (_isFetching) return;
     _page++;
-    await _fetch(append: true);
+    _isFetching = true;
+    try {
+      await _fetch(append: true);
+    } finally {
+      _isFetching = false;
+    }
   }
 
   Future<void> refresh() async {

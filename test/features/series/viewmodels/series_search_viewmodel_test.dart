@@ -8,12 +8,19 @@ import 'package:lorebase/features/series/data/models/series_model.dart';
 class FakeSeriesRepo implements SeriesRepository {
   List<SeriesModel>? results;
   bool shouldThrow = false;
+  bool shouldCancel = false;
   CancelToken? lastCancelToken;
 
   @override
   Future<List<SeriesModel>> searchSeries(String query,
       {int limit = 20, CancelToken? cancelToken}) async {
     lastCancelToken = cancelToken;
+    if (shouldCancel) {
+      throw DioException(
+        type: DioExceptionType.cancel,
+        requestOptions: RequestOptions(path: ''),
+      );
+    }
     if (shouldThrow) {
       throw DioException(
         type: DioExceptionType.badResponse,
@@ -90,6 +97,20 @@ void main() {
 
       final state = container.read(seriesSearchViewModelProvider);
       expect(state.hasError, true);
+    });
+
+    test('search() ignores cancellation errors', () async {
+      final repo = FakeSeriesRepo()..shouldCancel = true;
+      final container = createContainer(repo);
+      addTearDown(container.dispose);
+
+      await container
+          .read(seriesSearchViewModelProvider.notifier)
+          .search('test');
+
+      final state = container.read(seriesSearchViewModelProvider);
+      expect(state.hasValue, true);
+      expect(state.value, isEmpty);
     });
 
     test('clear() resets to empty list', () async {

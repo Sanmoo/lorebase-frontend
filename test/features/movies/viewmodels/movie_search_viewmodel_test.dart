@@ -8,6 +8,7 @@ import 'package:lorebase/features/movies/viewmodels/movie_search_viewmodel.dart'
 class FakeMovieRepo implements MovieRepository {
   List<MovieModel>? results;
   bool shouldThrow = false;
+  bool shouldCancel = false;
   CancelToken? lastCancelToken;
 
   @override
@@ -17,6 +18,12 @@ class FakeMovieRepo implements MovieRepository {
     CancelToken? cancelToken,
   }) async {
     lastCancelToken = cancelToken;
+    if (shouldCancel) {
+      throw DioException(
+        type: DioExceptionType.cancel,
+        requestOptions: RequestOptions(path: ''),
+      );
+    }
     if (shouldThrow) {
       throw DioException(
         type: DioExceptionType.badResponse,
@@ -93,6 +100,20 @@ void main() {
 
       final state = container.read(movieSearchViewModelProvider);
       expect(state.hasError, true);
+    });
+
+    test('search() ignores cancellation errors', () async {
+      final repo = FakeMovieRepo()..shouldCancel = true;
+      final container = createContainer(repo);
+      addTearDown(container.dispose);
+
+      await container
+          .read(movieSearchViewModelProvider.notifier)
+          .search('test');
+
+      final state = container.read(movieSearchViewModelProvider);
+      expect(state.hasValue, true);
+      expect(state.value, isEmpty);
     });
 
     test('clear() resets to empty list', () async {

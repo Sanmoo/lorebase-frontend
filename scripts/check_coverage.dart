@@ -10,7 +10,7 @@ Future<void> main(List<String> args) async {
   // 1. Run flutter test with coverage and branch coverage
   final testProcess = await Process.start(
     'flutter',
-    ['test', '--coverage'],
+    ['test', '--coverage', '--branch-coverage'],
   );
 
   testProcess.stdout.transform(utf8.decoder).listen(stdout.write);

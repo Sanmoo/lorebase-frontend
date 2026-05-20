@@ -428,6 +428,20 @@ void main() {
       expect(trackingRepo.lastUpdatedFields, isNull);
     });
 
+    test('removeTracking() no-ops when state is null', () async {
+      final seriesRepo = FakeSeriesRepo();
+      final trackingRepo = FakeTrackingRepo();
+      final container =
+          createContainer(seriesRepo: seriesRepo, trackingRepo: trackingRepo);
+      addTearDown(container.dispose);
+
+      await container
+          .read(seriesDetailViewModelProvider(42).notifier)
+          .removeTracking();
+
+      expect(trackingRepo.lastDeletedMediaId, isNull);
+    });
+
     test('removeTracking() no-ops when tracking is null in state', () async {
       final seriesRepo = FakeSeriesRepo()
         ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');

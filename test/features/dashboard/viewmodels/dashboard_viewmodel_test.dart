@@ -291,6 +291,29 @@ void main() {
       sub.close();
     });
 
+    test('refresh() ignores invalid stale cache and sets error', () async {
+      final cacheService = CacheService();
+      await cacheService.set(
+        'dashboard:v2:SERIES',
+        CacheEntry(
+          json: 'not valid json',
+          cachedAt: DateTime.now(),
+          ttl: const Duration(hours: 6),
+        ),
+      );
+      final repo = FakeDashboardRepo()..shouldThrow = true;
+      final container = ProviderContainer(overrides: [
+        dashboardRepositoryProvider.overrideWith((ref) => repo),
+        cacheServiceProvider.overrideWith((ref) => cacheService),
+      ]);
+      addTearDown(container.dispose);
+
+      await container.read(dashboardViewModelProvider.notifier).refresh();
+
+      final state = container.read(dashboardViewModelProvider);
+      expect(state.hasError, true);
+    });
+
     test('refresh() sets error when no stale cache is available', () async {
       final repo = FakeDashboardRepo()..shouldThrow = true;
       final container = ProviderContainer(overrides: [

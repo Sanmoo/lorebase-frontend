@@ -24,6 +24,7 @@ class SeriesSearchViewModel extends _$SeriesSearchViewModel {
     final cancelToken = CancelToken();
     _cancelToken = cancelToken;
 
+    final previousState = state;
     state = const AsyncValue.loading();
     try {
       final repository = ref.read(seriesRepositoryProvider);
@@ -33,7 +34,10 @@ class SeriesSearchViewModel extends _$SeriesSearchViewModel {
       );
       state = AsyncValue.data(results);
     } catch (error, stackTrace) {
-      if (error is DioException && error.type == DioExceptionType.cancel) return;
+      if (error is DioException && error.type == DioExceptionType.cancel) {
+        state = previousState;
+        return;
+      }
       state = AsyncValue.error(error, stackTrace);
     }
   }

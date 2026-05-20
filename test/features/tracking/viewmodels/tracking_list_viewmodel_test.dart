@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -26,6 +27,7 @@ class FakeTrackingRepo implements TrackingRepository {
   bool shouldThrow = false;
   MediaType? lastMediaType;
   int getTrackingCallCount = 0;
+  Completer<void>? delay;
 
   @override
   Future<List<TrackedMediaModel>> getTracking({
@@ -36,6 +38,7 @@ class FakeTrackingRepo implements TrackingRepository {
   }) async {
     getTrackingCallCount++;
     lastMediaType = mediaType;
+    await delay?.future;
     if (shouldThrow) throw Exception('Failed');
     return results ?? [];
   }
@@ -313,19 +316,33 @@ void main() {
     });
 
     test('loadMore() skips when already loading', () async {
+      final delay = Completer<void>();
       final repo = FakeTrackingRepo()
+        ..delay = delay
         ..results = [_makeTracking('t-1', 'WATCHING')];
-      final container = createContainer(repo);
+      final cache = CacheService();
+      await cache.clearAll();
+      final container = createContainer(repo, cache: cache);
       addTearDown(container.dispose);
 
-      await container
-          .read(trackingListViewModelProvider.notifier)
-          .loadTracking(status: 'WATCHING');
+      final subscription = container.listen(
+        trackingListViewModelProvider,
+        (_, __) {},
+      );
+      addTearDown(subscription.close);
 
-      // loadMore checks state.isLoading - should skip since not loading
-      await container.read(trackingListViewModelProvider.notifier).loadMore();
+      final firstLoadMoreFuture =
+          container.read(trackingListViewModelProvider.notifier).loadMore();
+      await Future<void>.delayed(Duration.zero);
 
-      expect(container.read(trackingListViewModelProvider).value!.length, 2);
+      final secondLoadMoreFuture =
+          container.read(trackingListViewModelProvider.notifier).loadMore();
+      await Future<void>.delayed(Duration.zero);
+
+      expect(repo.getTrackingCallCount, 1);
+      delay.complete();
+      await firstLoadMoreFuture;
+      await secondLoadMoreFuture;
     });
   });
 }

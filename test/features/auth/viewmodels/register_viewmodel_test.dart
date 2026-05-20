@@ -363,6 +363,19 @@ void main() {
       // No assertion needed — reaching here means no exception was thrown
     });
 
+    test('resendCode() silently ignores repository errors', () async {
+      final repo = FakeAuthRepo()..failResendSignUpCode = true;
+      final container = createContainer(repo);
+      addTearDown(container.dispose);
+
+      final notifier = container.read(registerViewModelProvider.notifier);
+      notifier.setEmail('test@email.com');
+
+      await notifier.resendCode();
+
+      expect(container.read(registerViewModelProvider).errorMessage, isNull);
+    });
+
     test('submit() with terms not accepted sets specific error', () async {
       final container = createContainer(FakeAuthRepo());
       addTearDown(container.dispose);
