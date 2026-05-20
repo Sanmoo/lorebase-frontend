@@ -23,8 +23,11 @@ class FakeSeriesRepo implements SeriesRepository {
   }
 
   @override
-  Future<List<SeriesModel>> searchSeries(String query,
-      {int limit = 20, CancelToken? cancelToken}) async {
+  Future<List<SeriesModel>> searchSeries(
+    String query, {
+    int limit = 20,
+    CancelToken? cancelToken,
+  }) async {
     throw UnimplementedError();
   }
 }
@@ -32,6 +35,7 @@ class FakeSeriesRepo implements SeriesRepository {
 class FakeTrackingRepo implements TrackingRepository {
   List<TrackedMediaModel> trackingResults = [];
   bool shouldThrowTracking = false;
+  bool shouldThrowUpdate = false;
   TrackedMediaModel? lastStartedTracking;
   TrackedMediaModel? lastUpdatedTracking;
   String? lastDeletedMediaId;
@@ -79,6 +83,7 @@ class FakeTrackingRepo implements TrackingRepository {
     String? review,
     List<Map<String, dynamic>>? seasonRatings,
   }) async {
+    if (shouldThrowUpdate) throw Exception('update failed');
     lastUpdatedFields = <String, dynamic>{
       'rating': rating,
       'review': review,
@@ -113,47 +118,53 @@ void main() {
       required FakeSeriesRepo seriesRepo,
       required FakeTrackingRepo trackingRepo,
     }) {
-      return ProviderContainer(overrides: [
-        seriesRepositoryProvider.overrideWith((ref) => seriesRepo),
-        trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
-        cacheServiceProvider.overrideWith((ref) => CacheService()),
-      ]);
+      return ProviderContainer(
+        overrides: [
+          seriesRepositoryProvider.overrideWith((ref) => seriesRepo),
+          trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
+          cacheServiceProvider.overrideWith((ref) => CacheService()),
+        ],
+      );
     }
 
-    test('build() returns SeriesDetailState with series and tracking', () async {
-      final seriesRepo = FakeSeriesRepo()
-        ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
-      final trackingRepo = FakeTrackingRepo()
-        ..trackingResults = [
-          TrackedMediaModel(
-            trackingId: 'track-42',
-            userId: 'user-1',
-            mediaType: MediaType.series,
-            mediaId: '42',
-            status: 'WATCHING',
-            media: const TrackedMediaSummaryModel(
-              mediaId: '42',
-              title: 'Test Show',
+    test(
+      'build() returns SeriesDetailState with series and tracking',
+      () async {
+        final seriesRepo = FakeSeriesRepo()
+          ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
+        final trackingRepo = FakeTrackingRepo()
+          ..trackingResults = [
+            TrackedMediaModel(
+              trackingId: 'track-42',
+              userId: 'user-1',
               mediaType: MediaType.series,
+              mediaId: '42',
+              status: 'WATCHING',
+              media: const TrackedMediaSummaryModel(
+                mediaId: '42',
+                title: 'Test Show',
+                mediaType: MediaType.series,
+              ),
+              addedAt: DateTime.now(),
+              lastUpdated: DateTime.now(),
             ),
-            addedAt: DateTime.now(),
-            lastUpdated: DateTime.now(),
-          ),
-        ];
-      final container =
-          createContainer(seriesRepo: seriesRepo, trackingRepo: trackingRepo);
-      addTearDown(container.dispose);
+          ];
+        final container = createContainer(
+          seriesRepo: seriesRepo,
+          trackingRepo: trackingRepo,
+        );
+        addTearDown(container.dispose);
 
-      final future =
-          container.read(seriesDetailViewModelProvider(42).future);
-      final state = await future;
+        final future = container.read(seriesDetailViewModelProvider(42).future);
+        final state = await future;
 
-      expect(state.series.tmdbId, 42);
-      expect(state.series.title, 'Test Show');
-      expect(state.tracking, isNotNull);
-      expect(state.tracking!.status, 'WATCHING');
-      expect(trackingRepo.lastMediaType, MediaType.series);
-    });
+        expect(state.series.tmdbId, 42);
+        expect(state.series.title, 'Test Show');
+        expect(state.tracking, isNotNull);
+        expect(state.tracking!.status, 'WATCHING');
+        expect(trackingRepo.lastMediaType, MediaType.series);
+      },
+    );
 
     test('build() with no matching tracking returns null tracking', () async {
       final seriesRepo = FakeSeriesRepo()
@@ -170,12 +181,13 @@ void main() {
             lastUpdated: DateTime.now(),
           ),
         ];
-      final container =
-          createContainer(seriesRepo: seriesRepo, trackingRepo: trackingRepo);
+      final container = createContainer(
+        seriesRepo: seriesRepo,
+        trackingRepo: trackingRepo,
+      );
       addTearDown(container.dispose);
 
-      final future =
-          container.read(seriesDetailViewModelProvider(42).future);
+      final future = container.read(seriesDetailViewModelProvider(42).future);
       final state = await future;
 
       expect(state.series.tmdbId, 42);
@@ -186,12 +198,13 @@ void main() {
       final seriesRepo = FakeSeriesRepo()
         ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
       final trackingRepo = FakeTrackingRepo()..shouldThrowTracking = true;
-      final container =
-          createContainer(seriesRepo: seriesRepo, trackingRepo: trackingRepo);
+      final container = createContainer(
+        seriesRepo: seriesRepo,
+        trackingRepo: trackingRepo,
+      );
       addTearDown(container.dispose);
 
-      final future =
-          container.read(seriesDetailViewModelProvider(42).future);
+      final future = container.read(seriesDetailViewModelProvider(42).future);
       final state = await future;
 
       expect(state.series.tmdbId, 42);
@@ -218,12 +231,13 @@ void main() {
             lastUpdated: DateTime.now(),
           ),
         ];
-      final container =
-          createContainer(seriesRepo: seriesRepo, trackingRepo: trackingRepo);
+      final container = createContainer(
+        seriesRepo: seriesRepo,
+        trackingRepo: trackingRepo,
+      );
       addTearDown(container.dispose);
 
-      final future =
-          container.read(seriesDetailViewModelProvider(42).future);
+      final future = container.read(seriesDetailViewModelProvider(42).future);
       final state = await future;
 
       expect(state.tracking, isNotNull);
@@ -234,8 +248,10 @@ void main() {
       final seriesRepo = FakeSeriesRepo()
         ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
       final trackingRepo = FakeTrackingRepo();
-      final container =
-          createContainer(seriesRepo: seriesRepo, trackingRepo: trackingRepo);
+      final container = createContainer(
+        seriesRepo: seriesRepo,
+        trackingRepo: trackingRepo,
+      );
       addTearDown(container.dispose);
 
       await container.read(seriesDetailViewModelProvider(42).future);
@@ -251,8 +267,10 @@ void main() {
       final seriesRepo = FakeSeriesRepo()
         ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
       final trackingRepo = FakeTrackingRepo();
-      final container =
-          createContainer(seriesRepo: seriesRepo, trackingRepo: trackingRepo);
+      final container = createContainer(
+        seriesRepo: seriesRepo,
+        trackingRepo: trackingRepo,
+      );
       addTearDown(container.dispose);
 
       await container.read(seriesDetailViewModelProvider(42).future);
@@ -286,8 +304,10 @@ void main() {
             lastUpdated: DateTime.now(),
           ),
         ];
-      final container =
-          createContainer(seriesRepo: seriesRepo, trackingRepo: trackingRepo);
+      final container = createContainer(
+        seriesRepo: seriesRepo,
+        trackingRepo: trackingRepo,
+      );
       addTearDown(container.dispose);
 
       await container.read(seriesDetailViewModelProvider(42).future);
@@ -300,11 +320,11 @@ void main() {
       expect(trackingRepo.lastUpdatedFields!['review'], 'Great');
     });
 
-    test('removeTracking() calls deleteTracking with correct mediaId',
-        () async {
+    test('updateTracking() rethrows repository error', () async {
       final seriesRepo = FakeSeriesRepo()
         ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
       final trackingRepo = FakeTrackingRepo()
+        ..shouldThrowUpdate = true
         ..trackingResults = [
           TrackedMediaModel(
             trackingId: 'track-42',
@@ -321,25 +341,86 @@ void main() {
             lastUpdated: DateTime.now(),
           ),
         ];
-      final container =
-          createContainer(seriesRepo: seriesRepo, trackingRepo: trackingRepo);
+      final container = createContainer(
+        seriesRepo: seriesRepo,
+        trackingRepo: trackingRepo,
+      );
       addTearDown(container.dispose);
 
       await container.read(seriesDetailViewModelProvider(42).future);
-      await container
-          .read(seriesDetailViewModelProvider(42).notifier)
-          .removeTracking();
 
-      expect(trackingRepo.lastDeletedMediaId, '42');
+      expect(
+        () => container
+            .read(seriesDetailViewModelProvider(42).notifier)
+            .updateTracking(rating: 8),
+        throwsException,
+      );
     });
+
+    test(
+      'removeTracking() calls deleteTracking with correct mediaId',
+      () async {
+        final seriesRepo = FakeSeriesRepo()
+          ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
+        final trackingRepo = FakeTrackingRepo()
+          ..trackingResults = [
+            TrackedMediaModel(
+              trackingId: 'track-42',
+              userId: 'user-1',
+              mediaType: MediaType.series,
+              mediaId: '42',
+              status: 'WATCHING',
+              media: const TrackedMediaSummaryModel(
+                mediaId: '42',
+                title: 'Test Show',
+                mediaType: MediaType.series,
+              ),
+              addedAt: DateTime.now(),
+              lastUpdated: DateTime.now(),
+            ),
+          ];
+        final container = createContainer(
+          seriesRepo: seriesRepo,
+          trackingRepo: trackingRepo,
+        );
+        addTearDown(container.dispose);
+
+        await container.read(seriesDetailViewModelProvider(42).future);
+        await container
+            .read(seriesDetailViewModelProvider(42).notifier)
+            .removeTracking();
+
+        expect(trackingRepo.lastDeletedMediaId, '42');
+      },
+    );
 
     test('updateTracking() no-ops when state is null', () async {
       final seriesRepo = FakeSeriesRepo();
       final trackingRepo = FakeTrackingRepo();
-      final container =
-          createContainer(seriesRepo: seriesRepo, trackingRepo: trackingRepo);
+      final container = createContainer(
+        seriesRepo: seriesRepo,
+        trackingRepo: trackingRepo,
+      );
       addTearDown(container.dispose);
 
+      await container
+          .read(seriesDetailViewModelProvider(42).notifier)
+          .updateTracking(rating: 5);
+
+      expect(trackingRepo.lastUpdatedFields, isNull);
+    });
+
+    test('updateTracking() no-ops when tracking is null in state', () async {
+      final seriesRepo = FakeSeriesRepo()
+        ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
+      final trackingRepo = FakeTrackingRepo();
+      final container = createContainer(
+        seriesRepo: seriesRepo,
+        trackingRepo: trackingRepo,
+      );
+      addTearDown(container.dispose);
+
+      await container.read(seriesDetailViewModelProvider(42).future);
       await container
           .read(seriesDetailViewModelProvider(42).notifier)
           .updateTracking(rating: 5);
@@ -351,8 +432,10 @@ void main() {
       final seriesRepo = FakeSeriesRepo()
         ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
       final trackingRepo = FakeTrackingRepo();
-      final container =
-          createContainer(seriesRepo: seriesRepo, trackingRepo: trackingRepo);
+      final container = createContainer(
+        seriesRepo: seriesRepo,
+        trackingRepo: trackingRepo,
+      );
       addTearDown(container.dispose);
 
       await container.read(seriesDetailViewModelProvider(42).future);
@@ -366,8 +449,10 @@ void main() {
     test('addTracking() no-ops when state is null', () async {
       final seriesRepo = FakeSeriesRepo();
       final trackingRepo = FakeTrackingRepo();
-      final container =
-          createContainer(seriesRepo: seriesRepo, trackingRepo: trackingRepo);
+      final container = createContainer(
+        seriesRepo: seriesRepo,
+        trackingRepo: trackingRepo,
+      );
       addTearDown(container.dispose);
 
       await container
@@ -377,39 +462,49 @@ void main() {
       expect(trackingRepo.lastStartedTracking, isNull);
     });
 
-    test('addTracking() with empty review and no rating calls updateTracking', () async {
-      final seriesRepo = FakeSeriesRepo()
-        ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
-      final trackingRepo = FakeTrackingRepo();
-      final container =
-          createContainer(seriesRepo: seriesRepo, trackingRepo: trackingRepo);
-      addTearDown(container.dispose);
+    test(
+      'addTracking() with empty review and no rating calls updateTracking',
+      () async {
+        final seriesRepo = FakeSeriesRepo()
+          ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
+        final trackingRepo = FakeTrackingRepo();
+        final container = createContainer(
+          seriesRepo: seriesRepo,
+          trackingRepo: trackingRepo,
+        );
+        addTearDown(container.dispose);
 
-      await container.read(seriesDetailViewModelProvider(42).future);
-      await container
-          .read(seriesDetailViewModelProvider(42).notifier)
-          .addTracking('WATCHING', review: '');
+        await container.read(seriesDetailViewModelProvider(42).future);
+        await container
+            .read(seriesDetailViewModelProvider(42).notifier)
+            .addTracking('WATCHING', review: '');
 
-      expect(trackingRepo.lastStartedTracking, isNotNull);
-      expect(trackingRepo.lastUpdatedFields, isNull);
-    });
+        expect(trackingRepo.lastStartedTracking, isNotNull);
+        expect(trackingRepo.lastUpdatedFields, isNull);
+      },
+    );
 
-    test('addTracking() with non-empty review and no rating calls updateTracking', () async {
-      final seriesRepo = FakeSeriesRepo()
-        ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
-      final trackingRepo = FakeTrackingRepo();
-      final container =
-          createContainer(seriesRepo: seriesRepo, trackingRepo: trackingRepo);
-      addTearDown(container.dispose);
+    test(
+      'addTracking() with non-empty review and no rating calls updateTracking',
+      () async {
+        final seriesRepo = FakeSeriesRepo()
+          ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
+        final trackingRepo = FakeTrackingRepo();
+        final container = createContainer(
+          seriesRepo: seriesRepo,
+          trackingRepo: trackingRepo,
+        );
+        addTearDown(container.dispose);
 
-      await container.read(seriesDetailViewModelProvider(42).future);
-      await container
-          .read(seriesDetailViewModelProvider(42).notifier)
-          .addTracking('WATCHING', review: 'Nice show');
+        await container.read(seriesDetailViewModelProvider(42).future);
+        await container
+            .read(seriesDetailViewModelProvider(42).notifier)
+            .addTracking('WATCHING', review: 'Nice show');
 
-      expect(trackingRepo.lastStartedTracking, isNotNull);
-      expect(trackingRepo.lastUpdatedFields, isNotNull);
-      expect(trackingRepo.lastUpdatedFields!['review'], 'Nice show');
-    });
+        expect(trackingRepo.lastStartedTracking, isNotNull);
+        expect(trackingRepo.lastUpdatedFields, isNotNull);
+        expect(trackingRepo.lastUpdatedFields!['review'], 'Nice show');
+      },
+    );
   });
 }

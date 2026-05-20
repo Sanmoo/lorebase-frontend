@@ -30,6 +30,8 @@ class FakeMovieRepo implements MovieRepository {
 class FakeTrackingRepo implements TrackingRepository {
   List<TrackedMediaModel> trackingResults = [];
   bool shouldThrow = false;
+  bool shouldThrowStart = false;
+  bool shouldThrowUpdate = false;
   String? lastStatus;
   String? lastMediaId;
   MediaType? lastMediaType;
@@ -56,6 +58,7 @@ class FakeTrackingRepo implements TrackingRepository {
     MediaType mediaType,
     String status,
   ) async {
+    if (shouldThrowStart) throw Exception('start failed');
     startCalled = true;
     lastMediaId = mediaId;
     lastMediaType = mediaType;
@@ -80,6 +83,7 @@ class FakeTrackingRepo implements TrackingRepository {
     String? review,
     List<Map<String, dynamic>>? seasonRatings,
   }) async {
+    if (shouldThrowUpdate) throw Exception('update failed');
     updateCalled = true;
     lastMediaId = mediaId;
     lastMediaType = mediaType;
@@ -130,11 +134,13 @@ void main() {
         ),
       ];
 
-    final container = ProviderContainer(overrides: [
-      movieRepositoryProvider.overrideWith((ref) => movieRepo),
-      trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
-      cacheServiceProvider.overrideWith((ref) => CacheService()),
-    ]);
+    final container = ProviderContainer(
+      overrides: [
+        movieRepositoryProvider.overrideWith((ref) => movieRepo),
+        trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
+        cacheServiceProvider.overrideWith((ref) => CacheService()),
+      ],
+    );
     addTearDown(container.dispose);
 
     final state = await container.read(movieDetailViewModelProvider(7).future);
@@ -149,11 +155,13 @@ void main() {
       ..movieResult = const MovieModel(tmdbId: 7, title: 'Se7en');
     final trackingRepo = FakeTrackingRepo()..shouldThrow = true;
 
-    final container = ProviderContainer(overrides: [
-      movieRepositoryProvider.overrideWith((ref) => movieRepo),
-      trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
-      cacheServiceProvider.overrideWith((ref) => CacheService()),
-    ]);
+    final container = ProviderContainer(
+      overrides: [
+        movieRepositoryProvider.overrideWith((ref) => movieRepo),
+        trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
+        cacheServiceProvider.overrideWith((ref) => CacheService()),
+      ],
+    );
     addTearDown(container.dispose);
 
     final state = await container.read(movieDetailViewModelProvider(7).future);
@@ -167,11 +175,13 @@ void main() {
       ..movieResult = const MovieModel(tmdbId: 7, title: 'Se7en');
     final trackingRepo = FakeTrackingRepo();
 
-    final container = ProviderContainer(overrides: [
-      movieRepositoryProvider.overrideWith((ref) => movieRepo),
-      trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
-      cacheServiceProvider.overrideWith((ref) => CacheService()),
-    ]);
+    final container = ProviderContainer(
+      overrides: [
+        movieRepositoryProvider.overrideWith((ref) => movieRepo),
+        trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
+        cacheServiceProvider.overrideWith((ref) => CacheService()),
+      ],
+    );
     addTearDown(container.dispose);
 
     await container.read(movieDetailViewModelProvider(7).future);
@@ -188,11 +198,13 @@ void main() {
       ..movieResult = const MovieModel(tmdbId: 7, title: 'Se7en');
     final trackingRepo = FakeTrackingRepo();
 
-    final container = ProviderContainer(overrides: [
-      movieRepositoryProvider.overrideWith((ref) => movieRepo),
-      trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
-      cacheServiceProvider.overrideWith((ref) => CacheService()),
-    ]);
+    final container = ProviderContainer(
+      overrides: [
+        movieRepositoryProvider.overrideWith((ref) => movieRepo),
+        trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
+        cacheServiceProvider.overrideWith((ref) => CacheService()),
+      ],
+    );
     addTearDown(container.dispose);
 
     await container.read(movieDetailViewModelProvider(7).future);
@@ -209,11 +221,13 @@ void main() {
       ..movieResult = const MovieModel(tmdbId: 7, title: 'Se7en');
     final trackingRepo = FakeTrackingRepo();
 
-    final container = ProviderContainer(overrides: [
-      movieRepositoryProvider.overrideWith((ref) => movieRepo),
-      trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
-      cacheServiceProvider.overrideWith((ref) => CacheService()),
-    ]);
+    final container = ProviderContainer(
+      overrides: [
+        movieRepositoryProvider.overrideWith((ref) => movieRepo),
+        trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
+        cacheServiceProvider.overrideWith((ref) => CacheService()),
+      ],
+    );
     addTearDown(container.dispose);
 
     await container.read(movieDetailViewModelProvider(7).future);
@@ -231,11 +245,13 @@ void main() {
       ..movieResult = const MovieModel(tmdbId: 7, title: 'Se7en');
     final trackingRepo = FakeTrackingRepo();
 
-    final container = ProviderContainer(overrides: [
-      movieRepositoryProvider.overrideWith((ref) => movieRepo),
-      trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
-      cacheServiceProvider.overrideWith((ref) => CacheService()),
-    ]);
+    final container = ProviderContainer(
+      overrides: [
+        movieRepositoryProvider.overrideWith((ref) => movieRepo),
+        trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
+        cacheServiceProvider.overrideWith((ref) => CacheService()),
+      ],
+    );
     addTearDown(container.dispose);
 
     // Don't await build - state still loading
@@ -263,11 +279,13 @@ void main() {
         ),
       ];
 
-    final container = ProviderContainer(overrides: [
-      movieRepositoryProvider.overrideWith((ref) => movieRepo),
-      trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
-      cacheServiceProvider.overrideWith((ref) => CacheService()),
-    ]);
+    final container = ProviderContainer(
+      overrides: [
+        movieRepositoryProvider.overrideWith((ref) => movieRepo),
+        trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
+        cacheServiceProvider.overrideWith((ref) => CacheService()),
+      ],
+    );
     addTearDown(container.dispose);
 
     await container.read(movieDetailViewModelProvider(7).future);
@@ -280,16 +298,78 @@ void main() {
     expect(trackingRepo.lastRating, 4);
   });
 
+  test('addTracking() rethrows repository error', () async {
+    final movieRepo = FakeMovieRepo()
+      ..movieResult = const MovieModel(tmdbId: 7, title: 'Se7en');
+    final trackingRepo = FakeTrackingRepo()..shouldThrowStart = true;
+
+    final container = ProviderContainer(
+      overrides: [
+        movieRepositoryProvider.overrideWith((ref) => movieRepo),
+        trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
+        cacheServiceProvider.overrideWith((ref) => CacheService()),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    await container.read(movieDetailViewModelProvider(7).future);
+
+    expect(
+      () => container
+          .read(movieDetailViewModelProvider(7).notifier)
+          .addTracking('WATCHING'),
+      throwsException,
+    );
+  });
+
+  test('updateTracking() rethrows repository error', () async {
+    final movieRepo = FakeMovieRepo()
+      ..movieResult = const MovieModel(tmdbId: 7, title: 'Se7en');
+    final trackingRepo = FakeTrackingRepo()
+      ..shouldThrowUpdate = true
+      ..trackingResults = [
+        TrackedMediaModel(
+          trackingId: 'track-7',
+          userId: 'user-1',
+          mediaType: MediaType.movie,
+          mediaId: '7',
+          status: 'WATCHING',
+          addedAt: DateTime.now(),
+          lastUpdated: DateTime.now(),
+        ),
+      ];
+
+    final container = ProviderContainer(
+      overrides: [
+        movieRepositoryProvider.overrideWith((ref) => movieRepo),
+        trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
+        cacheServiceProvider.overrideWith((ref) => CacheService()),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    await container.read(movieDetailViewModelProvider(7).future);
+
+    expect(
+      () => container
+          .read(movieDetailViewModelProvider(7).notifier)
+          .updateTracking(status: 'COMPLETED'),
+      throwsException,
+    );
+  });
+
   test('updateTracking() does nothing when no tracking exists', () async {
     final movieRepo = FakeMovieRepo()
       ..movieResult = const MovieModel(tmdbId: 7, title: 'Se7en');
     final trackingRepo = FakeTrackingRepo();
 
-    final container = ProviderContainer(overrides: [
-      movieRepositoryProvider.overrideWith((ref) => movieRepo),
-      trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
-      cacheServiceProvider.overrideWith((ref) => CacheService()),
-    ]);
+    final container = ProviderContainer(
+      overrides: [
+        movieRepositoryProvider.overrideWith((ref) => movieRepo),
+        trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
+        cacheServiceProvider.overrideWith((ref) => CacheService()),
+      ],
+    );
     addTearDown(container.dispose);
 
     await container.read(movieDetailViewModelProvider(7).future);
@@ -316,11 +396,13 @@ void main() {
         ),
       ];
 
-    final container = ProviderContainer(overrides: [
-      movieRepositoryProvider.overrideWith((ref) => movieRepo),
-      trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
-      cacheServiceProvider.overrideWith((ref) => CacheService()),
-    ]);
+    final container = ProviderContainer(
+      overrides: [
+        movieRepositoryProvider.overrideWith((ref) => movieRepo),
+        trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
+        cacheServiceProvider.overrideWith((ref) => CacheService()),
+      ],
+    );
     addTearDown(container.dispose);
 
     await container.read(movieDetailViewModelProvider(7).future);
@@ -336,11 +418,13 @@ void main() {
       ..movieResult = const MovieModel(tmdbId: 7, title: 'Se7en');
     final trackingRepo = FakeTrackingRepo();
 
-    final container = ProviderContainer(overrides: [
-      movieRepositoryProvider.overrideWith((ref) => movieRepo),
-      trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
-      cacheServiceProvider.overrideWith((ref) => CacheService()),
-    ]);
+    final container = ProviderContainer(
+      overrides: [
+        movieRepositoryProvider.overrideWith((ref) => movieRepo),
+        trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
+        cacheServiceProvider.overrideWith((ref) => CacheService()),
+      ],
+    );
     addTearDown(container.dispose);
 
     await container.read(movieDetailViewModelProvider(7).future);
