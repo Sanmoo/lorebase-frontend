@@ -9,6 +9,7 @@ import 'package:lorebase/features/social/data/models/paginated_social_response.d
 import 'package:lorebase/features/social/data/models/public_list_item_model.dart';
 import 'package:lorebase/features/social/data/models/social_profile_model.dart';
 import 'package:lorebase/features/social/data/repositories/social_repository.dart';
+import 'package:lorebase/features/social/pages/edit_social_profile_page.dart';
 import 'package:lorebase/features/social/pages/social_onboarding_page.dart';
 import 'package:lorebase/features/social/pages/social_page.dart';
 import 'package:lorebase/features/social/pages/social_profile_page.dart';
@@ -67,6 +68,55 @@ void main() {
     expect(repository.savedProfile, isTrue);
   });
 
+  testWidgets('Social page refreshes after onboarding creates profile', (
+    tester,
+  ) async {
+    final repository = _FakeSocialRepository(missingProfile: true);
+    await tester.pumpSocial(const SocialPage(), repository);
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(TextFormField).first, 'Fulano');
+    await tester.tap(find.text('Público'));
+    await tester.pump();
+    await tester.tap(find.text('Salvar perfil'));
+    await tester.pumpAndSettle();
+
+    expect(repository.savedProfile, isTrue);
+    expect(find.text('Feed'), findsOneWidget);
+    expect(find.text('Discover'), findsOneWidget);
+  });
+
+  testWidgets('Edit social profile loads current profile before saving', (
+    tester,
+  ) async {
+    final repository = _FakeSocialRepository(
+      profile: _profile(
+        displayName: 'Beltrano',
+        avatarUrl: 'https://example.com/avatar.png',
+        isPublic: false,
+      ),
+    );
+    await tester.pumpSocial(const EditSocialProfilePage(), repository);
+    await tester.pumpAndSettle();
+
+    expect(find.widgetWithText(TextFormField, 'Beltrano'), findsOneWidget);
+    expect(
+      find.widgetWithText(TextFormField, 'https://example.com/avatar.png'),
+      findsOneWidget,
+    );
+    expect(
+      tester.widget<SwitchListTile>(find.byType(SwitchListTile)).value,
+      isFalse,
+    );
+
+    await tester.tap(find.text('Salvar alterações'));
+    await tester.pumpAndSettle();
+
+    expect(repository.savedDisplayName, 'Beltrano');
+    expect(repository.savedAvatarUrl, 'https://example.com/avatar.png');
+    expect(repository.savedIsPublic, isFalse);
+  });
+
   testWidgets(
     'Profile page renders Activity, Lists, Followers, Following tabs',
     (tester) async {
@@ -114,18 +164,23 @@ class _FakeSocialRepository implements SocialRepository {
   _FakeSocialRepository({
     this.missingProfile = false,
     this.unavailableProfile = false,
+    this.profile,
   });
 
-  final bool missingProfile;
+  bool missingProfile;
   final bool unavailableProfile;
+  final SocialProfileModel? profile;
   bool savedProfile = false;
+  String? savedDisplayName;
+  String? savedAvatarUrl;
+  bool? savedIsPublic;
 
   @override
   Future<SocialProfileModel> getMyProfile() async {
     if (missingProfile) {
       throw const ServerException(message: 'Missing', statusCode: 404);
     }
-    return _profile();
+    return profile ?? _profile();
   }
 
   @override
@@ -135,7 +190,15 @@ class _FakeSocialRepository implements SocialRepository {
     required bool isPublic,
   }) async {
     savedProfile = true;
-    return _profile(displayName: displayName, isPublic: isPublic);
+    missingProfile = false;
+    savedDisplayName = displayName;
+    savedAvatarUrl = avatarUrl;
+    savedIsPublic = isPublic;
+    return _profile(
+      displayName: displayName,
+      avatarUrl: avatarUrl,
+      isPublic: isPublic,
+    );
   }
 
   @override
@@ -204,13 +267,14 @@ PaginatedSocialResponse<T> _empty<T>() => PaginatedSocialResponse<T>(
 SocialProfileModel _profile({
   String userId = 'user-1',
   String displayName = 'Fulano',
+  String? avatarUrl,
   bool isPublic = true,
 }) {
   final now = DateTime.utc(2026, 5, 20);
   return SocialProfileModel(
     userId: userId,
     displayName: displayName,
-    avatarUrl: null,
+    avatarUrl: avatarUrl,
     isPublic: isPublic,
     followingCount: 0,
     followerCount: 0,

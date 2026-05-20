@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -7,7 +5,9 @@ import '../data/models/social_privacy.dart';
 import '../viewmodels/social_onboarding_viewmodel.dart';
 
 class SocialOnboardingPage extends ConsumerStatefulWidget {
-  const SocialOnboardingPage({super.key});
+  const SocialOnboardingPage({super.key, this.onProfileCreated});
+
+  final VoidCallback? onProfileCreated;
 
   @override
   ConsumerState<SocialOnboardingPage> createState() =>
@@ -61,7 +61,9 @@ class _SocialOnboardingPageState extends ConsumerState<SocialOnboardingPage> {
             RadioListTile<SocialPrivacy>(
               title: const Text('Público'),
               value: SocialPrivacy.public,
+              // ignore: deprecated_member_use
               groupValue: _privacy,
+              // ignore: deprecated_member_use
               onChanged: (value) => setState(() {
                 _privacy = value;
                 _showPrivacyError = false;
@@ -70,7 +72,9 @@ class _SocialOnboardingPageState extends ConsumerState<SocialOnboardingPage> {
             RadioListTile<SocialPrivacy>(
               title: const Text('Privado'),
               value: SocialPrivacy.private,
+              // ignore: deprecated_member_use
               groupValue: _privacy,
+              // ignore: deprecated_member_use
               onChanged: (value) => setState(() {
                 _privacy = value;
                 _showPrivacyError = false;
@@ -111,5 +115,8 @@ class _SocialOnboardingPageState extends ConsumerState<SocialOnboardingPage> {
               : _avatarUrlController.text.trim(),
           privacy: privacy,
         );
+    if (ref.read(socialOnboardingViewModelProvider).profile != null) {
+      widget.onProfileCreated?.call();
+    }
   }
 }

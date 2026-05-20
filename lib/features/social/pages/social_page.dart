@@ -26,7 +26,9 @@ class SocialPage extends ConsumerWidget {
       data: (_) => const _SocialTabs(),
       error: (error, _) {
         if (error is ServerException && error.statusCode == 404) {
-          return const SocialOnboardingPage();
+          return SocialOnboardingPage(
+            onProfileCreated: () => ref.invalidate(mySocialProfileProvider),
+          );
         }
         return const Center(child: Text('Não foi possível carregar o Social.'));
       },
