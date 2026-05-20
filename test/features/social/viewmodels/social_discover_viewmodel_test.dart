@@ -100,6 +100,21 @@ void main() {
       expect(state.items.single.userId, 'user-1');
     });
 
+    test('refresh reloads and replaces items', () async {
+      final repo = _FakeSocialRepository()
+        ..discover = _discoverResponse(isFollowed: false, userId: 'user-1');
+      final container = _container(repo);
+      addTearDown(container.dispose);
+      await container.read(socialDiscoverViewModelProvider.future);
+
+      repo.discover = _discoverResponse(isFollowed: false, userId: 'user-2');
+      await container.read(socialDiscoverViewModelProvider.notifier).refresh();
+
+      final state = container.read(socialDiscoverViewModelProvider);
+      expect(repo.discoverCalls, 2);
+      expect(state.value!.items.single.userId, 'user-2');
+    });
+
     test('followUser calls repository and marks the user as followed', () async {
       final repo = _FakeSocialRepository()
         ..discover = _discoverResponse(isFollowed: false);
@@ -116,6 +131,30 @@ void main() {
       expect(state.items.single.isFollowedByMe, true);
       expect(state.nextCursor, 'next');
       expect(state.hasMore, true);
+    });
+
+    test('non-conflict ServerException propagates without mutating state',
+        () async {
+      final repo = _FakeSocialRepository()
+        ..discover = _discoverResponse(isFollowed: false)
+        ..followError = const ServerException(
+          message: 'Server failed',
+          statusCode: 500,
+        );
+      final container = _container(repo);
+      addTearDown(container.dispose);
+      await container.read(socialDiscoverViewModelProvider.future);
+
+      expect(
+        () => container
+            .read(socialDiscoverViewModelProvider.notifier)
+            .followUser('user-1'),
+        throwsA(isA<ServerException>()),
+      );
+
+      final state = container.read(socialDiscoverViewModelProvider).value!;
+      expect(repo.followedUserIds, ['user-1']);
+      expect(state.items.single.isFollowedByMe, false);
     });
 
     test('follow conflict with ServerException statusCode 409 marks followed',
@@ -155,11 +194,12 @@ ProviderContainer _container(_FakeSocialRepository repo) {
 
 PaginatedSocialResponse<DiscoverUserModel> _discoverResponse({
   required bool isFollowed,
+  String userId = 'user-1',
 }) {
   return PaginatedSocialResponse<DiscoverUserModel>(
     items: [
       DiscoverUserModel(
-        userId: 'user-1',
+        userId: userId,
         displayName: 'User 1',
         affinityScore: 0.9,
         isFollowedByMe: isFollowed,

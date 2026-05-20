@@ -22,8 +22,6 @@ class SocialDiscoverViewModel extends _$SocialDiscoverViewModel {
   }
 
   Future<void> followUser(String userId) async {
-    final previous = state.value;
-
     try {
       await ref.read(socialRepositoryProvider).followUser(userId);
     } on ServerException catch (error) {
@@ -32,21 +30,25 @@ class SocialDiscoverViewModel extends _$SocialDiscoverViewModel {
       }
     }
 
-    if (previous == null) {
+    final latest = switch (state) {
+      AsyncData(:final value) => value,
+      _ => null,
+    };
+    if (latest == null) {
       return;
     }
 
     state = AsyncData(
       PaginatedSocialResponse<DiscoverUserModel>(
-        items: previous.items
+        items: latest.items
             .map(
               (user) => user.userId == userId
                   ? user.copyWith(isFollowedByMe: true)
                   : user,
             )
             .toList(),
-        nextCursor: previous.nextCursor,
-        hasMore: previous.hasMore,
+        nextCursor: latest.nextCursor,
+        hasMore: latest.hasMore,
       ),
     );
   }
