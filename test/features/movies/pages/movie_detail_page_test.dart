@@ -51,13 +51,13 @@ class _ErrorMovieDetailVM extends MovieDetailViewModel {
 }
 
 MovieModel _testMovie() => const MovieModel(
-      tmdbId: 7,
-      title: 'Se7en',
-      overview: 'A test overview',
-      releaseDate: '1995-09-22',
-      runtimeMinutes: 127,
-      genres: ['Thriller'],
-    );
+  tmdbId: 7,
+  title: 'Se7en',
+  overview: 'A test overview',
+  releaseDate: '1995-09-22',
+  runtimeMinutes: 127,
+  genres: ['Thriller'],
+);
 
 Widget _wrap(ProviderContainer container) {
   return UncontrolledProviderScope(
@@ -70,7 +70,8 @@ Widget _wrap(ProviderContainer container) {
             GoRoute(
               path: '/movies/:tmdbId',
               builder: (_, state) => MovieDetailPage(
-                  tmdbId: int.parse(state.pathParameters['tmdbId']!)),
+                tmdbId: int.parse(state.pathParameters['tmdbId']!),
+              ),
             ),
           ],
         ),
@@ -85,11 +86,14 @@ Future<void> main() async {
   group('MovieDetailPage', () {
     testWidgets('renders Add to List and movie metadata', (tester) async {
       final detail = MovieDetailState(movie: _testMovie(), tracking: null);
-      final container = ProviderContainer(overrides: [
-        movieDetailViewModelProvider(7)
-            .overrideWith(() => FakeMovieDetailVM(detail)),
-        authViewModelProvider.overrideWith(() => FakeAuthVM()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          movieDetailViewModelProvider(
+            7,
+          ).overrideWith(() => FakeMovieDetailVM(detail)),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
       addTearDown(container.dispose);
 
       await tester.pumpWidget(_wrap(container));
@@ -105,11 +109,14 @@ Future<void> main() async {
     });
 
     testWidgets('loading state shows LoadingWidget', (tester) async {
-      final container = ProviderContainer(overrides: [
-        movieDetailViewModelProvider(7)
-            .overrideWith(() => _LoadingMovieDetailVM()),
-        authViewModelProvider.overrideWith(() => FakeAuthVM()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          movieDetailViewModelProvider(
+            7,
+          ).overrideWith(() => _LoadingMovieDetailVM()),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
       addTearDown(container.dispose);
 
       await tester.pumpWidget(_wrap(container));
@@ -119,11 +126,14 @@ Future<void> main() async {
     });
 
     testWidgets('error state shows error message and retry', (tester) async {
-      final container = ProviderContainer(overrides: [
-        movieDetailViewModelProvider(7)
-            .overrideWith(() => _ErrorMovieDetailVM()),
-        authViewModelProvider.overrideWith(() => FakeAuthVM()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          movieDetailViewModelProvider(
+            7,
+          ).overrideWith(() => _ErrorMovieDetailVM()),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
       addTearDown(container.dispose);
 
       await tester.pumpWidget(_wrap(container));
@@ -136,11 +146,14 @@ Future<void> main() async {
 
     testWidgets('overview section renders', (tester) async {
       final detail = MovieDetailState(movie: _testMovie(), tracking: null);
-      final container = ProviderContainer(overrides: [
-        movieDetailViewModelProvider(7)
-            .overrideWith(() => FakeMovieDetailVM(detail)),
-        authViewModelProvider.overrideWith(() => FakeAuthVM()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          movieDetailViewModelProvider(
+            7,
+          ).overrideWith(() => FakeMovieDetailVM(detail)),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
       addTearDown(container.dispose);
 
       await tester.pumpWidget(_wrap(container));
@@ -151,15 +164,19 @@ Future<void> main() async {
       expect(find.text('A test overview'), findsOneWidget);
     });
 
-    testWidgets('overview with null overview shows no description',
-        (tester) async {
+    testWidgets('overview with null overview shows no description', (
+      tester,
+    ) async {
       final movie = _testMovie().copyWith(overview: null);
       final detail = MovieDetailState(movie: movie, tracking: null);
-      final container = ProviderContainer(overrides: [
-        movieDetailViewModelProvider(7)
-            .overrideWith(() => FakeMovieDetailVM(detail)),
-        authViewModelProvider.overrideWith(() => FakeAuthVM()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          movieDetailViewModelProvider(
+            7,
+          ).overrideWith(() => FakeMovieDetailVM(detail)),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
       addTearDown(container.dispose);
 
       await tester.pumpWidget(_wrap(container));
@@ -169,16 +186,17 @@ Future<void> main() async {
       expect(find.text('No description available.'), findsOneWidget);
     });
 
-    testWidgets('backdrop OverflowBox is wrapped in ClipRRect', (tester) async {
-      final movie = _testMovie().copyWith(
-        backdropPath: '/test-backdrop.jpg',
-      );
+    testWidgets('backdrop image is wrapped in ClipRect', (tester) async {
+      final movie = _testMovie().copyWith(backdropPath: '/test-backdrop.jpg');
       final detail = MovieDetailState(movie: movie, tracking: null);
-      final container = ProviderContainer(overrides: [
-        movieDetailViewModelProvider(7)
-            .overrideWith(() => FakeMovieDetailVM(detail)),
-        authViewModelProvider.overrideWith(() => FakeAuthVM()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          movieDetailViewModelProvider(
+            7,
+          ).overrideWith(() => FakeMovieDetailVM(detail)),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
       addTearDown(container.dispose);
 
       await tester.pumpWidget(_wrap(container));
@@ -189,15 +207,19 @@ Future<void> main() async {
       expect(find.byKey(const ValueKey('backdrop_clip')), findsOneWidget);
     });
 
-    testWidgets('overview with empty overview shows no description',
-        (tester) async {
+    testWidgets('overview with empty overview shows no description', (
+      tester,
+    ) async {
       final movie = _testMovie().copyWith(overview: '');
       final detail = MovieDetailState(movie: movie, tracking: null);
-      final container = ProviderContainer(overrides: [
-        movieDetailViewModelProvider(7)
-            .overrideWith(() => FakeMovieDetailVM(detail)),
-        authViewModelProvider.overrideWith(() => FakeAuthVM()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          movieDetailViewModelProvider(
+            7,
+          ).overrideWith(() => FakeMovieDetailVM(detail)),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
       addTearDown(container.dispose);
 
       await tester.pumpWidget(_wrap(container));

@@ -65,8 +65,9 @@ class SeriesDetailPage extends ConsumerWidget {
         initialRating: tracking?.rating,
         initialReview: tracking?.review ?? '',
         onSave: ({required status, rating, review}) async {
-          final notifier =
-              ref.read(seriesDetailViewModelProvider(tmdbId).notifier);
+          final notifier = ref.read(
+            seriesDetailViewModelProvider(tmdbId).notifier,
+          );
           try {
             if (isEditing) {
               await notifier.updateTracking(
@@ -84,9 +85,9 @@ class SeriesDetailPage extends ConsumerWidget {
             if (ctx.mounted) Navigator.pop(ctx);
           } catch (e) {
             if (ctx.mounted) {
-              ScaffoldMessenger.of(ctx).showSnackBar(
-                SnackBar(content: Text(ctx.t.error_server)),
-              );
+              ScaffoldMessenger.of(
+                ctx,
+              ).showSnackBar(SnackBar(content: Text(ctx.t.error_server)));
             }
           }
         },
@@ -99,9 +100,9 @@ class SeriesDetailPage extends ConsumerWidget {
                   if (ctx.mounted) Navigator.pop(ctx);
                 } catch (e) {
                   if (ctx.mounted) {
-                    ScaffoldMessenger.of(ctx).showSnackBar(
-                      SnackBar(content: Text(ctx.t.error_server)),
-                    );
+                    ScaffoldMessenger.of(
+                      ctx,
+                    ).showSnackBar(SnackBar(content: Text(ctx.t.error_server)));
                   }
                 }
               }
@@ -138,18 +139,18 @@ class _SeriesDetailLoaded extends StatelessWidget {
         series.posterPath != null && series.posterPath!.isNotEmpty;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(series.title),
-      ),
+      appBar: AppBar(title: Text(series.title)),
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: FilledButton.icon(
             onPressed: onTrackingAction,
             icon: Icon(tracking != null ? Icons.edit : Icons.add),
-            label: Text(tracking != null
-                ? t.series_detail_manage_tracking
-                : t.series_detail_add_to_list),
+            label: Text(
+              tracking != null
+                  ? t.series_detail_manage_tracking
+                  : t.series_detail_add_to_list,
+            ),
           ),
         ),
       ),
@@ -166,16 +167,16 @@ class _SeriesDetailLoaded extends StatelessWidget {
                     Positioned.fill(
                       child: ClipRect(
                         key: const ValueKey('backdrop_clip'),
-                        child: CachedNetworkImage(
-                          imageUrl: series.backdropPath!,
-                          imageRenderMethodForWeb:
-                              ImageRenderMethodForWeb.HttpGet,
+                        child: Image.network(
+                          series.backdropPath!,
                           height: 250,
                           fit: BoxFit.fitHeight,
                           alignment: Alignment.bottomCenter,
-                          errorWidget: (context, url, error) => Container(
-                            color: theme.colorScheme.surfaceContainerHighest,
-                          ),
+                          errorBuilder: (context, error, stackTrace) =>
+                              Container(
+                                color:
+                                    theme.colorScheme.surfaceContainerHighest,
+                              ),
                         ),
                       ),
                     )
@@ -226,23 +227,15 @@ class _SeriesDetailLoaded extends StatelessWidget {
                                 height: 180,
                                 color:
                                     theme.colorScheme.surfaceContainerHighest,
-                                child: OverflowBox(
-                                  minWidth: 120,
-                                  maxWidth: 120,
-                                  minHeight: 192,
-                                  maxHeight: 192,
-                                  alignment: Alignment.bottomCenter,
-                                  child: CachedNetworkImage(
-                                    imageUrl: series.posterPath!,
-                                    imageRenderMethodForWeb:
-                                        ImageRenderMethodForWeb.HttpGet,
-                                    width: 120,
-                                    height: 192,
-                                    fit: BoxFit.cover,
-                                    errorWidget: (context, url, error) =>
-                                        const Icon(Icons.broken_image,
-                                            size: 40),
-                                  ),
+                                child: CachedNetworkImage(
+                                  imageUrl: series.posterPath!,
+                                  imageRenderMethodForWeb:
+                                      ImageRenderMethodForWeb.HttpGet,
+                                  width: 120,
+                                  height: 180,
+                                  fit: BoxFit.cover,
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(Icons.broken_image, size: 40),
                                 ),
                               )
                             : Container(
@@ -387,16 +380,16 @@ class _OverviewSectionState extends State<_OverviewSection> {
         children: [
           Text(
             t.series_detail_overview,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(
             t.series_detail_no_description,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       );
@@ -407,9 +400,9 @@ class _OverviewSectionState extends State<_OverviewSection> {
       children: [
         Text(
           t.series_detail_overview,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         Text(
@@ -424,9 +417,9 @@ class _OverviewSectionState extends State<_OverviewSection> {
           child: Text(
             _expanded ? t.series_detail_show_less : t.series_detail_show_more,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.w600,
-                ),
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ],
@@ -459,15 +452,15 @@ class _InfoCard extends StatelessWidget {
             Text(
               label,
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: 2),
             Text(
               value,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),

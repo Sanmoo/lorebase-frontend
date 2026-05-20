@@ -30,25 +30,16 @@ class SeriesPoster extends StatelessWidget {
               width: width,
               height: width * 1.5,
               color: Colors.grey[300],
-              child: OverflowBox(
-                minWidth: width,
-                maxWidth: width,
-                minHeight: width * 1.5 + 12,
-                maxHeight: width * 1.5 + 12,
-                alignment: Alignment.bottomCenter,
-                child: CachedNetworkImage(
-                  imageUrl: posterUrl,
-                  imageRenderMethodForWeb: ImageRenderMethodForWeb.HttpGet,
-                  width: width,
-                  height: width * 1.5 + 12,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => const Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                  errorWidget: (context, url, error) => const Icon(
-                    Icons.broken_image,
-                  ),
-                ),
+              child: CachedNetworkImage(
+                imageUrl: posterUrl,
+                imageRenderMethodForWeb: ImageRenderMethodForWeb.HttpGet,
+                width: width,
+                height: width * 1.5,
+                fit: BoxFit.cover,
+                placeholder: (context, url) =>
+                    const Center(child: CircularProgressIndicator()),
+                errorWidget: (context, url, error) =>
+                    const Icon(Icons.broken_image),
               ),
             ),
           ),
