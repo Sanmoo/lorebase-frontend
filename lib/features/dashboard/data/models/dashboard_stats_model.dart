@@ -4,7 +4,7 @@ part 'dashboard_stats_model.freezed.dart';
 part 'dashboard_stats_model.g.dart';
 
 @freezed
-class DashboardStatsModel with _$DashboardStatsModel {
+abstract class DashboardStatsModel with _$DashboardStatsModel {
   const factory DashboardStatsModel({
     @Default(0) int watchingCount,
     @Default(0) int wantToWatchCount,

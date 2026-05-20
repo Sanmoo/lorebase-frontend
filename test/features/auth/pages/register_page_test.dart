@@ -11,7 +11,7 @@ import 'package:lorebase/l10n/strings.g.dart';
 class FakeRegisterVM extends RegisterViewModel {
   final RegisterState testState;
   FakeRegisterVM({RegisterState? state})
-      : testState = state ?? const RegisterState();
+    : testState = state ?? const RegisterState();
 
   @override
   RegisterState build() => testState;
@@ -74,11 +74,9 @@ Widget _wrap(ProviderContainer container) {
         routerConfig: GoRouter(
           initialLocation: '/register',
           routes: [
-            GoRoute(
-                path: '/register', builder: (_, __) => const RegisterPage()),
-            GoRoute(path: '/login', builder: (_, __) => const SizedBox()),
-            GoRoute(
-                path: '/dashboard', builder: (_, __) => const SizedBox()),
+            GoRoute(path: '/register', builder: (_, _) => const RegisterPage()),
+            GoRoute(path: '/login', builder: (_, _) => const SizedBox()),
+            GoRoute(path: '/dashboard', builder: (_, _) => const SizedBox()),
           ],
         ),
       ),
@@ -100,10 +98,12 @@ Future<void> main() async {
 
   group('RegisterPage', () {
     ProviderContainer createContainer(FakeRegisterVM fakeVM) {
-      return ProviderContainer(overrides: [
-        registerViewModelProvider.overrideWith(() => fakeVM),
-        authViewModelProvider.overrideWith(() => FakeAuthVM()),
-      ]);
+      return ProviderContainer(
+        overrides: [
+          registerViewModelProvider.overrideWith(() => fakeVM),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
     }
 
     testWidgets('renders without crashing', (tester) async {
@@ -159,9 +159,7 @@ Future<void> main() async {
     });
 
     testWidgets('shows validation error for empty fields', (tester) async {
-      final fakeVM = FakeRegisterVM(
-        state: const RegisterState(),
-      );
+      final fakeVM = FakeRegisterVM(state: const RegisterState());
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
       await tester.pumpWidget(_wrap(container));
@@ -175,8 +173,7 @@ Future<void> main() async {
       expect(find.text('A senha é muito fraca'), findsOneWidget);
     });
 
-    testWidgets('shows validation error for password mismatch',
-        (tester) async {
+    testWidgets('shows validation error for password mismatch', (tester) async {
       final fakeVM = FakeRegisterVM(
         state: const RegisterState(
           email: 'a@b.com',
@@ -230,10 +227,7 @@ Future<void> main() async {
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
-      expect(
-        find.widgetWithText(ElevatedButton, 'Criar conta'),
-        findsNothing,
-      );
+      expect(find.widgetWithText(ElevatedButton, 'Criar conta'), findsNothing);
     });
 
     testWidgets('toggles password visibility', (tester) async {
@@ -294,7 +288,9 @@ Future<void> main() async {
       expect(fakeVM.state.password, 'StrongP@ss1');
     });
 
-    testWidgets('submit with valid data without terms shows error', (tester) async {
+    testWidgets('submit with valid data without terms shows error', (
+      tester,
+    ) async {
       final fakeVM = FakeRegisterVM(
         state: const RegisterState(
           email: 'a@b.com',
@@ -338,7 +334,9 @@ Future<void> main() async {
       expect(find.text('Confirme seu e-mail'), findsOneWidget);
     });
 
-    testWidgets('confirmation screen shows resend and confirm buttons', (tester) async {
+    testWidgets('confirmation screen shows resend and confirm buttons', (
+      tester,
+    ) async {
       final fakeVM = FakeRegisterVM(
         state: const RegisterState(
           email: 'a@b.com',

@@ -41,61 +41,70 @@ class FakeAuthRepo implements AuthRepository {
 
   @override
   Future<void> confirmResetPassword(
-      String email, String code, String newPassword) async {}
+    String email,
+    String code,
+    String newPassword,
+  ) async {}
 }
 
 void main() {
   group('AuthViewModel', () {
     test('build() returns AuthState.unknown', () {
-      final container = ProviderContainer(overrides: [
-        authRepositoryProvider.overrideWith((ref) => FakeAuthRepo()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          authRepositoryProvider.overrideWith((ref) => FakeAuthRepo()),
+        ],
+      );
       addTearDown(container.dispose);
 
       final state = container.read(authViewModelProvider);
       expect(state, const AuthState.unknown());
     });
 
-    test('_checkAuth sets authenticated when isAuthenticated returns true',
-        () async {
-      final repo = FakeAuthRepo()..authenticated = true;
-      final container = ProviderContainer(overrides: [
-        authRepositoryProvider.overrideWith((ref) => repo),
-      ]);
-      addTearDown(container.dispose);
+    test(
+      '_checkAuth sets authenticated when isAuthenticated returns true',
+      () async {
+        final repo = FakeAuthRepo()..authenticated = true;
+        final container = ProviderContainer(
+          overrides: [authRepositoryProvider.overrideWith((ref) => repo)],
+        );
+        addTearDown(container.dispose);
 
-      container.listen(authViewModelProvider, (_, __) {});
-      container.read(authViewModelProvider);
-      await Future.delayed(Duration.zero);
+        container.listen(authViewModelProvider, (_, _) {});
+        container.read(authViewModelProvider);
+        await Future.delayed(Duration.zero);
 
-      final state = container.read(authViewModelProvider);
-      expect(state.isAuthenticated, true);
-    });
+        final state = container.read(authViewModelProvider);
+        expect(state.isAuthenticated, true);
+      },
+    );
 
-    test('_checkAuth sets unauthenticated when isAuthenticated returns false',
-        () async {
-      final repo = FakeAuthRepo()..authenticated = false;
-      final container = ProviderContainer(overrides: [
-        authRepositoryProvider.overrideWith((ref) => repo),
-      ]);
-      addTearDown(container.dispose);
+    test(
+      '_checkAuth sets unauthenticated when isAuthenticated returns false',
+      () async {
+        final repo = FakeAuthRepo()..authenticated = false;
+        final container = ProviderContainer(
+          overrides: [authRepositoryProvider.overrideWith((ref) => repo)],
+        );
+        addTearDown(container.dispose);
 
-      container.listen(authViewModelProvider, (_, __) {});
-      container.read(authViewModelProvider);
-      await Future.delayed(Duration.zero);
+        container.listen(authViewModelProvider, (_, _) {});
+        container.read(authViewModelProvider);
+        await Future.delayed(Duration.zero);
 
-      final state = container.read(authViewModelProvider);
-      expect(state.isAuthenticated, false);
-    });
+        final state = container.read(authViewModelProvider);
+        expect(state.isAuthenticated, false);
+      },
+    );
 
     test('_checkAuth handles isAuthenticated error gracefully', () async {
       final repo = FakeAuthRepo()..throwOnIsAuthenticated = true;
-      final container = ProviderContainer(overrides: [
-        authRepositoryProvider.overrideWith((ref) => repo),
-      ]);
+      final container = ProviderContainer(
+        overrides: [authRepositoryProvider.overrideWith((ref) => repo)],
+      );
       addTearDown(container.dispose);
 
-      container.listen(authViewModelProvider, (_, __) {});
+      container.listen(authViewModelProvider, (_, _) {});
       container.read(authViewModelProvider);
       await Future.delayed(Duration.zero);
 
@@ -106,10 +115,12 @@ void main() {
 
     test('signOut calls repository.signOut', () async {
       final repo = FakeAuthRepo();
-      final container = ProviderContainer(overrides: [
-        authRepositoryProvider.overrideWith((ref) => repo),
-        cacheServiceProvider.overrideWith((ref) => CacheService()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          authRepositoryProvider.overrideWith((ref) => repo),
+          cacheServiceProvider.overrideWith((ref) => CacheService()),
+        ],
+      );
       addTearDown(container.dispose);
 
       final notifier = container.read(authViewModelProvider.notifier);
@@ -119,10 +130,12 @@ void main() {
     });
 
     test('signOut sets state to unauthenticated', () async {
-      final container = ProviderContainer(overrides: [
-        authRepositoryProvider.overrideWith((ref) => FakeAuthRepo()),
-        cacheServiceProvider.overrideWith((ref) => CacheService()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          authRepositoryProvider.overrideWith((ref) => FakeAuthRepo()),
+          cacheServiceProvider.overrideWith((ref) => CacheService()),
+        ],
+      );
       addTearDown(container.dispose);
 
       final notifier = container.read(authViewModelProvider.notifier);
@@ -135,10 +148,12 @@ void main() {
 
     test('signOut handles repository errors gracefully', () async {
       final repo = FakeAuthRepo()..signOutThrows = true;
-      final container = ProviderContainer(overrides: [
-        authRepositoryProvider.overrideWith((ref) => repo),
-        cacheServiceProvider.overrideWith((ref) => CacheService()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          authRepositoryProvider.overrideWith((ref) => repo),
+          cacheServiceProvider.overrideWith((ref) => CacheService()),
+        ],
+      );
       addTearDown(container.dispose);
 
       final notifier = container.read(authViewModelProvider.notifier);
@@ -151,9 +166,11 @@ void main() {
     });
 
     test('setAuthenticated updates state with userId', () {
-      final container = ProviderContainer(overrides: [
-        authRepositoryProvider.overrideWith((ref) => FakeAuthRepo()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          authRepositoryProvider.overrideWith((ref) => FakeAuthRepo()),
+        ],
+      );
       addTearDown(container.dispose);
 
       final notifier = container.read(authViewModelProvider.notifier);
@@ -165,9 +182,11 @@ void main() {
     });
 
     test('setUnauthenticated updates state', () {
-      final container = ProviderContainer(overrides: [
-        authRepositoryProvider.overrideWith((ref) => FakeAuthRepo()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          authRepositoryProvider.overrideWith((ref) => FakeAuthRepo()),
+        ],
+      );
       addTearDown(container.dispose);
 
       final notifier = container.read(authViewModelProvider.notifier);

@@ -6,9 +6,9 @@ part of 'tracked_media_summary_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$TrackedMediaSummaryModelImpl _$$TrackedMediaSummaryModelImplFromJson(
+_TrackedMediaSummaryModel _$TrackedMediaSummaryModelFromJson(
   Map<String, dynamic> json,
-) => _$TrackedMediaSummaryModelImpl(
+) => _TrackedMediaSummaryModel(
   mediaId: json['mediaId'] == null
       ? ''
       : flexibleStringFromJson(json['mediaId']),
@@ -24,8 +24,8 @@ _$TrackedMediaSummaryModelImpl _$$TrackedMediaSummaryModelImplFromJson(
       : DateTime.parse(json['addedAt'] as String),
 );
 
-Map<String, dynamic> _$$TrackedMediaSummaryModelImplToJson(
-  _$TrackedMediaSummaryModelImpl instance,
+Map<String, dynamic> _$TrackedMediaSummaryModelToJson(
+  _TrackedMediaSummaryModel instance,
 ) => <String, dynamic>{
   'mediaId': flexibleStringToJson(instance.mediaId),
   'title': instance.title,

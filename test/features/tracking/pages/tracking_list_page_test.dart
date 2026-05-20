@@ -76,7 +76,7 @@ Widget _wrap(ProviderContainer container) {
           routes: [
             GoRoute(
               path: '/tracking',
-              builder: (_, __) => const TrackingListPage(),
+              builder: (_, _) => const TrackingListPage(),
             ),
           ],
         ),

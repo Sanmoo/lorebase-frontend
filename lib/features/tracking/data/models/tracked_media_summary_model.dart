@@ -16,7 +16,7 @@ MediaType? _nullableMediaTypeFromJson(dynamic value) {
 dynamic _nullableMediaTypeToJson(MediaType? value) => value?.apiValue;
 
 @freezed
-class TrackedMediaSummaryModel with _$TrackedMediaSummaryModel {
+abstract class TrackedMediaSummaryModel with _$TrackedMediaSummaryModel {
   const factory TrackedMediaSummaryModel({
     @JsonKey(
       name: 'mediaId',

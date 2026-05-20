@@ -8,7 +8,7 @@ Object? _readRuntimeMinutes(Map<dynamic, dynamic> json, String key) =>
     json[key] ?? json['runtime'];
 
 @freezed
-class MovieModel with _$MovieModel {
+abstract class MovieModel with _$MovieModel {
   const factory MovieModel({
     @JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
     required int tmdbId,

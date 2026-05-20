@@ -6,173 +6,96 @@ part of 'movie_detail_viewmodel.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$movieDetailViewModelHash() =>
-    r'7f6d3196e734cbacb815843cd8de43fe754af5f1';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-abstract class _$MovieDetailViewModel
-    extends BuildlessAutoDisposeAsyncNotifier<MovieDetailState> {
-  late final int tmdbId;
-
-  FutureOr<MovieDetailState> build(int tmdbId);
-}
-
-/// See also [MovieDetailViewModel].
 @ProviderFor(MovieDetailViewModel)
-const movieDetailViewModelProvider = MovieDetailViewModelFamily();
+final movieDetailViewModelProvider = MovieDetailViewModelFamily._();
 
-/// See also [MovieDetailViewModel].
-class MovieDetailViewModelFamily extends Family<AsyncValue<MovieDetailState>> {
-  /// See also [MovieDetailViewModel].
-  const MovieDetailViewModelFamily();
+final class MovieDetailViewModelProvider
+    extends $AsyncNotifierProvider<MovieDetailViewModel, MovieDetailState> {
+  MovieDetailViewModelProvider._({
+    required MovieDetailViewModelFamily super.from,
+    required int super.argument,
+  }) : super(
+         retry: null,
+         name: r'movieDetailViewModelProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
-  /// See also [MovieDetailViewModel].
-  MovieDetailViewModelProvider call(int tmdbId) {
-    return MovieDetailViewModelProvider(tmdbId);
+  @override
+  String debugGetCreateSourceHash() => _$movieDetailViewModelHash();
+
+  @override
+  String toString() {
+    return r'movieDetailViewModelProvider'
+        ''
+        '($argument)';
   }
 
+  @$internal
   @override
-  MovieDetailViewModelProvider getProviderOverride(
-    covariant MovieDetailViewModelProvider provider,
-  ) {
-    return call(provider.tmdbId);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'movieDetailViewModelProvider';
-}
-
-/// See also [MovieDetailViewModel].
-class MovieDetailViewModelProvider
-    extends
-        AutoDisposeAsyncNotifierProviderImpl<
-          MovieDetailViewModel,
-          MovieDetailState
-        > {
-  /// See also [MovieDetailViewModel].
-  MovieDetailViewModelProvider(int tmdbId)
-    : this._internal(
-        () => MovieDetailViewModel()..tmdbId = tmdbId,
-        from: movieDetailViewModelProvider,
-        name: r'movieDetailViewModelProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$movieDetailViewModelHash,
-        dependencies: MovieDetailViewModelFamily._dependencies,
-        allTransitiveDependencies:
-            MovieDetailViewModelFamily._allTransitiveDependencies,
-        tmdbId: tmdbId,
-      );
-
-  MovieDetailViewModelProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.tmdbId,
-  }) : super.internal();
-
-  final int tmdbId;
-
-  @override
-  FutureOr<MovieDetailState> runNotifierBuild(
-    covariant MovieDetailViewModel notifier,
-  ) {
-    return notifier.build(tmdbId);
-  }
-
-  @override
-  Override overrideWith(MovieDetailViewModel Function() create) {
-    return ProviderOverride(
-      origin: this,
-      override: MovieDetailViewModelProvider._internal(
-        () => create()..tmdbId = tmdbId,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        tmdbId: tmdbId,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeAsyncNotifierProviderElement<
-    MovieDetailViewModel,
-    MovieDetailState
-  >
-  createElement() {
-    return _MovieDetailViewModelProviderElement(this);
-  }
+  MovieDetailViewModel create() => MovieDetailViewModel();
 
   @override
   bool operator ==(Object other) {
-    return other is MovieDetailViewModelProvider && other.tmdbId == tmdbId;
+    return other is MovieDetailViewModelProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, tmdbId.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin MovieDetailViewModelRef
-    on AutoDisposeAsyncNotifierProviderRef<MovieDetailState> {
-  /// The parameter `tmdbId` of this provider.
-  int get tmdbId;
-}
+String _$movieDetailViewModelHash() =>
+    r'81e171334142569f0c267eb11b49b4301d6c9480';
 
-class _MovieDetailViewModelProviderElement
-    extends
-        AutoDisposeAsyncNotifierProviderElement<
+final class MovieDetailViewModelFamily extends $Family
+    with
+        $ClassFamilyOverride<
           MovieDetailViewModel,
-          MovieDetailState
-        >
-    with MovieDetailViewModelRef {
-  _MovieDetailViewModelProviderElement(super.provider);
+          AsyncValue<MovieDetailState>,
+          MovieDetailState,
+          FutureOr<MovieDetailState>,
+          int
+        > {
+  MovieDetailViewModelFamily._()
+    : super(
+        retry: null,
+        name: r'movieDetailViewModelProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  MovieDetailViewModelProvider call(int tmdbId) =>
+      MovieDetailViewModelProvider._(argument: tmdbId, from: this);
 
   @override
-  int get tmdbId => (origin as MovieDetailViewModelProvider).tmdbId;
+  String toString() => r'movieDetailViewModelProvider';
 }
 
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$MovieDetailViewModel extends $AsyncNotifier<MovieDetailState> {
+  late final _$args = ref.$arg as int;
+  int get tmdbId => _$args;
+
+  FutureOr<MovieDetailState> build(int tmdbId);
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref =
+        this.ref as $Ref<AsyncValue<MovieDetailState>, MovieDetailState>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<MovieDetailState>, MovieDetailState>,
+              AsyncValue<MovieDetailState>,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, () => build(_$args));
+  }
+}

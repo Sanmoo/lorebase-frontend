@@ -223,7 +223,7 @@ void main() {
 
         final subscription = container.listen(
           trackingListViewModelProvider,
-          (_, __) {},
+          (_, _) {},
         );
 
         await container
@@ -339,7 +339,7 @@ void main() {
 
       final subscription = container.listen(
         trackingListViewModelProvider,
-        (_, __) {},
+        (_, _) {},
       );
       addTearDown(subscription.close);
 

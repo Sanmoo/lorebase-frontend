@@ -6,9 +6,7 @@ part of 'series_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$SeriesModelImpl _$$SeriesModelImplFromJson(
-  Map<String, dynamic> json,
-) => _$SeriesModelImpl(
+_SeriesModel _$SeriesModelFromJson(Map<String, dynamic> json) => _SeriesModel(
   tmdbId: flexibleIntFromJson(json['tmdbId']),
   title: json['title'] as String,
   overview: json['overview'] as String?,
@@ -25,7 +23,7 @@ _$SeriesModelImpl _$$SeriesModelImplFromJson(
   status: json['status'] as String?,
 );
 
-Map<String, dynamic> _$$SeriesModelImplToJson(_$SeriesModelImpl instance) =>
+Map<String, dynamic> _$SeriesModelToJson(_SeriesModel instance) =>
     <String, dynamic>{
       'tmdbId': flexibleIntToJson(instance.tmdbId),
       'title': instance.title,

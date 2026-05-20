@@ -6,9 +6,9 @@ part of 'dashboard_section_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$DashboardSectionModelImpl _$$DashboardSectionModelImplFromJson(
+_DashboardSectionModel _$DashboardSectionModelFromJson(
   Map<String, dynamic> json,
-) => _$DashboardSectionModelImpl(
+) => _DashboardSectionModel(
   items:
       (json['items'] as List<dynamic>?)
           ?.map(
@@ -20,8 +20,8 @@ _$DashboardSectionModelImpl _$$DashboardSectionModelImplFromJson(
   hasMore: json['hasMore'] as bool? ?? false,
 );
 
-Map<String, dynamic> _$$DashboardSectionModelImplToJson(
-  _$DashboardSectionModelImpl instance,
+Map<String, dynamic> _$DashboardSectionModelToJson(
+  _DashboardSectionModel instance,
 ) => <String, dynamic>{
   'items': instance.items,
   'total': instance.total,

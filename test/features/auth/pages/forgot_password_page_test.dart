@@ -16,7 +16,7 @@ class FakeForgotPasswordVM extends ForgotPasswordViewModel {
   final ForgotPasswordState testState;
 
   FakeForgotPasswordVM({ForgotPasswordState? state})
-      : testState = state ?? const ForgotPasswordState();
+    : testState = state ?? const ForgotPasswordState();
 
   @override
   ForgotPasswordState build() => testState;
@@ -78,12 +78,9 @@ Widget _wrap(ProviderContainer container) {
           routes: [
             GoRoute(
               path: '/forgot-password',
-              builder: (_, __) => const ForgotPasswordPage(),
+              builder: (_, _) => const ForgotPasswordPage(),
             ),
-            GoRoute(
-              path: '/login',
-              builder: (_, __) => const SizedBox(),
-            ),
+            GoRoute(path: '/login', builder: (_, _) => const SizedBox()),
           ],
         ),
       ),
@@ -96,10 +93,12 @@ Future<void> main() async {
 
   group('ForgotPasswordPage', () {
     ProviderContainer createContainer(FakeForgotPasswordVM fakeVM) {
-      return ProviderContainer(overrides: [
-        forgotPasswordViewModelProvider.overrideWith(() => fakeVM),
-        authViewModelProvider.overrideWith(() => FakeAuthVM()),
-      ]);
+      return ProviderContainer(
+        overrides: [
+          forgotPasswordViewModelProvider.overrideWith(() => fakeVM),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
     }
 
     testWidgets('phase 1: shows email field and send button', (tester) async {
@@ -114,8 +113,9 @@ Future<void> main() async {
       expect(find.text('Recuperar senha'), findsOneWidget);
     });
 
-    testWidgets('phase 2: shows code, password, confirm fields',
-        (tester) async {
+    testWidgets('phase 2: shows code, password, confirm fields', (
+      tester,
+    ) async {
       final fakeVM = FakeForgotPasswordVM(
         state: const ForgotPasswordState(
           phase: ForgotPasswordPhase.resetPassword,
@@ -186,31 +186,33 @@ Future<void> main() async {
       expect(find.text('Código enviado para seu e-mail'), findsOneWidget);
     });
 
-    testWidgets('tapping reset password button calls resetPassword and navigates',
-        (tester) async {
-      final fakeVM = FakeForgotPasswordVM(
-        state: const ForgotPasswordState(
-          phase: ForgotPasswordPhase.resetPassword,
-          email: 'test@email.com',
-          code: '123456',
-          newPassword: 'newPass',
-          confirmPassword: 'newPass',
-        ),
-      );
-      final container = createContainer(fakeVM);
-      addTearDown(container.dispose);
+    testWidgets(
+      'tapping reset password button calls resetPassword and navigates',
+      (tester) async {
+        final fakeVM = FakeForgotPasswordVM(
+          state: const ForgotPasswordState(
+            phase: ForgotPasswordPhase.resetPassword,
+            email: 'test@email.com',
+            code: '123456',
+            newPassword: 'newPass',
+            confirmPassword: 'newPass',
+          ),
+        );
+        final container = createContainer(fakeVM);
+        addTearDown(container.dispose);
 
-      await tester.pumpWidget(_wrap(container));
-      await tester.pump();
+        await tester.pumpWidget(_wrap(container));
+        await tester.pump();
 
-      await tester.ensureVisible(find.text('Redefinir senha'));
-      await tester.tap(find.text('Redefinir senha'));
-      await tester.pump();
-      await tester.pumpAndSettle();
+        await tester.ensureVisible(find.text('Redefinir senha'));
+        await tester.tap(find.text('Redefinir senha'));
+        await tester.pump();
+        await tester.pumpAndSettle();
 
-      expect(fakeVM.resetPasswordCalled, true);
-      expect(find.text('Redefinir senha'), findsNothing);
-    });
+        expect(fakeVM.resetPasswordCalled, true);
+        expect(find.text('Redefinir senha'), findsNothing);
+      },
+    );
 
     testWidgets('shows loading indicator when isLoading', (tester) async {
       final fakeVM = FakeForgotPasswordVM(

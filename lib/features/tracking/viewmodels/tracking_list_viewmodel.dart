@@ -126,15 +126,21 @@ class TrackingListViewModel extends _$TrackingListViewModel {
   }
 
   void _backgroundRefresh(String key) {
+    final repository = ref.read(trackingRepositoryProvider);
+    final cacheService = ref.read(cacheServiceProvider);
+    final errorNotifier = ref.read(trackingBackgroundErrorProvider.notifier);
+    final status = _currentStatus;
+    final mediaType = _currentMediaType;
+    final page = _page;
+    final pageSize = _pageSize;
+
     Future(() async {
       try {
-        final repository = ref.read(trackingRepositoryProvider);
-        final cacheService = ref.read(cacheServiceProvider);
         final items = await repository.getTracking(
-          status: _currentStatus,
-          mediaType: _currentMediaType,
-          page: _page,
-          pageSize: _pageSize,
+          status: status,
+          mediaType: mediaType,
+          page: page,
+          pageSize: pageSize,
         );
         final entry = CacheEntry(
           json: jsonEncode(items.map((e) => e.toJson()).toList()),
@@ -142,10 +148,10 @@ class TrackingListViewModel extends _$TrackingListViewModel {
           ttl: const Duration(hours: 6),
         );
         await cacheService.set(key, entry);
+        if (!ref.mounted) return;
         state = AsyncValue.data(items);
       } catch (_) {
-        ref.read(trackingBackgroundErrorProvider.notifier).state =
-            'Could not refresh. Pull down to retry.';
+        errorNotifier.state = 'Could not refresh. Pull down to retry.';
       }
     });
   }

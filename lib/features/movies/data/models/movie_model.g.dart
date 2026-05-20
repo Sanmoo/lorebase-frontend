@@ -6,26 +6,23 @@ part of 'movie_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$MovieModelImpl _$$MovieModelImplFromJson(Map<String, dynamic> json) =>
-    _$MovieModelImpl(
-      tmdbId: flexibleIntFromJson(json['tmdbId']),
-      title: json['title'] as String,
-      overview: json['overview'] as String?,
-      posterPath: json['posterPath'] as String?,
-      backdropPath: json['backdropPath'] as String?,
-      releaseDate: json['releaseDate'] as String?,
-      genres:
-          (json['genres'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          const [],
-      runtimeMinutes: flexibleNullableIntFromJson(
-        _readRuntimeMinutes(json, 'runtimeMinutes'),
-      ),
-      status: json['status'] as String?,
-    );
+_MovieModel _$MovieModelFromJson(Map<String, dynamic> json) => _MovieModel(
+  tmdbId: flexibleIntFromJson(json['tmdbId']),
+  title: json['title'] as String,
+  overview: json['overview'] as String?,
+  posterPath: json['posterPath'] as String?,
+  backdropPath: json['backdropPath'] as String?,
+  releaseDate: json['releaseDate'] as String?,
+  genres:
+      (json['genres'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+      const [],
+  runtimeMinutes: flexibleNullableIntFromJson(
+    _readRuntimeMinutes(json, 'runtimeMinutes'),
+  ),
+  status: json['status'] as String?,
+);
 
-Map<String, dynamic> _$$MovieModelImplToJson(_$MovieModelImpl instance) =>
+Map<String, dynamic> _$MovieModelToJson(_MovieModel instance) =>
     <String, dynamic>{
       'tmdbId': flexibleIntToJson(instance.tmdbId),
       'title': instance.title,

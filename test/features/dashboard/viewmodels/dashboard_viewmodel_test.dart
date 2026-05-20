@@ -310,7 +310,7 @@ void main() {
       );
       addTearDown(container.dispose);
 
-      final sub = container.listen(dashboardViewModelProvider, (_, __) {});
+      final sub = container.listen(dashboardViewModelProvider, (_, _) {});
 
       await container
           .read(dashboardViewModelProvider.notifier)

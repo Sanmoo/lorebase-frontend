@@ -5,7 +5,7 @@ import '../data/models/movie_model.dart';
 part 'movie_detail_state.freezed.dart';
 
 @freezed
-class MovieDetailState with _$MovieDetailState {
+abstract class MovieDetailState with _$MovieDetailState {
   const factory MovieDetailState({
     required MovieModel movie,
     TrackedMediaModel? tracking,

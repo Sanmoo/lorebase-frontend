@@ -6,21 +6,57 @@ part of 'auth_viewmodel.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(AuthViewModel)
+final authViewModelProvider = AuthViewModelProvider._();
+
+final class AuthViewModelProvider
+    extends $NotifierProvider<AuthViewModel, AuthState> {
+  AuthViewModelProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'authViewModelProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$authViewModelHash();
+
+  @$internal
+  @override
+  AuthViewModel create() => AuthViewModel();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AuthState value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AuthState>(value),
+    );
+  }
+}
+
 String _$authViewModelHash() => r'67a18e201225555107d0212f1a219d01e1585d5a';
 
-/// See also [AuthViewModel].
-@ProviderFor(AuthViewModel)
-final authViewModelProvider =
-    AutoDisposeNotifierProvider<AuthViewModel, AuthState>.internal(
-      AuthViewModel.new,
-      name: r'authViewModelProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$authViewModelHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-typedef _$AuthViewModel = AutoDisposeNotifier<AuthState>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$AuthViewModel extends $Notifier<AuthState> {
+  AuthState build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<AuthState, AuthState>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AuthState, AuthState>,
+              AuthState,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}

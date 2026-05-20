@@ -47,7 +47,7 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
     int? rating,
     String? review,
   }) async {
-    final currentState = state.valueOrNull;
+    final currentState = state.value;
     if (currentState == null) return;
     final trackingRepo = ref.read(trackingRepositoryProvider);
     final tracking = await trackingRepo.startTracking(
@@ -74,10 +74,10 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
     int? rating,
     String? review,
   }) async {
-    final currentState = state.valueOrNull;
+    final currentState = state.value;
     if (currentState == null) {
       debugPrint(
-          '[SERIES_VM] updateTracking aborted: state.valueOrNull is null');
+          '[SERIES_VM] updateTracking aborted: state.value is null');
       return;
     }
     final current = currentState.tracking;
@@ -109,7 +109,7 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
   }
 
   Future<void> removeTracking() async {
-    final currentState = state.valueOrNull;
+    final currentState = state.value;
     if (currentState == null) return;
     final current = currentState.tracking;
     if (current == null) return;

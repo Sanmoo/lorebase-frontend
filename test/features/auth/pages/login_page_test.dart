@@ -57,22 +57,13 @@ Widget _wrapLoginPage(ProviderContainer container) {
         routerConfig: GoRouter(
           initialLocation: '/login',
           routes: [
-            GoRoute(
-              path: '/login',
-              builder: (_, __) => const LoginPage(),
-            ),
-            GoRoute(
-              path: '/register',
-              builder: (_, __) => const SizedBox(),
-            ),
+            GoRoute(path: '/login', builder: (_, _) => const LoginPage()),
+            GoRoute(path: '/register', builder: (_, _) => const SizedBox()),
             GoRoute(
               path: '/forgot-password',
-              builder: (_, __) => const SizedBox(),
+              builder: (_, _) => const SizedBox(),
             ),
-            GoRoute(
-              path: '/dashboard',
-              builder: (_, __) => const SizedBox(),
-            ),
+            GoRoute(path: '/dashboard', builder: (_, _) => const SizedBox()),
           ],
         ),
       ),
@@ -86,10 +77,12 @@ Future<void> main() async {
   group('LoginPage', () {
     testWidgets('renders email and password fields', (tester) async {
       final fakeVM = FakeLoginVM();
-      final container = ProviderContainer(overrides: [
-        loginViewModelProvider.overrideWith(() => fakeVM),
-        authViewModelProvider.overrideWith(() => FakeAuthVM()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          loginViewModelProvider.overrideWith(() => fakeVM),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
       addTearDown(container.dispose);
 
       await tester.pumpWidget(_wrapLoginPage(container));
@@ -100,12 +93,15 @@ Future<void> main() async {
     });
 
     testWidgets('shows error message when state has error', (tester) async {
-      final fakeVM =
-          FakeLoginVM(state: const LoginState(errorMessage: 'Login failed'));
-      final container = ProviderContainer(overrides: [
-        loginViewModelProvider.overrideWith(() => fakeVM),
-        authViewModelProvider.overrideWith(() => FakeAuthVM()),
-      ]);
+      final fakeVM = FakeLoginVM(
+        state: const LoginState(errorMessage: 'Login failed'),
+      );
+      final container = ProviderContainer(
+        overrides: [
+          loginViewModelProvider.overrideWith(() => fakeVM),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
       addTearDown(container.dispose);
 
       await tester.pumpWidget(_wrapLoginPage(container));
@@ -116,11 +112,14 @@ Future<void> main() async {
 
     testWidgets('tapping Entrar calls submit', (tester) async {
       final fakeVM = FakeLoginVM(
-          state: const LoginState(email: 'a@b.com', password: '123'));
-      final container = ProviderContainer(overrides: [
-        loginViewModelProvider.overrideWith(() => fakeVM),
-        authViewModelProvider.overrideWith(() => FakeAuthVM()),
-      ]);
+        state: const LoginState(email: 'a@b.com', password: '123'),
+      );
+      final container = ProviderContainer(
+        overrides: [
+          loginViewModelProvider.overrideWith(() => fakeVM),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
       addTearDown(container.dispose);
 
       await tester.pumpWidget(_wrapLoginPage(container));
@@ -132,10 +131,12 @@ Future<void> main() async {
 
     testWidgets('has forgot password and register links', (tester) async {
       final fakeVM = FakeLoginVM();
-      final container = ProviderContainer(overrides: [
-        loginViewModelProvider.overrideWith(() => fakeVM),
-        authViewModelProvider.overrideWith(() => FakeAuthVM()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          loginViewModelProvider.overrideWith(() => fakeVM),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
       addTearDown(container.dispose);
 
       await tester.pumpWidget(_wrapLoginPage(container));
@@ -153,10 +154,12 @@ Future<void> main() async {
           errorMessage: 'Login failed',
         ),
       );
-      final container = ProviderContainer(overrides: [
-        loginViewModelProvider.overrideWith(() => fakeVM),
-        authViewModelProvider.overrideWith(() => FakeAuthVM()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          loginViewModelProvider.overrideWith(() => fakeVM),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
       addTearDown(container.dispose);
 
       await tester.pumpWidget(_wrapLoginPage(container));
@@ -166,13 +169,13 @@ Future<void> main() async {
     });
 
     testWidgets('shows loading spinner when isLoading is true', (tester) async {
-      final fakeVM = FakeLoginVM(
-        state: const LoginState(isLoading: true),
+      final fakeVM = FakeLoginVM(state: const LoginState(isLoading: true));
+      final container = ProviderContainer(
+        overrides: [
+          loginViewModelProvider.overrideWith(() => fakeVM),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
       );
-      final container = ProviderContainer(overrides: [
-        loginViewModelProvider.overrideWith(() => fakeVM),
-        authViewModelProvider.overrideWith(() => FakeAuthVM()),
-      ]);
       addTearDown(container.dispose);
 
       await tester.pumpWidget(_wrapLoginPage(container));
@@ -186,10 +189,12 @@ Future<void> main() async {
         state: const LoginState(email: 'a@b.com', password: '123'),
       );
       fakeVM.submitResult = false;
-      final container = ProviderContainer(overrides: [
-        loginViewModelProvider.overrideWith(() => fakeVM),
-        authViewModelProvider.overrideWith(() => FakeAuthVM()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          loginViewModelProvider.overrideWith(() => fakeVM),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
       addTearDown(container.dispose);
 
       await tester.pumpWidget(_wrapLoginPage(container));
@@ -206,10 +211,12 @@ Future<void> main() async {
       final fakeVM = FakeLoginVM(
         state: const LoginState(obscurePassword: true),
       );
-      final container = ProviderContainer(overrides: [
-        loginViewModelProvider.overrideWith(() => fakeVM),
-        authViewModelProvider.overrideWith(() => FakeAuthVM()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          loginViewModelProvider.overrideWith(() => fakeVM),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
       addTearDown(container.dispose);
 
       await tester.pumpWidget(_wrapLoginPage(container));
@@ -225,10 +232,12 @@ Future<void> main() async {
 
     testWidgets('typing in email field triggers listener', (tester) async {
       final fakeVM = FakeLoginVM();
-      final container = ProviderContainer(overrides: [
-        loginViewModelProvider.overrideWith(() => fakeVM),
-        authViewModelProvider.overrideWith(() => FakeAuthVM()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          loginViewModelProvider.overrideWith(() => fakeVM),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
       addTearDown(container.dispose);
 
       await tester.pumpWidget(_wrapLoginPage(container));
@@ -242,10 +251,12 @@ Future<void> main() async {
 
     testWidgets('typing in password field triggers listener', (tester) async {
       final fakeVM = FakeLoginVM();
-      final container = ProviderContainer(overrides: [
-        loginViewModelProvider.overrideWith(() => fakeVM),
-        authViewModelProvider.overrideWith(() => FakeAuthVM()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          loginViewModelProvider.overrideWith(() => fakeVM),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
       addTearDown(container.dispose);
 
       await tester.pumpWidget(_wrapLoginPage(container));
@@ -259,10 +270,12 @@ Future<void> main() async {
 
     testWidgets('forgot password link navigates', (tester) async {
       final fakeVM = FakeLoginVM();
-      final container = ProviderContainer(overrides: [
-        loginViewModelProvider.overrideWith(() => fakeVM),
-        authViewModelProvider.overrideWith(() => FakeAuthVM()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          loginViewModelProvider.overrideWith(() => fakeVM),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
       addTearDown(container.dispose);
 
       await tester.pumpWidget(_wrapLoginPage(container));
@@ -276,10 +289,12 @@ Future<void> main() async {
 
     testWidgets('register link navigates', (tester) async {
       final fakeVM = FakeLoginVM();
-      final container = ProviderContainer(overrides: [
-        loginViewModelProvider.overrideWith(() => fakeVM),
-        authViewModelProvider.overrideWith(() => FakeAuthVM()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          loginViewModelProvider.overrideWith(() => fakeVM),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
       addTearDown(container.dispose);
 
       await tester.pumpWidget(_wrapLoginPage(container));
@@ -293,10 +308,12 @@ Future<void> main() async {
 
     testWidgets('onSubmitted on email moves focus', (tester) async {
       final fakeVM = FakeLoginVM();
-      final container = ProviderContainer(overrides: [
-        loginViewModelProvider.overrideWith(() => fakeVM),
-        authViewModelProvider.overrideWith(() => FakeAuthVM()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          loginViewModelProvider.overrideWith(() => fakeVM),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
       addTearDown(container.dispose);
 
       await tester.pumpWidget(_wrapLoginPage(container));
@@ -315,10 +332,12 @@ Future<void> main() async {
       final fakeVM = FakeLoginVM(
         state: const LoginState(email: 'a@b.com', password: '123'),
       );
-      final container = ProviderContainer(overrides: [
-        loginViewModelProvider.overrideWith(() => fakeVM),
-        authViewModelProvider.overrideWith(() => FakeAuthVM()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          loginViewModelProvider.overrideWith(() => fakeVM),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
       addTearDown(container.dispose);
 
       await tester.pumpWidget(_wrapLoginPage(container));

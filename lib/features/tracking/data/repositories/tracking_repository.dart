@@ -28,10 +28,7 @@ abstract class TrackingRepository {
     List<Map<String, dynamic>>? seasonRatings,
   });
 
-  Future<void> deleteTracking(
-    String mediaId, {
-    required MediaType mediaType,
-  });
+  Future<void> deleteTracking(String mediaId, {required MediaType mediaType});
 }
 
 class TrackingRepositoryImpl implements TrackingRepository {
@@ -50,8 +47,8 @@ class TrackingRepositoryImpl implements TrackingRepository {
       final response = await _dio.get(
         '/tracking',
         queryParameters: {
-          if (status != null) 'status': status,
-          if (mediaType != null) 'mediaType': mediaType.apiValue,
+          'status': ?status,
+          'mediaType': ?mediaType?.apiValue,
           'page': page,
           'pageSize': pageSize,
           'includeMedia': true,
@@ -103,16 +100,13 @@ class TrackingRepositoryImpl implements TrackingRepository {
     try {
       final data = <String, dynamic>{
         'mediaType': mediaType.apiValue,
-        if (status != null) 'status': status,
-        if (rating != null) 'seriesRating': rating,
-        if (review != null) 'seriesReview': review,
-        if (seasonRatings != null) 'seasonRatings': seasonRatings,
+        'status': ?status,
+        'seriesRating': ?rating,
+        'seriesReview': ?review,
+        'seasonRatings': ?seasonRatings,
       };
 
-      final response = await _dio.put(
-        '/tracking/$mediaId',
-        data: data,
-      );
+      final response = await _dio.put('/tracking/$mediaId', data: data);
       return TrackedMediaModel.fromJson(response.data);
     } on DioException catch (e) {
       throw ServerException(
@@ -128,7 +122,10 @@ class TrackingRepositoryImpl implements TrackingRepository {
     required MediaType mediaType,
   }) async {
     try {
-      await _dio.delete('/tracking/$mediaId', queryParameters: {'mediaType': mediaType.apiValue});
+      await _dio.delete(
+        '/tracking/$mediaId',
+        queryParameters: {'mediaType': mediaType.apiValue},
+      );
     } on DioException catch (e) {
       throw ServerException(
         message: e.message ?? 'Failed to delete tracking',

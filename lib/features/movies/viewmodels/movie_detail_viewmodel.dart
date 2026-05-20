@@ -45,9 +45,9 @@ class MovieDetailViewModel extends _$MovieDetailViewModel {
     int? rating,
     String? review,
   }) async {
-    final currentState = state.valueOrNull;
+    final currentState = state.value;
     if (currentState == null) {
-      debugPrint('[MOVIE_VM] addTracking aborted: state.valueOrNull is null');
+      debugPrint('[MOVIE_VM] addTracking aborted: state.value is null');
       return;
     }
     try {
@@ -83,7 +83,7 @@ class MovieDetailViewModel extends _$MovieDetailViewModel {
     int? rating,
     String? review,
   }) async {
-    final current = state.valueOrNull?.tracking;
+    final current = state.value?.tracking;
     if (current == null) {
       debugPrint('[MOVIE_VM] updateTracking aborted: tracking is null');
       return;
@@ -108,7 +108,7 @@ class MovieDetailViewModel extends _$MovieDetailViewModel {
   }
 
   Future<void> removeTracking() async {
-    final current = state.valueOrNull?.tracking;
+    final current = state.value?.tracking;
     if (current == null) return;
     await ref.read(trackingRepositoryProvider).deleteTracking(
           current.mediaId,

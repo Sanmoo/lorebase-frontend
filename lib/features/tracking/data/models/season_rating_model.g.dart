@@ -6,18 +6,16 @@ part of 'season_rating_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$SeasonRatingModelImpl _$$SeasonRatingModelImplFromJson(
-  Map<String, dynamic> json,
-) => _$SeasonRatingModelImpl(
-  seasonNumber: (json['seasonNumber'] as num).toInt(),
-  rating: (json['rating'] as num).toInt(),
-  ratedAt: DateTime.parse(json['ratedAt'] as String),
-);
+_SeasonRatingModel _$SeasonRatingModelFromJson(Map<String, dynamic> json) =>
+    _SeasonRatingModel(
+      seasonNumber: (json['seasonNumber'] as num).toInt(),
+      rating: (json['rating'] as num).toInt(),
+      ratedAt: DateTime.parse(json['ratedAt'] as String),
+    );
 
-Map<String, dynamic> _$$SeasonRatingModelImplToJson(
-  _$SeasonRatingModelImpl instance,
-) => <String, dynamic>{
-  'seasonNumber': instance.seasonNumber,
-  'rating': instance.rating,
-  'ratedAt': instance.ratedAt.toIso8601String(),
-};
+Map<String, dynamic> _$SeasonRatingModelToJson(_SeasonRatingModel instance) =>
+    <String, dynamic>{
+      'seasonNumber': instance.seasonNumber,
+      'rating': instance.rating,
+      'ratedAt': instance.ratedAt.toIso8601String(),
+    };

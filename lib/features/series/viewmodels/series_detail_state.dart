@@ -5,7 +5,7 @@ import '../../tracking/data/models/tracked_media_model.dart';
 part 'series_detail_state.freezed.dart';
 
 @freezed
-class SeriesDetailState with _$SeriesDetailState {
+abstract class SeriesDetailState with _$SeriesDetailState {
   const factory SeriesDetailState({
     required SeriesModel series,
     TrackedMediaModel? tracking,

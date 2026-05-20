@@ -6,8 +6,8 @@ part of 'dashboard_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$DashboardModelImpl _$$DashboardModelImplFromJson(Map<String, dynamic> json) =>
-    _$DashboardModelImpl(
+_DashboardModel _$DashboardModelFromJson(Map<String, dynamic> json) =>
+    _DashboardModel(
       watching: DashboardSectionModel.fromJson(
         json['watching'] as Map<String, dynamic>,
       ),
@@ -25,12 +25,11 @@ _$DashboardModelImpl _$$DashboardModelImplFromJson(Map<String, dynamic> json) =>
       ),
     );
 
-Map<String, dynamic> _$$DashboardModelImplToJson(
-  _$DashboardModelImpl instance,
-) => <String, dynamic>{
-  'watching': instance.watching,
-  'wantToWatch': instance.wantToWatch,
-  'completed': instance.completed,
-  'dropped': instance.dropped,
-  'stats': instance.stats,
-};
+Map<String, dynamic> _$DashboardModelToJson(_DashboardModel instance) =>
+    <String, dynamic>{
+      'watching': instance.watching,
+      'wantToWatch': instance.wantToWatch,
+      'completed': instance.completed,
+      'dropped': instance.dropped,
+      'stats': instance.stats,
+    };

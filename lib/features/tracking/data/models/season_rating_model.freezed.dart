@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,207 +9,275 @@ part of 'season_rating_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
-);
-
-SeasonRatingModel _$SeasonRatingModelFromJson(Map<String, dynamic> json) {
-  return _SeasonRatingModel.fromJson(json);
-}
 
 /// @nodoc
 mixin _$SeasonRatingModel {
-  int get seasonNumber => throw _privateConstructorUsedError;
-  int get rating => throw _privateConstructorUsedError;
-  DateTime get ratedAt => throw _privateConstructorUsedError;
+
+ int get seasonNumber; int get rating; DateTime get ratedAt;
+/// Create a copy of SeasonRatingModel
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$SeasonRatingModelCopyWith<SeasonRatingModel> get copyWith => _$SeasonRatingModelCopyWithImpl<SeasonRatingModel>(this as SeasonRatingModel, _$identity);
 
   /// Serializes this SeasonRatingModel to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  Map<String, dynamic> toJson();
 
-  /// Create a copy of SeasonRatingModel
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $SeasonRatingModelCopyWith<SeasonRatingModel> get copyWith =>
-      throw _privateConstructorUsedError;
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SeasonRatingModel&&(identical(other.seasonNumber, seasonNumber) || other.seasonNumber == seasonNumber)&&(identical(other.rating, rating) || other.rating == rating)&&(identical(other.ratedAt, ratedAt) || other.ratedAt == ratedAt));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,seasonNumber,rating,ratedAt);
+
+@override
+String toString() {
+  return 'SeasonRatingModel(seasonNumber: $seasonNumber, rating: $rating, ratedAt: $ratedAt)';
+}
+
+
 }
 
 /// @nodoc
-abstract class $SeasonRatingModelCopyWith<$Res> {
-  factory $SeasonRatingModelCopyWith(
-    SeasonRatingModel value,
-    $Res Function(SeasonRatingModel) then,
-  ) = _$SeasonRatingModelCopyWithImpl<$Res, SeasonRatingModel>;
-  @useResult
-  $Res call({int seasonNumber, int rating, DateTime ratedAt});
-}
+abstract mixin class $SeasonRatingModelCopyWith<$Res>  {
+  factory $SeasonRatingModelCopyWith(SeasonRatingModel value, $Res Function(SeasonRatingModel) _then) = _$SeasonRatingModelCopyWithImpl;
+@useResult
+$Res call({
+ int seasonNumber, int rating, DateTime ratedAt
+});
 
+
+
+
+}
 /// @nodoc
-class _$SeasonRatingModelCopyWithImpl<$Res, $Val extends SeasonRatingModel>
+class _$SeasonRatingModelCopyWithImpl<$Res>
     implements $SeasonRatingModelCopyWith<$Res> {
-  _$SeasonRatingModelCopyWithImpl(this._value, this._then);
+  _$SeasonRatingModelCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final SeasonRatingModel _self;
+  final $Res Function(SeasonRatingModel) _then;
 
-  /// Create a copy of SeasonRatingModel
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? seasonNumber = null,
-    Object? rating = null,
-    Object? ratedAt = null,
-  }) {
-    return _then(
-      _value.copyWith(
-            seasonNumber: null == seasonNumber
-                ? _value.seasonNumber
-                : seasonNumber // ignore: cast_nullable_to_non_nullable
-                      as int,
-            rating: null == rating
-                ? _value.rating
-                : rating // ignore: cast_nullable_to_non_nullable
-                      as int,
-            ratedAt: null == ratedAt
-                ? _value.ratedAt
-                : ratedAt // ignore: cast_nullable_to_non_nullable
-                      as DateTime,
-          )
-          as $Val,
-    );
-  }
+/// Create a copy of SeasonRatingModel
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? seasonNumber = null,Object? rating = null,Object? ratedAt = null,}) {
+  return _then(_self.copyWith(
+seasonNumber: null == seasonNumber ? _self.seasonNumber : seasonNumber // ignore: cast_nullable_to_non_nullable
+as int,rating: null == rating ? _self.rating : rating // ignore: cast_nullable_to_non_nullable
+as int,ratedAt: null == ratedAt ? _self.ratedAt : ratedAt // ignore: cast_nullable_to_non_nullable
+as DateTime,
+  ));
 }
 
-/// @nodoc
-abstract class _$$SeasonRatingModelImplCopyWith<$Res>
-    implements $SeasonRatingModelCopyWith<$Res> {
-  factory _$$SeasonRatingModelImplCopyWith(
-    _$SeasonRatingModelImpl value,
-    $Res Function(_$SeasonRatingModelImpl) then,
-  ) = __$$SeasonRatingModelImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({int seasonNumber, int rating, DateTime ratedAt});
 }
 
-/// @nodoc
-class __$$SeasonRatingModelImplCopyWithImpl<$Res>
-    extends _$SeasonRatingModelCopyWithImpl<$Res, _$SeasonRatingModelImpl>
-    implements _$$SeasonRatingModelImplCopyWith<$Res> {
-  __$$SeasonRatingModelImplCopyWithImpl(
-    _$SeasonRatingModelImpl _value,
-    $Res Function(_$SeasonRatingModelImpl) _then,
-  ) : super(_value, _then);
 
-  /// Create a copy of SeasonRatingModel
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? seasonNumber = null,
-    Object? rating = null,
-    Object? ratedAt = null,
-  }) {
-    return _then(
-      _$SeasonRatingModelImpl(
-        seasonNumber: null == seasonNumber
-            ? _value.seasonNumber
-            : seasonNumber // ignore: cast_nullable_to_non_nullable
-                  as int,
-        rating: null == rating
-            ? _value.rating
-            : rating // ignore: cast_nullable_to_non_nullable
-                  as int,
-        ratedAt: null == ratedAt
-            ? _value.ratedAt
-            : ratedAt // ignore: cast_nullable_to_non_nullable
-                  as DateTime,
-      ),
-    );
-  }
+/// Adds pattern-matching-related methods to [SeasonRatingModel].
+extension SeasonRatingModelPatterns on SeasonRatingModel {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _SeasonRatingModel value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _SeasonRatingModel() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _SeasonRatingModel value)  $default,){
+final _that = this;
+switch (_that) {
+case _SeasonRatingModel():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _SeasonRatingModel value)?  $default,){
+final _that = this;
+switch (_that) {
+case _SeasonRatingModel() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int seasonNumber,  int rating,  DateTime ratedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _SeasonRatingModel() when $default != null:
+return $default(_that.seasonNumber,_that.rating,_that.ratedAt);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int seasonNumber,  int rating,  DateTime ratedAt)  $default,) {final _that = this;
+switch (_that) {
+case _SeasonRatingModel():
+return $default(_that.seasonNumber,_that.rating,_that.ratedAt);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int seasonNumber,  int rating,  DateTime ratedAt)?  $default,) {final _that = this;
+switch (_that) {
+case _SeasonRatingModel() when $default != null:
+return $default(_that.seasonNumber,_that.rating,_that.ratedAt);case _:
+  return null;
+
+}
+}
+
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$SeasonRatingModelImpl implements _SeasonRatingModel {
-  const _$SeasonRatingModelImpl({
-    required this.seasonNumber,
-    required this.rating,
-    required this.ratedAt,
-  });
 
-  factory _$SeasonRatingModelImpl.fromJson(Map<String, dynamic> json) =>
-      _$$SeasonRatingModelImplFromJson(json);
+class _SeasonRatingModel implements SeasonRatingModel {
+  const _SeasonRatingModel({required this.seasonNumber, required this.rating, required this.ratedAt});
+  factory _SeasonRatingModel.fromJson(Map<String, dynamic> json) => _$SeasonRatingModelFromJson(json);
 
-  @override
-  final int seasonNumber;
-  @override
-  final int rating;
-  @override
-  final DateTime ratedAt;
+@override final  int seasonNumber;
+@override final  int rating;
+@override final  DateTime ratedAt;
 
-  @override
-  String toString() {
-    return 'SeasonRatingModel(seasonNumber: $seasonNumber, rating: $rating, ratedAt: $ratedAt)';
-  }
+/// Create a copy of SeasonRatingModel
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$SeasonRatingModelCopyWith<_SeasonRatingModel> get copyWith => __$SeasonRatingModelCopyWithImpl<_SeasonRatingModel>(this, _$identity);
 
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$SeasonRatingModelImpl &&
-            (identical(other.seasonNumber, seasonNumber) ||
-                other.seasonNumber == seasonNumber) &&
-            (identical(other.rating, rating) || other.rating == rating) &&
-            (identical(other.ratedAt, ratedAt) || other.ratedAt == ratedAt));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(runtimeType, seasonNumber, rating, ratedAt);
-
-  /// Create a copy of SeasonRatingModel
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$SeasonRatingModelImplCopyWith<_$SeasonRatingModelImpl> get copyWith =>
-      __$$SeasonRatingModelImplCopyWithImpl<_$SeasonRatingModelImpl>(
-        this,
-        _$identity,
-      );
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$SeasonRatingModelImplToJson(this);
-  }
+@override
+Map<String, dynamic> toJson() {
+  return _$SeasonRatingModelToJson(this, );
 }
 
-abstract class _SeasonRatingModel implements SeasonRatingModel {
-  const factory _SeasonRatingModel({
-    required final int seasonNumber,
-    required final int rating,
-    required final DateTime ratedAt,
-  }) = _$SeasonRatingModelImpl;
-
-  factory _SeasonRatingModel.fromJson(Map<String, dynamic> json) =
-      _$SeasonRatingModelImpl.fromJson;
-
-  @override
-  int get seasonNumber;
-  @override
-  int get rating;
-  @override
-  DateTime get ratedAt;
-
-  /// Create a copy of SeasonRatingModel
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$SeasonRatingModelImplCopyWith<_$SeasonRatingModelImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SeasonRatingModel&&(identical(other.seasonNumber, seasonNumber) || other.seasonNumber == seasonNumber)&&(identical(other.rating, rating) || other.rating == rating)&&(identical(other.ratedAt, ratedAt) || other.ratedAt == ratedAt));
 }
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,seasonNumber,rating,ratedAt);
+
+@override
+String toString() {
+  return 'SeasonRatingModel(seasonNumber: $seasonNumber, rating: $rating, ratedAt: $ratedAt)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$SeasonRatingModelCopyWith<$Res> implements $SeasonRatingModelCopyWith<$Res> {
+  factory _$SeasonRatingModelCopyWith(_SeasonRatingModel value, $Res Function(_SeasonRatingModel) _then) = __$SeasonRatingModelCopyWithImpl;
+@override @useResult
+$Res call({
+ int seasonNumber, int rating, DateTime ratedAt
+});
+
+
+
+
+}
+/// @nodoc
+class __$SeasonRatingModelCopyWithImpl<$Res>
+    implements _$SeasonRatingModelCopyWith<$Res> {
+  __$SeasonRatingModelCopyWithImpl(this._self, this._then);
+
+  final _SeasonRatingModel _self;
+  final $Res Function(_SeasonRatingModel) _then;
+
+/// Create a copy of SeasonRatingModel
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? seasonNumber = null,Object? rating = null,Object? ratedAt = null,}) {
+  return _then(_SeasonRatingModel(
+seasonNumber: null == seasonNumber ? _self.seasonNumber : seasonNumber // ignore: cast_nullable_to_non_nullable
+as int,rating: null == rating ? _self.rating : rating // ignore: cast_nullable_to_non_nullable
+as int,ratedAt: null == ratedAt ? _self.ratedAt : ratedAt // ignore: cast_nullable_to_non_nullable
+as DateTime,
+  ));
+}
+
+
+}
+
+// dart format on

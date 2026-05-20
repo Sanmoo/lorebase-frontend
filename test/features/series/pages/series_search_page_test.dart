@@ -15,12 +15,15 @@ class FakeSearchVM extends SeriesSearchViewModel {
   final AsyncValue<List<SeriesModel>> testState;
   bool retryCalled = false;
   FakeSearchVM({AsyncValue<List<SeriesModel>>? state})
-      : testState = state ?? const AsyncValue.data([]);
+    : testState = state ?? const AsyncValue.data([]);
 
   @override
   AsyncValue<List<SeriesModel>> build() => testState;
   @override
-  Future<void> search(String query) async { retryCalled = true; }
+  Future<void> search(String query) async {
+    retryCalled = true;
+  }
+
   @override
   void clear() {}
 }
@@ -30,7 +33,7 @@ class FakeMovieSearchVM extends MovieSearchViewModel {
   bool searchCalled = false;
 
   FakeMovieSearchVM({AsyncValue<List<MovieModel>>? state})
-      : testState = state ?? const AsyncValue.data([]);
+    : testState = state ?? const AsyncValue.data([]);
 
   @override
   AsyncValue<List<MovieModel>> build() => testState;
@@ -65,7 +68,7 @@ Widget _wrap(ProviderContainer container) {
           routes: [
             GoRoute(
               path: '/search',
-              builder: (_, __) => const SeriesSearchPage(),
+              builder: (_, _) => const SeriesSearchPage(),
             ),
           ],
         ),
@@ -79,10 +82,12 @@ Future<void> main() async {
 
   group('SeriesSearchPage', () {
     ProviderContainer createContainer(FakeSearchVM fakeVM) {
-      return ProviderContainer(overrides: [
-        seriesSearchViewModelProvider.overrideWith(() => fakeVM),
-        authViewModelProvider.overrideWith(() => FakeAuthVM()),
-      ]);
+      return ProviderContainer(
+        overrides: [
+          seriesSearchViewModelProvider.overrideWith(() => fakeVM),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
     }
 
     testWidgets('renders search field', (tester) async {
@@ -100,10 +105,7 @@ Future<void> main() async {
       await tester.pumpWidget(_wrap(container));
       await tester.pump();
 
-      expect(
-        find.textContaining('Type at least 2 characters'),
-        findsOneWidget,
-      );
+      expect(find.textContaining('Type at least 2 characters'), findsOneWidget);
     });
 
     testWidgets('shows results list when data available', (tester) async {
@@ -131,15 +133,11 @@ Future<void> main() async {
       await tester.pump();
 
       // Empty list but query is empty → shows initial state
-      expect(
-        find.textContaining('Type at least 2 characters'),
-        findsOneWidget,
-      );
+      expect(find.textContaining('Type at least 2 characters'), findsOneWidget);
     });
 
     testWidgets('shows loading indicator when loading', (tester) async {
-      final fakeVM =
-          FakeSearchVM(state: const AsyncValue.loading());
+      final fakeVM = FakeSearchVM(state: const AsyncValue.loading());
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
       await tester.pumpWidget(_wrap(container));
@@ -148,8 +146,9 @@ Future<void> main() async {
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
-    testWidgets('shows error message and retry when search fails',
-        (tester) async {
+    testWidgets('shows error message and retry when search fails', (
+      tester,
+    ) async {
       final fakeVM = FakeSearchVM(
         state: AsyncValue.error('Search failed', StackTrace.current),
       );
@@ -162,20 +161,22 @@ Future<void> main() async {
       expect(find.text('Retry'), findsOneWidget);
     });
 
-    testWidgets('shows no results message when empty data with non-empty query',
-        (tester) async {
-      final fakeVM = FakeSearchVM(state: const AsyncValue.data([]));
-      final container = createContainer(fakeVM);
-      addTearDown(container.dispose);
+    testWidgets(
+      'shows no results message when empty data with non-empty query',
+      (tester) async {
+        final fakeVM = FakeSearchVM(state: const AsyncValue.data([]));
+        final container = createContainer(fakeVM);
+        addTearDown(container.dispose);
 
-      await tester.pumpWidget(_wrap(container));
-      await tester.pump();
+        await tester.pumpWidget(_wrap(container));
+        await tester.pump();
 
-      expect(
-        find.textContaining('Type at least 2 characters'),
-        findsOneWidget,
-      );
-    });
+        expect(
+          find.textContaining('Type at least 2 characters'),
+          findsOneWidget,
+        );
+      },
+    );
 
     testWidgets('search field has autofocus', (tester) async {
       final fakeVM = FakeSearchVM();
@@ -238,9 +239,7 @@ Future<void> main() async {
     });
 
     testWidgets('tapping series item does not crash', (tester) async {
-      final results = [
-        const SeriesModel(tmdbId: 1, title: 'Breaking Bad'),
-      ];
+      final results = [const SeriesModel(tmdbId: 1, title: 'Breaking Bad')];
       final fakeVM = FakeSearchVM(state: AsyncValue.data(results));
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
@@ -254,11 +253,13 @@ Future<void> main() async {
     });
 
     testWidgets('switching to Movies shows the movie hint', (tester) async {
-      final container = ProviderContainer(overrides: [
-        seriesSearchViewModelProvider.overrideWith(() => FakeSearchVM()),
-        movieSearchViewModelProvider.overrideWith(() => FakeMovieSearchVM()),
-        authViewModelProvider.overrideWith(() => FakeAuthVM()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          seriesSearchViewModelProvider.overrideWith(() => FakeSearchVM()),
+          movieSearchViewModelProvider.overrideWith(() => FakeMovieSearchVM()),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
       addTearDown(container.dispose);
 
       await tester.pumpWidget(_wrap(container));

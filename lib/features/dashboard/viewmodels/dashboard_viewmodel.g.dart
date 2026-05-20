@@ -6,25 +6,64 @@ part of 'dashboard_viewmodel.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(DashboardViewModel)
+final dashboardViewModelProvider = DashboardViewModelProvider._();
+
+final class DashboardViewModelProvider
+    extends $NotifierProvider<DashboardViewModel, AsyncValue<DashboardModel>> {
+  DashboardViewModelProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'dashboardViewModelProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$dashboardViewModelHash();
+
+  @$internal
+  @override
+  DashboardViewModel create() => DashboardViewModel();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AsyncValue<DashboardModel> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AsyncValue<DashboardModel>>(value),
+    );
+  }
+}
+
 String _$dashboardViewModelHash() =>
     r'c4e9a648d098388583176fdf12adc6096262227e';
 
-/// See also [DashboardViewModel].
-@ProviderFor(DashboardViewModel)
-final dashboardViewModelProvider =
-    AutoDisposeNotifierProvider<
-      DashboardViewModel,
-      AsyncValue<DashboardModel>
-    >.internal(
-      DashboardViewModel.new,
-      name: r'dashboardViewModelProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$dashboardViewModelHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-typedef _$DashboardViewModel = AutoDisposeNotifier<AsyncValue<DashboardModel>>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$DashboardViewModel
+    extends $Notifier<AsyncValue<DashboardModel>> {
+  AsyncValue<DashboardModel> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref =
+        this.ref
+            as $Ref<AsyncValue<DashboardModel>, AsyncValue<DashboardModel>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<
+                AsyncValue<DashboardModel>,
+                AsyncValue<DashboardModel>
+              >,
+              AsyncValue<DashboardModel>,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}

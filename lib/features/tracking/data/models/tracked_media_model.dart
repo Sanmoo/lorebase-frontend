@@ -7,7 +7,7 @@ part 'tracked_media_model.freezed.dart';
 part 'tracked_media_model.g.dart';
 
 @freezed
-class TrackedMediaModel with _$TrackedMediaModel {
+abstract class TrackedMediaModel with _$TrackedMediaModel {
   const factory TrackedMediaModel({
     required String trackingId,
     required String userId,

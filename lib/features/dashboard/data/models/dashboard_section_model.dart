@@ -5,7 +5,7 @@ part 'dashboard_section_model.freezed.dart';
 part 'dashboard_section_model.g.dart';
 
 @freezed
-class DashboardSectionModel with _$DashboardSectionModel {
+abstract class DashboardSectionModel with _$DashboardSectionModel {
   const factory DashboardSectionModel({
     @Default([]) List<TrackedMediaSummaryModel> items,
     @Default(0) int total,
