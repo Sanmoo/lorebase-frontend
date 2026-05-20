@@ -16,6 +16,15 @@ int flexibleIntFromJson(dynamic value) {
 /// for the fromJson converter.
 int flexibleIntToJson(int value) => value;
 
+/// Parses a nullable [value] that may be either [int] or [String] into an [int].
+int? flexibleNullableIntFromJson(dynamic value) {
+  if (value == null) return null;
+  return flexibleIntFromJson(value);
+}
+
+/// Returns the nullable [int] value unchanged for JSON serialization.
+int? flexibleNullableIntToJson(int? value) => value;
+
 /// Converts a [value] that may be [int] or [String] to a [String].
 ///
 /// Used for fields where the API sends an integer but the model uses a [String].

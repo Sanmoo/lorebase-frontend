@@ -12,7 +12,8 @@ part of 'movie_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 MovieModel _$MovieModelFromJson(Map<String, dynamic> json) {
   return _MovieModel.fromJson(json);
@@ -28,6 +29,11 @@ mixin _$MovieModel {
   String? get backdropPath => throw _privateConstructorUsedError;
   String? get releaseDate => throw _privateConstructorUsedError;
   List<String> get genres => throw _privateConstructorUsedError;
+  @JsonKey(
+    readValue: _readRuntimeMinutes,
+    fromJson: flexibleNullableIntFromJson,
+    toJson: flexibleNullableIntToJson,
+  )
   int? get runtimeMinutes => throw _privateConstructorUsedError;
   String? get status => throw _privateConstructorUsedError;
 
@@ -44,20 +50,27 @@ mixin _$MovieModel {
 /// @nodoc
 abstract class $MovieModelCopyWith<$Res> {
   factory $MovieModelCopyWith(
-          MovieModel value, $Res Function(MovieModel) then) =
-      _$MovieModelCopyWithImpl<$Res, MovieModel>;
+    MovieModel value,
+    $Res Function(MovieModel) then,
+  ) = _$MovieModelCopyWithImpl<$Res, MovieModel>;
   @useResult
-  $Res call(
-      {@JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
-      int tmdbId,
-      String title,
-      String? overview,
-      String? posterPath,
-      String? backdropPath,
-      String? releaseDate,
-      List<String> genres,
-      int? runtimeMinutes,
-      String? status});
+  $Res call({
+    @JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
+    int tmdbId,
+    String title,
+    String? overview,
+    String? posterPath,
+    String? backdropPath,
+    String? releaseDate,
+    List<String> genres,
+    @JsonKey(
+      readValue: _readRuntimeMinutes,
+      fromJson: flexibleNullableIntFromJson,
+      toJson: flexibleNullableIntToJson,
+    )
+    int? runtimeMinutes,
+    String? status,
+  });
 }
 
 /// @nodoc
@@ -85,44 +98,47 @@ class _$MovieModelCopyWithImpl<$Res, $Val extends MovieModel>
     Object? runtimeMinutes = freezed,
     Object? status = freezed,
   }) {
-    return _then(_value.copyWith(
-      tmdbId: null == tmdbId
-          ? _value.tmdbId
-          : tmdbId // ignore: cast_nullable_to_non_nullable
-              as int,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
-      overview: freezed == overview
-          ? _value.overview
-          : overview // ignore: cast_nullable_to_non_nullable
-              as String?,
-      posterPath: freezed == posterPath
-          ? _value.posterPath
-          : posterPath // ignore: cast_nullable_to_non_nullable
-              as String?,
-      backdropPath: freezed == backdropPath
-          ? _value.backdropPath
-          : backdropPath // ignore: cast_nullable_to_non_nullable
-              as String?,
-      releaseDate: freezed == releaseDate
-          ? _value.releaseDate
-          : releaseDate // ignore: cast_nullable_to_non_nullable
-              as String?,
-      genres: null == genres
-          ? _value.genres
-          : genres // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      runtimeMinutes: freezed == runtimeMinutes
-          ? _value.runtimeMinutes
-          : runtimeMinutes // ignore: cast_nullable_to_non_nullable
-              as int?,
-      status: freezed == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            tmdbId: null == tmdbId
+                ? _value.tmdbId
+                : tmdbId // ignore: cast_nullable_to_non_nullable
+                      as int,
+            title: null == title
+                ? _value.title
+                : title // ignore: cast_nullable_to_non_nullable
+                      as String,
+            overview: freezed == overview
+                ? _value.overview
+                : overview // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            posterPath: freezed == posterPath
+                ? _value.posterPath
+                : posterPath // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            backdropPath: freezed == backdropPath
+                ? _value.backdropPath
+                : backdropPath // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            releaseDate: freezed == releaseDate
+                ? _value.releaseDate
+                : releaseDate // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            genres: null == genres
+                ? _value.genres
+                : genres // ignore: cast_nullable_to_non_nullable
+                      as List<String>,
+            runtimeMinutes: freezed == runtimeMinutes
+                ? _value.runtimeMinutes
+                : runtimeMinutes // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            status: freezed == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as String?,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -130,21 +146,28 @@ class _$MovieModelCopyWithImpl<$Res, $Val extends MovieModel>
 abstract class _$$MovieModelImplCopyWith<$Res>
     implements $MovieModelCopyWith<$Res> {
   factory _$$MovieModelImplCopyWith(
-          _$MovieModelImpl value, $Res Function(_$MovieModelImpl) then) =
-      __$$MovieModelImplCopyWithImpl<$Res>;
+    _$MovieModelImpl value,
+    $Res Function(_$MovieModelImpl) then,
+  ) = __$$MovieModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {@JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
-      int tmdbId,
-      String title,
-      String? overview,
-      String? posterPath,
-      String? backdropPath,
-      String? releaseDate,
-      List<String> genres,
-      int? runtimeMinutes,
-      String? status});
+  $Res call({
+    @JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
+    int tmdbId,
+    String title,
+    String? overview,
+    String? posterPath,
+    String? backdropPath,
+    String? releaseDate,
+    List<String> genres,
+    @JsonKey(
+      readValue: _readRuntimeMinutes,
+      fromJson: flexibleNullableIntFromJson,
+      toJson: flexibleNullableIntToJson,
+    )
+    int? runtimeMinutes,
+    String? status,
+  });
 }
 
 /// @nodoc
@@ -152,8 +175,9 @@ class __$$MovieModelImplCopyWithImpl<$Res>
     extends _$MovieModelCopyWithImpl<$Res, _$MovieModelImpl>
     implements _$$MovieModelImplCopyWith<$Res> {
   __$$MovieModelImplCopyWithImpl(
-      _$MovieModelImpl _value, $Res Function(_$MovieModelImpl) _then)
-      : super(_value, _then);
+    _$MovieModelImpl _value,
+    $Res Function(_$MovieModelImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of MovieModel
   /// with the given fields replaced by the non-null parameter values.
@@ -170,62 +194,69 @@ class __$$MovieModelImplCopyWithImpl<$Res>
     Object? runtimeMinutes = freezed,
     Object? status = freezed,
   }) {
-    return _then(_$MovieModelImpl(
-      tmdbId: null == tmdbId
-          ? _value.tmdbId
-          : tmdbId // ignore: cast_nullable_to_non_nullable
-              as int,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
-      overview: freezed == overview
-          ? _value.overview
-          : overview // ignore: cast_nullable_to_non_nullable
-              as String?,
-      posterPath: freezed == posterPath
-          ? _value.posterPath
-          : posterPath // ignore: cast_nullable_to_non_nullable
-              as String?,
-      backdropPath: freezed == backdropPath
-          ? _value.backdropPath
-          : backdropPath // ignore: cast_nullable_to_non_nullable
-              as String?,
-      releaseDate: freezed == releaseDate
-          ? _value.releaseDate
-          : releaseDate // ignore: cast_nullable_to_non_nullable
-              as String?,
-      genres: null == genres
-          ? _value._genres
-          : genres // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      runtimeMinutes: freezed == runtimeMinutes
-          ? _value.runtimeMinutes
-          : runtimeMinutes // ignore: cast_nullable_to_non_nullable
-              as int?,
-      status: freezed == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
+    return _then(
+      _$MovieModelImpl(
+        tmdbId: null == tmdbId
+            ? _value.tmdbId
+            : tmdbId // ignore: cast_nullable_to_non_nullable
+                  as int,
+        title: null == title
+            ? _value.title
+            : title // ignore: cast_nullable_to_non_nullable
+                  as String,
+        overview: freezed == overview
+            ? _value.overview
+            : overview // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        posterPath: freezed == posterPath
+            ? _value.posterPath
+            : posterPath // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        backdropPath: freezed == backdropPath
+            ? _value.backdropPath
+            : backdropPath // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        releaseDate: freezed == releaseDate
+            ? _value.releaseDate
+            : releaseDate // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        genres: null == genres
+            ? _value._genres
+            : genres // ignore: cast_nullable_to_non_nullable
+                  as List<String>,
+        runtimeMinutes: freezed == runtimeMinutes
+            ? _value.runtimeMinutes
+            : runtimeMinutes // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        status: freezed == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as String?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$MovieModelImpl implements _MovieModel {
-  const _$MovieModelImpl(
-      {@JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
-      required this.tmdbId,
-      required this.title,
-      this.overview,
-      this.posterPath,
-      this.backdropPath,
-      this.releaseDate,
-      final List<String> genres = const [],
-      this.runtimeMinutes,
-      this.status})
-      : _genres = genres;
+  const _$MovieModelImpl({
+    @JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
+    required this.tmdbId,
+    required this.title,
+    this.overview,
+    this.posterPath,
+    this.backdropPath,
+    this.releaseDate,
+    final List<String> genres = const [],
+    @JsonKey(
+      readValue: _readRuntimeMinutes,
+      fromJson: flexibleNullableIntFromJson,
+      toJson: flexibleNullableIntToJson,
+    )
+    this.runtimeMinutes,
+    this.status,
+  }) : _genres = genres;
 
   factory _$MovieModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$MovieModelImplFromJson(json);
@@ -253,6 +284,11 @@ class _$MovieModelImpl implements _MovieModel {
   }
 
   @override
+  @JsonKey(
+    readValue: _readRuntimeMinutes,
+    fromJson: flexibleNullableIntFromJson,
+    toJson: flexibleNullableIntToJson,
+  )
   final int? runtimeMinutes;
   @override
   final String? status;
@@ -286,16 +322,17 @@ class _$MovieModelImpl implements _MovieModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      tmdbId,
-      title,
-      overview,
-      posterPath,
-      backdropPath,
-      releaseDate,
-      const DeepCollectionEquality().hash(_genres),
-      runtimeMinutes,
-      status);
+    runtimeType,
+    tmdbId,
+    title,
+    overview,
+    posterPath,
+    backdropPath,
+    releaseDate,
+    const DeepCollectionEquality().hash(_genres),
+    runtimeMinutes,
+    status,
+  );
 
   /// Create a copy of MovieModel
   /// with the given fields replaced by the non-null parameter values.
@@ -307,24 +344,28 @@ class _$MovieModelImpl implements _MovieModel {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$MovieModelImplToJson(
-      this,
-    );
+    return _$$MovieModelImplToJson(this);
   }
 }
 
 abstract class _MovieModel implements MovieModel {
-  const factory _MovieModel(
-      {@JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
-      required final int tmdbId,
-      required final String title,
-      final String? overview,
-      final String? posterPath,
-      final String? backdropPath,
-      final String? releaseDate,
-      final List<String> genres,
-      final int? runtimeMinutes,
-      final String? status}) = _$MovieModelImpl;
+  const factory _MovieModel({
+    @JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
+    required final int tmdbId,
+    required final String title,
+    final String? overview,
+    final String? posterPath,
+    final String? backdropPath,
+    final String? releaseDate,
+    final List<String> genres,
+    @JsonKey(
+      readValue: _readRuntimeMinutes,
+      fromJson: flexibleNullableIntFromJson,
+      toJson: flexibleNullableIntToJson,
+    )
+    final int? runtimeMinutes,
+    final String? status,
+  }) = _$MovieModelImpl;
 
   factory _MovieModel.fromJson(Map<String, dynamic> json) =
       _$MovieModelImpl.fromJson;
@@ -345,6 +386,11 @@ abstract class _MovieModel implements MovieModel {
   @override
   List<String> get genres;
   @override
+  @JsonKey(
+    readValue: _readRuntimeMinutes,
+    fromJson: flexibleNullableIntFromJson,
+    toJson: flexibleNullableIntToJson,
+  )
   int? get runtimeMinutes;
   @override
   String? get status;

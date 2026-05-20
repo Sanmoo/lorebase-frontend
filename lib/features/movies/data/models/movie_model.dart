@@ -4,6 +4,9 @@ import '../../../../core/utils/json_converters.dart';
 part 'movie_model.freezed.dart';
 part 'movie_model.g.dart';
 
+Object? _readRuntimeMinutes(Map<dynamic, dynamic> json, String key) =>
+    json[key] ?? json['runtime'];
+
 @freezed
 class MovieModel with _$MovieModel {
   const factory MovieModel({
@@ -15,6 +18,11 @@ class MovieModel with _$MovieModel {
     String? backdropPath,
     String? releaseDate,
     @Default([]) List<String> genres,
+    @JsonKey(
+      readValue: _readRuntimeMinutes,
+      fromJson: flexibleNullableIntFromJson,
+      toJson: flexibleNullableIntToJson,
+    )
     int? runtimeMinutes,
     String? status,
   }) = _MovieModel;

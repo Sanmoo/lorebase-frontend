@@ -14,11 +14,14 @@ _$MovieModelImpl _$$MovieModelImplFromJson(Map<String, dynamic> json) =>
       posterPath: json['posterPath'] as String?,
       backdropPath: json['backdropPath'] as String?,
       releaseDate: json['releaseDate'] as String?,
-      genres: (json['genres'] as List<dynamic>?)
+      genres:
+          (json['genres'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           const [],
-      runtimeMinutes: json['runtimeMinutes'] as int?,
+      runtimeMinutes: flexibleNullableIntFromJson(
+        _readRuntimeMinutes(json, 'runtimeMinutes'),
+      ),
       status: json['status'] as String?,
     );
 
@@ -31,6 +34,6 @@ Map<String, dynamic> _$$MovieModelImplToJson(_$MovieModelImpl instance) =>
       'backdropPath': instance.backdropPath,
       'releaseDate': instance.releaseDate,
       'genres': instance.genres,
-      'runtimeMinutes': instance.runtimeMinutes,
+      'runtimeMinutes': flexibleNullableIntToJson(instance.runtimeMinutes),
       'status': instance.status,
     };

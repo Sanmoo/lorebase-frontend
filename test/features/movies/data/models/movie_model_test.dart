@@ -81,5 +81,14 @@ void main() {
       expect(movie.tmdbId, 550);
       expect(movie.title, 'Fight Club');
     });
+
+    test('fromJson accepts runtime field from API', () {
+      final movie = MovieModel.fromJson({
+        ...minimalJson,
+        'runtime': 113,
+      });
+
+      expect(movie.runtimeMinutes, 113);
+    });
   });
 }
