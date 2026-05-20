@@ -12,23 +12,28 @@ part of 'tracked_media_summary_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 TrackedMediaSummaryModel _$TrackedMediaSummaryModelFromJson(
-    Map<String, dynamic> json) {
+  Map<String, dynamic> json,
+) {
   return _TrackedMediaSummaryModel.fromJson(json);
 }
 
 /// @nodoc
 mixin _$TrackedMediaSummaryModel {
   @JsonKey(
-      name: 'mediaId',
-      fromJson: flexibleStringFromJson,
-      toJson: flexibleStringToJson)
+    name: 'mediaId',
+    fromJson: flexibleStringFromJson,
+    toJson: flexibleStringToJson,
+  )
   String get mediaId => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
   @JsonKey(
-      fromJson: _nullableMediaTypeFromJson, toJson: _nullableMediaTypeToJson)
+    fromJson: _nullableMediaTypeFromJson,
+    toJson: _nullableMediaTypeToJson,
+  )
   MediaType? get mediaType => throw _privateConstructorUsedError;
   String? get overview => throw _privateConstructorUsedError;
   String? get posterPath => throw _privateConstructorUsedError;
@@ -49,32 +54,38 @@ mixin _$TrackedMediaSummaryModel {
 
 /// @nodoc
 abstract class $TrackedMediaSummaryModelCopyWith<$Res> {
-  factory $TrackedMediaSummaryModelCopyWith(TrackedMediaSummaryModel value,
-          $Res Function(TrackedMediaSummaryModel) then) =
-      _$TrackedMediaSummaryModelCopyWithImpl<$Res, TrackedMediaSummaryModel>;
+  factory $TrackedMediaSummaryModelCopyWith(
+    TrackedMediaSummaryModel value,
+    $Res Function(TrackedMediaSummaryModel) then,
+  ) = _$TrackedMediaSummaryModelCopyWithImpl<$Res, TrackedMediaSummaryModel>;
   @useResult
-  $Res call(
-      {@JsonKey(
-          name: 'mediaId',
-          fromJson: flexibleStringFromJson,
-          toJson: flexibleStringToJson)
-      String mediaId,
-      String title,
-      @JsonKey(
-          fromJson: _nullableMediaTypeFromJson,
-          toJson: _nullableMediaTypeToJson)
-      MediaType? mediaType,
-      String? overview,
-      String? posterPath,
-      String? status,
-      int? trackingRating,
-      int? seasonCount,
-      DateTime? addedAt});
+  $Res call({
+    @JsonKey(
+      name: 'mediaId',
+      fromJson: flexibleStringFromJson,
+      toJson: flexibleStringToJson,
+    )
+    String mediaId,
+    String title,
+    @JsonKey(
+      fromJson: _nullableMediaTypeFromJson,
+      toJson: _nullableMediaTypeToJson,
+    )
+    MediaType? mediaType,
+    String? overview,
+    String? posterPath,
+    String? status,
+    int? trackingRating,
+    int? seasonCount,
+    DateTime? addedAt,
+  });
 }
 
 /// @nodoc
-class _$TrackedMediaSummaryModelCopyWithImpl<$Res,
-        $Val extends TrackedMediaSummaryModel>
+class _$TrackedMediaSummaryModelCopyWithImpl<
+  $Res,
+  $Val extends TrackedMediaSummaryModel
+>
     implements $TrackedMediaSummaryModelCopyWith<$Res> {
   _$TrackedMediaSummaryModelCopyWithImpl(this._value, this._then);
 
@@ -98,44 +109,47 @@ class _$TrackedMediaSummaryModelCopyWithImpl<$Res,
     Object? seasonCount = freezed,
     Object? addedAt = freezed,
   }) {
-    return _then(_value.copyWith(
-      mediaId: null == mediaId
-          ? _value.mediaId
-          : mediaId // ignore: cast_nullable_to_non_nullable
-              as String,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
-      mediaType: freezed == mediaType
-          ? _value.mediaType
-          : mediaType // ignore: cast_nullable_to_non_nullable
-              as MediaType?,
-      overview: freezed == overview
-          ? _value.overview
-          : overview // ignore: cast_nullable_to_non_nullable
-              as String?,
-      posterPath: freezed == posterPath
-          ? _value.posterPath
-          : posterPath // ignore: cast_nullable_to_non_nullable
-              as String?,
-      status: freezed == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String?,
-      trackingRating: freezed == trackingRating
-          ? _value.trackingRating
-          : trackingRating // ignore: cast_nullable_to_non_nullable
-              as int?,
-      seasonCount: freezed == seasonCount
-          ? _value.seasonCount
-          : seasonCount // ignore: cast_nullable_to_non_nullable
-              as int?,
-      addedAt: freezed == addedAt
-          ? _value.addedAt
-          : addedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            mediaId: null == mediaId
+                ? _value.mediaId
+                : mediaId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            title: null == title
+                ? _value.title
+                : title // ignore: cast_nullable_to_non_nullable
+                      as String,
+            mediaType: freezed == mediaType
+                ? _value.mediaType
+                : mediaType // ignore: cast_nullable_to_non_nullable
+                      as MediaType?,
+            overview: freezed == overview
+                ? _value.overview
+                : overview // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            posterPath: freezed == posterPath
+                ? _value.posterPath
+                : posterPath // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            status: freezed == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            trackingRating: freezed == trackingRating
+                ? _value.trackingRating
+                : trackingRating // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            seasonCount: freezed == seasonCount
+                ? _value.seasonCount
+                : seasonCount // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            addedAt: freezed == addedAt
+                ? _value.addedAt
+                : addedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -143,39 +157,45 @@ class _$TrackedMediaSummaryModelCopyWithImpl<$Res,
 abstract class _$$TrackedMediaSummaryModelImplCopyWith<$Res>
     implements $TrackedMediaSummaryModelCopyWith<$Res> {
   factory _$$TrackedMediaSummaryModelImplCopyWith(
-          _$TrackedMediaSummaryModelImpl value,
-          $Res Function(_$TrackedMediaSummaryModelImpl) then) =
-      __$$TrackedMediaSummaryModelImplCopyWithImpl<$Res>;
+    _$TrackedMediaSummaryModelImpl value,
+    $Res Function(_$TrackedMediaSummaryModelImpl) then,
+  ) = __$$TrackedMediaSummaryModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {@JsonKey(
-          name: 'mediaId',
-          fromJson: flexibleStringFromJson,
-          toJson: flexibleStringToJson)
-      String mediaId,
-      String title,
-      @JsonKey(
-          fromJson: _nullableMediaTypeFromJson,
-          toJson: _nullableMediaTypeToJson)
-      MediaType? mediaType,
-      String? overview,
-      String? posterPath,
-      String? status,
-      int? trackingRating,
-      int? seasonCount,
-      DateTime? addedAt});
+  $Res call({
+    @JsonKey(
+      name: 'mediaId',
+      fromJson: flexibleStringFromJson,
+      toJson: flexibleStringToJson,
+    )
+    String mediaId,
+    String title,
+    @JsonKey(
+      fromJson: _nullableMediaTypeFromJson,
+      toJson: _nullableMediaTypeToJson,
+    )
+    MediaType? mediaType,
+    String? overview,
+    String? posterPath,
+    String? status,
+    int? trackingRating,
+    int? seasonCount,
+    DateTime? addedAt,
+  });
 }
 
 /// @nodoc
 class __$$TrackedMediaSummaryModelImplCopyWithImpl<$Res>
-    extends _$TrackedMediaSummaryModelCopyWithImpl<$Res,
-        _$TrackedMediaSummaryModelImpl>
+    extends
+        _$TrackedMediaSummaryModelCopyWithImpl<
+          $Res,
+          _$TrackedMediaSummaryModelImpl
+        >
     implements _$$TrackedMediaSummaryModelImplCopyWith<$Res> {
   __$$TrackedMediaSummaryModelImplCopyWithImpl(
-      _$TrackedMediaSummaryModelImpl _value,
-      $Res Function(_$TrackedMediaSummaryModelImpl) _then)
-      : super(_value, _then);
+    _$TrackedMediaSummaryModelImpl _value,
+    $Res Function(_$TrackedMediaSummaryModelImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of TrackedMediaSummaryModel
   /// with the given fields replaced by the non-null parameter values.
@@ -192,82 +212,90 @@ class __$$TrackedMediaSummaryModelImplCopyWithImpl<$Res>
     Object? seasonCount = freezed,
     Object? addedAt = freezed,
   }) {
-    return _then(_$TrackedMediaSummaryModelImpl(
-      mediaId: null == mediaId
-          ? _value.mediaId
-          : mediaId // ignore: cast_nullable_to_non_nullable
-              as String,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
-      mediaType: freezed == mediaType
-          ? _value.mediaType
-          : mediaType // ignore: cast_nullable_to_non_nullable
-              as MediaType?,
-      overview: freezed == overview
-          ? _value.overview
-          : overview // ignore: cast_nullable_to_non_nullable
-              as String?,
-      posterPath: freezed == posterPath
-          ? _value.posterPath
-          : posterPath // ignore: cast_nullable_to_non_nullable
-              as String?,
-      status: freezed == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String?,
-      trackingRating: freezed == trackingRating
-          ? _value.trackingRating
-          : trackingRating // ignore: cast_nullable_to_non_nullable
-              as int?,
-      seasonCount: freezed == seasonCount
-          ? _value.seasonCount
-          : seasonCount // ignore: cast_nullable_to_non_nullable
-              as int?,
-      addedAt: freezed == addedAt
-          ? _value.addedAt
-          : addedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ));
+    return _then(
+      _$TrackedMediaSummaryModelImpl(
+        mediaId: null == mediaId
+            ? _value.mediaId
+            : mediaId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        title: null == title
+            ? _value.title
+            : title // ignore: cast_nullable_to_non_nullable
+                  as String,
+        mediaType: freezed == mediaType
+            ? _value.mediaType
+            : mediaType // ignore: cast_nullable_to_non_nullable
+                  as MediaType?,
+        overview: freezed == overview
+            ? _value.overview
+            : overview // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        posterPath: freezed == posterPath
+            ? _value.posterPath
+            : posterPath // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        status: freezed == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        trackingRating: freezed == trackingRating
+            ? _value.trackingRating
+            : trackingRating // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        seasonCount: freezed == seasonCount
+            ? _value.seasonCount
+            : seasonCount // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        addedAt: freezed == addedAt
+            ? _value.addedAt
+            : addedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$TrackedMediaSummaryModelImpl implements _TrackedMediaSummaryModel {
-  const _$TrackedMediaSummaryModelImpl(
-      {@JsonKey(
-          name: 'mediaId',
-          fromJson: flexibleStringFromJson,
-          toJson: flexibleStringToJson)
-      this.mediaId = '',
-      required this.title,
-      @JsonKey(
-          fromJson: _nullableMediaTypeFromJson,
-          toJson: _nullableMediaTypeToJson)
-      this.mediaType,
-      this.overview,
-      this.posterPath,
-      this.status,
-      this.trackingRating,
-      this.seasonCount,
-      this.addedAt});
+  const _$TrackedMediaSummaryModelImpl({
+    @JsonKey(
+      name: 'mediaId',
+      fromJson: flexibleStringFromJson,
+      toJson: flexibleStringToJson,
+    )
+    this.mediaId = '',
+    required this.title,
+    @JsonKey(
+      fromJson: _nullableMediaTypeFromJson,
+      toJson: _nullableMediaTypeToJson,
+    )
+    this.mediaType,
+    this.overview,
+    this.posterPath,
+    this.status,
+    this.trackingRating,
+    this.seasonCount,
+    this.addedAt,
+  });
 
   factory _$TrackedMediaSummaryModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$TrackedMediaSummaryModelImplFromJson(json);
 
   @override
   @JsonKey(
-      name: 'mediaId',
-      fromJson: flexibleStringFromJson,
-      toJson: flexibleStringToJson)
+    name: 'mediaId',
+    fromJson: flexibleStringFromJson,
+    toJson: flexibleStringToJson,
+  )
   final String mediaId;
   @override
   final String title;
   @override
   @JsonKey(
-      fromJson: _nullableMediaTypeFromJson, toJson: _nullableMediaTypeToJson)
+    fromJson: _nullableMediaTypeFromJson,
+    toJson: _nullableMediaTypeToJson,
+  )
   final MediaType? mediaType;
   @override
   final String? overview;
@@ -310,8 +338,18 @@ class _$TrackedMediaSummaryModelImpl implements _TrackedMediaSummaryModel {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, mediaId, title, mediaType,
-      overview, posterPath, status, trackingRating, seasonCount, addedAt);
+  int get hashCode => Object.hash(
+    runtimeType,
+    mediaId,
+    title,
+    mediaType,
+    overview,
+    posterPath,
+    status,
+    trackingRating,
+    seasonCount,
+    addedAt,
+  );
 
   /// Create a copy of TrackedMediaSummaryModel
   /// with the given fields replaced by the non-null parameter values.
@@ -319,50 +357,56 @@ class _$TrackedMediaSummaryModelImpl implements _TrackedMediaSummaryModel {
   @override
   @pragma('vm:prefer-inline')
   _$$TrackedMediaSummaryModelImplCopyWith<_$TrackedMediaSummaryModelImpl>
-      get copyWith => __$$TrackedMediaSummaryModelImplCopyWithImpl<
-          _$TrackedMediaSummaryModelImpl>(this, _$identity);
+  get copyWith =>
+      __$$TrackedMediaSummaryModelImplCopyWithImpl<
+        _$TrackedMediaSummaryModelImpl
+      >(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$TrackedMediaSummaryModelImplToJson(
-      this,
-    );
+    return _$$TrackedMediaSummaryModelImplToJson(this);
   }
 }
 
 abstract class _TrackedMediaSummaryModel implements TrackedMediaSummaryModel {
-  const factory _TrackedMediaSummaryModel(
-      {@JsonKey(
-          name: 'mediaId',
-          fromJson: flexibleStringFromJson,
-          toJson: flexibleStringToJson)
-      final String mediaId,
-      required final String title,
-      @JsonKey(
-          fromJson: _nullableMediaTypeFromJson,
-          toJson: _nullableMediaTypeToJson)
-      final MediaType? mediaType,
-      final String? overview,
-      final String? posterPath,
-      final String? status,
-      final int? trackingRating,
-      final int? seasonCount,
-      final DateTime? addedAt}) = _$TrackedMediaSummaryModelImpl;
+  const factory _TrackedMediaSummaryModel({
+    @JsonKey(
+      name: 'mediaId',
+      fromJson: flexibleStringFromJson,
+      toJson: flexibleStringToJson,
+    )
+    final String mediaId,
+    required final String title,
+    @JsonKey(
+      fromJson: _nullableMediaTypeFromJson,
+      toJson: _nullableMediaTypeToJson,
+    )
+    final MediaType? mediaType,
+    final String? overview,
+    final String? posterPath,
+    final String? status,
+    final int? trackingRating,
+    final int? seasonCount,
+    final DateTime? addedAt,
+  }) = _$TrackedMediaSummaryModelImpl;
 
   factory _TrackedMediaSummaryModel.fromJson(Map<String, dynamic> json) =
       _$TrackedMediaSummaryModelImpl.fromJson;
 
   @override
   @JsonKey(
-      name: 'mediaId',
-      fromJson: flexibleStringFromJson,
-      toJson: flexibleStringToJson)
+    name: 'mediaId',
+    fromJson: flexibleStringFromJson,
+    toJson: flexibleStringToJson,
+  )
   String get mediaId;
   @override
   String get title;
   @override
   @JsonKey(
-      fromJson: _nullableMediaTypeFromJson, toJson: _nullableMediaTypeToJson)
+    fromJson: _nullableMediaTypeFromJson,
+    toJson: _nullableMediaTypeToJson,
+  )
   MediaType? get mediaType;
   @override
   String? get overview;
@@ -382,5 +426,5 @@ abstract class _TrackedMediaSummaryModel implements TrackedMediaSummaryModel {
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$TrackedMediaSummaryModelImplCopyWith<_$TrackedMediaSummaryModelImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  get copyWith => throw _privateConstructorUsedError;
 }

@@ -12,10 +12,12 @@ part of 'dashboard_section_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 DashboardSectionModel _$DashboardSectionModelFromJson(
-    Map<String, dynamic> json) {
+  Map<String, dynamic> json,
+) {
   return _DashboardSectionModel.fromJson(json);
 }
 
@@ -38,16 +40,19 @@ mixin _$DashboardSectionModel {
 
 /// @nodoc
 abstract class $DashboardSectionModelCopyWith<$Res> {
-  factory $DashboardSectionModelCopyWith(DashboardSectionModel value,
-          $Res Function(DashboardSectionModel) then) =
-      _$DashboardSectionModelCopyWithImpl<$Res, DashboardSectionModel>;
+  factory $DashboardSectionModelCopyWith(
+    DashboardSectionModel value,
+    $Res Function(DashboardSectionModel) then,
+  ) = _$DashboardSectionModelCopyWithImpl<$Res, DashboardSectionModel>;
   @useResult
   $Res call({List<TrackedMediaSummaryModel> items, int total, bool hasMore});
 }
 
 /// @nodoc
-class _$DashboardSectionModelCopyWithImpl<$Res,
-        $Val extends DashboardSectionModel>
+class _$DashboardSectionModelCopyWithImpl<
+  $Res,
+  $Val extends DashboardSectionModel
+>
     implements $DashboardSectionModelCopyWith<$Res> {
   _$DashboardSectionModelCopyWithImpl(this._value, this._then);
 
@@ -65,20 +70,23 @@ class _$DashboardSectionModelCopyWithImpl<$Res,
     Object? total = null,
     Object? hasMore = null,
   }) {
-    return _then(_value.copyWith(
-      items: null == items
-          ? _value.items
-          : items // ignore: cast_nullable_to_non_nullable
-              as List<TrackedMediaSummaryModel>,
-      total: null == total
-          ? _value.total
-          : total // ignore: cast_nullable_to_non_nullable
-              as int,
-      hasMore: null == hasMore
-          ? _value.hasMore
-          : hasMore // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            items: null == items
+                ? _value.items
+                : items // ignore: cast_nullable_to_non_nullable
+                      as List<TrackedMediaSummaryModel>,
+            total: null == total
+                ? _value.total
+                : total // ignore: cast_nullable_to_non_nullable
+                      as int,
+            hasMore: null == hasMore
+                ? _value.hasMore
+                : hasMore // ignore: cast_nullable_to_non_nullable
+                      as bool,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -86,9 +94,9 @@ class _$DashboardSectionModelCopyWithImpl<$Res,
 abstract class _$$DashboardSectionModelImplCopyWith<$Res>
     implements $DashboardSectionModelCopyWith<$Res> {
   factory _$$DashboardSectionModelImplCopyWith(
-          _$DashboardSectionModelImpl value,
-          $Res Function(_$DashboardSectionModelImpl) then) =
-      __$$DashboardSectionModelImplCopyWithImpl<$Res>;
+    _$DashboardSectionModelImpl value,
+    $Res Function(_$DashboardSectionModelImpl) then,
+  ) = __$$DashboardSectionModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({List<TrackedMediaSummaryModel> items, int total, bool hasMore});
@@ -96,12 +104,13 @@ abstract class _$$DashboardSectionModelImplCopyWith<$Res>
 
 /// @nodoc
 class __$$DashboardSectionModelImplCopyWithImpl<$Res>
-    extends _$DashboardSectionModelCopyWithImpl<$Res,
-        _$DashboardSectionModelImpl>
+    extends
+        _$DashboardSectionModelCopyWithImpl<$Res, _$DashboardSectionModelImpl>
     implements _$$DashboardSectionModelImplCopyWith<$Res> {
-  __$$DashboardSectionModelImplCopyWithImpl(_$DashboardSectionModelImpl _value,
-      $Res Function(_$DashboardSectionModelImpl) _then)
-      : super(_value, _then);
+  __$$DashboardSectionModelImplCopyWithImpl(
+    _$DashboardSectionModelImpl _value,
+    $Res Function(_$DashboardSectionModelImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of DashboardSectionModel
   /// with the given fields replaced by the non-null parameter values.
@@ -112,31 +121,33 @@ class __$$DashboardSectionModelImplCopyWithImpl<$Res>
     Object? total = null,
     Object? hasMore = null,
   }) {
-    return _then(_$DashboardSectionModelImpl(
-      items: null == items
-          ? _value._items
-          : items // ignore: cast_nullable_to_non_nullable
-              as List<TrackedMediaSummaryModel>,
-      total: null == total
-          ? _value.total
-          : total // ignore: cast_nullable_to_non_nullable
-              as int,
-      hasMore: null == hasMore
-          ? _value.hasMore
-          : hasMore // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ));
+    return _then(
+      _$DashboardSectionModelImpl(
+        items: null == items
+            ? _value._items
+            : items // ignore: cast_nullable_to_non_nullable
+                  as List<TrackedMediaSummaryModel>,
+        total: null == total
+            ? _value.total
+            : total // ignore: cast_nullable_to_non_nullable
+                  as int,
+        hasMore: null == hasMore
+            ? _value.hasMore
+            : hasMore // ignore: cast_nullable_to_non_nullable
+                  as bool,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$DashboardSectionModelImpl implements _DashboardSectionModel {
-  const _$DashboardSectionModelImpl(
-      {final List<TrackedMediaSummaryModel> items = const [],
-      this.total = 0,
-      this.hasMore = false})
-      : _items = items;
+  const _$DashboardSectionModelImpl({
+    final List<TrackedMediaSummaryModel> items = const [],
+    this.total = 0,
+    this.hasMore = false,
+  }) : _items = items;
 
   factory _$DashboardSectionModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$DashboardSectionModelImplFromJson(json);
@@ -175,7 +186,11 @@ class _$DashboardSectionModelImpl implements _DashboardSectionModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType, const DeepCollectionEquality().hash(_items), total, hasMore);
+    runtimeType,
+    const DeepCollectionEquality().hash(_items),
+    total,
+    hasMore,
+  );
 
   /// Create a copy of DashboardSectionModel
   /// with the given fields replaced by the non-null parameter values.
@@ -183,22 +198,24 @@ class _$DashboardSectionModelImpl implements _DashboardSectionModel {
   @override
   @pragma('vm:prefer-inline')
   _$$DashboardSectionModelImplCopyWith<_$DashboardSectionModelImpl>
-      get copyWith => __$$DashboardSectionModelImplCopyWithImpl<
-          _$DashboardSectionModelImpl>(this, _$identity);
+  get copyWith =>
+      __$$DashboardSectionModelImplCopyWithImpl<_$DashboardSectionModelImpl>(
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$DashboardSectionModelImplToJson(
-      this,
-    );
+    return _$$DashboardSectionModelImplToJson(this);
   }
 }
 
 abstract class _DashboardSectionModel implements DashboardSectionModel {
-  const factory _DashboardSectionModel(
-      {final List<TrackedMediaSummaryModel> items,
-      final int total,
-      final bool hasMore}) = _$DashboardSectionModelImpl;
+  const factory _DashboardSectionModel({
+    final List<TrackedMediaSummaryModel> items,
+    final int total,
+    final bool hasMore,
+  }) = _$DashboardSectionModelImpl;
 
   factory _DashboardSectionModel.fromJson(Map<String, dynamic> json) =
       _$DashboardSectionModelImpl.fromJson;
@@ -215,5 +232,5 @@ abstract class _DashboardSectionModel implements DashboardSectionModel {
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$DashboardSectionModelImplCopyWith<_$DashboardSectionModelImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  get copyWith => throw _privateConstructorUsedError;
 }

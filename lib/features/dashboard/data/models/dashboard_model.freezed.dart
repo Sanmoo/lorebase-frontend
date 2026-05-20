@@ -12,7 +12,8 @@ part of 'dashboard_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 DashboardModel _$DashboardModelFromJson(Map<String, dynamic> json) {
   return _DashboardModel.fromJson(json);
@@ -39,15 +40,17 @@ mixin _$DashboardModel {
 /// @nodoc
 abstract class $DashboardModelCopyWith<$Res> {
   factory $DashboardModelCopyWith(
-          DashboardModel value, $Res Function(DashboardModel) then) =
-      _$DashboardModelCopyWithImpl<$Res, DashboardModel>;
+    DashboardModel value,
+    $Res Function(DashboardModel) then,
+  ) = _$DashboardModelCopyWithImpl<$Res, DashboardModel>;
   @useResult
-  $Res call(
-      {DashboardSectionModel watching,
-      DashboardSectionModel wantToWatch,
-      DashboardSectionModel completed,
-      DashboardSectionModel dropped,
-      DashboardStatsModel stats});
+  $Res call({
+    DashboardSectionModel watching,
+    DashboardSectionModel wantToWatch,
+    DashboardSectionModel completed,
+    DashboardSectionModel dropped,
+    DashboardStatsModel stats,
+  });
 
   $DashboardSectionModelCopyWith<$Res> get watching;
   $DashboardSectionModelCopyWith<$Res> get wantToWatch;
@@ -77,28 +80,31 @@ class _$DashboardModelCopyWithImpl<$Res, $Val extends DashboardModel>
     Object? dropped = null,
     Object? stats = null,
   }) {
-    return _then(_value.copyWith(
-      watching: null == watching
-          ? _value.watching
-          : watching // ignore: cast_nullable_to_non_nullable
-              as DashboardSectionModel,
-      wantToWatch: null == wantToWatch
-          ? _value.wantToWatch
-          : wantToWatch // ignore: cast_nullable_to_non_nullable
-              as DashboardSectionModel,
-      completed: null == completed
-          ? _value.completed
-          : completed // ignore: cast_nullable_to_non_nullable
-              as DashboardSectionModel,
-      dropped: null == dropped
-          ? _value.dropped
-          : dropped // ignore: cast_nullable_to_non_nullable
-              as DashboardSectionModel,
-      stats: null == stats
-          ? _value.stats
-          : stats // ignore: cast_nullable_to_non_nullable
-              as DashboardStatsModel,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            watching: null == watching
+                ? _value.watching
+                : watching // ignore: cast_nullable_to_non_nullable
+                      as DashboardSectionModel,
+            wantToWatch: null == wantToWatch
+                ? _value.wantToWatch
+                : wantToWatch // ignore: cast_nullable_to_non_nullable
+                      as DashboardSectionModel,
+            completed: null == completed
+                ? _value.completed
+                : completed // ignore: cast_nullable_to_non_nullable
+                      as DashboardSectionModel,
+            dropped: null == dropped
+                ? _value.dropped
+                : dropped // ignore: cast_nullable_to_non_nullable
+                      as DashboardSectionModel,
+            stats: null == stats
+                ? _value.stats
+                : stats // ignore: cast_nullable_to_non_nullable
+                      as DashboardStatsModel,
+          )
+          as $Val,
+    );
   }
 
   /// Create a copy of DashboardModel
@@ -155,17 +161,19 @@ class _$DashboardModelCopyWithImpl<$Res, $Val extends DashboardModel>
 /// @nodoc
 abstract class _$$DashboardModelImplCopyWith<$Res>
     implements $DashboardModelCopyWith<$Res> {
-  factory _$$DashboardModelImplCopyWith(_$DashboardModelImpl value,
-          $Res Function(_$DashboardModelImpl) then) =
-      __$$DashboardModelImplCopyWithImpl<$Res>;
+  factory _$$DashboardModelImplCopyWith(
+    _$DashboardModelImpl value,
+    $Res Function(_$DashboardModelImpl) then,
+  ) = __$$DashboardModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {DashboardSectionModel watching,
-      DashboardSectionModel wantToWatch,
-      DashboardSectionModel completed,
-      DashboardSectionModel dropped,
-      DashboardStatsModel stats});
+  $Res call({
+    DashboardSectionModel watching,
+    DashboardSectionModel wantToWatch,
+    DashboardSectionModel completed,
+    DashboardSectionModel dropped,
+    DashboardStatsModel stats,
+  });
 
   @override
   $DashboardSectionModelCopyWith<$Res> get watching;
@@ -184,8 +192,9 @@ class __$$DashboardModelImplCopyWithImpl<$Res>
     extends _$DashboardModelCopyWithImpl<$Res, _$DashboardModelImpl>
     implements _$$DashboardModelImplCopyWith<$Res> {
   __$$DashboardModelImplCopyWithImpl(
-      _$DashboardModelImpl _value, $Res Function(_$DashboardModelImpl) _then)
-      : super(_value, _then);
+    _$DashboardModelImpl _value,
+    $Res Function(_$DashboardModelImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of DashboardModel
   /// with the given fields replaced by the non-null parameter values.
@@ -198,40 +207,43 @@ class __$$DashboardModelImplCopyWithImpl<$Res>
     Object? dropped = null,
     Object? stats = null,
   }) {
-    return _then(_$DashboardModelImpl(
-      watching: null == watching
-          ? _value.watching
-          : watching // ignore: cast_nullable_to_non_nullable
-              as DashboardSectionModel,
-      wantToWatch: null == wantToWatch
-          ? _value.wantToWatch
-          : wantToWatch // ignore: cast_nullable_to_non_nullable
-              as DashboardSectionModel,
-      completed: null == completed
-          ? _value.completed
-          : completed // ignore: cast_nullable_to_non_nullable
-              as DashboardSectionModel,
-      dropped: null == dropped
-          ? _value.dropped
-          : dropped // ignore: cast_nullable_to_non_nullable
-              as DashboardSectionModel,
-      stats: null == stats
-          ? _value.stats
-          : stats // ignore: cast_nullable_to_non_nullable
-              as DashboardStatsModel,
-    ));
+    return _then(
+      _$DashboardModelImpl(
+        watching: null == watching
+            ? _value.watching
+            : watching // ignore: cast_nullable_to_non_nullable
+                  as DashboardSectionModel,
+        wantToWatch: null == wantToWatch
+            ? _value.wantToWatch
+            : wantToWatch // ignore: cast_nullable_to_non_nullable
+                  as DashboardSectionModel,
+        completed: null == completed
+            ? _value.completed
+            : completed // ignore: cast_nullable_to_non_nullable
+                  as DashboardSectionModel,
+        dropped: null == dropped
+            ? _value.dropped
+            : dropped // ignore: cast_nullable_to_non_nullable
+                  as DashboardSectionModel,
+        stats: null == stats
+            ? _value.stats
+            : stats // ignore: cast_nullable_to_non_nullable
+                  as DashboardStatsModel,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$DashboardModelImpl implements _DashboardModel {
-  const _$DashboardModelImpl(
-      {required this.watching,
-      required this.wantToWatch,
-      required this.completed,
-      required this.dropped,
-      required this.stats});
+  const _$DashboardModelImpl({
+    required this.watching,
+    required this.wantToWatch,
+    required this.completed,
+    required this.dropped,
+    required this.stats,
+  });
 
   factory _$DashboardModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$DashboardModelImplFromJson(json);
@@ -270,7 +282,13 @@ class _$DashboardModelImpl implements _DashboardModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType, watching, wantToWatch, completed, dropped, stats);
+    runtimeType,
+    watching,
+    wantToWatch,
+    completed,
+    dropped,
+    stats,
+  );
 
   /// Create a copy of DashboardModel
   /// with the given fields replaced by the non-null parameter values.
@@ -279,23 +297,24 @@ class _$DashboardModelImpl implements _DashboardModel {
   @pragma('vm:prefer-inline')
   _$$DashboardModelImplCopyWith<_$DashboardModelImpl> get copyWith =>
       __$$DashboardModelImplCopyWithImpl<_$DashboardModelImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$DashboardModelImplToJson(
-      this,
-    );
+    return _$$DashboardModelImplToJson(this);
   }
 }
 
 abstract class _DashboardModel implements DashboardModel {
-  const factory _DashboardModel(
-      {required final DashboardSectionModel watching,
-      required final DashboardSectionModel wantToWatch,
-      required final DashboardSectionModel completed,
-      required final DashboardSectionModel dropped,
-      required final DashboardStatsModel stats}) = _$DashboardModelImpl;
+  const factory _DashboardModel({
+    required final DashboardSectionModel watching,
+    required final DashboardSectionModel wantToWatch,
+    required final DashboardSectionModel completed,
+    required final DashboardSectionModel dropped,
+    required final DashboardStatsModel stats,
+  }) = _$DashboardModelImpl;
 
   factory _DashboardModel.fromJson(Map<String, dynamic> json) =
       _$DashboardModelImpl.fromJson;

@@ -11,16 +11,19 @@ String _$forgotPasswordViewModelHash() =>
 
 /// See also [ForgotPasswordViewModel].
 @ProviderFor(ForgotPasswordViewModel)
-final forgotPasswordViewModelProvider = AutoDisposeNotifierProvider<
-    ForgotPasswordViewModel, ForgotPasswordState>.internal(
-  ForgotPasswordViewModel.new,
-  name: r'forgotPasswordViewModelProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$forgotPasswordViewModelHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+final forgotPasswordViewModelProvider =
+    AutoDisposeNotifierProvider<
+      ForgotPasswordViewModel,
+      ForgotPasswordState
+    >.internal(
+      ForgotPasswordViewModel.new,
+      name: r'forgotPasswordViewModelProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$forgotPasswordViewModelHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$ForgotPasswordViewModel = AutoDisposeNotifier<ForgotPasswordState>;
 // ignore_for_file: type=lint

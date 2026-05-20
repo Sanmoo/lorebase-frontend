@@ -11,16 +11,19 @@ String _$dashboardViewModelHash() =>
 
 /// See also [DashboardViewModel].
 @ProviderFor(DashboardViewModel)
-final dashboardViewModelProvider = AutoDisposeNotifierProvider<
-    DashboardViewModel, AsyncValue<DashboardModel>>.internal(
-  DashboardViewModel.new,
-  name: r'dashboardViewModelProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$dashboardViewModelHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+final dashboardViewModelProvider =
+    AutoDisposeNotifierProvider<
+      DashboardViewModel,
+      AsyncValue<DashboardModel>
+    >.internal(
+      DashboardViewModel.new,
+      name: r'dashboardViewModelProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$dashboardViewModelHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$DashboardViewModel = AutoDisposeNotifier<AsyncValue<DashboardModel>>;
 // ignore_for_file: type=lint

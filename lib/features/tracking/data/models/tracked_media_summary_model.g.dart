@@ -7,33 +7,33 @@ part of 'tracked_media_summary_model.dart';
 // **************************************************************************
 
 _$TrackedMediaSummaryModelImpl _$$TrackedMediaSummaryModelImplFromJson(
-        Map<String, dynamic> json) =>
-    _$TrackedMediaSummaryModelImpl(
-      mediaId: json['mediaId'] == null
-          ? ''
-          : flexibleStringFromJson(json['mediaId']),
-      title: json['title'] as String,
-      mediaType: _nullableMediaTypeFromJson(json['mediaType']),
-      overview: json['overview'] as String?,
-      posterPath: json['posterPath'] as String?,
-      status: json['status'] as String?,
-      trackingRating: json['trackingRating'] as int?,
-      seasonCount: json['seasonCount'] as int?,
-      addedAt: json['addedAt'] == null
-          ? null
-          : DateTime.parse(json['addedAt'] as String),
-    );
+  Map<String, dynamic> json,
+) => _$TrackedMediaSummaryModelImpl(
+  mediaId: json['mediaId'] == null
+      ? ''
+      : flexibleStringFromJson(json['mediaId']),
+  title: json['title'] as String,
+  mediaType: _nullableMediaTypeFromJson(json['mediaType']),
+  overview: json['overview'] as String?,
+  posterPath: json['posterPath'] as String?,
+  status: json['status'] as String?,
+  trackingRating: (json['trackingRating'] as num?)?.toInt(),
+  seasonCount: (json['seasonCount'] as num?)?.toInt(),
+  addedAt: json['addedAt'] == null
+      ? null
+      : DateTime.parse(json['addedAt'] as String),
+);
 
 Map<String, dynamic> _$$TrackedMediaSummaryModelImplToJson(
-        _$TrackedMediaSummaryModelImpl instance) =>
-    <String, dynamic>{
-      'mediaId': flexibleStringToJson(instance.mediaId),
-      'title': instance.title,
-      'mediaType': _nullableMediaTypeToJson(instance.mediaType),
-      'overview': instance.overview,
-      'posterPath': instance.posterPath,
-      'status': instance.status,
-      'trackingRating': instance.trackingRating,
-      'seasonCount': instance.seasonCount,
-      'addedAt': instance.addedAt?.toIso8601String(),
-    };
+  _$TrackedMediaSummaryModelImpl instance,
+) => <String, dynamic>{
+  'mediaId': flexibleStringToJson(instance.mediaId),
+  'title': instance.title,
+  'mediaType': _nullableMediaTypeToJson(instance.mediaType),
+  'overview': instance.overview,
+  'posterPath': instance.posterPath,
+  'status': instance.status,
+  'trackingRating': instance.trackingRating,
+  'seasonCount': instance.seasonCount,
+  'addedAt': instance.addedAt?.toIso8601String(),
+};

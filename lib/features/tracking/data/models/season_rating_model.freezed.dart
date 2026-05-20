@@ -12,7 +12,8 @@ part of 'season_rating_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 SeasonRatingModel _$SeasonRatingModelFromJson(Map<String, dynamic> json) {
   return _SeasonRatingModel.fromJson(json);
@@ -37,8 +38,9 @@ mixin _$SeasonRatingModel {
 /// @nodoc
 abstract class $SeasonRatingModelCopyWith<$Res> {
   factory $SeasonRatingModelCopyWith(
-          SeasonRatingModel value, $Res Function(SeasonRatingModel) then) =
-      _$SeasonRatingModelCopyWithImpl<$Res, SeasonRatingModel>;
+    SeasonRatingModel value,
+    $Res Function(SeasonRatingModel) then,
+  ) = _$SeasonRatingModelCopyWithImpl<$Res, SeasonRatingModel>;
   @useResult
   $Res call({int seasonNumber, int rating, DateTime ratedAt});
 }
@@ -62,29 +64,33 @@ class _$SeasonRatingModelCopyWithImpl<$Res, $Val extends SeasonRatingModel>
     Object? rating = null,
     Object? ratedAt = null,
   }) {
-    return _then(_value.copyWith(
-      seasonNumber: null == seasonNumber
-          ? _value.seasonNumber
-          : seasonNumber // ignore: cast_nullable_to_non_nullable
-              as int,
-      rating: null == rating
-          ? _value.rating
-          : rating // ignore: cast_nullable_to_non_nullable
-              as int,
-      ratedAt: null == ratedAt
-          ? _value.ratedAt
-          : ratedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            seasonNumber: null == seasonNumber
+                ? _value.seasonNumber
+                : seasonNumber // ignore: cast_nullable_to_non_nullable
+                      as int,
+            rating: null == rating
+                ? _value.rating
+                : rating // ignore: cast_nullable_to_non_nullable
+                      as int,
+            ratedAt: null == ratedAt
+                ? _value.ratedAt
+                : ratedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$SeasonRatingModelImplCopyWith<$Res>
     implements $SeasonRatingModelCopyWith<$Res> {
-  factory _$$SeasonRatingModelImplCopyWith(_$SeasonRatingModelImpl value,
-          $Res Function(_$SeasonRatingModelImpl) then) =
-      __$$SeasonRatingModelImplCopyWithImpl<$Res>;
+  factory _$$SeasonRatingModelImplCopyWith(
+    _$SeasonRatingModelImpl value,
+    $Res Function(_$SeasonRatingModelImpl) then,
+  ) = __$$SeasonRatingModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({int seasonNumber, int rating, DateTime ratedAt});
@@ -94,9 +100,10 @@ abstract class _$$SeasonRatingModelImplCopyWith<$Res>
 class __$$SeasonRatingModelImplCopyWithImpl<$Res>
     extends _$SeasonRatingModelCopyWithImpl<$Res, _$SeasonRatingModelImpl>
     implements _$$SeasonRatingModelImplCopyWith<$Res> {
-  __$$SeasonRatingModelImplCopyWithImpl(_$SeasonRatingModelImpl _value,
-      $Res Function(_$SeasonRatingModelImpl) _then)
-      : super(_value, _then);
+  __$$SeasonRatingModelImplCopyWithImpl(
+    _$SeasonRatingModelImpl _value,
+    $Res Function(_$SeasonRatingModelImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of SeasonRatingModel
   /// with the given fields replaced by the non-null parameter values.
@@ -107,30 +114,33 @@ class __$$SeasonRatingModelImplCopyWithImpl<$Res>
     Object? rating = null,
     Object? ratedAt = null,
   }) {
-    return _then(_$SeasonRatingModelImpl(
-      seasonNumber: null == seasonNumber
-          ? _value.seasonNumber
-          : seasonNumber // ignore: cast_nullable_to_non_nullable
-              as int,
-      rating: null == rating
-          ? _value.rating
-          : rating // ignore: cast_nullable_to_non_nullable
-              as int,
-      ratedAt: null == ratedAt
-          ? _value.ratedAt
-          : ratedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ));
+    return _then(
+      _$SeasonRatingModelImpl(
+        seasonNumber: null == seasonNumber
+            ? _value.seasonNumber
+            : seasonNumber // ignore: cast_nullable_to_non_nullable
+                  as int,
+        rating: null == rating
+            ? _value.rating
+            : rating // ignore: cast_nullable_to_non_nullable
+                  as int,
+        ratedAt: null == ratedAt
+            ? _value.ratedAt
+            : ratedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$SeasonRatingModelImpl implements _SeasonRatingModel {
-  const _$SeasonRatingModelImpl(
-      {required this.seasonNumber,
-      required this.rating,
-      required this.ratedAt});
+  const _$SeasonRatingModelImpl({
+    required this.seasonNumber,
+    required this.rating,
+    required this.ratedAt,
+  });
 
   factory _$SeasonRatingModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$SeasonRatingModelImplFromJson(json);
@@ -169,21 +179,22 @@ class _$SeasonRatingModelImpl implements _SeasonRatingModel {
   @pragma('vm:prefer-inline')
   _$$SeasonRatingModelImplCopyWith<_$SeasonRatingModelImpl> get copyWith =>
       __$$SeasonRatingModelImplCopyWithImpl<_$SeasonRatingModelImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$SeasonRatingModelImplToJson(
-      this,
-    );
+    return _$$SeasonRatingModelImplToJson(this);
   }
 }
 
 abstract class _SeasonRatingModel implements SeasonRatingModel {
-  const factory _SeasonRatingModel(
-      {required final int seasonNumber,
-      required final int rating,
-      required final DateTime ratedAt}) = _$SeasonRatingModelImpl;
+  const factory _SeasonRatingModel({
+    required final int seasonNumber,
+    required final int rating,
+    required final DateTime ratedAt,
+  }) = _$SeasonRatingModelImpl;
 
   factory _SeasonRatingModel.fromJson(Map<String, dynamic> json) =
       _$SeasonRatingModelImpl.fromJson;

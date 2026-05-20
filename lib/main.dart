@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:url_strategy/url_strategy.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 import 'amplifyconfiguration.dart';
 import 'app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  setPathUrlStrategy();
+  usePathUrlStrategy();
   try {
     await dotenv.load();
   } catch (e) {
@@ -18,11 +18,7 @@ void main() async {
   }
   await _configureHive();
   await _configureAmplify();
-  runApp(
-    const ProviderScope(
-      child: LorebaseApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: LorebaseApp()));
 }
 
 Future<void> _configureHive() async {

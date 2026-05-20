@@ -12,7 +12,8 @@ part of 'dashboard_stats_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 DashboardStatsModel _$DashboardStatsModelFromJson(Map<String, dynamic> json) {
   return _DashboardStatsModel.fromJson(json);
@@ -39,15 +40,17 @@ mixin _$DashboardStatsModel {
 /// @nodoc
 abstract class $DashboardStatsModelCopyWith<$Res> {
   factory $DashboardStatsModelCopyWith(
-          DashboardStatsModel value, $Res Function(DashboardStatsModel) then) =
-      _$DashboardStatsModelCopyWithImpl<$Res, DashboardStatsModel>;
+    DashboardStatsModel value,
+    $Res Function(DashboardStatsModel) then,
+  ) = _$DashboardStatsModelCopyWithImpl<$Res, DashboardStatsModel>;
   @useResult
-  $Res call(
-      {int watchingCount,
-      int wantToWatchCount,
-      int completedCount,
-      int droppedCount,
-      int totalTracked});
+  $Res call({
+    int watchingCount,
+    int wantToWatchCount,
+    int completedCount,
+    int droppedCount,
+    int totalTracked,
+  });
 }
 
 /// @nodoc
@@ -71,54 +74,60 @@ class _$DashboardStatsModelCopyWithImpl<$Res, $Val extends DashboardStatsModel>
     Object? droppedCount = null,
     Object? totalTracked = null,
   }) {
-    return _then(_value.copyWith(
-      watchingCount: null == watchingCount
-          ? _value.watchingCount
-          : watchingCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      wantToWatchCount: null == wantToWatchCount
-          ? _value.wantToWatchCount
-          : wantToWatchCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      completedCount: null == completedCount
-          ? _value.completedCount
-          : completedCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      droppedCount: null == droppedCount
-          ? _value.droppedCount
-          : droppedCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalTracked: null == totalTracked
-          ? _value.totalTracked
-          : totalTracked // ignore: cast_nullable_to_non_nullable
-              as int,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            watchingCount: null == watchingCount
+                ? _value.watchingCount
+                : watchingCount // ignore: cast_nullable_to_non_nullable
+                      as int,
+            wantToWatchCount: null == wantToWatchCount
+                ? _value.wantToWatchCount
+                : wantToWatchCount // ignore: cast_nullable_to_non_nullable
+                      as int,
+            completedCount: null == completedCount
+                ? _value.completedCount
+                : completedCount // ignore: cast_nullable_to_non_nullable
+                      as int,
+            droppedCount: null == droppedCount
+                ? _value.droppedCount
+                : droppedCount // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalTracked: null == totalTracked
+                ? _value.totalTracked
+                : totalTracked // ignore: cast_nullable_to_non_nullable
+                      as int,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$DashboardStatsModelImplCopyWith<$Res>
     implements $DashboardStatsModelCopyWith<$Res> {
-  factory _$$DashboardStatsModelImplCopyWith(_$DashboardStatsModelImpl value,
-          $Res Function(_$DashboardStatsModelImpl) then) =
-      __$$DashboardStatsModelImplCopyWithImpl<$Res>;
+  factory _$$DashboardStatsModelImplCopyWith(
+    _$DashboardStatsModelImpl value,
+    $Res Function(_$DashboardStatsModelImpl) then,
+  ) = __$$DashboardStatsModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {int watchingCount,
-      int wantToWatchCount,
-      int completedCount,
-      int droppedCount,
-      int totalTracked});
+  $Res call({
+    int watchingCount,
+    int wantToWatchCount,
+    int completedCount,
+    int droppedCount,
+    int totalTracked,
+  });
 }
 
 /// @nodoc
 class __$$DashboardStatsModelImplCopyWithImpl<$Res>
     extends _$DashboardStatsModelCopyWithImpl<$Res, _$DashboardStatsModelImpl>
     implements _$$DashboardStatsModelImplCopyWith<$Res> {
-  __$$DashboardStatsModelImplCopyWithImpl(_$DashboardStatsModelImpl _value,
-      $Res Function(_$DashboardStatsModelImpl) _then)
-      : super(_value, _then);
+  __$$DashboardStatsModelImplCopyWithImpl(
+    _$DashboardStatsModelImpl _value,
+    $Res Function(_$DashboardStatsModelImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of DashboardStatsModel
   /// with the given fields replaced by the non-null parameter values.
@@ -131,40 +140,43 @@ class __$$DashboardStatsModelImplCopyWithImpl<$Res>
     Object? droppedCount = null,
     Object? totalTracked = null,
   }) {
-    return _then(_$DashboardStatsModelImpl(
-      watchingCount: null == watchingCount
-          ? _value.watchingCount
-          : watchingCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      wantToWatchCount: null == wantToWatchCount
-          ? _value.wantToWatchCount
-          : wantToWatchCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      completedCount: null == completedCount
-          ? _value.completedCount
-          : completedCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      droppedCount: null == droppedCount
-          ? _value.droppedCount
-          : droppedCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalTracked: null == totalTracked
-          ? _value.totalTracked
-          : totalTracked // ignore: cast_nullable_to_non_nullable
-              as int,
-    ));
+    return _then(
+      _$DashboardStatsModelImpl(
+        watchingCount: null == watchingCount
+            ? _value.watchingCount
+            : watchingCount // ignore: cast_nullable_to_non_nullable
+                  as int,
+        wantToWatchCount: null == wantToWatchCount
+            ? _value.wantToWatchCount
+            : wantToWatchCount // ignore: cast_nullable_to_non_nullable
+                  as int,
+        completedCount: null == completedCount
+            ? _value.completedCount
+            : completedCount // ignore: cast_nullable_to_non_nullable
+                  as int,
+        droppedCount: null == droppedCount
+            ? _value.droppedCount
+            : droppedCount // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalTracked: null == totalTracked
+            ? _value.totalTracked
+            : totalTracked // ignore: cast_nullable_to_non_nullable
+                  as int,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$DashboardStatsModelImpl implements _DashboardStatsModel {
-  const _$DashboardStatsModelImpl(
-      {this.watchingCount = 0,
-      this.wantToWatchCount = 0,
-      this.completedCount = 0,
-      this.droppedCount = 0,
-      this.totalTracked = 0});
+  const _$DashboardStatsModelImpl({
+    this.watchingCount = 0,
+    this.wantToWatchCount = 0,
+    this.completedCount = 0,
+    this.droppedCount = 0,
+    this.totalTracked = 0,
+  });
 
   factory _$DashboardStatsModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$DashboardStatsModelImplFromJson(json);
@@ -209,8 +221,14 @@ class _$DashboardStatsModelImpl implements _DashboardStatsModel {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, watchingCount, wantToWatchCount,
-      completedCount, droppedCount, totalTracked);
+  int get hashCode => Object.hash(
+    runtimeType,
+    watchingCount,
+    wantToWatchCount,
+    completedCount,
+    droppedCount,
+    totalTracked,
+  );
 
   /// Create a copy of DashboardStatsModel
   /// with the given fields replaced by the non-null parameter values.
@@ -219,23 +237,24 @@ class _$DashboardStatsModelImpl implements _DashboardStatsModel {
   @pragma('vm:prefer-inline')
   _$$DashboardStatsModelImplCopyWith<_$DashboardStatsModelImpl> get copyWith =>
       __$$DashboardStatsModelImplCopyWithImpl<_$DashboardStatsModelImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$DashboardStatsModelImplToJson(
-      this,
-    );
+    return _$$DashboardStatsModelImplToJson(this);
   }
 }
 
 abstract class _DashboardStatsModel implements DashboardStatsModel {
-  const factory _DashboardStatsModel(
-      {final int watchingCount,
-      final int wantToWatchCount,
-      final int completedCount,
-      final int droppedCount,
-      final int totalTracked}) = _$DashboardStatsModelImpl;
+  const factory _DashboardStatsModel({
+    final int watchingCount,
+    final int wantToWatchCount,
+    final int completedCount,
+    final int droppedCount,
+    final int totalTracked,
+  }) = _$DashboardStatsModelImpl;
 
   factory _DashboardStatsModel.fromJson(Map<String, dynamic> json) =
       _$DashboardStatsModelImpl.fromJson;

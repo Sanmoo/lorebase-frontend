@@ -12,14 +12,14 @@ String _$loginViewModelHash() => r'16bcfcb54f7cac196c122b2de8b1b9c62de59bff';
 @ProviderFor(LoginViewModel)
 final loginViewModelProvider =
     AutoDisposeNotifierProvider<LoginViewModel, LoginState>.internal(
-  LoginViewModel.new,
-  name: r'loginViewModelProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$loginViewModelHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      LoginViewModel.new,
+      name: r'loginViewModelProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$loginViewModelHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$LoginViewModel = AutoDisposeNotifier<LoginState>;
 // ignore_for_file: type=lint

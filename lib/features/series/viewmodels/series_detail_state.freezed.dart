@@ -12,7 +12,8 @@ part of 'series_detail_state.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 /// @nodoc
 mixin _$SeriesDetailState {
@@ -29,8 +30,9 @@ mixin _$SeriesDetailState {
 /// @nodoc
 abstract class $SeriesDetailStateCopyWith<$Res> {
   factory $SeriesDetailStateCopyWith(
-          SeriesDetailState value, $Res Function(SeriesDetailState) then) =
-      _$SeriesDetailStateCopyWithImpl<$Res, SeriesDetailState>;
+    SeriesDetailState value,
+    $Res Function(SeriesDetailState) then,
+  ) = _$SeriesDetailStateCopyWithImpl<$Res, SeriesDetailState>;
   @useResult
   $Res call({SeriesModel series, TrackedMediaModel? tracking});
 
@@ -52,20 +54,20 @@ class _$SeriesDetailStateCopyWithImpl<$Res, $Val extends SeriesDetailState>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? series = null,
-    Object? tracking = freezed,
-  }) {
-    return _then(_value.copyWith(
-      series: null == series
-          ? _value.series
-          : series // ignore: cast_nullable_to_non_nullable
-              as SeriesModel,
-      tracking: freezed == tracking
-          ? _value.tracking
-          : tracking // ignore: cast_nullable_to_non_nullable
-              as TrackedMediaModel?,
-    ) as $Val);
+  $Res call({Object? series = null, Object? tracking = freezed}) {
+    return _then(
+      _value.copyWith(
+            series: null == series
+                ? _value.series
+                : series // ignore: cast_nullable_to_non_nullable
+                      as SeriesModel,
+            tracking: freezed == tracking
+                ? _value.tracking
+                : tracking // ignore: cast_nullable_to_non_nullable
+                      as TrackedMediaModel?,
+          )
+          as $Val,
+    );
   }
 
   /// Create a copy of SeriesDetailState
@@ -96,9 +98,10 @@ class _$SeriesDetailStateCopyWithImpl<$Res, $Val extends SeriesDetailState>
 /// @nodoc
 abstract class _$$SeriesDetailStateImplCopyWith<$Res>
     implements $SeriesDetailStateCopyWith<$Res> {
-  factory _$$SeriesDetailStateImplCopyWith(_$SeriesDetailStateImpl value,
-          $Res Function(_$SeriesDetailStateImpl) then) =
-      __$$SeriesDetailStateImplCopyWithImpl<$Res>;
+  factory _$$SeriesDetailStateImplCopyWith(
+    _$SeriesDetailStateImpl value,
+    $Res Function(_$SeriesDetailStateImpl) then,
+  ) = __$$SeriesDetailStateImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({SeriesModel series, TrackedMediaModel? tracking});
@@ -113,28 +116,28 @@ abstract class _$$SeriesDetailStateImplCopyWith<$Res>
 class __$$SeriesDetailStateImplCopyWithImpl<$Res>
     extends _$SeriesDetailStateCopyWithImpl<$Res, _$SeriesDetailStateImpl>
     implements _$$SeriesDetailStateImplCopyWith<$Res> {
-  __$$SeriesDetailStateImplCopyWithImpl(_$SeriesDetailStateImpl _value,
-      $Res Function(_$SeriesDetailStateImpl) _then)
-      : super(_value, _then);
+  __$$SeriesDetailStateImplCopyWithImpl(
+    _$SeriesDetailStateImpl _value,
+    $Res Function(_$SeriesDetailStateImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of SeriesDetailState
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? series = null,
-    Object? tracking = freezed,
-  }) {
-    return _then(_$SeriesDetailStateImpl(
-      series: null == series
-          ? _value.series
-          : series // ignore: cast_nullable_to_non_nullable
-              as SeriesModel,
-      tracking: freezed == tracking
-          ? _value.tracking
-          : tracking // ignore: cast_nullable_to_non_nullable
-              as TrackedMediaModel?,
-    ));
+  $Res call({Object? series = null, Object? tracking = freezed}) {
+    return _then(
+      _$SeriesDetailStateImpl(
+        series: null == series
+            ? _value.series
+            : series // ignore: cast_nullable_to_non_nullable
+                  as SeriesModel,
+        tracking: freezed == tracking
+            ? _value.tracking
+            : tracking // ignore: cast_nullable_to_non_nullable
+                  as TrackedMediaModel?,
+      ),
+    );
   }
 }
 
@@ -173,13 +176,16 @@ class _$SeriesDetailStateImpl implements _SeriesDetailState {
   @pragma('vm:prefer-inline')
   _$$SeriesDetailStateImplCopyWith<_$SeriesDetailStateImpl> get copyWith =>
       __$$SeriesDetailStateImplCopyWithImpl<_$SeriesDetailStateImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 }
 
 abstract class _SeriesDetailState implements SeriesDetailState {
-  const factory _SeriesDetailState(
-      {required final SeriesModel series,
-      final TrackedMediaModel? tracking}) = _$SeriesDetailStateImpl;
+  const factory _SeriesDetailState({
+    required final SeriesModel series,
+    final TrackedMediaModel? tracking,
+  }) = _$SeriesDetailStateImpl;
 
   @override
   SeriesModel get series;

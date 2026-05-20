@@ -12,7 +12,8 @@ part of 'movie_detail_state.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 /// @nodoc
 mixin _$MovieDetailState {
@@ -29,8 +30,9 @@ mixin _$MovieDetailState {
 /// @nodoc
 abstract class $MovieDetailStateCopyWith<$Res> {
   factory $MovieDetailStateCopyWith(
-          MovieDetailState value, $Res Function(MovieDetailState) then) =
-      _$MovieDetailStateCopyWithImpl<$Res, MovieDetailState>;
+    MovieDetailState value,
+    $Res Function(MovieDetailState) then,
+  ) = _$MovieDetailStateCopyWithImpl<$Res, MovieDetailState>;
   @useResult
   $Res call({MovieModel movie, TrackedMediaModel? tracking});
 
@@ -52,20 +54,20 @@ class _$MovieDetailStateCopyWithImpl<$Res, $Val extends MovieDetailState>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? movie = null,
-    Object? tracking = freezed,
-  }) {
-    return _then(_value.copyWith(
-      movie: null == movie
-          ? _value.movie
-          : movie // ignore: cast_nullable_to_non_nullable
-              as MovieModel,
-      tracking: freezed == tracking
-          ? _value.tracking
-          : tracking // ignore: cast_nullable_to_non_nullable
-              as TrackedMediaModel?,
-    ) as $Val);
+  $Res call({Object? movie = null, Object? tracking = freezed}) {
+    return _then(
+      _value.copyWith(
+            movie: null == movie
+                ? _value.movie
+                : movie // ignore: cast_nullable_to_non_nullable
+                      as MovieModel,
+            tracking: freezed == tracking
+                ? _value.tracking
+                : tracking // ignore: cast_nullable_to_non_nullable
+                      as TrackedMediaModel?,
+          )
+          as $Val,
+    );
   }
 
   /// Create a copy of MovieDetailState
@@ -96,9 +98,10 @@ class _$MovieDetailStateCopyWithImpl<$Res, $Val extends MovieDetailState>
 /// @nodoc
 abstract class _$$MovieDetailStateImplCopyWith<$Res>
     implements $MovieDetailStateCopyWith<$Res> {
-  factory _$$MovieDetailStateImplCopyWith(_$MovieDetailStateImpl value,
-          $Res Function(_$MovieDetailStateImpl) then) =
-      __$$MovieDetailStateImplCopyWithImpl<$Res>;
+  factory _$$MovieDetailStateImplCopyWith(
+    _$MovieDetailStateImpl value,
+    $Res Function(_$MovieDetailStateImpl) then,
+  ) = __$$MovieDetailStateImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({MovieModel movie, TrackedMediaModel? tracking});
@@ -113,28 +116,28 @@ abstract class _$$MovieDetailStateImplCopyWith<$Res>
 class __$$MovieDetailStateImplCopyWithImpl<$Res>
     extends _$MovieDetailStateCopyWithImpl<$Res, _$MovieDetailStateImpl>
     implements _$$MovieDetailStateImplCopyWith<$Res> {
-  __$$MovieDetailStateImplCopyWithImpl(_$MovieDetailStateImpl _value,
-      $Res Function(_$MovieDetailStateImpl) _then)
-      : super(_value, _then);
+  __$$MovieDetailStateImplCopyWithImpl(
+    _$MovieDetailStateImpl _value,
+    $Res Function(_$MovieDetailStateImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of MovieDetailState
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? movie = null,
-    Object? tracking = freezed,
-  }) {
-    return _then(_$MovieDetailStateImpl(
-      movie: null == movie
-          ? _value.movie
-          : movie // ignore: cast_nullable_to_non_nullable
-              as MovieModel,
-      tracking: freezed == tracking
-          ? _value.tracking
-          : tracking // ignore: cast_nullable_to_non_nullable
-              as TrackedMediaModel?,
-    ));
+  $Res call({Object? movie = null, Object? tracking = freezed}) {
+    return _then(
+      _$MovieDetailStateImpl(
+        movie: null == movie
+            ? _value.movie
+            : movie // ignore: cast_nullable_to_non_nullable
+                  as MovieModel,
+        tracking: freezed == tracking
+            ? _value.tracking
+            : tracking // ignore: cast_nullable_to_non_nullable
+                  as TrackedMediaModel?,
+      ),
+    );
   }
 }
 
@@ -173,13 +176,16 @@ class _$MovieDetailStateImpl implements _MovieDetailState {
   @pragma('vm:prefer-inline')
   _$$MovieDetailStateImplCopyWith<_$MovieDetailStateImpl> get copyWith =>
       __$$MovieDetailStateImplCopyWithImpl<_$MovieDetailStateImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 }
 
 abstract class _MovieDetailState implements MovieDetailState {
-  const factory _MovieDetailState(
-      {required final MovieModel movie,
-      final TrackedMediaModel? tracking}) = _$MovieDetailStateImpl;
+  const factory _MovieDetailState({
+    required final MovieModel movie,
+    final TrackedMediaModel? tracking,
+  }) = _$MovieDetailStateImpl;
 
   @override
   MovieModel get movie;

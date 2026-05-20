@@ -12,7 +12,8 @@ part of 'series_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 SeriesModel _$SeriesModelFromJson(Map<String, dynamic> json) {
   return _SeriesModel.fromJson(json);
@@ -45,21 +46,23 @@ mixin _$SeriesModel {
 /// @nodoc
 abstract class $SeriesModelCopyWith<$Res> {
   factory $SeriesModelCopyWith(
-          SeriesModel value, $Res Function(SeriesModel) then) =
-      _$SeriesModelCopyWithImpl<$Res, SeriesModel>;
+    SeriesModel value,
+    $Res Function(SeriesModel) then,
+  ) = _$SeriesModelCopyWithImpl<$Res, SeriesModel>;
   @useResult
-  $Res call(
-      {@JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
-      int tmdbId,
-      String title,
-      String? overview,
-      String? posterPath,
-      String? backdropPath,
-      String? firstAirDate,
-      List<String> genres,
-      List<String> networks,
-      int seasonCount,
-      String? status});
+  $Res call({
+    @JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
+    int tmdbId,
+    String title,
+    String? overview,
+    String? posterPath,
+    String? backdropPath,
+    String? firstAirDate,
+    List<String> genres,
+    List<String> networks,
+    int seasonCount,
+    String? status,
+  });
 }
 
 /// @nodoc
@@ -88,48 +91,51 @@ class _$SeriesModelCopyWithImpl<$Res, $Val extends SeriesModel>
     Object? seasonCount = null,
     Object? status = freezed,
   }) {
-    return _then(_value.copyWith(
-      tmdbId: null == tmdbId
-          ? _value.tmdbId
-          : tmdbId // ignore: cast_nullable_to_non_nullable
-              as int,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
-      overview: freezed == overview
-          ? _value.overview
-          : overview // ignore: cast_nullable_to_non_nullable
-              as String?,
-      posterPath: freezed == posterPath
-          ? _value.posterPath
-          : posterPath // ignore: cast_nullable_to_non_nullable
-              as String?,
-      backdropPath: freezed == backdropPath
-          ? _value.backdropPath
-          : backdropPath // ignore: cast_nullable_to_non_nullable
-              as String?,
-      firstAirDate: freezed == firstAirDate
-          ? _value.firstAirDate
-          : firstAirDate // ignore: cast_nullable_to_non_nullable
-              as String?,
-      genres: null == genres
-          ? _value.genres
-          : genres // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      networks: null == networks
-          ? _value.networks
-          : networks // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      seasonCount: null == seasonCount
-          ? _value.seasonCount
-          : seasonCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      status: freezed == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            tmdbId: null == tmdbId
+                ? _value.tmdbId
+                : tmdbId // ignore: cast_nullable_to_non_nullable
+                      as int,
+            title: null == title
+                ? _value.title
+                : title // ignore: cast_nullable_to_non_nullable
+                      as String,
+            overview: freezed == overview
+                ? _value.overview
+                : overview // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            posterPath: freezed == posterPath
+                ? _value.posterPath
+                : posterPath // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            backdropPath: freezed == backdropPath
+                ? _value.backdropPath
+                : backdropPath // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            firstAirDate: freezed == firstAirDate
+                ? _value.firstAirDate
+                : firstAirDate // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            genres: null == genres
+                ? _value.genres
+                : genres // ignore: cast_nullable_to_non_nullable
+                      as List<String>,
+            networks: null == networks
+                ? _value.networks
+                : networks // ignore: cast_nullable_to_non_nullable
+                      as List<String>,
+            seasonCount: null == seasonCount
+                ? _value.seasonCount
+                : seasonCount // ignore: cast_nullable_to_non_nullable
+                      as int,
+            status: freezed == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as String?,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -137,22 +143,24 @@ class _$SeriesModelCopyWithImpl<$Res, $Val extends SeriesModel>
 abstract class _$$SeriesModelImplCopyWith<$Res>
     implements $SeriesModelCopyWith<$Res> {
   factory _$$SeriesModelImplCopyWith(
-          _$SeriesModelImpl value, $Res Function(_$SeriesModelImpl) then) =
-      __$$SeriesModelImplCopyWithImpl<$Res>;
+    _$SeriesModelImpl value,
+    $Res Function(_$SeriesModelImpl) then,
+  ) = __$$SeriesModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {@JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
-      int tmdbId,
-      String title,
-      String? overview,
-      String? posterPath,
-      String? backdropPath,
-      String? firstAirDate,
-      List<String> genres,
-      List<String> networks,
-      int seasonCount,
-      String? status});
+  $Res call({
+    @JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
+    int tmdbId,
+    String title,
+    String? overview,
+    String? posterPath,
+    String? backdropPath,
+    String? firstAirDate,
+    List<String> genres,
+    List<String> networks,
+    int seasonCount,
+    String? status,
+  });
 }
 
 /// @nodoc
@@ -160,8 +168,9 @@ class __$$SeriesModelImplCopyWithImpl<$Res>
     extends _$SeriesModelCopyWithImpl<$Res, _$SeriesModelImpl>
     implements _$$SeriesModelImplCopyWith<$Res> {
   __$$SeriesModelImplCopyWithImpl(
-      _$SeriesModelImpl _value, $Res Function(_$SeriesModelImpl) _then)
-      : super(_value, _then);
+    _$SeriesModelImpl _value,
+    $Res Function(_$SeriesModelImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of SeriesModel
   /// with the given fields replaced by the non-null parameter values.
@@ -179,68 +188,70 @@ class __$$SeriesModelImplCopyWithImpl<$Res>
     Object? seasonCount = null,
     Object? status = freezed,
   }) {
-    return _then(_$SeriesModelImpl(
-      tmdbId: null == tmdbId
-          ? _value.tmdbId
-          : tmdbId // ignore: cast_nullable_to_non_nullable
-              as int,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
-      overview: freezed == overview
-          ? _value.overview
-          : overview // ignore: cast_nullable_to_non_nullable
-              as String?,
-      posterPath: freezed == posterPath
-          ? _value.posterPath
-          : posterPath // ignore: cast_nullable_to_non_nullable
-              as String?,
-      backdropPath: freezed == backdropPath
-          ? _value.backdropPath
-          : backdropPath // ignore: cast_nullable_to_non_nullable
-              as String?,
-      firstAirDate: freezed == firstAirDate
-          ? _value.firstAirDate
-          : firstAirDate // ignore: cast_nullable_to_non_nullable
-              as String?,
-      genres: null == genres
-          ? _value._genres
-          : genres // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      networks: null == networks
-          ? _value._networks
-          : networks // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      seasonCount: null == seasonCount
-          ? _value.seasonCount
-          : seasonCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      status: freezed == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
+    return _then(
+      _$SeriesModelImpl(
+        tmdbId: null == tmdbId
+            ? _value.tmdbId
+            : tmdbId // ignore: cast_nullable_to_non_nullable
+                  as int,
+        title: null == title
+            ? _value.title
+            : title // ignore: cast_nullable_to_non_nullable
+                  as String,
+        overview: freezed == overview
+            ? _value.overview
+            : overview // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        posterPath: freezed == posterPath
+            ? _value.posterPath
+            : posterPath // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        backdropPath: freezed == backdropPath
+            ? _value.backdropPath
+            : backdropPath // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        firstAirDate: freezed == firstAirDate
+            ? _value.firstAirDate
+            : firstAirDate // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        genres: null == genres
+            ? _value._genres
+            : genres // ignore: cast_nullable_to_non_nullable
+                  as List<String>,
+        networks: null == networks
+            ? _value._networks
+            : networks // ignore: cast_nullable_to_non_nullable
+                  as List<String>,
+        seasonCount: null == seasonCount
+            ? _value.seasonCount
+            : seasonCount // ignore: cast_nullable_to_non_nullable
+                  as int,
+        status: freezed == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as String?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$SeriesModelImpl implements _SeriesModel {
-  const _$SeriesModelImpl(
-      {@JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
-      required this.tmdbId,
-      required this.title,
-      this.overview,
-      this.posterPath,
-      this.backdropPath,
-      this.firstAirDate,
-      final List<String> genres = const [],
-      final List<String> networks = const [],
-      this.seasonCount = 0,
-      this.status})
-      : _genres = genres,
-        _networks = networks;
+  const _$SeriesModelImpl({
+    @JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
+    required this.tmdbId,
+    required this.title,
+    this.overview,
+    this.posterPath,
+    this.backdropPath,
+    this.firstAirDate,
+    final List<String> genres = const [],
+    final List<String> networks = const [],
+    this.seasonCount = 0,
+    this.status,
+  }) : _genres = genres,
+       _networks = networks;
 
   factory _$SeriesModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$SeriesModelImplFromJson(json);
@@ -312,17 +323,18 @@ class _$SeriesModelImpl implements _SeriesModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      tmdbId,
-      title,
-      overview,
-      posterPath,
-      backdropPath,
-      firstAirDate,
-      const DeepCollectionEquality().hash(_genres),
-      const DeepCollectionEquality().hash(_networks),
-      seasonCount,
-      status);
+    runtimeType,
+    tmdbId,
+    title,
+    overview,
+    posterPath,
+    backdropPath,
+    firstAirDate,
+    const DeepCollectionEquality().hash(_genres),
+    const DeepCollectionEquality().hash(_networks),
+    seasonCount,
+    status,
+  );
 
   /// Create a copy of SeriesModel
   /// with the given fields replaced by the non-null parameter values.
@@ -334,25 +346,24 @@ class _$SeriesModelImpl implements _SeriesModel {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$SeriesModelImplToJson(
-      this,
-    );
+    return _$$SeriesModelImplToJson(this);
   }
 }
 
 abstract class _SeriesModel implements SeriesModel {
-  const factory _SeriesModel(
-      {@JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
-      required final int tmdbId,
-      required final String title,
-      final String? overview,
-      final String? posterPath,
-      final String? backdropPath,
-      final String? firstAirDate,
-      final List<String> genres,
-      final List<String> networks,
-      final int seasonCount,
-      final String? status}) = _$SeriesModelImpl;
+  const factory _SeriesModel({
+    @JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
+    required final int tmdbId,
+    required final String title,
+    final String? overview,
+    final String? posterPath,
+    final String? backdropPath,
+    final String? firstAirDate,
+    final List<String> genres,
+    final List<String> networks,
+    final int seasonCount,
+    final String? status,
+  }) = _$SeriesModelImpl;
 
   factory _SeriesModel.fromJson(Map<String, dynamic> json) =
       _$SeriesModelImpl.fromJson;

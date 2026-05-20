@@ -34,9 +34,7 @@ abstract class _$SeriesDetailViewModel
     extends BuildlessAutoDisposeAsyncNotifier<SeriesDetailState> {
   late final int tmdbId;
 
-  FutureOr<SeriesDetailState> build(
-    int tmdbId,
-  );
+  FutureOr<SeriesDetailState> build(int tmdbId);
 }
 
 /// See also [SeriesDetailViewModel].
@@ -50,21 +48,15 @@ class SeriesDetailViewModelFamily
   const SeriesDetailViewModelFamily();
 
   /// See also [SeriesDetailViewModel].
-  SeriesDetailViewModelProvider call(
-    int tmdbId,
-  ) {
-    return SeriesDetailViewModelProvider(
-      tmdbId,
-    );
+  SeriesDetailViewModelProvider call(int tmdbId) {
+    return SeriesDetailViewModelProvider(tmdbId);
   }
 
   @override
   SeriesDetailViewModelProvider getProviderOverride(
     covariant SeriesDetailViewModelProvider provider,
   ) {
-    return call(
-      provider.tmdbId,
-    );
+    return call(provider.tmdbId);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -84,24 +76,25 @@ class SeriesDetailViewModelFamily
 
 /// See also [SeriesDetailViewModel].
 class SeriesDetailViewModelProvider
-    extends AutoDisposeAsyncNotifierProviderImpl<SeriesDetailViewModel,
-        SeriesDetailState> {
+    extends
+        AutoDisposeAsyncNotifierProviderImpl<
+          SeriesDetailViewModel,
+          SeriesDetailState
+        > {
   /// See also [SeriesDetailViewModel].
-  SeriesDetailViewModelProvider(
-    int tmdbId,
-  ) : this._internal(
-          () => SeriesDetailViewModel()..tmdbId = tmdbId,
-          from: seriesDetailViewModelProvider,
-          name: r'seriesDetailViewModelProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$seriesDetailViewModelHash,
-          dependencies: SeriesDetailViewModelFamily._dependencies,
-          allTransitiveDependencies:
-              SeriesDetailViewModelFamily._allTransitiveDependencies,
-          tmdbId: tmdbId,
-        );
+  SeriesDetailViewModelProvider(int tmdbId)
+    : this._internal(
+        () => SeriesDetailViewModel()..tmdbId = tmdbId,
+        from: seriesDetailViewModelProvider,
+        name: r'seriesDetailViewModelProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$seriesDetailViewModelHash,
+        dependencies: SeriesDetailViewModelFamily._dependencies,
+        allTransitiveDependencies:
+            SeriesDetailViewModelFamily._allTransitiveDependencies,
+        tmdbId: tmdbId,
+      );
 
   SeriesDetailViewModelProvider._internal(
     super._createNotifier, {
@@ -119,9 +112,7 @@ class SeriesDetailViewModelProvider
   FutureOr<SeriesDetailState> runNotifierBuild(
     covariant SeriesDetailViewModel notifier,
   ) {
-    return notifier.build(
-      tmdbId,
-    );
+    return notifier.build(tmdbId);
   }
 
   @override
@@ -141,8 +132,11 @@ class SeriesDetailViewModelProvider
   }
 
   @override
-  AutoDisposeAsyncNotifierProviderElement<SeriesDetailViewModel,
-      SeriesDetailState> createElement() {
+  AutoDisposeAsyncNotifierProviderElement<
+    SeriesDetailViewModel,
+    SeriesDetailState
+  >
+  createElement() {
     return _SeriesDetailViewModelProviderElement(this);
   }
 
@@ -169,12 +163,17 @@ mixin SeriesDetailViewModelRef
 }
 
 class _SeriesDetailViewModelProviderElement
-    extends AutoDisposeAsyncNotifierProviderElement<SeriesDetailViewModel,
-        SeriesDetailState> with SeriesDetailViewModelRef {
+    extends
+        AutoDisposeAsyncNotifierProviderElement<
+          SeriesDetailViewModel,
+          SeriesDetailState
+        >
+    with SeriesDetailViewModelRef {
   _SeriesDetailViewModelProviderElement(super.provider);
 
   @override
   int get tmdbId => (origin as SeriesDetailViewModelProvider).tmdbId;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

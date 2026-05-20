@@ -12,7 +12,8 @@ part of 'tracked_media_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 TrackedMediaModel _$TrackedMediaModelFromJson(Map<String, dynamic> json) {
   return _TrackedMediaModel.fromJson(json);
@@ -47,22 +48,24 @@ mixin _$TrackedMediaModel {
 /// @nodoc
 abstract class $TrackedMediaModelCopyWith<$Res> {
   factory $TrackedMediaModelCopyWith(
-          TrackedMediaModel value, $Res Function(TrackedMediaModel) then) =
-      _$TrackedMediaModelCopyWithImpl<$Res, TrackedMediaModel>;
+    TrackedMediaModel value,
+    $Res Function(TrackedMediaModel) then,
+  ) = _$TrackedMediaModelCopyWithImpl<$Res, TrackedMediaModel>;
   @useResult
-  $Res call(
-      {String trackingId,
-      String userId,
-      @JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson)
-      MediaType mediaType,
-      String mediaId,
-      String status,
-      int? rating,
-      String? review,
-      List<SeasonRatingModel> seasonRatings,
-      TrackedMediaSummaryModel? media,
-      DateTime addedAt,
-      DateTime lastUpdated});
+  $Res call({
+    String trackingId,
+    String userId,
+    @JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson)
+    MediaType mediaType,
+    String mediaId,
+    String status,
+    int? rating,
+    String? review,
+    List<SeasonRatingModel> seasonRatings,
+    TrackedMediaSummaryModel? media,
+    DateTime addedAt,
+    DateTime lastUpdated,
+  });
 
   $TrackedMediaSummaryModelCopyWith<$Res>? get media;
 }
@@ -94,52 +97,55 @@ class _$TrackedMediaModelCopyWithImpl<$Res, $Val extends TrackedMediaModel>
     Object? addedAt = null,
     Object? lastUpdated = null,
   }) {
-    return _then(_value.copyWith(
-      trackingId: null == trackingId
-          ? _value.trackingId
-          : trackingId // ignore: cast_nullable_to_non_nullable
-              as String,
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
-      mediaType: null == mediaType
-          ? _value.mediaType
-          : mediaType // ignore: cast_nullable_to_non_nullable
-              as MediaType,
-      mediaId: null == mediaId
-          ? _value.mediaId
-          : mediaId // ignore: cast_nullable_to_non_nullable
-              as String,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String,
-      rating: freezed == rating
-          ? _value.rating
-          : rating // ignore: cast_nullable_to_non_nullable
-              as int?,
-      review: freezed == review
-          ? _value.review
-          : review // ignore: cast_nullable_to_non_nullable
-              as String?,
-      seasonRatings: null == seasonRatings
-          ? _value.seasonRatings
-          : seasonRatings // ignore: cast_nullable_to_non_nullable
-              as List<SeasonRatingModel>,
-      media: freezed == media
-          ? _value.media
-          : media // ignore: cast_nullable_to_non_nullable
-              as TrackedMediaSummaryModel?,
-      addedAt: null == addedAt
-          ? _value.addedAt
-          : addedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      lastUpdated: null == lastUpdated
-          ? _value.lastUpdated
-          : lastUpdated // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            trackingId: null == trackingId
+                ? _value.trackingId
+                : trackingId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            userId: null == userId
+                ? _value.userId
+                : userId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            mediaType: null == mediaType
+                ? _value.mediaType
+                : mediaType // ignore: cast_nullable_to_non_nullable
+                      as MediaType,
+            mediaId: null == mediaId
+                ? _value.mediaId
+                : mediaId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            status: null == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as String,
+            rating: freezed == rating
+                ? _value.rating
+                : rating // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            review: freezed == review
+                ? _value.review
+                : review // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            seasonRatings: null == seasonRatings
+                ? _value.seasonRatings
+                : seasonRatings // ignore: cast_nullable_to_non_nullable
+                      as List<SeasonRatingModel>,
+            media: freezed == media
+                ? _value.media
+                : media // ignore: cast_nullable_to_non_nullable
+                      as TrackedMediaSummaryModel?,
+            addedAt: null == addedAt
+                ? _value.addedAt
+                : addedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+            lastUpdated: null == lastUpdated
+                ? _value.lastUpdated
+                : lastUpdated // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+          )
+          as $Val,
+    );
   }
 
   /// Create a copy of TrackedMediaModel
@@ -160,24 +166,26 @@ class _$TrackedMediaModelCopyWithImpl<$Res, $Val extends TrackedMediaModel>
 /// @nodoc
 abstract class _$$TrackedMediaModelImplCopyWith<$Res>
     implements $TrackedMediaModelCopyWith<$Res> {
-  factory _$$TrackedMediaModelImplCopyWith(_$TrackedMediaModelImpl value,
-          $Res Function(_$TrackedMediaModelImpl) then) =
-      __$$TrackedMediaModelImplCopyWithImpl<$Res>;
+  factory _$$TrackedMediaModelImplCopyWith(
+    _$TrackedMediaModelImpl value,
+    $Res Function(_$TrackedMediaModelImpl) then,
+  ) = __$$TrackedMediaModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String trackingId,
-      String userId,
-      @JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson)
-      MediaType mediaType,
-      String mediaId,
-      String status,
-      int? rating,
-      String? review,
-      List<SeasonRatingModel> seasonRatings,
-      TrackedMediaSummaryModel? media,
-      DateTime addedAt,
-      DateTime lastUpdated});
+  $Res call({
+    String trackingId,
+    String userId,
+    @JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson)
+    MediaType mediaType,
+    String mediaId,
+    String status,
+    int? rating,
+    String? review,
+    List<SeasonRatingModel> seasonRatings,
+    TrackedMediaSummaryModel? media,
+    DateTime addedAt,
+    DateTime lastUpdated,
+  });
 
   @override
   $TrackedMediaSummaryModelCopyWith<$Res>? get media;
@@ -187,9 +195,10 @@ abstract class _$$TrackedMediaModelImplCopyWith<$Res>
 class __$$TrackedMediaModelImplCopyWithImpl<$Res>
     extends _$TrackedMediaModelCopyWithImpl<$Res, _$TrackedMediaModelImpl>
     implements _$$TrackedMediaModelImplCopyWith<$Res> {
-  __$$TrackedMediaModelImplCopyWithImpl(_$TrackedMediaModelImpl _value,
-      $Res Function(_$TrackedMediaModelImpl) _then)
-      : super(_value, _then);
+  __$$TrackedMediaModelImplCopyWithImpl(
+    _$TrackedMediaModelImpl _value,
+    $Res Function(_$TrackedMediaModelImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of TrackedMediaModel
   /// with the given fields replaced by the non-null parameter values.
@@ -208,72 +217,74 @@ class __$$TrackedMediaModelImplCopyWithImpl<$Res>
     Object? addedAt = null,
     Object? lastUpdated = null,
   }) {
-    return _then(_$TrackedMediaModelImpl(
-      trackingId: null == trackingId
-          ? _value.trackingId
-          : trackingId // ignore: cast_nullable_to_non_nullable
-              as String,
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
-      mediaType: null == mediaType
-          ? _value.mediaType
-          : mediaType // ignore: cast_nullable_to_non_nullable
-              as MediaType,
-      mediaId: null == mediaId
-          ? _value.mediaId
-          : mediaId // ignore: cast_nullable_to_non_nullable
-              as String,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String,
-      rating: freezed == rating
-          ? _value.rating
-          : rating // ignore: cast_nullable_to_non_nullable
-              as int?,
-      review: freezed == review
-          ? _value.review
-          : review // ignore: cast_nullable_to_non_nullable
-              as String?,
-      seasonRatings: null == seasonRatings
-          ? _value._seasonRatings
-          : seasonRatings // ignore: cast_nullable_to_non_nullable
-              as List<SeasonRatingModel>,
-      media: freezed == media
-          ? _value.media
-          : media // ignore: cast_nullable_to_non_nullable
-              as TrackedMediaSummaryModel?,
-      addedAt: null == addedAt
-          ? _value.addedAt
-          : addedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      lastUpdated: null == lastUpdated
-          ? _value.lastUpdated
-          : lastUpdated // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ));
+    return _then(
+      _$TrackedMediaModelImpl(
+        trackingId: null == trackingId
+            ? _value.trackingId
+            : trackingId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        userId: null == userId
+            ? _value.userId
+            : userId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        mediaType: null == mediaType
+            ? _value.mediaType
+            : mediaType // ignore: cast_nullable_to_non_nullable
+                  as MediaType,
+        mediaId: null == mediaId
+            ? _value.mediaId
+            : mediaId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        status: null == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as String,
+        rating: freezed == rating
+            ? _value.rating
+            : rating // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        review: freezed == review
+            ? _value.review
+            : review // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        seasonRatings: null == seasonRatings
+            ? _value._seasonRatings
+            : seasonRatings // ignore: cast_nullable_to_non_nullable
+                  as List<SeasonRatingModel>,
+        media: freezed == media
+            ? _value.media
+            : media // ignore: cast_nullable_to_non_nullable
+                  as TrackedMediaSummaryModel?,
+        addedAt: null == addedAt
+            ? _value.addedAt
+            : addedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        lastUpdated: null == lastUpdated
+            ? _value.lastUpdated
+            : lastUpdated // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$TrackedMediaModelImpl implements _TrackedMediaModel {
-  const _$TrackedMediaModelImpl(
-      {required this.trackingId,
-      required this.userId,
-      @JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson)
-      required this.mediaType,
-      required this.mediaId,
-      required this.status,
-      this.rating,
-      this.review,
-      final List<SeasonRatingModel> seasonRatings = const [],
-      this.media,
-      required this.addedAt,
-      required this.lastUpdated})
-      : _seasonRatings = seasonRatings;
+  const _$TrackedMediaModelImpl({
+    required this.trackingId,
+    required this.userId,
+    @JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson)
+    required this.mediaType,
+    required this.mediaId,
+    required this.status,
+    this.rating,
+    this.review,
+    final List<SeasonRatingModel> seasonRatings = const [],
+    this.media,
+    required this.addedAt,
+    required this.lastUpdated,
+  }) : _seasonRatings = seasonRatings;
 
   factory _$TrackedMediaModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$TrackedMediaModelImplFromJson(json);
@@ -328,8 +339,10 @@ class _$TrackedMediaModelImpl implements _TrackedMediaModel {
             (identical(other.status, status) || other.status == status) &&
             (identical(other.rating, rating) || other.rating == rating) &&
             (identical(other.review, review) || other.review == review) &&
-            const DeepCollectionEquality()
-                .equals(other._seasonRatings, _seasonRatings) &&
+            const DeepCollectionEquality().equals(
+              other._seasonRatings,
+              _seasonRatings,
+            ) &&
             (identical(other.media, media) || other.media == media) &&
             (identical(other.addedAt, addedAt) || other.addedAt == addedAt) &&
             (identical(other.lastUpdated, lastUpdated) ||
@@ -339,18 +352,19 @@ class _$TrackedMediaModelImpl implements _TrackedMediaModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      trackingId,
-      userId,
-      mediaType,
-      mediaId,
-      status,
-      rating,
-      review,
-      const DeepCollectionEquality().hash(_seasonRatings),
-      media,
-      addedAt,
-      lastUpdated);
+    runtimeType,
+    trackingId,
+    userId,
+    mediaType,
+    mediaId,
+    status,
+    rating,
+    review,
+    const DeepCollectionEquality().hash(_seasonRatings),
+    media,
+    addedAt,
+    lastUpdated,
+  );
 
   /// Create a copy of TrackedMediaModel
   /// with the given fields replaced by the non-null parameter values.
@@ -359,30 +373,31 @@ class _$TrackedMediaModelImpl implements _TrackedMediaModel {
   @pragma('vm:prefer-inline')
   _$$TrackedMediaModelImplCopyWith<_$TrackedMediaModelImpl> get copyWith =>
       __$$TrackedMediaModelImplCopyWithImpl<_$TrackedMediaModelImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$TrackedMediaModelImplToJson(
-      this,
-    );
+    return _$$TrackedMediaModelImplToJson(this);
   }
 }
 
 abstract class _TrackedMediaModel implements TrackedMediaModel {
-  const factory _TrackedMediaModel(
-      {required final String trackingId,
-      required final String userId,
-      @JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson)
-      required final MediaType mediaType,
-      required final String mediaId,
-      required final String status,
-      final int? rating,
-      final String? review,
-      final List<SeasonRatingModel> seasonRatings,
-      final TrackedMediaSummaryModel? media,
-      required final DateTime addedAt,
-      required final DateTime lastUpdated}) = _$TrackedMediaModelImpl;
+  const factory _TrackedMediaModel({
+    required final String trackingId,
+    required final String userId,
+    @JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson)
+    required final MediaType mediaType,
+    required final String mediaId,
+    required final String status,
+    final int? rating,
+    final String? review,
+    final List<SeasonRatingModel> seasonRatings,
+    final TrackedMediaSummaryModel? media,
+    required final DateTime addedAt,
+    required final DateTime lastUpdated,
+  }) = _$TrackedMediaModelImpl;
 
   factory _TrackedMediaModel.fromJson(Map<String, dynamic> json) =
       _$TrackedMediaModelImpl.fromJson;

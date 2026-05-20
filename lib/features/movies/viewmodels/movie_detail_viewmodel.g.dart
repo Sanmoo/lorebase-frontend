@@ -34,9 +34,7 @@ abstract class _$MovieDetailViewModel
     extends BuildlessAutoDisposeAsyncNotifier<MovieDetailState> {
   late final int tmdbId;
 
-  FutureOr<MovieDetailState> build(
-    int tmdbId,
-  );
+  FutureOr<MovieDetailState> build(int tmdbId);
 }
 
 /// See also [MovieDetailViewModel].
@@ -49,21 +47,15 @@ class MovieDetailViewModelFamily extends Family<AsyncValue<MovieDetailState>> {
   const MovieDetailViewModelFamily();
 
   /// See also [MovieDetailViewModel].
-  MovieDetailViewModelProvider call(
-    int tmdbId,
-  ) {
-    return MovieDetailViewModelProvider(
-      tmdbId,
-    );
+  MovieDetailViewModelProvider call(int tmdbId) {
+    return MovieDetailViewModelProvider(tmdbId);
   }
 
   @override
   MovieDetailViewModelProvider getProviderOverride(
     covariant MovieDetailViewModelProvider provider,
   ) {
-    return call(
-      provider.tmdbId,
-    );
+    return call(provider.tmdbId);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -82,24 +74,26 @@ class MovieDetailViewModelFamily extends Family<AsyncValue<MovieDetailState>> {
 }
 
 /// See also [MovieDetailViewModel].
-class MovieDetailViewModelProvider extends AutoDisposeAsyncNotifierProviderImpl<
-    MovieDetailViewModel, MovieDetailState> {
+class MovieDetailViewModelProvider
+    extends
+        AutoDisposeAsyncNotifierProviderImpl<
+          MovieDetailViewModel,
+          MovieDetailState
+        > {
   /// See also [MovieDetailViewModel].
-  MovieDetailViewModelProvider(
-    int tmdbId,
-  ) : this._internal(
-          () => MovieDetailViewModel()..tmdbId = tmdbId,
-          from: movieDetailViewModelProvider,
-          name: r'movieDetailViewModelProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$movieDetailViewModelHash,
-          dependencies: MovieDetailViewModelFamily._dependencies,
-          allTransitiveDependencies:
-              MovieDetailViewModelFamily._allTransitiveDependencies,
-          tmdbId: tmdbId,
-        );
+  MovieDetailViewModelProvider(int tmdbId)
+    : this._internal(
+        () => MovieDetailViewModel()..tmdbId = tmdbId,
+        from: movieDetailViewModelProvider,
+        name: r'movieDetailViewModelProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$movieDetailViewModelHash,
+        dependencies: MovieDetailViewModelFamily._dependencies,
+        allTransitiveDependencies:
+            MovieDetailViewModelFamily._allTransitiveDependencies,
+        tmdbId: tmdbId,
+      );
 
   MovieDetailViewModelProvider._internal(
     super._createNotifier, {
@@ -117,9 +111,7 @@ class MovieDetailViewModelProvider extends AutoDisposeAsyncNotifierProviderImpl<
   FutureOr<MovieDetailState> runNotifierBuild(
     covariant MovieDetailViewModel notifier,
   ) {
-    return notifier.build(
-      tmdbId,
-    );
+    return notifier.build(tmdbId);
   }
 
   @override
@@ -139,8 +131,11 @@ class MovieDetailViewModelProvider extends AutoDisposeAsyncNotifierProviderImpl<
   }
 
   @override
-  AutoDisposeAsyncNotifierProviderElement<MovieDetailViewModel,
-      MovieDetailState> createElement() {
+  AutoDisposeAsyncNotifierProviderElement<
+    MovieDetailViewModel,
+    MovieDetailState
+  >
+  createElement() {
     return _MovieDetailViewModelProviderElement(this);
   }
 
@@ -167,12 +162,17 @@ mixin MovieDetailViewModelRef
 }
 
 class _MovieDetailViewModelProviderElement
-    extends AutoDisposeAsyncNotifierProviderElement<MovieDetailViewModel,
-        MovieDetailState> with MovieDetailViewModelRef {
+    extends
+        AutoDisposeAsyncNotifierProviderElement<
+          MovieDetailViewModel,
+          MovieDetailState
+        >
+    with MovieDetailViewModelRef {
   _MovieDetailViewModelProviderElement(super.provider);
 
   @override
   int get tmdbId => (origin as MovieDetailViewModelProvider).tmdbId;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
