@@ -104,8 +104,8 @@ class TrackingRepositoryImpl implements TrackingRepository {
       final data = <String, dynamic>{
         'mediaType': mediaType.apiValue,
         if (status != null) 'status': status,
-        if (rating != null) 'rating': rating,
-        if (review != null) 'review': review,
+        if (rating != null) 'seriesRating': rating,
+        if (review != null) 'seriesReview': review,
         if (seasonRatings != null) 'seasonRatings': seasonRatings,
       };
 
