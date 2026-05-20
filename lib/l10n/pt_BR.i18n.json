@@ -3,6 +3,7 @@
   "nav_search": "Buscar",
   "nav_my_lists": "Minhas Listas",
   "nav_recommend": "Recomendar",
+  "nav_social": "Social",
   "app_title": "Lorebase",
   "login_welcome": "Bem-vindo de volta",
   "login_subtitle": "Entre para continuar suas listas",
@@ -91,5 +92,10 @@
   "error_network": "Erro de rede. Verifique sua conexão.",
   "error_server": "Erro no servidor. Tente novamente mais tarde.",
   "error_session_expired": "Sessão expirada. Faça login novamente.",
-  "error_resource_not_found": "Recurso não encontrado."
+  "error_resource_not_found": "Recurso não encontrado.",
+  "social_feed": "Feed",
+  "social_discover": "Descobrir",
+  "social_empty_feed_title": "Seu feed está vazio",
+  "social_empty_feed_body": "Siga pessoas para ver as atividades delas aqui.",
+  "social_discover_people": "Descobrir pessoas"
 }

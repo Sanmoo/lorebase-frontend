@@ -16,18 +16,11 @@ class ScaffoldWithNavBar extends ConsumerWidget {
 
   int _getCurrentIndex(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
-    switch (location) {
-      case '/dashboard':
-        return 0;
-      case '/search':
-        return 1;
-      case '/tracking':
-        return 2;
-      case '/recommend':
-        return 3;
-      default:
-        return 0;
-    }
+    if (location == '/dashboard') return 0;
+    if (location == '/search') return 1;
+    if (location == '/tracking') return 2;
+    if (location == '/social' || location.startsWith('/social/')) return 3;
+    return 0;
   }
 
   void _onItemTapped(int index, BuildContext context) {
@@ -42,7 +35,7 @@ class ScaffoldWithNavBar extends ConsumerWidget {
         context.go('/tracking');
         break;
       case 3:
-        context.go('/recommend');
+        context.go('/social');
         break;
     }
   }
@@ -85,9 +78,9 @@ class ScaffoldWithNavBar extends ConsumerWidget {
             label: t.nav_my_lists,
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.recommend_outlined),
-            activeIcon: const Icon(Icons.recommend),
-            label: t.nav_recommend,
+            icon: const Icon(Icons.people_outline),
+            activeIcon: const Icon(Icons.people),
+            label: t.nav_social,
           ),
         ],
       ),

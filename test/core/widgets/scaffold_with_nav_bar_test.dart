@@ -53,6 +53,14 @@ Widget _wrapWithRouter(Widget child, {String location = '/dashboard'}) {
                   builder: (context, state) => child,
                 ),
                 GoRoute(
+                  path: '/social',
+                  builder: (context, state) => child,
+                ),
+                GoRoute(
+                  path: '/social/profile/:userId',
+                  builder: (context, state) => child,
+                ),
+                GoRoute(
                   path: '/recommend',
                   builder: (context, state) => child,
                 ),
@@ -92,6 +100,14 @@ Widget _wrapWithRouteLabels(String location) {
                   builder: (context, state) => const Text('Tracking Page'),
                 ),
                 GoRoute(
+                  path: '/social',
+                  builder: (context, state) => const Text('Social Page'),
+                ),
+                GoRoute(
+                  path: '/social/profile/:userId',
+                  builder: (context, state) => const Text('Social Profile Page'),
+                ),
+                GoRoute(
                   path: '/recommend',
                   builder: (context, state) => const Text('Recommend Page'),
                 ),
@@ -115,7 +131,8 @@ Future<void> main() async {
       expect(find.text('Home'), findsOneWidget);
       expect(find.text('Search'), findsOneWidget);
       expect(find.text('My Lists'), findsOneWidget);
-      expect(find.text('Recommend'), findsOneWidget);
+      expect(find.text('Social'), findsOneWidget);
+      expect(find.text('Recommend'), findsNothing);
     });
 
     testWidgets('renders logout icon button', (tester) async {
@@ -153,6 +170,10 @@ Future<void> main() async {
                       ),
                       GoRoute(
                         path: '/tracking',
+                        builder: (context, state) => const Text('Content'),
+                      ),
+                      GoRoute(
+                        path: '/social',
                         builder: (context, state) => const Text('Content'),
                       ),
                       GoRoute(
@@ -212,9 +233,21 @@ Future<void> main() async {
       expect(navBar.currentIndex, 2);
     });
 
-    testWidgets('recommend tab has correct index', (tester) async {
+    testWidgets('social tab has correct index', (tester) async {
       await tester.pumpWidget(
-          _wrapWithRouter(const Text('Content'), location: '/recommend'));
+          _wrapWithRouter(const Text('Content'), location: '/social'));
+      await tester.pumpAndSettle();
+
+      final navBar =
+          tester.widget<BottomNavigationBar>(find.byType(BottomNavigationBar));
+      expect(navBar.currentIndex, 3);
+    });
+
+    testWidgets('social nested route has correct index', (tester) async {
+      await tester.pumpWidget(_wrapWithRouter(
+        const Text('Content'),
+        location: '/social/profile/user-1',
+      ));
       await tester.pumpAndSettle();
 
       final navBar =
@@ -251,15 +284,15 @@ Future<void> main() async {
       expect(navBar.currentIndex, 2);
     });
 
-    testWidgets('tapping recommend tab navigates to recommend page',
+    testWidgets('tapping social tab navigates to social page',
         (tester) async {
       await tester.pumpWidget(_wrapWithRouteLabels('/dashboard'));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Recommend'));
+      await tester.tap(find.text('Social'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Recommend Page'), findsOneWidget);
+      expect(find.text('Social Page'), findsOneWidget);
       final navBar =
           tester.widget<BottomNavigationBar>(find.byType(BottomNavigationBar));
       expect(navBar.currentIndex, 3);

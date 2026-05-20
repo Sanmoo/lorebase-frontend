@@ -100,6 +100,7 @@ class TranslationsEn extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get nav_home => 'Home';
 	@override String get nav_my_lists => 'My Lists';
 	@override String get nav_recommend => 'Recommend';
+	@override String get nav_social => 'Social';
 	@override String get nav_search => 'Search';
 	@override String get recommend_coming_soon => 'Recommendation feature coming soon!';
 	@override String get search_empty => 'Type at least 2 characters to search';
@@ -132,6 +133,11 @@ class TranslationsEn extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get tracking_empty_movies => 'No {status} movies yet';
 	@override String get tracking_want_to_watch => 'Want to Watch';
 	@override String get tracking_watching => 'Watching';
+	@override String get social_feed => 'Feed';
+	@override String get social_discover => 'Discover';
+	@override String get social_empty_feed_title => 'Your feed is empty';
+	@override String get social_empty_feed_body => 'Follow people to see their activity here.';
+	@override String get social_discover_people => 'Discover people';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -203,6 +209,7 @@ extension on TranslationsEn {
 			'nav_home' => 'Home',
 			'nav_my_lists' => 'My Lists',
 			'nav_recommend' => 'Recommend',
+			'nav_social' => 'Social',
 			'nav_search' => 'Search',
 			'recommend_coming_soon' => 'Recommendation feature coming soon!',
 			'search_empty' => 'Type at least 2 characters to search',
@@ -235,6 +242,11 @@ extension on TranslationsEn {
 			'tracking_empty_movies' => 'No {status} movies yet',
 			'tracking_want_to_watch' => 'Want to Watch',
 			'tracking_watching' => 'Watching',
+			'social_feed' => 'Feed',
+			'social_discover' => 'Discover',
+			'social_empty_feed_title' => 'Your feed is empty',
+			'social_empty_feed_body' => 'Follow people to see their activity here.',
+			'social_discover_people' => 'Discover people',
 			_ => null,
 		};
 	}

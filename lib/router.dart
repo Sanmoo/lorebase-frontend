@@ -15,6 +15,9 @@ import 'features/series/pages/series_search_page.dart';
 import 'features/tracking/pages/tracking_list_page.dart';
 import 'features/series/pages/series_detail_page.dart';
 import 'features/movies/pages/movie_detail_page.dart';
+import 'features/social/pages/edit_social_profile_page.dart';
+import 'features/social/pages/social_page.dart';
+import 'features/social/pages/social_profile_page.dart';
 
 @visibleForTesting
 String? authRedirect(AuthState authState, String location) {
@@ -81,6 +84,36 @@ final routerProvider = Provider<GoRouter>((ref) {
             pageBuilder: (context, state) => NoTransitionPage(
               key: state.pageKey,
               child: const TrackingListPage(),
+            ),
+          ),
+          GoRoute(
+            path: '/social',
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const SocialPage(),
+            ),
+          ),
+          GoRoute(
+            path: '/social/profile/me',
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const SocialProfilePage(userId: 'me', isMe: true),
+            ),
+          ),
+          GoRoute(
+            path: '/social/profile/edit',
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const EditSocialProfilePage(),
+            ),
+          ),
+          GoRoute(
+            path: '/social/profile/:userId',
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: SocialProfilePage(
+                userId: state.pathParameters['userId']!,
+              ),
             ),
           ),
           GoRoute(

@@ -21,6 +21,8 @@ void main() {
         expect(authRedirect(unauthenticated, '/search'), '/login');
         expect(authRedirect(unauthenticated, '/tracking'), '/login');
         expect(authRedirect(unauthenticated, '/recommend'), '/login');
+        expect(authRedirect(unauthenticated, '/social'), '/login');
+        expect(authRedirect(unauthenticated, '/social/profile/user-1'), '/login');
         expect(authRedirect(unauthenticated, '/series/123'), '/login');
         expect(authRedirect(unauthenticated, '/movies/123'), '/login');
       });
@@ -34,6 +36,8 @@ void main() {
         expect(authRedirect(authenticated, '/search'), isNull);
         expect(authRedirect(authenticated, '/tracking'), isNull);
         expect(authRedirect(authenticated, '/recommend'), isNull);
+        expect(authRedirect(authenticated, '/social'), isNull);
+        expect(authRedirect(authenticated, '/social/profile/user-1'), isNull);
         expect(authRedirect(authenticated, '/series/123'), isNull);
         expect(authRedirect(authenticated, '/movies/123'), isNull);
       });
@@ -84,6 +88,24 @@ void main() {
 
       final router = container.read(routerProvider);
       expect(router, isA<GoRouter>());
+    });
+
+    test('social profile route is registered', () {
+      final container = ProviderContainer(overrides: [
+        authViewModelProvider.overrideWith(
+          () => _FakeAuthVM(const AuthState.authenticated('user1')),
+        ),
+      ]);
+      addTearDown(container.dispose);
+
+      final router = container.read(routerProvider);
+      final matches = router.configuration.findMatch(
+        Uri.parse('/social/profile/user-1'),
+      );
+      final shellMatch = matches.matches.last as dynamic;
+      final routeMatch = shellMatch.matches.last as RouteMatch;
+
+      expect(routeMatch.route.path, '/social/profile/:userId');
     });
   });
 

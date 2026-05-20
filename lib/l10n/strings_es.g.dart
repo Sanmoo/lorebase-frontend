@@ -43,6 +43,7 @@ class TranslationsEs extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get nav_search => 'Buscar';
 	@override String get nav_my_lists => 'Mis Listas';
 	@override String get nav_recommend => 'Recomendar';
+	@override String get nav_social => 'Social';
 	@override String get app_title => 'Lorebase';
 	@override String get login_welcome => 'Bienvenido de nuevo';
 	@override String get login_subtitle => 'Inicia sesión para continuar tus listas';
@@ -132,6 +133,11 @@ class TranslationsEs extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get error_server => 'Error del servidor. Inténtalo de nuevo más tarde.';
 	@override String get error_session_expired => 'Sesión expirada. Inicia sesión de nuevo.';
 	@override String get error_resource_not_found => 'Recurso no encontrado.';
+	@override String get social_feed => 'Feed';
+	@override String get social_discover => 'Descubrir';
+	@override String get social_empty_feed_title => 'Tu feed está vacío';
+	@override String get social_empty_feed_body => 'Sigue personas para ver su actividad aquí.';
+	@override String get social_discover_people => 'Descubrir personas';
 }
 
 /// The flat map containing all translations for locale <es>.
@@ -146,6 +152,7 @@ extension on TranslationsEs {
 			'nav_search' => 'Buscar',
 			'nav_my_lists' => 'Mis Listas',
 			'nav_recommend' => 'Recomendar',
+			'nav_social' => 'Social',
 			'app_title' => 'Lorebase',
 			'login_welcome' => 'Bienvenido de nuevo',
 			'login_subtitle' => 'Inicia sesión para continuar tus listas',
@@ -235,6 +242,11 @@ extension on TranslationsEs {
 			'error_server' => 'Error del servidor. Inténtalo de nuevo más tarde.',
 			'error_session_expired' => 'Sesión expirada. Inicia sesión de nuevo.',
 			'error_resource_not_found' => 'Recurso no encontrado.',
+			'social_feed' => 'Feed',
+			'social_discover' => 'Descubrir',
+			'social_empty_feed_title' => 'Tu feed está vacío',
+			'social_empty_feed_body' => 'Sigue personas para ver su actividad aquí.',
+			'social_discover_people' => 'Descubrir personas',
 			_ => null,
 		};
 	}

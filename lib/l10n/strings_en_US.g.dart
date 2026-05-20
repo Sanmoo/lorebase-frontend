@@ -43,6 +43,7 @@ class TranslationsEnUs extends Translations with BaseTranslations<AppLocale, Tra
 	@override String get nav_search => 'Search';
 	@override String get nav_my_lists => 'My Lists';
 	@override String get nav_recommend => 'Recommend';
+	@override String get nav_social => 'Social';
 	@override String get app_title => 'Lorebase';
 	@override String get login_welcome => 'Welcome back';
 	@override String get login_subtitle => 'Sign in to continue your lists';
@@ -132,6 +133,11 @@ class TranslationsEnUs extends Translations with BaseTranslations<AppLocale, Tra
 	@override String get error_server => 'Server error. Please try again later.';
 	@override String get error_session_expired => 'Session expired. Please log in again.';
 	@override String get error_resource_not_found => 'Resource not found.';
+	@override String get social_feed => 'Feed';
+	@override String get social_discover => 'Discover';
+	@override String get social_empty_feed_title => 'Your feed is empty';
+	@override String get social_empty_feed_body => 'Follow people to see their activity here.';
+	@override String get social_discover_people => 'Discover people';
 }
 
 /// The flat map containing all translations for locale <en-US>.
@@ -146,6 +152,7 @@ extension on TranslationsEnUs {
 			'nav_search' => 'Search',
 			'nav_my_lists' => 'My Lists',
 			'nav_recommend' => 'Recommend',
+			'nav_social' => 'Social',
 			'app_title' => 'Lorebase',
 			'login_welcome' => 'Welcome back',
 			'login_subtitle' => 'Sign in to continue your lists',
@@ -235,6 +242,11 @@ extension on TranslationsEnUs {
 			'error_server' => 'Server error. Please try again later.',
 			'error_session_expired' => 'Session expired. Please log in again.',
 			'error_resource_not_found' => 'Resource not found.',
+			'social_feed' => 'Feed',
+			'social_discover' => 'Discover',
+			'social_empty_feed_title' => 'Your feed is empty',
+			'social_empty_feed_body' => 'Follow people to see their activity here.',
+			'social_discover_people' => 'Discover people',
 			_ => null,
 		};
 	}

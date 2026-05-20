@@ -53,6 +53,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// pt-BR: 'Recomendar'
 	String get nav_recommend => 'Recomendar';
 
+	/// pt-BR: 'Social'
+	String get nav_social => 'Social';
+
 	/// pt-BR: 'Lorebase'
 	String get app_title => 'Lorebase';
 
@@ -319,6 +322,21 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// pt-BR: 'Recurso não encontrado.'
 	String get error_resource_not_found => 'Recurso não encontrado.';
+
+	/// pt-BR: 'Feed'
+	String get social_feed => 'Feed';
+
+	/// pt-BR: 'Descobrir'
+	String get social_discover => 'Descobrir';
+
+	/// pt-BR: 'Seu feed está vazio'
+	String get social_empty_feed_title => 'Seu feed está vazio';
+
+	/// pt-BR: 'Siga pessoas para ver as atividades delas aqui.'
+	String get social_empty_feed_body => 'Siga pessoas para ver as atividades delas aqui.';
+
+	/// pt-BR: 'Descobrir pessoas'
+	String get social_discover_people => 'Descobrir pessoas';
 }
 
 /// The flat map containing all translations for locale <pt-BR>.
@@ -333,6 +351,7 @@ extension on Translations {
 			'nav_search' => 'Buscar',
 			'nav_my_lists' => 'Minhas Listas',
 			'nav_recommend' => 'Recomendar',
+			'nav_social' => 'Social',
 			'app_title' => 'Lorebase',
 			'login_welcome' => 'Bem-vindo de volta',
 			'login_subtitle' => 'Entre para continuar suas listas',
@@ -422,6 +441,11 @@ extension on Translations {
 			'error_server' => 'Erro no servidor. Tente novamente mais tarde.',
 			'error_session_expired' => 'Sessão expirada. Faça login novamente.',
 			'error_resource_not_found' => 'Recurso não encontrado.',
+			'social_feed' => 'Feed',
+			'social_discover' => 'Descobrir',
+			'social_empty_feed_title' => 'Seu feed está vazio',
+			'social_empty_feed_body' => 'Siga pessoas para ver as atividades delas aqui.',
+			'social_discover_people' => 'Descobrir pessoas',
 			_ => null,
 		};
 	}
