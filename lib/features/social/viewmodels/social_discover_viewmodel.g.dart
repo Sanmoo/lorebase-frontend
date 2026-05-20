@@ -38,7 +38,7 @@ final class SocialDiscoverViewModelProvider
 }
 
 String _$socialDiscoverViewModelHash() =>
-    r'88cd95c1a7b03fc9a3bb5c654486b5157929c720';
+    r'105503004e41acfcdf21b127101508284bac2610';
 
 abstract class _$SocialDiscoverViewModel
     extends $AsyncNotifier<PaginatedSocialResponse<DiscoverUserModel>> {
