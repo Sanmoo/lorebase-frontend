@@ -4,10 +4,19 @@ import 'package:lorebase/features/social/data/models/discover_user_model.dart';
 import 'package:lorebase/features/social/data/models/follow_relationship_model.dart';
 import 'package:lorebase/features/social/data/models/paginated_social_response.dart';
 import 'package:lorebase/features/social/data/models/public_list_item_model.dart';
+import 'package:lorebase/features/social/data/models/social_privacy.dart';
 import 'package:lorebase/features/social/data/models/social_profile_model.dart';
 
 void main() {
   group('social models', () {
+    test('identifies public social privacy as public', () {
+      expect(SocialPrivacy.public.isPublic, isTrue);
+    });
+
+    test('identifies private social privacy as not public', () {
+      expect(SocialPrivacy.private.isPublic, isFalse);
+    });
+
     test('parses a social profile', () {
       final profile = SocialProfileModel.fromJson({
         'userId': 'user-1',
@@ -226,12 +235,19 @@ void main() {
     test('parses paginated response', () {
       final response = PaginatedSocialResponse<ActivityEventModel>.fromJson({
         'items': [
-          {
+          <String, dynamic>{
             'eventId': 'evt-1',
-            'user': {'userId': 'user-1', 'displayName': 'Fulano'},
+            'user': <String, dynamic>{
+              'userId': 'user-1',
+              'displayName': 'Fulano',
+            },
             'activityType': 'COMPLETED',
-            'media': {'mediaId': '1', 'mediaType': 'MOVIE', 'title': 'Movie'},
-            'metadata': {},
+            'media': <String, dynamic>{
+              'mediaId': '1',
+              'mediaType': 'MOVIE',
+              'title': 'Movie',
+            },
+            'metadata': <String, dynamic>{},
             'createdAt': '2026-05-20T10:00:00Z',
           },
         ],

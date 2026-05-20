@@ -15,27 +15,11 @@ class PaginatedSocialResponse<T> {
   ) {
     final rawItems = (json['items'] as List?) ?? const [];
     return PaginatedSocialResponse<T>(
-      items: rawItems.map((item) => fromJsonT(_stringKeyMap(item))).toList(),
+      items: rawItems
+          .map((item) => fromJsonT(Map<String, dynamic>.from(item as Map)))
+          .toList(),
       nextCursor: json['nextCursor'] as String?,
       hasMore: json['hasMore'] as bool? ?? false,
     );
-  }
-
-  static Map<String, dynamic> _stringKeyMap(Object? value) {
-    return Map<String, dynamic>.from(
-      (value as Map).map(
-        (key, value) => MapEntry(key as String, _convertJsonValue(value)),
-      ),
-    );
-  }
-
-  static Object? _convertJsonValue(Object? value) {
-    if (value is Map) {
-      return _stringKeyMap(value);
-    }
-    if (value is List) {
-      return value.map(_convertJsonValue).toList();
-    }
-    return value;
   }
 }
