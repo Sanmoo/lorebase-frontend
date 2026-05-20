@@ -38,7 +38,7 @@ class SocialProfilePage extends ConsumerWidget {
               isScrollable: true,
               tabs: [
                 Tab(text: 'Activity'),
-                Tab(text: 'Listas'),
+                Tab(text: 'Lists'),
                 Tab(text: 'Followers'),
                 Tab(text: 'Following'),
               ],

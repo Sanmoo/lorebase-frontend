@@ -77,7 +77,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Activity'), findsOneWidget);
-      expect(find.text('Listas'), findsOneWidget);
+      expect(find.text('Lists'), findsOneWidget);
       expect(find.text('Followers'), findsOneWidget);
       expect(find.text('Following'), findsOneWidget);
     },
