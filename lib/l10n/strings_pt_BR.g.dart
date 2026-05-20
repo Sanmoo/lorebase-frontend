@@ -329,11 +329,11 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// pt-BR: 'Descobrir'
 	String get social_discover => 'Descobrir';
 
-	/// pt-BR: 'Seu feed está vazio'
-	String get social_empty_feed_title => 'Seu feed está vazio';
+	/// pt-BR: 'Seu feed ainda está quieto'
+	String get social_empty_feed_title => 'Seu feed ainda está quieto';
 
-	/// pt-BR: 'Siga pessoas para ver as atividades delas aqui.'
-	String get social_empty_feed_body => 'Siga pessoas para ver as atividades delas aqui.';
+	/// pt-BR: 'Siga pessoas para ver avaliações, reviews e atividades recentes.'
+	String get social_empty_feed_body => 'Siga pessoas para ver avaliações, reviews e atividades recentes.';
 
 	/// pt-BR: 'Descobrir pessoas'
 	String get social_discover_people => 'Descobrir pessoas';
@@ -443,8 +443,8 @@ extension on Translations {
 			'error_resource_not_found' => 'Recurso não encontrado.',
 			'social_feed' => 'Feed',
 			'social_discover' => 'Descobrir',
-			'social_empty_feed_title' => 'Seu feed está vazio',
-			'social_empty_feed_body' => 'Siga pessoas para ver as atividades delas aqui.',
+			'social_empty_feed_title' => 'Seu feed ainda está quieto',
+			'social_empty_feed_body' => 'Siga pessoas para ver avaliações, reviews e atividades recentes.',
 			'social_discover_people' => 'Descobrir pessoas',
 			_ => null,
 		};

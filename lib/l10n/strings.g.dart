@@ -6,7 +6,7 @@
 /// Locales: 4
 /// Strings: 396 (99 per locale)
 ///
-/// Built on 2026-05-20 at 16:18 UTC
+/// Built on 2026-05-20 at 16:29 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint, unused_import
