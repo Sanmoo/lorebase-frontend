@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -85,6 +86,9 @@ Widget _wrap(ProviderContainer container) {
     container: container,
     child: TranslationProvider(
       child: MaterialApp.router(
+        locale: AppLocale.enUs.flutterLocale,
+        supportedLocales: AppLocaleUtils.supportedLocales,
+        localizationsDelegates: GlobalMaterialLocalizations.delegates,
         routerConfig: GoRouter(
           initialLocation: '/series/1',
           routes: [
@@ -153,8 +157,7 @@ Future<void> main() async {
       addTearDown(container.dispose);
 
       await tester.pumpWidget(_wrap(container));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pumpAndSettle();
 
       expect(find.text('Exception: Test error message'), findsOneWidget);
       expect(find.text('Retry'), findsOneWidget);
@@ -179,7 +182,7 @@ Future<void> main() async {
       expect(find.text('Test Series'), findsWidgets);
       expect(find.text('Drama'), findsOneWidget);
       expect(find.text('First Air Date'), findsOneWidget);
-      expect(find.text('2024-01-01'), findsOneWidget);
+      expect(find.text('Jan 1, 2024'), findsOneWidget);
       expect(find.text('Seasons'), findsOneWidget);
       expect(find.text('3'), findsOneWidget);
       expect(find.text('Networks'), findsOneWidget);
@@ -604,12 +607,10 @@ Future<void> main() async {
       addTearDown(container.dispose);
 
       await tester.pumpWidget(_wrap(container));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pumpAndSettle();
 
       await tester.tap(find.text('Retry'));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pumpAndSettle();
 
       expect(find.text('Exception: Test error message'), findsOneWidget);
     });

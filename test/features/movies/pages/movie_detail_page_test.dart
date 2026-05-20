@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -63,6 +64,9 @@ Widget _wrap(ProviderContainer container) {
     container: container,
     child: TranslationProvider(
       child: MaterialApp.router(
+        locale: AppLocale.enUs.flutterLocale,
+        supportedLocales: AppLocaleUtils.supportedLocales,
+        localizationsDelegates: GlobalMaterialLocalizations.delegates,
         routerConfig: GoRouter(
           initialLocation: '/movies/7',
           routes: [
@@ -101,7 +105,7 @@ Future<void> main() async {
 
       expect(find.text('Se7en'), findsWidgets);
       expect(find.text('Release Date'), findsOneWidget);
-      expect(find.text('1995-09-22'), findsOneWidget);
+      expect(find.text('Sep 22, 1995'), findsOneWidget);
       expect(find.text('Runtime'), findsOneWidget);
       expect(find.text('127 min'), findsOneWidget);
       expect(find.text('Add to List'), findsOneWidget);
@@ -136,8 +140,7 @@ Future<void> main() async {
       addTearDown(container.dispose);
 
       await tester.pumpWidget(_wrap(container));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pumpAndSettle();
 
       expect(find.text('Exception: Test error message'), findsOneWidget);
       expect(find.text('Retry'), findsOneWidget);
