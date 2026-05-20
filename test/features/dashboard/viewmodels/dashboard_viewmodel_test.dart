@@ -24,22 +24,24 @@ class FakeDashboardRepo implements DashboardRepository {
   }
 
   DashboardModel _defaultDashboard() => const DashboardModel(
-        watching: DashboardSectionModel(),
-        wantToWatch: DashboardSectionModel(),
-        completed: DashboardSectionModel(),
-        dropped: DashboardSectionModel(),
-        stats: DashboardStatsModel(),
-      );
+    watching: DashboardSectionModel(),
+    wantToWatch: DashboardSectionModel(),
+    completed: DashboardSectionModel(),
+    dropped: DashboardSectionModel(),
+    stats: DashboardStatsModel(),
+  );
 }
 
 void main() {
   group('DashboardViewModel', () {
     test('build() starts with AsyncValue.loading when no cache', () {
       final repo = FakeDashboardRepo();
-      final container = ProviderContainer(overrides: [
-        dashboardRepositoryProvider.overrideWith((ref) => repo),
-        cacheServiceProvider.overrideWith((ref) => CacheService()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          dashboardRepositoryProvider.overrideWith((ref) => repo),
+          cacheServiceProvider.overrideWith((ref) => CacheService()),
+        ],
+      );
       addTearDown(container.dispose);
 
       final state = container.read(dashboardViewModelProvider);
@@ -55,10 +57,12 @@ void main() {
         stats: DashboardStatsModel(watchingCount: 5, totalTracked: 10),
       );
       final repo = FakeDashboardRepo()..result = dashboard;
-      final container = ProviderContainer(overrides: [
-        dashboardRepositoryProvider.overrideWith((ref) => repo),
-        cacheServiceProvider.overrideWith((ref) => CacheService()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          dashboardRepositoryProvider.overrideWith((ref) => repo),
+          cacheServiceProvider.overrideWith((ref) => CacheService()),
+        ],
+      );
       addTearDown(container.dispose);
 
       // Listen to trigger build and wait for async to complete
@@ -80,10 +84,12 @@ void main() {
 
     test('build() sets error on failure', () async {
       final repo = FakeDashboardRepo()..shouldThrow = true;
-      final container = ProviderContainer(overrides: [
-        dashboardRepositoryProvider.overrideWith((ref) => repo),
-        cacheServiceProvider.overrideWith((ref) => CacheService()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          dashboardRepositoryProvider.overrideWith((ref) => repo),
+          cacheServiceProvider.overrideWith((ref) => CacheService()),
+        ],
+      );
       addTearDown(container.dispose);
 
       final subscription = container.listen(
@@ -101,10 +107,12 @@ void main() {
 
     test('refresh() reloads dashboard', () async {
       final repo = FakeDashboardRepo();
-      final container = ProviderContainer(overrides: [
-        dashboardRepositoryProvider.overrideWith((ref) => repo),
-        cacheServiceProvider.overrideWith((ref) => CacheService()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          dashboardRepositoryProvider.overrideWith((ref) => repo),
+          cacheServiceProvider.overrideWith((ref) => CacheService()),
+        ],
+      );
       addTearDown(container.dispose);
 
       final subscription = container.listen(
@@ -114,8 +122,9 @@ void main() {
 
       await Future<void>.delayed(const Duration(milliseconds: 50));
       expect(
-          container.read(dashboardViewModelProvider).value!.stats.totalTracked,
-          0);
+        container.read(dashboardViewModelProvider).value!.stats.totalTracked,
+        0,
+      );
 
       // Change repo data and refresh
       repo.result = const DashboardModel(
@@ -128,8 +137,9 @@ void main() {
 
       await container.read(dashboardViewModelProvider.notifier).refresh();
       expect(
-          container.read(dashboardViewModelProvider).value!.stats.totalTracked,
-          42);
+        container.read(dashboardViewModelProvider).value!.stats.totalTracked,
+        42,
+      );
 
       subscription.close();
     });
@@ -137,23 +147,28 @@ void main() {
     test('refresh() keeps stale data on network failure', () async {
       final cacheService = CacheService();
       await cacheService.set(
-          'dashboard:v2:SERIES',
-          CacheEntry(
-            json: jsonEncode(const DashboardModel(
+        'dashboard:v2:SERIES',
+        CacheEntry(
+          json: jsonEncode(
+            const DashboardModel(
               watching: DashboardSectionModel(),
               wantToWatch: DashboardSectionModel(),
               completed: DashboardSectionModel(),
               dropped: DashboardSectionModel(),
               stats: DashboardStatsModel(watchingCount: 3),
-            ).toJson()),
-            cachedAt: DateTime.now(),
-            ttl: const Duration(hours: 6),
-          ));
+            ).toJson(),
+          ),
+          cachedAt: DateTime.now(),
+          ttl: const Duration(hours: 6),
+        ),
+      );
       final repo = FakeDashboardRepo()..shouldThrow = true;
-      final container = ProviderContainer(overrides: [
-        dashboardRepositoryProvider.overrideWith((ref) => repo),
-        cacheServiceProvider.overrideWith((ref) => cacheService),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          dashboardRepositoryProvider.overrideWith((ref) => repo),
+          cacheServiceProvider.overrideWith((ref) => cacheService),
+        ],
+      );
       addTearDown(container.dispose);
 
       await container.read(dashboardViewModelProvider.notifier).refresh();
@@ -165,23 +180,28 @@ void main() {
     test('build() returns cached data from memory', () async {
       final cacheService = CacheService();
       await cacheService.set(
-          'dashboard:v2:SERIES',
-          CacheEntry(
-            json: jsonEncode(const DashboardModel(
+        'dashboard:v2:SERIES',
+        CacheEntry(
+          json: jsonEncode(
+            const DashboardModel(
               watching: DashboardSectionModel(),
               wantToWatch: DashboardSectionModel(),
               completed: DashboardSectionModel(),
               dropped: DashboardSectionModel(),
               stats: DashboardStatsModel(watchingCount: 3),
-            ).toJson()),
-            cachedAt: DateTime.now(),
-            ttl: const Duration(hours: 6),
-          ));
+            ).toJson(),
+          ),
+          cachedAt: DateTime.now(),
+          ttl: const Duration(hours: 6),
+        ),
+      );
       final repo = FakeDashboardRepo();
-      final container = ProviderContainer(overrides: [
-        dashboardRepositoryProvider.overrideWith((ref) => repo),
-        cacheServiceProvider.overrideWith((ref) => cacheService),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          dashboardRepositoryProvider.overrideWith((ref) => repo),
+          cacheServiceProvider.overrideWith((ref) => cacheService),
+        ],
+      );
       addTearDown(container.dispose);
 
       final state = container.read(dashboardViewModelProvider);
@@ -192,18 +212,21 @@ void main() {
     test('build() triggers background refresh when cache is stale', () async {
       final cacheService = CacheService();
       await cacheService.set(
-          'dashboard:v2:SERIES',
-          CacheEntry(
-            json: jsonEncode(const DashboardModel(
+        'dashboard:v2:SERIES',
+        CacheEntry(
+          json: jsonEncode(
+            const DashboardModel(
               watching: DashboardSectionModel(),
               wantToWatch: DashboardSectionModel(),
               completed: DashboardSectionModel(),
               dropped: DashboardSectionModel(),
               stats: DashboardStatsModel(watchingCount: 3),
-            ).toJson()),
-            cachedAt: DateTime.now().subtract(const Duration(days: 1)),
-            ttl: const Duration(hours: 6),
-          ));
+            ).toJson(),
+          ),
+          cachedAt: DateTime.now().subtract(const Duration(days: 1)),
+          ttl: const Duration(hours: 6),
+        ),
+      );
       const dashboard = DashboardModel(
         watching: DashboardSectionModel(),
         wantToWatch: DashboardSectionModel(),
@@ -212,10 +235,12 @@ void main() {
         stats: DashboardStatsModel(watchingCount: 10),
       );
       final repo = FakeDashboardRepo()..result = dashboard;
-      final container = ProviderContainer(overrides: [
-        dashboardRepositoryProvider.overrideWith((ref) => repo),
-        cacheServiceProvider.overrideWith((ref) => cacheService),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          dashboardRepositoryProvider.overrideWith((ref) => repo),
+          cacheServiceProvider.overrideWith((ref) => cacheService),
+        ],
+      );
       addTearDown(container.dispose);
 
       final state = container.read(dashboardViewModelProvider);
@@ -233,23 +258,28 @@ void main() {
     test('build() handles background refresh failure on stale cache', () async {
       final cacheService = CacheService();
       await cacheService.set(
-          'dashboard:v2:SERIES',
-          CacheEntry(
-            json: jsonEncode(const DashboardModel(
+        'dashboard:v2:SERIES',
+        CacheEntry(
+          json: jsonEncode(
+            const DashboardModel(
               watching: DashboardSectionModel(),
               wantToWatch: DashboardSectionModel(),
               completed: DashboardSectionModel(),
               dropped: DashboardSectionModel(),
               stats: DashboardStatsModel(watchingCount: 3),
-            ).toJson()),
-            cachedAt: DateTime.now().subtract(const Duration(days: 1)),
-            ttl: const Duration(hours: 6),
-          ));
+            ).toJson(),
+          ),
+          cachedAt: DateTime.now().subtract(const Duration(days: 1)),
+          ttl: const Duration(hours: 6),
+        ),
+      );
       final repo = FakeDashboardRepo()..shouldThrow = true;
-      final container = ProviderContainer(overrides: [
-        dashboardRepositoryProvider.overrideWith((ref) => repo),
-        cacheServiceProvider.overrideWith((ref) => cacheService),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          dashboardRepositoryProvider.overrideWith((ref) => repo),
+          cacheServiceProvider.overrideWith((ref) => cacheService),
+        ],
+      );
       addTearDown(container.dispose);
 
       final state = container.read(dashboardViewModelProvider);
@@ -272,10 +302,12 @@ void main() {
           dropped: DashboardSectionModel(),
           stats: DashboardStatsModel(watchingCount: 5, totalTracked: 5),
         );
-      final container = ProviderContainer(overrides: [
-        dashboardRepositoryProvider.overrideWith((ref) => repo),
-        cacheServiceProvider.overrideWith((ref) => cacheService),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          dashboardRepositoryProvider.overrideWith((ref) => repo),
+          cacheServiceProvider.overrideWith((ref) => cacheService),
+        ],
+      );
       addTearDown(container.dispose);
 
       final sub = container.listen(dashboardViewModelProvider, (_, __) {});
@@ -302,10 +334,12 @@ void main() {
         ),
       );
       final repo = FakeDashboardRepo()..shouldThrow = true;
-      final container = ProviderContainer(overrides: [
-        dashboardRepositoryProvider.overrideWith((ref) => repo),
-        cacheServiceProvider.overrideWith((ref) => cacheService),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          dashboardRepositoryProvider.overrideWith((ref) => repo),
+          cacheServiceProvider.overrideWith((ref) => cacheService),
+        ],
+      );
       addTearDown(container.dispose);
 
       await container.read(dashboardViewModelProvider.notifier).refresh();
@@ -316,10 +350,12 @@ void main() {
 
     test('refresh() sets error when no stale cache is available', () async {
       final repo = FakeDashboardRepo()..shouldThrow = true;
-      final container = ProviderContainer(overrides: [
-        dashboardRepositoryProvider.overrideWith((ref) => repo),
-        cacheServiceProvider.overrideWith((ref) => CacheService()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          dashboardRepositoryProvider.overrideWith((ref) => repo),
+          cacheServiceProvider.overrideWith((ref) => CacheService()),
+        ],
+      );
       addTearDown(container.dispose);
 
       await container.read(dashboardViewModelProvider.notifier).refresh();

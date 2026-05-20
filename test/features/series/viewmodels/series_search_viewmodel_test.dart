@@ -12,8 +12,11 @@ class FakeSeriesRepo implements SeriesRepository {
   CancelToken? lastCancelToken;
 
   @override
-  Future<List<SeriesModel>> searchSeries(String query,
-      {int limit = 20, CancelToken? cancelToken}) async {
+  Future<List<SeriesModel>> searchSeries(
+    String query, {
+    int limit = 20,
+    CancelToken? cancelToken,
+  }) async {
     lastCancelToken = cancelToken;
     if (shouldCancel) {
       throw DioException(
@@ -39,9 +42,9 @@ class FakeSeriesRepo implements SeriesRepository {
 void main() {
   group('SeriesSearchViewModel', () {
     ProviderContainer createContainer(FakeSeriesRepo repo) {
-      return ProviderContainer(overrides: [
-        seriesRepositoryProvider.overrideWith((ref) => repo),
-      ]);
+      return ProviderContainer(
+        overrides: [seriesRepositoryProvider.overrideWith((ref) => repo)],
+      );
     }
 
     test('build() returns empty list', () {

@@ -431,8 +431,10 @@ void main() {
     test('removeTracking() no-ops when state is null', () async {
       final seriesRepo = FakeSeriesRepo();
       final trackingRepo = FakeTrackingRepo();
-      final container =
-          createContainer(seriesRepo: seriesRepo, trackingRepo: trackingRepo);
+      final container = createContainer(
+        seriesRepo: seriesRepo,
+        trackingRepo: trackingRepo,
+      );
       addTearDown(container.dispose);
 
       await container

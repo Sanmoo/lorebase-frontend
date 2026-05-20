@@ -27,10 +27,9 @@ class MovieSearchViewModel extends _$MovieSearchViewModel {
     final previousState = state;
     state = const AsyncValue.loading();
     try {
-      final results = await ref.read(movieRepositoryProvider).searchMovies(
-            query,
-            cancelToken: cancelToken,
-          );
+      final results = await ref
+          .read(movieRepositoryProvider)
+          .searchMovies(query, cancelToken: cancelToken);
       state = AsyncValue.data(results);
     } catch (error, stackTrace) {
       if (error is DioException && error.type == DioExceptionType.cancel) {

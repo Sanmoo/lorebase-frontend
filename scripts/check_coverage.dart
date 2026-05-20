@@ -8,18 +8,18 @@ Future<void> main(List<String> args) async {
   final lcovPath = '$packageDir/coverage/lcov.info';
 
   // 1. Run flutter test with coverage and branch coverage
-  final testProcess = await Process.start(
-    'flutter',
-    ['test', '--coverage', '--branch-coverage'],
-  );
+  final testProcess = await Process.start('flutter', [
+    'test',
+    '--coverage',
+    '--branch-coverage',
+  ]);
 
   testProcess.stdout.transform(utf8.decoder).listen(stdout.write);
   testProcess.stderr.transform(utf8.decoder).listen(stderr.write);
 
   final testExitCode = await testProcess.exitCode;
   if (testExitCode != 0) {
-    stderr.writeln(
-        'ERROR: flutter test failed with exit code $testExitCode');
+    stderr.writeln('ERROR: flutter test failed with exit code $testExitCode');
     exit(testExitCode);
   }
 
@@ -65,18 +65,23 @@ Future<void> main(List<String> args) async {
 
   // 3. Calculate percentages
   final linePct = totalLines > 0 ? (hitLines / totalLines) * 100 : 100.0;
-  final branchPct =
-      totalBranches > 0 ? (hitBranches / totalBranches) * 100 : 100.0;
+  final branchPct = totalBranches > 0
+      ? (hitBranches / totalBranches) * 100
+      : 100.0;
 
   // 4. Print report
   stderr.writeln('');
   stderr.writeln('Coverage Report:');
   stderr.writeln('  Files: $totalFiles (after exclusions)');
   stderr.writeln('');
-  stderr.writeln('  Lines:     ${linePct.toStringAsFixed(2)}%'
-      ' ($hitLines/$totalLines)');
-  stderr.writeln('  Branches:  ${branchPct.toStringAsFixed(2)}%'
-      ' ($hitBranches/$totalBranches)');
+  stderr.writeln(
+    '  Lines:     ${linePct.toStringAsFixed(2)}%'
+    ' ($hitLines/$totalLines)',
+  );
+  stderr.writeln(
+    '  Branches:  ${branchPct.toStringAsFixed(2)}%'
+    ' ($hitBranches/$totalBranches)',
+  );
   stderr.writeln('');
   stderr.writeln('Threshold: ${_threshold.toStringAsFixed(0)}%');
 
@@ -97,7 +102,8 @@ Future<void> main(List<String> args) async {
 bool _checkMetric(String name, double pct) {
   if (pct < _threshold) {
     stderr.writeln(
-        'FAIL: $name coverage ${pct.toStringAsFixed(2)}% < $_threshold%');
+      'FAIL: $name coverage ${pct.toStringAsFixed(2)}% < $_threshold%',
+    );
     return true;
   }
   return false;

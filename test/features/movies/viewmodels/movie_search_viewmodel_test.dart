@@ -42,9 +42,9 @@ class FakeMovieRepo implements MovieRepository {
 void main() {
   group('MovieSearchViewModel', () {
     ProviderContainer createContainer(FakeMovieRepo repo) {
-      return ProviderContainer(overrides: [
-        movieRepositoryProvider.overrideWith((ref) => repo),
-      ]);
+      return ProviderContainer(
+        overrides: [movieRepositoryProvider.overrideWith((ref) => repo)],
+      );
     }
 
     test('build() returns empty list', () {

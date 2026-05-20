@@ -21,8 +21,10 @@ class TrackingListViewModel extends _$TrackingListViewModel {
     return const AsyncValue.data([]);
   }
 
-  Future<void> loadTracking(
-      {String? status, MediaType mediaType = MediaType.series}) async {
+  Future<void> loadTracking({
+    String? status,
+    MediaType mediaType = MediaType.series,
+  }) async {
     _currentStatus = status;
     _currentMediaType = mediaType;
     _page = 1;

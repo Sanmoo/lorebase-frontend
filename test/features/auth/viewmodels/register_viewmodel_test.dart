@@ -51,7 +51,11 @@ class FakeAuthRepo implements AuthRepository {
   @override
   Future<void> resetPassword(String email) async {}
   @override
-  Future<void> confirmResetPassword(String email, String code, String newPassword) async {}
+  Future<void> confirmResetPassword(
+    String email,
+    String code,
+    String newPassword,
+  ) async {}
   @override
   Future<void> signOut() async {}
   @override
@@ -74,10 +78,12 @@ class FakeAuthViewModel extends AuthViewModel {
 }
 
 ProviderContainer createContainer(FakeAuthRepo repo) {
-  return ProviderContainer(overrides: [
-    authRepositoryProvider.overrideWith((ref) => repo),
-    authViewModelProvider.overrideWith(() => FakeAuthViewModel()),
-  ]);
+  return ProviderContainer(
+    overrides: [
+      authRepositoryProvider.overrideWith((ref) => repo),
+      authViewModelProvider.overrideWith(() => FakeAuthViewModel()),
+    ],
+  );
 }
 
 void main() {
@@ -199,8 +205,9 @@ void main() {
       final container = createContainer(FakeAuthRepo());
       addTearDown(container.dispose);
 
-      final result =
-          await container.read(registerViewModelProvider.notifier).submit();
+      final result = await container
+          .read(registerViewModelProvider.notifier)
+          .submit();
       expect(result, false);
 
       final state = container.read(registerViewModelProvider);
@@ -304,10 +311,12 @@ void main() {
     test('confirmSignUp() success returns true and authenticates', () async {
       final fakeAuthVM = FakeAuthViewModel();
       final repo = FakeAuthRepo();
-      final container = ProviderContainer(overrides: [
-        authRepositoryProvider.overrideWith((ref) => repo),
-        authViewModelProvider.overrideWith(() => fakeAuthVM),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          authRepositoryProvider.overrideWith((ref) => repo),
+          authViewModelProvider.overrideWith(() => fakeAuthVM),
+        ],
+      );
       addTearDown(container.dispose);
 
       final notifier = container.read(registerViewModelProvider.notifier);
@@ -393,43 +402,47 @@ void main() {
       expect(state.errorMessage, 'Aceite os termos de uso');
     });
 
-    test('submit() with email empty but password strong sets fill-all error',
-        () async {
-      final container = createContainer(FakeAuthRepo());
-      addTearDown(container.dispose);
+    test(
+      'submit() with email empty but password strong sets fill-all error',
+      () async {
+        final container = createContainer(FakeAuthRepo());
+        addTearDown(container.dispose);
 
-      final notifier = container.read(registerViewModelProvider.notifier);
-      notifier.setPassword('Test1234');
-      notifier.setConfirmPassword('Test1234');
-      notifier.toggleTerms();
+        final notifier = container.read(registerViewModelProvider.notifier);
+        notifier.setPassword('Test1234');
+        notifier.setConfirmPassword('Test1234');
+        notifier.toggleTerms();
 
-      final result = await notifier.submit();
-      expect(result, false);
+        final result = await notifier.submit();
+        expect(result, false);
 
-      final state = container.read(registerViewModelProvider);
-      expect(state.errorMessage, 'Preencha todos os campos');
-    });
+        final state = container.read(registerViewModelProvider);
+        expect(state.errorMessage, 'Preencha todos os campos');
+      },
+    );
 
-    test('confirmSignUp() with generic exception sets fallback error',
-        () async {
-      final repo = FakeAuthRepo()..failConfirmSignUpGeneric = true;
-      final container = createContainer(repo);
-      addTearDown(container.dispose);
+    test(
+      'confirmSignUp() with generic exception sets fallback error',
+      () async {
+        final repo = FakeAuthRepo()..failConfirmSignUpGeneric = true;
+        final container = createContainer(repo);
+        addTearDown(container.dispose);
 
-      final notifier = container.read(registerViewModelProvider.notifier);
-      notifier.setEmail('test@email.com');
-      notifier.setPassword('Test1234');
-      notifier.setConfirmPassword('Test1234');
-      notifier.toggleTerms();
-      await notifier.submit();
-      notifier.setConfirmationCode('123456');
+        final notifier = container.read(registerViewModelProvider.notifier);
+        notifier.setEmail('test@email.com');
+        notifier.setPassword('Test1234');
+        notifier.setConfirmPassword('Test1234');
+        notifier.toggleTerms();
+        await notifier.submit();
+        notifier.setConfirmationCode('123456');
 
-      final result = await notifier.confirmSignUp();
-      expect(result, false);
+        final result = await notifier.confirmSignUp();
+        expect(result, false);
 
-      final state = container.read(registerViewModelProvider);
-      expect(state.errorMessage, contains('Código inválido'));
-      expect(state.isLoading, false);
-    });
+        final state = container.read(registerViewModelProvider);
+        expect(state.errorMessage, contains('Código inválido'));
+        expect(state.isLoading, false);
+      },
+    );
   });
 }
