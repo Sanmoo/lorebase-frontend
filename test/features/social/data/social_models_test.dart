@@ -44,6 +44,21 @@ void main() {
       expect(profile.avatarUrl, isNull);
     });
 
+    test('defaults profile isFollowedByMe to false when omitted', () {
+      final profile = SocialProfileModel.fromJson({
+        'userId': 'user-1',
+        'displayName': 'Fulano',
+        'avatarUrl': null,
+        'isPublic': true,
+        'followingCount': 3,
+        'followerCount': 7,
+        'createdAt': '2026-05-20T10:00:00Z',
+        'updatedAt': '2026-05-20T11:00:00Z',
+      });
+
+      expect(profile.isFollowedByMe, isFalse);
+    });
+
     test('parses enriched activity event', () {
       final event = ActivityEventModel.fromJson({
         'eventId': 'evt-1',
@@ -107,6 +122,19 @@ void main() {
       expect(user.isFollowedByMe, isFalse);
     });
 
+    test('defaults discover user optional collections and follow state', () {
+      final user = DiscoverUserModel.fromJson({
+        'userId': 'user-2',
+        'displayName': 'Maria',
+        'avatarUrl': null,
+        'affinityScore': 0.82,
+      });
+
+      expect(user.commonGenres, isEmpty);
+      expect(user.commonMedia, isEmpty);
+      expect(user.isFollowedByMe, isFalse);
+    });
+
     test('parses follow relationship', () {
       final relationship = FollowRelationshipModel.fromJson({
         'followerId': 'user-1',
@@ -116,10 +144,27 @@ void main() {
 
       expect(relationship.followerId, 'user-1');
       expect(relationship.followedId, 'user-2');
-      expect(
-        relationship.followedAt,
-        DateTime.parse('2026-05-20T10:00:00Z'),
-      );
+      expect(relationship.followedAt, DateTime.parse('2026-05-20T10:00:00Z'));
+    });
+
+    test('allows omitted follow relationship optional fields', () {
+      final relationship = FollowRelationshipModel.fromJson({});
+
+      expect(relationship.followerId, isNull);
+      expect(relationship.followedId, isNull);
+      expect(relationship.followedAt, isNull);
+    });
+
+    test('allows null follow relationship optional fields', () {
+      final relationship = FollowRelationshipModel.fromJson({
+        'followerId': null,
+        'followedId': null,
+        'followedAt': null,
+      });
+
+      expect(relationship.followerId, isNull);
+      expect(relationship.followedId, isNull);
+      expect(relationship.followedAt, isNull);
     });
 
     test('parses public list item', () {
@@ -148,6 +193,36 @@ void main() {
       expect(item.updatedAt, DateTime.parse('2026-05-20T11:00:00Z'));
     });
 
+    test('allows omitted public list item optional fields', () {
+      final item = PublicListItemModel.fromJson({
+        'mediaId': '1399',
+        'mediaType': 'SERIES',
+        'status': 'COMPLETED',
+      });
+
+      expect(item.rating, isNull);
+      expect(item.review, isNull);
+      expect(item.media, isNull);
+      expect(item.updatedAt, isNull);
+    });
+
+    test('allows null public list item optional fields', () {
+      final item = PublicListItemModel.fromJson({
+        'mediaId': '1399',
+        'mediaType': 'SERIES',
+        'status': 'COMPLETED',
+        'rating': null,
+        'review': null,
+        'media': null,
+        'updatedAt': null,
+      });
+
+      expect(item.rating, isNull);
+      expect(item.review, isNull);
+      expect(item.media, isNull);
+      expect(item.updatedAt, isNull);
+    });
+
     test('parses paginated response', () {
       final response = PaginatedSocialResponse<ActivityEventModel>.fromJson({
         'items': [
@@ -167,6 +242,17 @@ void main() {
       expect(response.items, hasLength(1));
       expect(response.nextCursor, 'next');
       expect(response.hasMore, isTrue);
+    });
+
+    test('defaults paginated response items and hasMore when omitted', () {
+      final response = PaginatedSocialResponse<ActivityEventModel>.fromJson(
+        {},
+        ActivityEventModel.fromJson,
+      );
+
+      expect(response.items, isEmpty);
+      expect(response.nextCursor, isNull);
+      expect(response.hasMore, isFalse);
     });
   });
 }
