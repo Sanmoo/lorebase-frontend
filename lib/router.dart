@@ -21,7 +21,11 @@ import 'features/social/pages/social_profile_page.dart';
 
 @visibleForTesting
 String? authRedirect(AuthState authState, String location) {
-  final isAuthRoute = ['/login', '/register', '/forgot-password'].contains(location);
+  final isAuthRoute = [
+    '/login',
+    '/register',
+    '/forgot-password',
+  ].contains(location);
   final isAuthenticated = authState.isAuthenticated;
 
   if (!isAuthenticated && !isAuthRoute) return '/login';
@@ -34,12 +38,10 @@ final routerProvider = Provider<GoRouter>((ref) {
 
   return GoRouter(
     initialLocation: '/login',
-    redirect: (context, state) => authRedirect(authState, state.matchedLocation),
+    redirect: (context, state) =>
+        authRedirect(authState, state.matchedLocation),
     routes: [
-      GoRoute(
-        path: '/login',
-        builder: (context, state) => const LoginPage(),
-      ),
+      GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
       GoRoute(
         path: '/register',
         builder: (context, state) => const RegisterPage(),
@@ -88,10 +90,8 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/social',
-            pageBuilder: (context, state) => NoTransitionPage(
-              key: state.pageKey,
-              child: const SocialPage(),
-            ),
+            pageBuilder: (context, state) =>
+                NoTransitionPage(key: state.pageKey, child: const SocialPage()),
           ),
           GoRoute(
             path: '/social/profile/me',
@@ -111,9 +111,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: '/social/profile/:userId',
             pageBuilder: (context, state) => NoTransitionPage(
               key: state.pageKey,
-              child: SocialProfilePage(
-                userId: state.pathParameters['userId']!,
-              ),
+              child: SocialProfilePage(userId: state.pathParameters['userId']!),
             ),
           ),
           GoRoute(

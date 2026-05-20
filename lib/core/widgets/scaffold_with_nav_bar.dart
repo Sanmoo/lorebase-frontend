@@ -9,10 +9,7 @@ import '../i18n/locale_provider.dart';
 class ScaffoldWithNavBar extends ConsumerWidget {
   final Widget child;
 
-  const ScaffoldWithNavBar({
-    super.key,
-    required this.child,
-  });
+  const ScaffoldWithNavBar({super.key, required this.child});
 
   int _getCurrentIndex(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
@@ -101,7 +98,9 @@ class ScaffoldWithNavBar extends ConsumerWidget {
                   ? const Icon(Icons.check)
                   : null,
               onTap: () {
-                ref.read(localeProvider.notifier).setLocale(const Locale('pt', 'BR'));
+                ref
+                    .read(localeProvider.notifier)
+                    .setLocale(const Locale('pt', 'BR'));
                 Navigator.pop(ctx);
               },
             ),
@@ -111,7 +110,9 @@ class ScaffoldWithNavBar extends ConsumerWidget {
                   ? const Icon(Icons.check)
                   : null,
               onTap: () {
-                ref.read(localeProvider.notifier).setLocale(const Locale('en', 'US'));
+                ref
+                    .read(localeProvider.notifier)
+                    .setLocale(const Locale('en', 'US'));
                 Navigator.pop(ctx);
               },
             ),

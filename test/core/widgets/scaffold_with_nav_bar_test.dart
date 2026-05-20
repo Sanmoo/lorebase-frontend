@@ -28,9 +28,7 @@ class FakeAuthViewModel extends AuthViewModel {
 
 Widget _wrapWithRouter(Widget child, {String location = '/dashboard'}) {
   return ProviderScope(
-    overrides: [
-      authViewModelProvider.overrideWith(() => FakeAuthViewModel()),
-    ],
+    overrides: [authViewModelProvider.overrideWith(() => FakeAuthViewModel())],
     child: TranslationProvider(
       child: MaterialApp.router(
         routerConfig: GoRouter(
@@ -40,30 +38,15 @@ Widget _wrapWithRouter(Widget child, {String location = '/dashboard'}) {
               builder: (context, state, child) =>
                   ScaffoldWithNavBar(child: child),
               routes: [
-                GoRoute(
-                  path: '/dashboard',
-                  builder: (context, state) => child,
-                ),
-                GoRoute(
-                  path: '/search',
-                  builder: (context, state) => child,
-                ),
-                GoRoute(
-                  path: '/tracking',
-                  builder: (context, state) => child,
-                ),
-                GoRoute(
-                  path: '/social',
-                  builder: (context, state) => child,
-                ),
+                GoRoute(path: '/dashboard', builder: (context, state) => child),
+                GoRoute(path: '/search', builder: (context, state) => child),
+                GoRoute(path: '/tracking', builder: (context, state) => child),
+                GoRoute(path: '/social', builder: (context, state) => child),
                 GoRoute(
                   path: '/social/profile/:userId',
                   builder: (context, state) => child,
                 ),
-                GoRoute(
-                  path: '/recommend',
-                  builder: (context, state) => child,
-                ),
+                GoRoute(path: '/recommend', builder: (context, state) => child),
               ],
             ),
           ],
@@ -75,9 +58,7 @@ Widget _wrapWithRouter(Widget child, {String location = '/dashboard'}) {
 
 Widget _wrapWithRouteLabels(String location) {
   return ProviderScope(
-    overrides: [
-      authViewModelProvider.overrideWith(() => FakeAuthViewModel()),
-    ],
+    overrides: [authViewModelProvider.overrideWith(() => FakeAuthViewModel())],
     child: TranslationProvider(
       child: MaterialApp.router(
         routerConfig: GoRouter(
@@ -105,7 +86,8 @@ Widget _wrapWithRouteLabels(String location) {
                 ),
                 GoRoute(
                   path: '/social/profile/:userId',
-                  builder: (context, state) => const Text('Social Profile Page'),
+                  builder: (context, state) =>
+                      const Text('Social Profile Page'),
                 ),
                 GoRoute(
                   path: '/recommend',
@@ -143,9 +125,11 @@ Future<void> main() async {
     });
 
     testWidgets('logout button calls signOut', (tester) async {
-      final container = ProviderContainer(overrides: [
-        authViewModelProvider.overrideWith(() => FakeAuthViewModel()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          authViewModelProvider.overrideWith(() => FakeAuthViewModel()),
+        ],
+      );
       addTearDown(container.dispose);
 
       await tester.pumpWidget(
@@ -197,8 +181,7 @@ Future<void> main() async {
     });
 
     testWidgets('renders child content', (tester) async {
-      await tester.pumpWidget(
-          _wrapWithRouter(const Text('Page Content')));
+      await tester.pumpWidget(_wrapWithRouter(const Text('Page Content')));
       await tester.pumpAndSettle();
 
       expect(find.text('Page Content'), findsOneWidget);
@@ -208,50 +191,60 @@ Future<void> main() async {
       await tester.pumpWidget(_wrapWithRouter(const Text('Content')));
       await tester.pumpAndSettle();
 
-      final navBar =
-          tester.widget<BottomNavigationBar>(find.byType(BottomNavigationBar));
+      final navBar = tester.widget<BottomNavigationBar>(
+        find.byType(BottomNavigationBar),
+      );
       expect(navBar.currentIndex, 0);
     });
 
     testWidgets('search tab has correct index', (tester) async {
       await tester.pumpWidget(
-          _wrapWithRouter(const Text('Content'), location: '/search'));
+        _wrapWithRouter(const Text('Content'), location: '/search'),
+      );
       await tester.pumpAndSettle();
 
-      final navBar =
-          tester.widget<BottomNavigationBar>(find.byType(BottomNavigationBar));
+      final navBar = tester.widget<BottomNavigationBar>(
+        find.byType(BottomNavigationBar),
+      );
       expect(navBar.currentIndex, 1);
     });
 
     testWidgets('tracking tab has correct index', (tester) async {
       await tester.pumpWidget(
-          _wrapWithRouter(const Text('Content'), location: '/tracking'));
+        _wrapWithRouter(const Text('Content'), location: '/tracking'),
+      );
       await tester.pumpAndSettle();
 
-      final navBar =
-          tester.widget<BottomNavigationBar>(find.byType(BottomNavigationBar));
+      final navBar = tester.widget<BottomNavigationBar>(
+        find.byType(BottomNavigationBar),
+      );
       expect(navBar.currentIndex, 2);
     });
 
     testWidgets('social tab has correct index', (tester) async {
       await tester.pumpWidget(
-          _wrapWithRouter(const Text('Content'), location: '/social'));
+        _wrapWithRouter(const Text('Content'), location: '/social'),
+      );
       await tester.pumpAndSettle();
 
-      final navBar =
-          tester.widget<BottomNavigationBar>(find.byType(BottomNavigationBar));
+      final navBar = tester.widget<BottomNavigationBar>(
+        find.byType(BottomNavigationBar),
+      );
       expect(navBar.currentIndex, 3);
     });
 
     testWidgets('social nested route has correct index', (tester) async {
-      await tester.pumpWidget(_wrapWithRouter(
-        const Text('Content'),
-        location: '/social/profile/user-1',
-      ));
+      await tester.pumpWidget(
+        _wrapWithRouter(
+          const Text('Content'),
+          location: '/social/profile/user-1',
+        ),
+      );
       await tester.pumpAndSettle();
 
-      final navBar =
-          tester.widget<BottomNavigationBar>(find.byType(BottomNavigationBar));
+      final navBar = tester.widget<BottomNavigationBar>(
+        find.byType(BottomNavigationBar),
+      );
       expect(navBar.currentIndex, 3);
     });
 
@@ -265,13 +258,15 @@ Future<void> main() async {
       await tester.pumpAndSettle();
 
       expect(find.text('Search Page'), findsOneWidget);
-      final navBar =
-          tester.widget<BottomNavigationBar>(find.byType(BottomNavigationBar));
+      final navBar = tester.widget<BottomNavigationBar>(
+        find.byType(BottomNavigationBar),
+      );
       expect(navBar.currentIndex, 1);
     });
 
-    testWidgets('tapping tracking tab navigates to tracking page',
-        (tester) async {
+    testWidgets('tapping tracking tab navigates to tracking page', (
+      tester,
+    ) async {
       await tester.pumpWidget(_wrapWithRouteLabels('/dashboard'));
       await tester.pumpAndSettle();
 
@@ -279,13 +274,13 @@ Future<void> main() async {
       await tester.pumpAndSettle();
 
       expect(find.text('Tracking Page'), findsOneWidget);
-      final navBar =
-          tester.widget<BottomNavigationBar>(find.byType(BottomNavigationBar));
+      final navBar = tester.widget<BottomNavigationBar>(
+        find.byType(BottomNavigationBar),
+      );
       expect(navBar.currentIndex, 2);
     });
 
-    testWidgets('tapping social tab navigates to social page',
-        (tester) async {
+    testWidgets('tapping social tab navigates to social page', (tester) async {
       await tester.pumpWidget(_wrapWithRouteLabels('/dashboard'));
       await tester.pumpAndSettle();
 
@@ -293,8 +288,9 @@ Future<void> main() async {
       await tester.pumpAndSettle();
 
       expect(find.text('Social Page'), findsOneWidget);
-      final navBar =
-          tester.widget<BottomNavigationBar>(find.byType(BottomNavigationBar));
+      final navBar = tester.widget<BottomNavigationBar>(
+        find.byType(BottomNavigationBar),
+      );
       expect(navBar.currentIndex, 3);
     });
 
@@ -308,11 +304,10 @@ Future<void> main() async {
       await tester.pumpAndSettle();
 
       expect(find.text('Dashboard Page'), findsOneWidget);
-      final navBar =
-          tester.widget<BottomNavigationBar>(find.byType(BottomNavigationBar));
+      final navBar = tester.widget<BottomNavigationBar>(
+        find.byType(BottomNavigationBar),
+      );
       expect(navBar.currentIndex, 0);
     });
-
-
   });
 }
