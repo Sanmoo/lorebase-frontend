@@ -25,19 +25,14 @@ class LorebaseApp extends ConsumerWidget {
         themeMode: ThemeMode.system,
         locale: localeState,
         supportedLocales: AppLocaleUtils.supportedLocales,
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-        ],
+        localizationsDelegates: GlobalMaterialLocalizations.delegates,
         routerConfig: ref.watch(routerProvider),
         builder: (context, child) {
           if (authState.isLoading) {
             return Material(
               child: Container(
                 color: Theme.of(context).scaffoldBackgroundColor,
-                child: const Center(
-                  child: CircularProgressIndicator(),
-                ),
+                child: const Center(child: CircularProgressIndicator()),
               ),
             );
           }

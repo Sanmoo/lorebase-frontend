@@ -26,7 +26,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       ref.read(loginViewModelProvider.notifier).setEmail(_emailController.text);
     });
     _passwordController.addListener(() {
-      ref.read(loginViewModelProvider.notifier).setPassword(_passwordController.text);
+      ref
+          .read(loginViewModelProvider.notifier)
+          .setPassword(_passwordController.text);
     });
   }
 
@@ -55,17 +57,17 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           t.login_welcome,
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-              ),
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         const SizedBox(height: 8),
         Text(
           t.login_subtitle,
           textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.white70,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(color: Colors.white70),
         ),
         const SizedBox(height: 32),
         AuthTextField(
@@ -119,7 +121,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 t.login_or,
-                style: TextStyle(color: Colors.white.withOpacity(0.5)),
+                style: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
               ),
             ),
             const Expanded(child: Divider(color: Colors.white30)),

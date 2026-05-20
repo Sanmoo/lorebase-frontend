@@ -58,8 +58,7 @@ class FakeDetailVM extends SeriesDetailViewModel {
 class _LoadingDetailVM extends SeriesDetailViewModel {
   @override
   Future<SeriesDetailState> build(int tmdbId) async {
-    await Completer<Never>().future;
-    throw UnimplementedError();
+    return Completer<SeriesDetailState>().future;
   }
 }
 

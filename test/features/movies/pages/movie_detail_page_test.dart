@@ -38,8 +38,7 @@ class FakeAuthVM extends AuthViewModel {
 class _LoadingMovieDetailVM extends MovieDetailViewModel {
   @override
   Future<MovieDetailState> build(int tmdbId) async {
-    await Completer<Never>().future;
-    throw UnimplementedError();
+    return Completer<MovieDetailState>().future;
   }
 }
 

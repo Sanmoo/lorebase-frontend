@@ -22,7 +22,6 @@ class _TestHandler implements ErrorInterceptorHandler {
   @override
   void resolve(Response<dynamic> response) {}
 
-  @override
   ErrorInterceptorHandler get linted => this;
 
   @override
@@ -185,19 +184,21 @@ void main() {
       },
     );
 
-    test('default/unhandled type wraps as NetworkException generic message',
-        () {
-      final err = _createDioException(DioExceptionType.cancel);
-      interceptor.onError(err, handler);
+    test(
+      'default/unhandled type wraps as NetworkException generic message',
+      () {
+        final err = _createDioException(DioExceptionType.cancel);
+        interceptor.onError(err, handler);
 
-      expect(handler.isRejected, isFalse);
-      expect(handler.capturedError, isNotNull);
-      expect(handler.capturedError!.error, isA<NetworkException>());
-      expect(
-        (handler.capturedError!.error as NetworkException).message,
-        'Network error. Check your connection.',
-      );
-    });
+        expect(handler.isRejected, isFalse);
+        expect(handler.capturedError, isNotNull);
+        expect(handler.capturedError!.error, isA<NetworkException>());
+        expect(
+          (handler.capturedError!.error as NetworkException).message,
+          'Network error. Check your connection.',
+        );
+      },
+    );
 
     test('handler always calls handler.next() not reject', () {
       final err = _createDioException(DioExceptionType.connectionTimeout);

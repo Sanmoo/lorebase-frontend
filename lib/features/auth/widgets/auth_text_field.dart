@@ -36,7 +36,7 @@ class AuthTextField extends StatelessWidget {
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: TextStyle(color: Colors.white.withOpacity(0.6)),
+        hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.6)),
         prefixIcon: Icon(icon, color: Colors.white70),
         suffixIcon: onToggleObscure != null
             ? IconButton(
@@ -48,7 +48,7 @@ class AuthTextField extends StatelessWidget {
               )
             : null,
         filled: true,
-        fillColor: Colors.white.withOpacity(0.1),
+        fillColor: Colors.white.withValues(alpha: 0.1),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,

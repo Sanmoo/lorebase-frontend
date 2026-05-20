@@ -6,7 +6,11 @@ abstract class AuthRepository {
   Future<void> confirmSignUp(String email, String code);
   Future<void> resendSignUpCode(String email);
   Future<void> resetPassword(String email);
-  Future<void> confirmResetPassword(String email, String code, String newPassword);
+  Future<void> confirmResetPassword(
+    String email,
+    String code,
+    String newPassword,
+  );
   Future<void> signOut();
   Future<bool> isAuthenticated();
 }
@@ -21,7 +25,6 @@ class AmplifyAuthRepository implements AuthRepository {
     if (!result.isSignedIn) {
       throw const AuthException('Login failed. Please check your credentials.');
     }
-    final session = await Amplify.Auth.fetchAuthSession();
     final user = await Amplify.Auth.getCurrentUser();
     return user.userId;
   }
@@ -40,10 +43,7 @@ class AmplifyAuthRepository implements AuthRepository {
 
   @override
   Future<void> confirmSignUp(String email, String code) async {
-    await Amplify.Auth.confirmSignUp(
-      username: email,
-      confirmationCode: code,
-    );
+    await Amplify.Auth.confirmSignUp(username: email, confirmationCode: code);
   }
 
   @override
@@ -57,7 +57,11 @@ class AmplifyAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<void> confirmResetPassword(String email, String code, String newPassword) async {
+  Future<void> confirmResetPassword(
+    String email,
+    String code,
+    String newPassword,
+  ) async {
     await Amplify.Auth.confirmResetPassword(
       username: email,
       newPassword: newPassword,

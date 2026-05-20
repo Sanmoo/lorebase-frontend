@@ -25,16 +25,24 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   void initState() {
     super.initState();
     _emailController.addListener(() {
-      ref.read(registerViewModelProvider.notifier).setEmail(_emailController.text);
+      ref
+          .read(registerViewModelProvider.notifier)
+          .setEmail(_emailController.text);
     });
     _passwordController.addListener(() {
-      ref.read(registerViewModelProvider.notifier).setPassword(_passwordController.text);
+      ref
+          .read(registerViewModelProvider.notifier)
+          .setPassword(_passwordController.text);
     });
     _confirmController.addListener(() {
-      ref.read(registerViewModelProvider.notifier).setConfirmPassword(_confirmController.text);
+      ref
+          .read(registerViewModelProvider.notifier)
+          .setConfirmPassword(_confirmController.text);
     });
     _codeController.addListener(() {
-      ref.read(registerViewModelProvider.notifier).setConfirmationCode(_codeController.text);
+      ref
+          .read(registerViewModelProvider.notifier)
+          .setConfirmationCode(_codeController.text);
     });
   }
 
@@ -55,7 +63,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   }
 
   Future<void> _confirm() async {
-    final success = await ref.read(registerViewModelProvider.notifier).confirmSignUp();
+    final success = await ref
+        .read(registerViewModelProvider.notifier)
+        .confirmSignUp();
     if (success && mounted) {
       context.go('/dashboard');
     }
@@ -88,12 +98,14 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     return AuthPageScaffold(
       children: [
         Text(
-          registerState.showConfirmation ? t.auth_confirm_email : t.auth_create_account,
+          registerState.showConfirmation
+              ? t.auth_confirm_email
+              : t.auth_create_account,
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-              ),
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         const SizedBox(height: 8),
         Text(
@@ -101,9 +113,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               ? t.auth_code_sent_to.replaceFirst('{email}', registerState.email)
               : t.login_subtitle,
           textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.white70,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(color: Colors.white70),
         ),
         const SizedBox(height: 32),
         if (registerState.showConfirmation) ...[
@@ -122,7 +134,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
           ),
           const SizedBox(height: 12),
           TextButton(
-            onPressed: () => ref.read(registerViewModelProvider.notifier).resendCode(),
+            onPressed: () =>
+                ref.read(registerViewModelProvider.notifier).resendCode(),
             child: Text(
               t.auth_resend_code,
               style: const TextStyle(color: Colors.white70),
@@ -143,7 +156,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             icon: Icons.lock_outline,
             obscureText: registerState.obscurePassword,
             onToggleObscure: () {
-              ref.read(registerViewModelProvider.notifier).toggleObscurePassword();
+              ref
+                  .read(registerViewModelProvider.notifier)
+                  .toggleObscurePassword();
             },
             onSubmitted: (_) => FocusScope.of(context).nextFocus(),
           ),
@@ -153,15 +168,23 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             Row(
               children: [
                 Expanded(
-                  flex: registerState.passwordStrength == PasswordStrength.weak ? 1 : 0,
+                  flex: registerState.passwordStrength == PasswordStrength.weak
+                      ? 1
+                      : 0,
                   child: Container(height: 3, color: Colors.redAccent),
                 ),
                 Expanded(
-                  flex: registerState.passwordStrength == PasswordStrength.medium ? 1 : 0,
+                  flex:
+                      registerState.passwordStrength == PasswordStrength.medium
+                      ? 1
+                      : 0,
                   child: Container(height: 3, color: Colors.orangeAccent),
                 ),
                 Expanded(
-                  flex: registerState.passwordStrength == PasswordStrength.strong ? 1 : 0,
+                  flex:
+                      registerState.passwordStrength == PasswordStrength.strong
+                      ? 1
+                      : 0,
                   child: Container(height: 3, color: Colors.greenAccent),
                 ),
                 const SizedBox(width: 8),
@@ -188,7 +211,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             children: [
               Checkbox(
                 value: registerState.termsAccepted,
-                onChanged: (_) => ref.read(registerViewModelProvider.notifier).toggleTerms(),
+                onChanged: (_) =>
+                    ref.read(registerViewModelProvider.notifier).toggleTerms(),
                 fillColor: WidgetStateProperty.resolveWith((states) {
                   if (states.contains(WidgetState.selected)) {
                     return Colors.white;
@@ -200,7 +224,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               Expanded(
                 child: Text(
                   t.auth_accept_terms,
-                  style: TextStyle(color: Colors.white.withOpacity(0.8)),
+                  style: TextStyle(color: Colors.white.withValues(alpha: 0.8)),
                 ),
               ),
             ],
