@@ -29,9 +29,9 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
 
   void _onMediaTypeChanged(MediaType type) {
     setState(() => _selectedType = type);
-    ref.read(dashboardViewModelProvider.notifier).loadDashboard(
-          mediaType: type,
-        );
+    ref
+        .read(dashboardViewModelProvider.notifier)
+        .loadDashboard(mediaType: type);
   }
 
   @override
@@ -39,9 +39,9 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     final t = context.t;
     ref.listen<String?>(dashboardBackgroundErrorProvider, (prev, next) {
       if (next != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(next)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(next)));
         ref.read(dashboardBackgroundErrorProvider.notifier).state = null;
       }
     });
@@ -207,9 +207,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                       ),
                     ),
                     _SocialPreviewSection(feedState: socialFeedState),
-                    _RecommendationCard(
-                      onTap: () => context.go('/recommend'),
-                    ),
+                    _RecommendationCard(onTap: () => context.go('/recommend')),
                   ],
                 ),
               )
@@ -223,7 +221,6 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                 ),
               ),
             ],
-
           ],
         ),
       ),

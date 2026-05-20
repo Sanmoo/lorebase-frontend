@@ -80,11 +80,7 @@ ActivityEventModel _activity(String id, String title) => ActivityEventModel(
   eventId: id,
   user: const SocialUserModel(userId: 'user-1', displayName: 'Fulano'),
   activityType: 'COMPLETED',
-  media: SocialMediaModel(
-    mediaId: id,
-    mediaType: 'SERIES',
-    title: title,
-  ),
+  media: SocialMediaModel(mediaId: id, mediaType: 'SERIES', title: title),
   createdAt: DateTime.utc(2026, 5, 20),
 );
 
