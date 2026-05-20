@@ -56,7 +56,7 @@ final class SocialProfileViewModelProvider
 }
 
 String _$socialProfileViewModelHash() =>
-    r'afc999cf38ac314382f0ac6ad7d33d0589f0ef54';
+    r'2e5780f9725451f3e0da84d4033b68035f036be5';
 
 final class SocialProfileViewModelFamily extends $Family
     with

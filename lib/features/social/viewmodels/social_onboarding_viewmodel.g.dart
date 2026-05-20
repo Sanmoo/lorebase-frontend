@@ -43,7 +43,7 @@ final class SocialOnboardingViewModelProvider
 }
 
 String _$socialOnboardingViewModelHash() =>
-    r'335f89ebaa834c8c7fcddb2e0dbfaec46229062d';
+    r'58b9ca070f33fc39e5f5ab84bbc10c75f0de1604';
 
 abstract class _$SocialOnboardingViewModel
     extends $Notifier<SocialOnboardingState> {

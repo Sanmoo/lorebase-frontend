@@ -48,7 +48,7 @@ final class TrackingListViewModelProvider
 }
 
 String _$trackingListViewModelHash() =>
-    r'22cac63195a5dd32b2e5b005e92d91c12241e132';
+    r'297cbe6faae65c71dfd7a5f82e67426bb37bd4b5';
 
 abstract class _$TrackingListViewModel
     extends $Notifier<AsyncValue<List<TrackedMediaModel>>> {

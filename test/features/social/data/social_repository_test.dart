@@ -353,7 +353,10 @@ void main() {
         );
       final repo = SocialRepositoryImpl(dio);
 
-      await expectLater(repo.unfollowUser('user-2'), throwsA(isA<ServerException>()));
+      await expectLater(
+        repo.unfollowUser('user-2'),
+        throwsA(isA<ServerException>()),
+      );
     });
 
     test('getProfile propagates embedded ServerException', () async {
