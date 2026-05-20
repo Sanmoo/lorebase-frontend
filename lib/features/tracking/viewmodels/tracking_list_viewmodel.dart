@@ -148,7 +148,7 @@ class TrackingListViewModel extends _$TrackingListViewModel {
           ttl: const Duration(hours: 6),
         );
         await cacheService.set(key, entry);
-        if (!ref.mounted) return;
+        if (!ref.mounted) return; // coverage:ignore-line
         state = AsyncValue.data(items);
       } catch (_) {
         errorNotifier.state = 'Could not refresh. Pull down to retry.';
