@@ -30,16 +30,14 @@ class MockAdapter implements HttpClientAdapter {
   void close({bool force = false}) {}
 }
 
-ResponseBody _jsonBody(
-  Map<String, dynamic> json, {
-  int statusCode = 200,
-}) => ResponseBody.fromString(
-  jsonEncode(json),
-  statusCode,
-  headers: {
-    Headers.contentTypeHeader: [Headers.jsonContentType],
-  },
-);
+ResponseBody _jsonBody(Map<String, dynamic> json, {int statusCode = 200}) =>
+    ResponseBody.fromString(
+      jsonEncode(json),
+      statusCode,
+      headers: {
+        Headers.contentTypeHeader: [Headers.jsonContentType],
+      },
+    );
 
 Map<String, dynamic> _profileJson() => {
   'userId': 'user-1',
@@ -234,10 +232,7 @@ void main() {
     test('getMyProfile propagates 404 as ServerException', () async {
       final dio = Dio()
         ..httpClientAdapter = MockAdapter(
-          onFetch: (_) => _jsonBody(
-            {'message': 'Not found'},
-            statusCode: 404,
-          ),
+          onFetch: (_) => _jsonBody({'message': 'Not found'}, statusCode: 404),
         );
       final repo = SocialRepositoryImpl(dio);
 
@@ -256,10 +251,8 @@ void main() {
     test('followUser propagates 409 as ServerException', () async {
       final dio = Dio()
         ..httpClientAdapter = MockAdapter(
-          onFetch: (_) => _jsonBody(
-            {'message': 'Already following'},
-            statusCode: 409,
-          ),
+          onFetch: (_) =>
+              _jsonBody({'message': 'Already following'}, statusCode: 409),
         );
       final repo = SocialRepositoryImpl(dio);
 
@@ -275,93 +268,102 @@ void main() {
       );
     });
 
-    test('getUserActivity calls profile activity endpoint and parses events', () async {
-      String? capturedPath;
-      Map<String, dynamic>? capturedParams;
-      final dio = Dio()
-        ..httpClientAdapter = MockAdapter(
-          onFetch: (options) {
-            capturedPath = options.path;
-            capturedParams = options.queryParameters;
-            return _jsonBody({
-              'items': [_activityJson()],
-              'nextCursor': null,
-              'hasMore': false,
-            });
-          },
+    test(
+      'getUserActivity calls profile activity endpoint and parses events',
+      () async {
+        String? capturedPath;
+        Map<String, dynamic>? capturedParams;
+        final dio = Dio()
+          ..httpClientAdapter = MockAdapter(
+            onFetch: (options) {
+              capturedPath = options.path;
+              capturedParams = options.queryParameters;
+              return _jsonBody({
+                'items': [_activityJson()],
+                'nextCursor': null,
+                'hasMore': false,
+              });
+            },
+          );
+        final repo = SocialRepositoryImpl(dio);
+
+        final result = await repo.getUserActivity(
+          'user-1',
+          limit: 12,
+          cursor: 'cursor-3',
         );
-      final repo = SocialRepositoryImpl(dio);
 
-      final result = await repo.getUserActivity(
-        'user-1',
-        limit: 12,
-        cursor: 'cursor-3',
-      );
+        expect(capturedPath, '/profiles/user-1/activity');
+        expect(capturedParams, {'limit': 12, 'cursor': 'cursor-3'});
+        expect(result, isA<PaginatedSocialResponse<ActivityEventModel>>());
+        expect(result.items.single.eventId, 'evt-1');
+      },
+    );
 
-      expect(capturedPath, '/profiles/user-1/activity');
-      expect(capturedParams, {'limit': 12, 'cursor': 'cursor-3'});
-      expect(result, isA<PaginatedSocialResponse<ActivityEventModel>>());
-      expect(result.items.single.eventId, 'evt-1');
-    });
+    test(
+      'getFollowers calls followers endpoint and parses relationships',
+      () async {
+        String? capturedPath;
+        Map<String, dynamic>? capturedParams;
+        final dio = Dio()
+          ..httpClientAdapter = MockAdapter(
+            onFetch: (options) {
+              capturedPath = options.path;
+              capturedParams = options.queryParameters;
+              return _jsonBody({
+                'items': [_followRelationshipJson()],
+                'nextCursor': 'next-followers',
+                'hasMore': true,
+              });
+            },
+          );
+        final repo = SocialRepositoryImpl(dio);
 
-    test('getFollowers calls followers endpoint and parses relationships', () async {
-      String? capturedPath;
-      Map<String, dynamic>? capturedParams;
-      final dio = Dio()
-        ..httpClientAdapter = MockAdapter(
-          onFetch: (options) {
-            capturedPath = options.path;
-            capturedParams = options.queryParameters;
-            return _jsonBody({
-              'items': [_followRelationshipJson()],
-              'nextCursor': 'next-followers',
-              'hasMore': true,
-            });
-          },
+        final result = await repo.getFollowers(
+          'user-2',
+          limit: 7,
+          cursor: 'cursor-4',
         );
-      final repo = SocialRepositoryImpl(dio);
 
-      final result = await repo.getFollowers(
-        'user-2',
-        limit: 7,
-        cursor: 'cursor-4',
-      );
+        expect(capturedPath, '/follows/user-2/followers');
+        expect(capturedParams, {'limit': 7, 'cursor': 'cursor-4'});
+        expect(result, isA<PaginatedSocialResponse<FollowRelationshipModel>>());
+        expect(result.items.single.followerId, 'user-1');
+        expect(result.nextCursor, 'next-followers');
+      },
+    );
 
-      expect(capturedPath, '/follows/user-2/followers');
-      expect(capturedParams, {'limit': 7, 'cursor': 'cursor-4'});
-      expect(result, isA<PaginatedSocialResponse<FollowRelationshipModel>>());
-      expect(result.items.single.followerId, 'user-1');
-      expect(result.nextCursor, 'next-followers');
-    });
+    test(
+      'getFollowing calls following endpoint and parses relationships',
+      () async {
+        String? capturedPath;
+        Map<String, dynamic>? capturedParams;
+        final dio = Dio()
+          ..httpClientAdapter = MockAdapter(
+            onFetch: (options) {
+              capturedPath = options.path;
+              capturedParams = options.queryParameters;
+              return _jsonBody({
+                'items': [_followRelationshipJson()],
+                'nextCursor': null,
+                'hasMore': false,
+              });
+            },
+          );
+        final repo = SocialRepositoryImpl(dio);
 
-    test('getFollowing calls following endpoint and parses relationships', () async {
-      String? capturedPath;
-      Map<String, dynamic>? capturedParams;
-      final dio = Dio()
-        ..httpClientAdapter = MockAdapter(
-          onFetch: (options) {
-            capturedPath = options.path;
-            capturedParams = options.queryParameters;
-            return _jsonBody({
-              'items': [_followRelationshipJson()],
-              'nextCursor': null,
-              'hasMore': false,
-            });
-          },
+        final result = await repo.getFollowing(
+          'user-1',
+          limit: 8,
+          cursor: 'cursor-5',
         );
-      final repo = SocialRepositoryImpl(dio);
 
-      final result = await repo.getFollowing(
-        'user-1',
-        limit: 8,
-        cursor: 'cursor-5',
-      );
-
-      expect(capturedPath, '/follows/user-1/following');
-      expect(capturedParams, {'limit': 8, 'cursor': 'cursor-5'});
-      expect(result, isA<PaginatedSocialResponse<FollowRelationshipModel>>());
-      expect(result.items.single.followedId, 'user-2');
-    });
+        expect(capturedPath, '/follows/user-1/following');
+        expect(capturedParams, {'limit': 8, 'cursor': 'cursor-5'});
+        expect(result, isA<PaginatedSocialResponse<FollowRelationshipModel>>());
+        expect(result.items.single.followedId, 'user-2');
+      },
+    );
 
     test('getPublicLists calls lists endpoint and parses list items', () async {
       String? capturedPath;
