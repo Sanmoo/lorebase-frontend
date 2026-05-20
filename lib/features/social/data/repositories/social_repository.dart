@@ -5,6 +5,7 @@ import '../../../../core/errors/exceptions.dart';
 import '../../../../core/providers/core_providers.dart';
 import '../models/activity_event_model.dart';
 import '../models/discover_user_model.dart';
+import '../models/follow_relationship_model.dart';
 import '../models/paginated_social_response.dart';
 import '../models/public_list_item_model.dart';
 import '../models/social_profile_model.dart';
@@ -40,13 +41,13 @@ abstract class SocialRepository {
     String? cursor,
   });
 
-  Future<PaginatedSocialResponse<SocialProfileModel>> getFollowers(
+  Future<PaginatedSocialResponse<FollowRelationshipModel>> getFollowers(
     String userId, {
     int limit = 20,
     String? cursor,
   });
 
-  Future<PaginatedSocialResponse<SocialProfileModel>> getFollowing(
+  Future<PaginatedSocialResponse<FollowRelationshipModel>> getFollowing(
     String userId, {
     int limit = 20,
     String? cursor,
@@ -156,7 +157,7 @@ class SocialRepositoryImpl implements SocialRepository {
   }
 
   @override
-  Future<PaginatedSocialResponse<SocialProfileModel>> getFollowers(
+  Future<PaginatedSocialResponse<FollowRelationshipModel>> getFollowers(
     String userId, {
     int limit = 20,
     String? cursor,
@@ -167,13 +168,13 @@ class SocialRepositoryImpl implements SocialRepository {
     return _getPaginated(
       path,
       queryParameters: _paginationParams(limit: limit, cursor: cursor),
-      fromJson: SocialProfileModel.fromJson,
+      fromJson: FollowRelationshipModel.fromJson,
       fallbackMessage: 'Failed to load followers',
     );
   }
 
   @override
-  Future<PaginatedSocialResponse<SocialProfileModel>> getFollowing(
+  Future<PaginatedSocialResponse<FollowRelationshipModel>> getFollowing(
     String userId, {
     int limit = 20,
     String? cursor,
@@ -184,7 +185,7 @@ class SocialRepositoryImpl implements SocialRepository {
     return _getPaginated(
       path,
       queryParameters: _paginationParams(limit: limit, cursor: cursor),
-      fromJson: SocialProfileModel.fromJson,
+      fromJson: FollowRelationshipModel.fromJson,
       fallbackMessage: 'Failed to load following',
     );
   }
@@ -229,10 +230,7 @@ class SocialRepositoryImpl implements SocialRepository {
     required String fallbackMessage,
   }) async {
     try {
-      final response = await _dio.get(
-        path,
-        queryParameters: queryParameters,
-      );
+      final response = await _dio.get(path, queryParameters: queryParameters);
       return PaginatedSocialResponse<T>.fromJson(
         _responseMap(response.data),
         fromJson,
@@ -242,14 +240,8 @@ class SocialRepositoryImpl implements SocialRepository {
     }
   }
 
-  Map<String, dynamic> _paginationParams({
-    required int limit,
-    String? cursor,
-  }) {
-    return {
-      'limit': limit,
-      'cursor': ?cursor,
-    };
+  Map<String, dynamic> _paginationParams({required int limit, String? cursor}) {
+    return {'limit': limit, 'cursor': ?cursor};
   }
 
   Map<String, dynamic> _responseMap(dynamic data) {
