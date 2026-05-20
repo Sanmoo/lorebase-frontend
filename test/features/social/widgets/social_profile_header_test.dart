@@ -95,14 +95,18 @@ void main() {
     expect(unfollowCalls, 1);
   });
 
-  testWidgets('disables follow button when callback is missing', (tester) async {
+  testWidgets('disables follow button when callback is missing', (
+    tester,
+  ) async {
     await pumpHeader(tester, onUnfollow: () {});
 
     final button = tester.widget<FilledButton>(find.byType(FilledButton));
     expect(button.onPressed, isNull);
   });
 
-  testWidgets('disables unfollow button when callback is missing', (tester) async {
+  testWidgets('disables unfollow button when callback is missing', (
+    tester,
+  ) async {
     await pumpHeader(tester, followed: true, onFollow: () {});
 
     final button = tester.widget<FilledButton>(find.byType(FilledButton));
