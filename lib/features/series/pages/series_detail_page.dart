@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cached_network_image_platform_interface/cached_network_image_platform_interface.dart';
+import '../../../../core/i18n/date_formatter.dart';
 import '../../../../core/widgets/error_widget.dart';
 import '../../../../core/widgets/loading_widget.dart';
 import '../../../l10n/strings.g.dart';
@@ -310,7 +311,10 @@ class _SeriesDetailLoaded extends StatelessWidget {
                         child: _InfoCard(
                           icon: Icons.calendar_today,
                           label: t.series_detail_first_air_date,
-                          value: series.firstAirDate ?? '—',
+                          value: formatLocalizedDate(
+                            context,
+                            series.firstAirDate,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 12),
