@@ -160,6 +160,35 @@ void main() {
       expect(result.status, 'WATCHING'); // from _trackingJson default
     });
 
+    test('updateTracking() sends backend-compatible rating and review keys',
+        () async {
+      Map<String, dynamic>? capturedData;
+      final dio = Dio()
+        ..httpClientAdapter = MockAdapter(
+          onFetch: (options) {
+            capturedData = options.data as Map<String, dynamic>?;
+            return _json(_trackingJson('t-updated', 'SERIES'));
+          },
+        );
+      final repo = TrackingRepositoryImpl(dio);
+
+      await repo.updateTracking(
+        'series-1',
+        mediaType: MediaType.series,
+        status: 'WATCHING',
+        rating: 8,
+        review: 'Great',
+      );
+
+      expect(capturedData, isNotNull);
+      expect(capturedData!['mediaType'], 'SERIES');
+      expect(capturedData!['status'], 'WATCHING');
+      expect(capturedData!['seriesRating'], 8);
+      expect(capturedData!['seriesReview'], 'Great');
+      expect(capturedData!.containsKey('rating'), false);
+      expect(capturedData!.containsKey('review'), false);
+    });
+
     test('updateTracking() throws ServerException on DioException', () async {
       final dio = Dio()
         ..httpClientAdapter = MockAdapter(
