@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lorebase/features/social/data/models/activity_event_model.dart';
@@ -39,28 +41,66 @@ void main() {
     },
   );
 
+  test('repository failure resets saving and exposes error message', () async {
+    final repo = _FakeSocialRepository(updateError: Exception('boom'));
+    final container = ProviderContainer(
+      overrides: [socialRepositoryProvider.overrideWithValue(repo)],
+    );
+    addTearDown(container.dispose);
+
+    await container
+        .read(socialOnboardingViewModelProvider.notifier)
+        .saveProfile(
+          displayName: 'Fulano',
+          avatarUrl: null,
+          privacy: SocialPrivacy.private,
+        );
+
+    final state = container.read(socialOnboardingViewModelProvider);
+    expect(repo.updateMyProfileCalls, 1);
+    expect(state.isSaving, isFalse);
+    expect(state.errorMessage, 'Failed to save profile');
+    expect(state.validationError, isNull);
+  });
+
   test(
-    'repository failure resets saving and exposes error message',
+    'concurrent save while saving calls repository once',
     () async {
-      final repo = _FakeSocialRepository(updateError: Exception('boom'));
+      final completer = Completer<SocialProfileModel>();
+      final repo = _FakeSocialRepository(updateCompleter: completer);
       final container = ProviderContainer(
         overrides: [socialRepositoryProvider.overrideWithValue(repo)],
       );
       addTearDown(container.dispose);
 
-      await container
-          .read(socialOnboardingViewModelProvider.notifier)
-          .saveProfile(
-            displayName: 'Fulano',
-            avatarUrl: null,
-            privacy: SocialPrivacy.private,
-          );
+      final notifier = container.read(
+        socialOnboardingViewModelProvider.notifier,
+      );
+      final firstSave = notifier.saveProfile(
+        displayName: 'First',
+        avatarUrl: null,
+        privacy: SocialPrivacy.public,
+      );
+
+      expect(container.read(socialOnboardingViewModelProvider).isSaving, isTrue);
+
+      await notifier.saveProfile(
+        displayName: 'Second',
+        avatarUrl: 'https://example.com/second.jpg',
+        privacy: SocialPrivacy.private,
+      );
+
+      expect(repo.updateMyProfileCalls, 1);
+      expect(repo.lastDisplayName, 'First');
+
+      completer.complete(repo.profile.copyWith(displayName: 'First'));
+      await firstSave;
 
       final state = container.read(socialOnboardingViewModelProvider);
       expect(repo.updateMyProfileCalls, 1);
+      expect(state.profile?.displayName, 'First');
+      expect(state.errorMessage, isNull);
       expect(state.isSaving, isFalse);
-      expect(state.errorMessage, 'Failed to save profile');
-      expect(state.validationError, isNull);
     },
   );
 
@@ -89,9 +129,10 @@ void main() {
 }
 
 class _FakeSocialRepository implements SocialRepository {
-  _FakeSocialRepository({this.updateError});
+  _FakeSocialRepository({this.updateError, this.updateCompleter});
 
   final Object? updateError;
+  final Completer<SocialProfileModel>? updateCompleter;
   int updateMyProfileCalls = 0;
   String? lastDisplayName;
   String? lastAvatarUrl;
@@ -105,12 +146,15 @@ class _FakeSocialRepository implements SocialRepository {
     required bool isPublic,
   }) async {
     updateMyProfileCalls++;
-    if (updateError != null) {
-      throw updateError!;
-    }
     lastDisplayName = displayName;
     lastAvatarUrl = avatarUrl;
     lastIsPublic = isPublic;
+    if (updateCompleter != null) {
+      return updateCompleter!.future;
+    }
+    if (updateError != null) {
+      throw updateError!;
+    }
     return profile.copyWith(
       displayName: displayName,
       avatarUrl: avatarUrl,

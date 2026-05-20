@@ -32,7 +32,9 @@ class SocialOnboardingState {
       validationError: clearValidationError
           ? null
           : validationError ?? this.validationError,
-      errorMessage: clearErrorMessage ? null : errorMessage ?? this.errorMessage,
+      errorMessage: clearErrorMessage
+          ? null
+          : errorMessage ?? this.errorMessage,
       isSaving: isSaving ?? this.isSaving,
     );
   }
@@ -50,6 +52,10 @@ class SocialOnboardingViewModel extends _$SocialOnboardingViewModel {
     String? avatarUrl,
     required SocialPrivacy privacy,
   }) async {
+    if (state.isSaving) {
+      return;
+    }
+
     final trimmedDisplayName = displayName.trim();
     if (trimmedDisplayName.isEmpty) {
       state = state.copyWith(
