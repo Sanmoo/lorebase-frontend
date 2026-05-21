@@ -52,11 +52,15 @@ class _SocialTabs extends StatelessWidget {
       length: 2,
       child: Column(
         children: [
-          ListTile(
-            leading: CircleAvatar(child: Text(_initial(profile.displayName))),
-            title: Text(profile.displayName),
-            subtitle: const Text('Meu perfil social'),
-            onTap: () => context.go('/social/profile/me'),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              child: TextButton(
+                onPressed: () => context.go('/social/profile/me'),
+                child: const Text('Meu perfil →'),
+              ),
+            ),
           ),
           const TabBar(
             tabs: [
@@ -70,12 +74,6 @@ class _SocialTabs extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  String _initial(String value) {
-    return value.trim().isEmpty
-        ? '?'
-        : value.trim().characters.first.toUpperCase();
   }
 }
 

@@ -11,6 +11,8 @@ import '../../../l10n/strings.g.dart';
 import '../../tracking/data/models/media_type.dart';
 import '../../social/data/models/activity_event_model.dart';
 import '../../social/data/models/paginated_social_response.dart';
+import '../../social/data/models/social_profile_model.dart';
+import '../../social/pages/social_page.dart';
 import '../../social/viewmodels/social_feed_viewmodel.dart';
 import '../../../core/cache/cache_providers.dart';
 import '../viewmodels/dashboard_viewmodel.dart';
@@ -63,6 +65,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
 
     final dashboardState = ref.watch(dashboardViewModelProvider);
     final socialFeedState = ref.watch(socialFeedViewModelProvider);
+    final socialProfileState = ref.watch(mySocialProfileProvider);
 
     return RefreshIndicator(
       onRefresh: _refreshDashboardAndSocialFeed,
@@ -222,14 +225,20 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                         icon: Icons.tv_off,
                       ),
                     ),
-                    _SocialPreviewSection(feedState: socialFeedState),
+                    _SocialPreviewSection(
+                      feedState: socialFeedState,
+                      profileState: socialProfileState,
+                    ),
                     _RecommendationCard(onTap: () => context.go('/recommend')),
                   ],
                 ),
               )
             else ...[
               SliverToBoxAdapter(
-                child: _SocialPreviewSection(feedState: socialFeedState),
+                child: _SocialPreviewSection(
+                  feedState: socialFeedState,
+                  profileState: socialProfileState,
+                ),
               ),
               SliverToBoxAdapter(
                 child: _RecommendationCard(
@@ -246,8 +255,12 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
 
 class _SocialPreviewSection extends StatelessWidget {
   final AsyncValue<PaginatedSocialResponse<ActivityEventModel>> feedState;
+  final AsyncValue<SocialProfileModel> profileState;
 
-  const _SocialPreviewSection({required this.feedState});
+  const _SocialPreviewSection({
+    required this.feedState,
+    required this.profileState,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -272,6 +285,13 @@ class _SocialPreviewSection extends StatelessWidget {
                   ),
                 ],
               ),
+              if (profileState.hasValue) ...[
+                const SizedBox(height: 8),
+                Text(
+                  'Perfil social: ${profileState.requireValue.displayName}',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
               const SizedBox(height: 12),
               if (activities.isEmpty)
                 Text(

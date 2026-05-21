@@ -31,16 +31,18 @@ void main() {
     expect(repository.getMyProfileCallCount, 1);
   });
 
-  testWidgets('Social page existing profile renders display name and tabs', (
-    tester,
-  ) async {
-    await tester.pumpSocial(const SocialPage(), _FakeSocialRepository());
-    await tester.pumpAndSettle();
+  testWidgets(
+    'Social page existing profile renders compact profile link and tabs',
+    (tester) async {
+      await tester.pumpSocial(const SocialPage(), _FakeSocialRepository());
+      await tester.pumpAndSettle();
 
-    expect(find.text('Fulano'), findsOneWidget);
-    expect(find.text('Feed'), findsOneWidget);
-    expect(find.text('Discover'), findsOneWidget);
-  });
+      expect(find.text('Meu perfil →'), findsOneWidget);
+      expect(find.text('Meu perfil social'), findsNothing);
+      expect(find.text('Feed'), findsOneWidget);
+      expect(find.text('Discover'), findsOneWidget);
+    },
+  );
 
   testWidgets('Social page empty feed renders CTA', (tester) async {
     await tester.pumpSocial(const SocialPage(), _FakeSocialRepository());

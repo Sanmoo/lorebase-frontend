@@ -14,7 +14,9 @@ import 'package:lorebase/features/auth/viewmodels/auth_state.dart';
 import 'package:lorebase/features/social/data/models/activity_event_model.dart';
 import 'package:lorebase/features/social/data/models/paginated_social_response.dart';
 import 'package:lorebase/features/social/data/models/social_media_model.dart';
+import 'package:lorebase/features/social/data/models/social_profile_model.dart';
 import 'package:lorebase/features/social/data/models/social_user_model.dart';
+import 'package:lorebase/features/social/pages/social_page.dart';
 import 'package:lorebase/features/social/viewmodels/social_feed_viewmodel.dart';
 import 'package:lorebase/l10n/strings.g.dart';
 
@@ -515,6 +517,40 @@ Future<void> main() async {
       await tester.pump();
 
       expect(find.text('Social activity'), findsOneWidget);
+    });
+
+    testWidgets('shows social profile name as dashboard context', (
+      tester,
+    ) async {
+      final fakeVM = FakeDashboardVM(
+        testState: AsyncValue.data(_emptyDashboard()),
+      );
+      final container = ProviderContainer(
+        overrides: [
+          dashboardViewModelProvider.overrideWith(() => fakeVM),
+          socialFeedViewModelProvider.overrideWith(
+            () => FakeSocialFeedVM(testState: AsyncValue.data(_feed())),
+          ),
+          mySocialProfileProvider.overrideWith(
+            (ref) async => SocialProfileModel(
+              userId: 'user-1',
+              displayName: 'Fulano',
+              isPublic: true,
+              followingCount: 1,
+              followerCount: 2,
+              createdAt: DateTime.utc(2026, 5, 20),
+              updatedAt: DateTime.utc(2026, 5, 20),
+            ),
+          ),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      expect(find.text('Perfil social: Fulano'), findsOneWidget);
     });
 
     testWidgets('social preview CTA navigates to social', (tester) async {
