@@ -334,15 +334,42 @@ class _RecommendationCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
       child: Card(
-        child: ListTile(
-          leading: const Icon(Icons.auto_awesome_outlined),
-          title: Text(t.dashboard_recommendation_title),
-          subtitle: Text(t.dashboard_recommendation_body),
-          trailing: TextButton(
-            onPressed: onTap,
-            child: Text(t.dashboard_recommendation_cta),
-          ),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
           onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.auto_awesome_outlined),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        t.dashboard_recommendation_title,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  t.dashboard_recommendation_body,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 12),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: onTap,
+                    child: Text(t.dashboard_recommendation_cta),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
