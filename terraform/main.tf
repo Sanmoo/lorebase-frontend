@@ -4,14 +4,30 @@ resource "aws_s3_bucket" "web" {
   bucket = "${var.bucket_name}-${terraform.workspace}"
 }
 
-# Bloqueia todo acesso público ao bucket — só CloudFront acessa via OAC
+locals {
+  is_dev = terraform.workspace == "dev"
+}
+
+# Dev usa S3 website público para deploy rápido; demais ambientes ficam CloudFront-only.
 resource "aws_s3_bucket_public_access_block" "web" {
   bucket = aws_s3_bucket.web.id
 
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
+  block_public_acls       = !local.is_dev
+  block_public_policy     = !local.is_dev
+  ignore_public_acls      = !local.is_dev
+  restrict_public_buckets = !local.is_dev
+}
+
+resource "aws_s3_bucket_website_configuration" "web" {
+  bucket = aws_s3_bucket.web.id
+
+  index_document {
+    suffix = "index.html"
+  }
+
+  error_document {
+    key = "index.html"
+  }
 }
 
 # ─── CloudFront Origin Access Control (OAC) ──────────────────────────────────
@@ -26,21 +42,24 @@ resource "aws_cloudfront_origin_access_control" "web" {
 
 # ─── Bucket Policy ───────────────────────────────────────────────────────────
 
-# Permite apenas o CloudFront acessar o bucket (via OAC)
+# Dev permite leitura pública via S3 website; demais ambientes permitem só CloudFront via OAC.
 data "aws_iam_policy_document" "cloudfront_oac" {
   statement {
     actions   = ["s3:GetObject"]
     resources = ["${aws_s3_bucket.web.arn}/*"]
 
     principals {
-      type        = "Service"
-      identifiers = ["cloudfront.amazonaws.com"]
+      type        = local.is_dev ? "*" : "Service"
+      identifiers = local.is_dev ? ["*"] : ["cloudfront.amazonaws.com"]
     }
 
-    condition {
-      test     = "StringEquals"
-      variable = "AWS:SourceArn"
-      values   = [aws_cloudfront_distribution.web.arn]
+    dynamic "condition" {
+      for_each = local.is_dev ? [] : [1]
+      content {
+        test     = "StringEquals"
+        variable = "AWS:SourceArn"
+        values   = [aws_cloudfront_distribution.web.arn]
+      }
     }
   }
 }

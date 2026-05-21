@@ -1,4 +1,4 @@
-.PHONY: test test-coverage analyze check-disk check clean-tmp golden-test golden-update deploy build-web infra workspace-list workspace-show workspace-create
+.PHONY: test test-coverage analyze check-disk check clean-tmp golden-test golden-update deploy deploy-dev-fast build-web infra workspace-list workspace-show workspace-create
 
 # ─── Testing & Quality ─────────────────────────
 
@@ -9,13 +9,10 @@ test-coverage:
 	dart run scripts/check_coverage.dart
 
 analyze:
-	dart analyze --fatal-infos; s=$$?; if [ $$s -ne 0 ] && [ $$s -ne 2 ]; then exit $$s; fi
+	@dart analyze --fatal-infos || case "$$?" in 2) true ;; *) false ;; esac
 
 check-disk:
-	@usage=$$(df -P /tmp | awk 'NR==2{gsub(/%/,""); print $$5}'); \
-	if [ -n "$$usage" ] && [ "$$usage" -gt 70 ]; then \
-		echo "⚠️  /tmp is $$usage% full. Consider 'make clean-tmp' for faster tests."; \
-	fi || true
+	@sh -c 'usage=$$(df -P /tmp | awk '\''NR==2{gsub(/%/,""); print $$5}'\''); if [ -n "$$usage" ] && [ "$$usage" -gt 70 ]; then echo "⚠️  /tmp is $$usage% full. Consider '\''make clean-tmp'\'' for faster tests."; fi' || true
 
 check: analyze check-disk test-coverage golden-test
 
@@ -52,15 +49,24 @@ deploy: check-deps deploy-env-check check-files
 	@echo "🔨 Building Flutter web..."
 	flutter build web --release
 	@echo "📦 Syncing to S3..."
-	aws s3 sync build/web/ s3://$$(terraform -chdir=terraform output -raw bucket_name) --delete
+	aws s3 sync build/web/ s3://`terraform -chdir=terraform output -raw bucket_name` --delete
 	@echo "🚀 Invalidating CloudFront cache..."
 	aws cloudfront create-invalidation \
-		--distribution-id $$(terraform -chdir=terraform output -raw cloudfront_distribution_id) \
+		--distribution-id `terraform -chdir=terraform output -raw cloudfront_distribution_id` \
 		--paths "/*" \
 		--no-cli-pager
 	@echo ""
 	@echo "✅  Deploy completo!"
-	@echo "🌐  $(ENV): https://$$(terraform -chdir=terraform output -raw cloudfront_domain)"
+	@echo "🌐  $(ENV): https://`terraform -chdir=terraform output -raw cloudfront_domain`"
+
+deploy-dev-fast: check-dev-fast-deps check-files
+	@echo "🔨 Building Flutter web for fast dev deploy..."
+	flutter build web --release
+	@echo "📦 Syncing directly to dev S3 website bucket..."
+	aws s3 sync build/web/ s3://lorebase-web-dev --delete
+	@echo ""
+	@echo "✅  Deploy dev rápido completo!"
+	@echo "🌐  dev: http://lorebase-web-dev.s3-website-us-east-1.amazonaws.com"
 
 # ─── Infra (apenas Terraform) ──────────────────
 
@@ -77,16 +83,7 @@ infra: check-deps deploy-env-check
 # ─── Environment Check ─────────────────────────
 
 deploy-env-check:
-	@if [ -z "$(ENV)" ]; then \
-		echo "❌ Defina ENV=dev|qa|prod"; \
-		echo "   Ex: make deploy ENV=dev"; \
-		exit 1; \
-	fi
-	@echo "$(ENV)" | grep -Eq '^(dev|qa|prod)$$' || { \
-		echo "❌ ENV inválida: '$(ENV)'. Use dev, qa ou prod."; \
-		exit 1; \
-	}
-	@echo "🌍 Ambiente: $(ENV)"
+	@sh -c 'if [ -z "$$ENV" ]; then echo "❌ Defina ENV=dev|qa|prod"; echo "   Ex: make deploy ENV=dev"; exit 1; fi; case "$$ENV" in dev|qa|prod) ;; *) echo "❌ ENV inválida: '\''$$ENV'\''. Use dev, qa ou prod."; exit 1 ;; esac; echo "🌍 Ambiente: $$ENV"'
 
 # ─── Workspace Management ──────────────────────
 
@@ -111,6 +108,11 @@ check-deps:
 	@command -v flutter >/dev/null 2>&1 || { echo >&2 "❌ flutter não encontrado"; exit 1; }
 	@aws sts get-caller-identity >/dev/null 2>&1 || { echo >&2 "❌ AWS não autenticada. Execute: aws configure"; exit 1; }
 
+check-dev-fast-deps:
+	@command -v aws >/dev/null 2>&1 || { echo >&2 "❌ aws CLI não encontrada. Instale com: mise install aws"; exit 1; }
+	@command -v flutter >/dev/null 2>&1 || { echo >&2 "❌ flutter não encontrado"; exit 1; }
+	@aws sts get-caller-identity >/dev/null 2>&1 || { echo >&2 "❌ AWS não autenticada. Execute: aws configure"; exit 1; }
+
 check-files:
-	@test -f lib/amplifyconfiguration.dart || { echo >&2 "⚠️  lib/amplifyconfiguration.dart não encontrado. O build pode falhar."; }
-	@test -f .env || echo >&2 "⚠️  .env não encontrado. O build usará defaults."
+	@[ -f lib/amplifyconfiguration.dart ] || { echo >&2 "⚠️  lib/amplifyconfiguration.dart não encontrado. O build pode falhar."; }
+	@[ -f .env ] || echo >&2 "⚠️  .env não encontrado. O build usará defaults."
