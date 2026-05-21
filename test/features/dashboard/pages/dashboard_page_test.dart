@@ -579,6 +579,13 @@ Future<void> main() async {
       expect(find.text('Get recommendations'), findsOneWidget);
       expect(
         find.ancestor(
+          of: find.text('Get recommendations'),
+          matching: find.byType(TextButton),
+        ),
+        findsNothing,
+      );
+      expect(
+        find.ancestor(
           of: find.text('Recommendations for you'),
           matching: find.byType(ListTile),
         ),

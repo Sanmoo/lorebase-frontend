@@ -362,9 +362,11 @@ class _RecommendationCard extends StatelessWidget {
                 const SizedBox(height: 12),
                 Align(
                   alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: onTap,
-                    child: Text(t.dashboard_recommendation_cta),
+                  child: Text(
+                    t.dashboard_recommendation_cta,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   ),
                 ),
               ],
