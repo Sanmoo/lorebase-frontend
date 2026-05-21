@@ -14,9 +14,10 @@ import '../widgets/social_activity_card.dart';
 import '../widgets/social_empty_feed.dart';
 import 'social_onboarding_page.dart';
 
-final mySocialProfileProvider = FutureProvider<SocialProfileModel>((ref) {
-  return ref.watch(socialRepositoryProvider).getMyProfile();
-});
+final mySocialProfileProvider = FutureProvider<SocialProfileModel>(
+  retry: (_, _) => null,
+  (ref) => ref.watch(socialRepositoryProvider).getMyProfile(),
+);
 
 class SocialPage extends ConsumerWidget {
   const SocialPage({super.key});
@@ -26,7 +27,7 @@ class SocialPage extends ConsumerWidget {
     final profile = ref.watch(mySocialProfileProvider);
 
     return profile.when(
-      data: (_) => const _SocialTabs(),
+      data: (profile) => _SocialTabs(profile: profile),
       error: (error, _) {
         if (error is ServerException && error.statusCode == 404) {
           return SocialOnboardingPage(
@@ -41,24 +42,40 @@ class SocialPage extends ConsumerWidget {
 }
 
 class _SocialTabs extends StatelessWidget {
-  const _SocialTabs();
+  const _SocialTabs({required this.profile});
+
+  final SocialProfileModel profile;
 
   @override
   Widget build(BuildContext context) {
-    return const DefaultTabController(
+    return DefaultTabController(
       length: 2,
       child: Column(
         children: [
-          TabBar(
+          ListTile(
+            leading: CircleAvatar(child: Text(_initial(profile.displayName))),
+            title: Text(profile.displayName),
+            subtitle: const Text('Meu perfil social'),
+            onTap: () => context.go('/social/profile/me'),
+          ),
+          const TabBar(
             tabs: [
               Tab(text: 'Feed'),
               Tab(text: 'Discover'),
             ],
           ),
-          Expanded(child: TabBarView(children: [_FeedTab(), _DiscoverTab()])),
+          const Expanded(
+            child: TabBarView(children: [_FeedTab(), _DiscoverTab()]),
+          ),
         ],
       ),
     );
+  }
+
+  String _initial(String value) {
+    return value.trim().isEmpty
+        ? '?'
+        : value.trim().characters.first.toUpperCase();
   }
 }
 

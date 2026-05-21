@@ -18,24 +18,26 @@ import 'package:lorebase/features/social/pages/social_page.dart';
 import 'package:lorebase/features/social/pages/social_profile_page.dart';
 
 void main() {
-  testWidgets('Social page missing profile state renders onboarding', (
+  testWidgets('Social page missing profile state renders onboarding once', (
     tester,
   ) async {
-    await tester.pumpSocial(
-      const SocialPage(),
-      _FakeSocialRepository(missingProfile: true),
-    );
+    final repository = _FakeSocialRepository(missingProfile: true);
+    await tester.pumpSocial(const SocialPage(), repository);
     await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump();
 
     expect(find.text('Crie seu perfil social'), findsOneWidget);
+    expect(repository.getMyProfileCallCount, 1);
   });
 
-  testWidgets('Social page existing profile renders Feed and Discover tabs', (
+  testWidgets('Social page existing profile renders display name and tabs', (
     tester,
   ) async {
     await tester.pumpSocial(const SocialPage(), _FakeSocialRepository());
     await tester.pumpAndSettle();
 
+    expect(find.text('Fulano'), findsOneWidget);
     expect(find.text('Feed'), findsOneWidget);
     expect(find.text('Discover'), findsOneWidget);
   });
@@ -165,7 +167,7 @@ void main() {
     await tester.pumpRouter(router);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Fulano'));
+    await tester.tap(find.text('Fulano').last);
     await tester.pumpAndSettle();
     expect(
       router.routeInformationProvider.value.uri.path,
@@ -229,11 +231,11 @@ void main() {
     expect(router.routeInformationProvider.value.uri.path, '/movies/123');
   });
 
-  testWidgets('Onboarding save shows suggestions until finished', (tester) async {
+  testWidgets('Onboarding save shows suggestions until finished', (
+    tester,
+  ) async {
     var finished = false;
-    final repository = _FakeSocialRepository(
-      discoverItems: [_discoverUser()],
-    );
+    final repository = _FakeSocialRepository(discoverItems: [_discoverUser()]);
     await tester.pumpSocial(
       SocialOnboardingPage(onProfileCreated: () => finished = true),
       repository,
@@ -286,15 +288,18 @@ GoRouter _router(Widget child, SocialRepository repository) {
       ),
       GoRoute(
         path: '/social/profile/:userId',
-        builder: (context, state) => Text('profile ${state.pathParameters['userId']}'),
+        builder: (context, state) =>
+            Text('profile ${state.pathParameters['userId']}'),
       ),
       GoRoute(
         path: '/series/:tmdbId',
-        builder: (context, state) => Text('series ${state.pathParameters['tmdbId']}'),
+        builder: (context, state) =>
+            Text('series ${state.pathParameters['tmdbId']}'),
       ),
       GoRoute(
         path: '/movies/:tmdbId',
-        builder: (context, state) => Text('movie ${state.pathParameters['tmdbId']}'),
+        builder: (context, state) =>
+            Text('movie ${state.pathParameters['tmdbId']}'),
       ),
     ],
   );
@@ -408,11 +413,8 @@ class _FakeSocialRepository implements SocialRepository {
 
 PaginatedSocialResponse<T> _empty<T>() => _page(const []);
 
-PaginatedSocialResponse<T> _page<T>(List<T> items) => PaginatedSocialResponse<T>(
-  items: items,
-  nextCursor: null,
-  hasMore: false,
-);
+PaginatedSocialResponse<T> _page<T>(List<T> items) =>
+    PaginatedSocialResponse<T>(items: items, nextCursor: null, hasMore: false);
 
 SocialProfileModel _profile({
   String userId = 'user-1',
