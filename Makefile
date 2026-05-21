@@ -1,4 +1,4 @@
-.PHONY: test test-coverage analyze check-disk check clean-tmp golden-test golden-update deploy deploy-dev-fast build-web infra workspace-list workspace-show workspace-create
+.PHONY: test test-coverage analyze check-disk check clean-tmp golden-test golden-update deploy deploy-dev-fast deploy-dev-quick build-web infra workspace-list workspace-show workspace-create
 
 # ─── Testing & Quality ─────────────────────────
 
@@ -66,6 +66,15 @@ deploy-dev-fast: check-dev-fast-deps check-files
 	aws s3 sync build/web/ s3://lorebase-web-dev --delete
 	@echo ""
 	@echo "✅  Deploy dev rápido completo!"
+	@echo "🌐  dev: http://lorebase-web-dev.s3-website-us-east-1.amazonaws.com"
+
+deploy-dev-quick: check-dev-fast-deps check-files
+	@echo "⚡ Building Flutter web profile bundle for quick dev deploy..."
+	flutter build web --profile --no-wasm-dry-run -o build/web-quick
+	@echo "📦 Syncing quick build directly to dev S3 website bucket..."
+	aws s3 sync build/web-quick/ s3://lorebase-web-dev --delete
+	@echo ""
+	@echo "✅  Deploy dev quick completo!"
 	@echo "🌐  dev: http://lorebase-web-dev.s3-website-us-east-1.amazonaws.com"
 
 # ─── Infra (apenas Terraform) ──────────────────
