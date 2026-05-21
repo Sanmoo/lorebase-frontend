@@ -88,7 +88,7 @@ Map<String, dynamic> _publicListItemJson() => {
 
 void main() {
   group('SocialRepositoryImpl', () {
-    test('getMyProfile calls GET /users/me/profile and parses model', () async {
+    test('getMyProfile calls GET /profiles/me and parses model', () async {
       String? capturedMethod;
       String? capturedPath;
       final dio = Dio()
@@ -104,7 +104,7 @@ void main() {
       final result = await repo.getMyProfile();
 
       expect(capturedMethod, 'GET');
-      expect(capturedPath, '/users/me/profile');
+      expect(capturedPath, '/profiles/me');
       expect(result, isA<SocialProfileModel>());
       expect(result.userId, 'user-1');
     });
@@ -140,7 +140,7 @@ void main() {
     );
 
     test(
-      'updateMyProfile calls PUT /users/me/profile with profile fields',
+      'updateMyProfile calls PUT /profiles/me with profile fields',
       () async {
         String? capturedMethod;
         String? capturedPath;
@@ -163,7 +163,7 @@ void main() {
         );
 
         expect(capturedMethod, 'PUT');
-        expect(capturedPath, '/users/me/profile');
+        expect(capturedPath, '/profiles/me');
         expect(capturedData, {
           'displayName': 'Fulano',
           'avatarUrl': 'https://example.com/a.jpg',

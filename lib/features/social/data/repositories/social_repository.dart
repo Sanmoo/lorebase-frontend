@@ -69,7 +69,7 @@ class SocialRepositoryImpl implements SocialRepository {
 
   @override
   Future<SocialProfileModel> getMyProfile() async {
-    return _getProfile('/users/me/profile', 'Failed to load profile');
+    return _getProfile('/profiles/me', 'Failed to load profile');
   }
 
   @override
@@ -80,7 +80,7 @@ class SocialRepositoryImpl implements SocialRepository {
   }) async {
     try {
       final response = await _dio.put(
-        '/users/me/profile',
+        '/profiles/me',
         data: {
           'displayName': displayName,
           'avatarUrl': avatarUrl,
