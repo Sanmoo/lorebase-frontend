@@ -555,6 +555,60 @@ Future<void> main() async {
       expect(find.text('Recommend page'), findsOneWidget);
     });
 
+    testWidgets('recommendation card renders social-style content', (
+      tester,
+    ) async {
+      final fakeVM = FakeDashboardVM(
+        testState: AsyncValue.data(_emptyDashboard()),
+      );
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.drag(find.byType(Scrollable), const Offset(0, -500));
+      await tester.pumpAndSettle();
+
+      expect(find.byIcon(Icons.auto_awesome_outlined), findsOneWidget);
+      expect(find.text('Recommendations for you'), findsOneWidget);
+      expect(
+        find.text('Find something tailored to watch next.'),
+        findsOneWidget,
+      );
+      expect(find.text('Get recommendations'), findsOneWidget);
+      expect(
+        find.ancestor(
+          of: find.byWidgetPredicate(
+            (widget) =>
+                widget is Text && widget.data == 'Recommendations for you',
+          ),
+          matching: find.byType(ListTile),
+        ),
+        findsNothing,
+      );
+    });
+
+    testWidgets('tapping recommendation card surface navigates to recommend', (
+      tester,
+    ) async {
+      final fakeVM = FakeDashboardVM(
+        testState: AsyncValue.data(_emptyDashboard()),
+      );
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.drag(find.byType(Scrollable), const Offset(0, -500));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Recommendations for you'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Recommend page'), findsOneWidget);
+    });
+
     testWidgets('social preview shows up to three activity rows', (
       tester,
     ) async {
