@@ -44,10 +44,13 @@ class SocialProfileViewModel extends _$SocialProfileViewModel {
   @override
   Future<SocialProfileDetailState> build(String userId) async {
     final repository = ref.watch(socialRepositoryProvider);
-    final (profile, activity, publicLists) = await (
-      repository.getProfile(userId),
-      repository.getUserActivity(userId),
-      repository.getPublicLists(userId),
+    final profile = userId == 'me'
+        ? await repository.getMyProfile()
+        : await repository.getProfile(userId);
+    final resolvedUserId = profile.userId;
+    final (activity, publicLists) = await (
+      repository.getUserActivity(resolvedUserId),
+      repository.getPublicLists(resolvedUserId),
     ).wait;
 
     return SocialProfileDetailState(

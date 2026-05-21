@@ -31,22 +31,46 @@ void main() {
     expect(repo.publicListUserIds, ['user-1']);
   });
 
-  test('follow and unfollow while loading leave loading state intact', () async {
-    final repo = _FakeSocialRepository();
-    final container = ProviderContainer(
-      overrides: [socialRepositoryProvider.overrideWithValue(repo)],
-    );
-    addTearDown(container.dispose);
-    final notifier = container.read(
-      socialProfileViewModelProvider('user-1').notifier,
-    );
+  test(
+    'build loads me profile endpoint and uses resolved userId for details',
+    () async {
+      final repo = _FakeSocialRepository(myProfileUserId: 'current-user');
+      final container = ProviderContainer(
+        overrides: [socialRepositoryProvider.overrideWithValue(repo)],
+      );
+      addTearDown(container.dispose);
 
-    await notifier.follow();
-    await notifier.unfollow();
+      final state = await container.read(
+        socialProfileViewModelProvider('me').future,
+      );
 
-    expect(repo.followCalls, isEmpty);
-    expect(repo.unfollowCalls, isEmpty);
-  });
+      expect(state.profile.userId, 'current-user');
+      expect(repo.myProfileCalls, 1);
+      expect(repo.profileUserIds, isEmpty);
+      expect(repo.activityUserIds, ['current-user']);
+      expect(repo.publicListUserIds, ['current-user']);
+    },
+  );
+
+  test(
+    'follow and unfollow while loading leave loading state intact',
+    () async {
+      final repo = _FakeSocialRepository();
+      final container = ProviderContainer(
+        overrides: [socialRepositoryProvider.overrideWithValue(repo)],
+      );
+      addTearDown(container.dispose);
+      final notifier = container.read(
+        socialProfileViewModelProvider('user-1').notifier,
+      );
+
+      await notifier.follow();
+      await notifier.unfollow();
+
+      expect(repo.followCalls, isEmpty);
+      expect(repo.unfollowCalls, isEmpty);
+    },
+  );
 
   test(
     'follow toggles profile followed and increments followerCount',
@@ -199,11 +223,14 @@ class _FakeSocialRepository implements SocialRepository {
     this.initiallyFollowed = false,
     this.followCompleter,
     this.followError,
+    this.myProfileUserId = 'me',
   });
   final int initialFollowerCount;
   final bool initiallyFollowed;
   final Completer<void>? followCompleter;
   final Object? followError;
+  final String myProfileUserId;
+  var myProfileCalls = 0;
   final profileUserIds = <String>[];
   final activityUserIds = <String>[];
   final publicListUserIds = <String>[];
@@ -300,7 +327,20 @@ class _FakeSocialRepository implements SocialRepository {
     String? cursor,
   }) => throw UnimplementedError();
   @override
-  Future<SocialProfileModel> getMyProfile() => throw UnimplementedError();
+  Future<SocialProfileModel> getMyProfile() async {
+    myProfileCalls += 1;
+    return SocialProfileModel(
+      userId: myProfileUserId,
+      displayName: 'Fulano',
+      isPublic: true,
+      followingCount: 1,
+      followerCount: initialFollowerCount,
+      isFollowedByMe: initiallyFollowed,
+      createdAt: DateTime.utc(2026),
+      updatedAt: DateTime.utc(2026),
+    );
+  }
+
   @override
   Future<SocialProfileModel> updateMyProfile({
     required String displayName,
