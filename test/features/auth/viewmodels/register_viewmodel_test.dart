@@ -11,9 +11,11 @@ class FakeAuthRepo implements AuthRepository {
   bool failWithGeneric = false;
   bool failSignUp = false;
   bool failSignUpGeneric = false;
+  bool failSignUpUsernameExists = false;
   bool failConfirmSignUp = false;
   bool failConfirmSignUpGeneric = false;
   bool failResendSignUpCode = false;
+  int resendSignUpCodeCalls = 0;
 
   @override
   Future<String> signIn(String email, String password) async {
@@ -32,6 +34,9 @@ class FakeAuthRepo implements AuthRepository {
       throw AuthException('Email already in use');
     }
     if (failSignUpGeneric) throw Exception('Network error');
+    if (failSignUpUsernameExists) {
+      throw Exception('UsernameExistsException: User already exists');
+    }
   }
 
   @override
@@ -45,6 +50,7 @@ class FakeAuthRepo implements AuthRepository {
 
   @override
   Future<void> resendSignUpCode(String email) async {
+    resendSignUpCodeCalls++;
     if (failResendSignUpCode) throw Exception('Failed');
   }
 
@@ -267,6 +273,71 @@ void main() {
 
       final state = container.read(registerViewModelProvider);
       expect(state.errorMessage, 'Email already in use');
+      expect(state.isLoading, false);
+    });
+
+    test(
+      'submit() maps Cognito UsernameExistsException to duplicate email message',
+      () async {
+        final repo = FakeAuthRepo()..failSignUpUsernameExists = true;
+        final container = createContainer(repo);
+        addTearDown(container.dispose);
+
+        final notifier = container.read(registerViewModelProvider.notifier);
+        notifier.setEmail('test@email.com');
+        notifier.setPassword('Test1234');
+        notifier.setConfirmPassword('Test1234');
+        notifier.toggleTerms();
+
+        final result = await notifier.submit();
+        expect(result, false);
+
+        final state = container.read(registerViewModelProvider);
+        expect(
+          state.errorMessage,
+          'Este email já está cadastrado. Faça login ou use outro email.',
+        );
+        expect(state.isLoading, false);
+      },
+    );
+
+    test(
+      'resendExistingAccountCode resends code and shows confirmation',
+      () async {
+        final repo = FakeAuthRepo();
+        final container = createContainer(repo);
+        addTearDown(container.dispose);
+
+        final notifier = container.read(registerViewModelProvider.notifier);
+        notifier.setEmail('test@email.com');
+
+        final result = await notifier.resendExistingAccountCode();
+        expect(result, true);
+        expect(repo.resendSignUpCodeCalls, 1);
+
+        final state = container.read(registerViewModelProvider);
+        expect(state.showConfirmation, true);
+        expect(state.errorMessage, isNull);
+        expect(state.isLoading, false);
+      },
+    );
+
+    test('resendExistingAccountCode reports resend failures', () async {
+      final repo = FakeAuthRepo()..failResendSignUpCode = true;
+      final container = createContainer(repo);
+      addTearDown(container.dispose);
+
+      final notifier = container.read(registerViewModelProvider.notifier);
+      notifier.setEmail('test@email.com');
+
+      final result = await notifier.resendExistingAccountCode();
+      expect(result, false);
+
+      final state = container.read(registerViewModelProvider);
+      expect(
+        state.errorMessage,
+        'Não foi possível reenviar o código. Tente novamente.',
+      );
       expect(state.isLoading, false);
     });
 

@@ -243,6 +243,18 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             style: const TextStyle(color: Colors.redAccent, fontSize: 13),
             textAlign: TextAlign.center,
           ),
+          if (registerState.errorMessage!.contains('já está cadastrado')) ...[
+            const SizedBox(height: 8),
+            TextButton(
+              onPressed: () => ref
+                  .read(registerViewModelProvider.notifier)
+                  .resendExistingAccountCode(),
+              child: const Text(
+                'Reenviar código de confirmação',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
         ],
         const SizedBox(height: 16),
         TextButton(

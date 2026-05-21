@@ -69,7 +69,7 @@ class SocialRepositoryImpl implements SocialRepository {
 
   @override
   Future<SocialProfileModel> getMyProfile() async {
-    return _getProfile('/profiles/me', 'Failed to load profile');
+    return _getProfile('/users/me/profile', 'Failed to load profile');
   }
 
   @override
@@ -80,14 +80,14 @@ class SocialRepositoryImpl implements SocialRepository {
   }) async {
     try {
       final response = await _dio.put(
-        '/profiles/me',
+        '/users/me/profile',
         data: {
           'displayName': displayName,
           'avatarUrl': avatarUrl,
           'isPublic': isPublic,
         },
       );
-      return SocialProfileModel.fromJson(_responseMap(response.data));
+      return _profileFromResponse(response.data);
     } on DioException catch (e) {
       throw _repositoryException(e, 'Failed to update profile');
     }
@@ -217,7 +217,7 @@ class SocialRepositoryImpl implements SocialRepository {
   ) async {
     try {
       final response = await _dio.get(path);
-      return SocialProfileModel.fromJson(_responseMap(response.data));
+      return _profileFromResponse(response.data);
     } on DioException catch (e) {
       throw _repositoryException(e, fallbackMessage);
     }
@@ -242,6 +242,17 @@ class SocialRepositoryImpl implements SocialRepository {
 
   Map<String, dynamic> _paginationParams({required int limit, String? cursor}) {
     return {'limit': limit, 'cursor': ?cursor};
+  }
+
+  SocialProfileModel _profileFromResponse(dynamic data) {
+    final json = _responseMap(data);
+    const epoch = '1970-01-01T00:00:00.000Z';
+    json['createdAt'] ??= epoch;
+    json['updatedAt'] ??= epoch;
+    if (json['isFollowedByMe'] == null && json['isFollowing'] is bool) {
+      json['isFollowedByMe'] = json['isFollowing'];
+    }
+    return SocialProfileModel.fromJson(json);
   }
 
   Map<String, dynamic> _responseMap(dynamic data) {

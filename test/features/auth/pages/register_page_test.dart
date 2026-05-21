@@ -38,6 +38,8 @@ class FakeRegisterVM extends RegisterViewModel {
   void setConfirmationCode(String c) =>
       state = state.copyWith(confirmationCode: c);
 
+  var resendExistingAccountCodeCalls = 0;
+
   @override
   Future<bool> submit() async {
     if (!state.isValid) {
@@ -53,6 +55,13 @@ class FakeRegisterVM extends RegisterViewModel {
       return false;
     }
     state = state.copyWith(showConfirmation: true);
+    return true;
+  }
+
+  @override
+  Future<bool> resendExistingAccountCode() async {
+    resendExistingAccountCodeCalls++;
+    state = state.copyWith(showConfirmation: true, errorMessage: null);
     return true;
   }
 }
@@ -147,6 +156,31 @@ Future<void> main() async {
       await tester.pump();
 
       expect(find.text('Email in use'), findsOneWidget);
+    });
+
+    testWidgets('duplicate account error offers resend confirmation code', (
+      tester,
+    ) async {
+      final fakeVM = FakeRegisterVM(
+        state: const RegisterState(
+          email: 'a@b.com',
+          errorMessage:
+              'Este email já está cadastrado. Faça login ou use outro email.',
+        ),
+      );
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      expect(find.text('Reenviar código de confirmação'), findsOneWidget);
+
+      await tester.ensureVisible(find.text('Reenviar código de confirmação'));
+      await tester.tap(find.text('Reenviar código de confirmação'));
+      await tester.pump();
+
+      expect(fakeVM.resendExistingAccountCodeCalls, 1);
+      expect(find.text('Confirme seu e-mail'), findsOneWidget);
     });
 
     testWidgets('has login link', (tester) async {

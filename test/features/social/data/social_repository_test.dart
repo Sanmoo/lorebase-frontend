@@ -88,7 +88,7 @@ Map<String, dynamic> _publicListItemJson() => {
 
 void main() {
   group('SocialRepositoryImpl', () {
-    test('getMyProfile calls GET /profiles/me and parses model', () async {
+    test('getMyProfile calls GET /users/me/profile and parses model', () async {
       String? capturedMethod;
       String? capturedPath;
       final dio = Dio()
@@ -104,13 +104,43 @@ void main() {
       final result = await repo.getMyProfile();
 
       expect(capturedMethod, 'GET');
-      expect(capturedPath, '/profiles/me');
+      expect(capturedPath, '/users/me/profile');
       expect(result, isA<SocialProfileModel>());
       expect(result.userId, 'user-1');
     });
 
     test(
-      'updateMyProfile calls PUT /profiles/me with profile fields',
+      'getMyProfile tolerates BFF profile responses without timestamps',
+      () async {
+        final dio = Dio()
+          ..httpClientAdapter = MockAdapter(
+            onFetch: (_) => _jsonBody({
+              'userId': 'user-1',
+              'displayName': 'Fulano',
+              'avatarUrl': null,
+              'isPublic': true,
+              'followingCount': 0,
+              'followerCount': 0,
+            }),
+          );
+        final repo = SocialRepositoryImpl(dio);
+
+        final result = await repo.getMyProfile();
+
+        expect(result.userId, 'user-1');
+        expect(
+          result.createdAt,
+          DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
+        );
+        expect(
+          result.updatedAt,
+          DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
+        );
+      },
+    );
+
+    test(
+      'updateMyProfile calls PUT /users/me/profile with profile fields',
       () async {
         String? capturedMethod;
         String? capturedPath;
@@ -133,7 +163,7 @@ void main() {
         );
 
         expect(capturedMethod, 'PUT');
-        expect(capturedPath, '/profiles/me');
+        expect(capturedPath, '/users/me/profile');
         expect(capturedData, {
           'displayName': 'Fulano',
           'avatarUrl': 'https://example.com/a.jpg',

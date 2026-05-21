@@ -94,11 +94,17 @@ class RegisterViewModel extends _$RegisterViewModel {
   }
 
   void setConfirmPassword(String confirmPassword) {
-    state = state.copyWith(confirmPassword: confirmPassword, errorMessage: null);
+    state = state.copyWith(
+      confirmPassword: confirmPassword,
+      errorMessage: null,
+    );
   }
 
   void toggleTerms() {
-    state = state.copyWith(termsAccepted: !state.termsAccepted, errorMessage: null);
+    state = state.copyWith(
+      termsAccepted: !state.termsAccepted,
+      errorMessage: null,
+    );
   }
 
   void toggleObscurePassword() {
@@ -136,10 +142,19 @@ class RegisterViewModel extends _$RegisterViewModel {
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        errorMessage: 'Erro ao criar conta. Tente novamente.',
+        errorMessage: _signUpErrorMessage(e),
       );
       return false;
     }
+  }
+
+  String _signUpErrorMessage(Object error) {
+    final text = error.toString();
+    if (text.contains('UsernameExistsException') ||
+        text.contains('User already exists')) {
+      return 'Este email já está cadastrado. Faça login ou use outro email.';
+    }
+    return 'Erro ao criar conta. Tente novamente.';
   }
 
   Future<bool> confirmSignUp() async {
@@ -175,6 +190,22 @@ class RegisterViewModel extends _$RegisterViewModel {
       await repository.resendSignUpCode(state.email);
     } catch (_) {
       // Silently fail
+    }
+  }
+
+  Future<bool> resendExistingAccountCode() async {
+    state = state.copyWith(isLoading: true, errorMessage: null);
+    try {
+      final repository = ref.read(authRepositoryProvider);
+      await repository.resendSignUpCode(state.email);
+      state = state.copyWith(isLoading: false, showConfirmation: true);
+      return true;
+    } catch (_) {
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: 'Não foi possível reenviar o código. Tente novamente.',
+      );
+      return false;
     }
   }
 }
