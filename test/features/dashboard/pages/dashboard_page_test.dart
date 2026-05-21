@@ -547,7 +547,7 @@ Future<void> main() async {
       await tester.pumpWidget(_wrap(container));
       await tester.pump();
 
-      await tester.drag(find.byType(Scrollable), const Offset(0, -500));
+      await tester.ensureVisible(find.text('Recommendations for you'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Get recommendations'));
       await tester.pumpAndSettle();
@@ -567,7 +567,7 @@ Future<void> main() async {
       await tester.pumpWidget(_wrap(container));
       await tester.pump();
 
-      await tester.drag(find.byType(Scrollable), const Offset(0, -500));
+      await tester.ensureVisible(find.text('Recommendations for you'));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.auto_awesome_outlined), findsOneWidget);
@@ -579,10 +579,7 @@ Future<void> main() async {
       expect(find.text('Get recommendations'), findsOneWidget);
       expect(
         find.ancestor(
-          of: find.byWidgetPredicate(
-            (widget) =>
-                widget is Text && widget.data == 'Recommendations for you',
-          ),
+          of: find.text('Recommendations for you'),
           matching: find.byType(ListTile),
         ),
         findsNothing,
@@ -601,7 +598,7 @@ Future<void> main() async {
       await tester.pumpWidget(_wrap(container));
       await tester.pump();
 
-      await tester.drag(find.byType(Scrollable), const Offset(0, -500));
+      await tester.ensureVisible(find.text('Recommendations for you'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Recommendations for you'));
       await tester.pumpAndSettle();
