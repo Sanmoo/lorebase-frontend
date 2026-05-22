@@ -291,10 +291,14 @@ void main() {
   testWidgets('Onboarding save shows suggestions until finished', (
     tester,
   ) async {
+    var created = false;
     var finished = false;
     final repository = _FakeSocialRepository(discoverItems: [_discoverUser()]);
     await tester.pumpSocial(
-      SocialOnboardingPage(onProfileCreated: () => finished = true),
+      SocialOnboardingPage(
+        onProfileCreated: () => created = true,
+        onFinish: () => finished = true,
+      ),
       repository,
     );
 
@@ -304,6 +308,7 @@ void main() {
     await tester.tap(find.text('Salvar perfil'));
     await tester.pumpAndSettle();
 
+    expect(created, isTrue);
     expect(finished, isFalse);
     expect(find.text('Sugestões para seguir'), findsOneWidget);
     expect(find.text('Ciclano'), findsOneWidget);

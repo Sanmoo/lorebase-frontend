@@ -40,24 +40,47 @@ final mySocialProfileProvider = FutureProvider<SocialProfileModel>(
   },
 );
 
-class SocialPage extends ConsumerWidget {
+class SocialPage extends ConsumerStatefulWidget {
   const SocialPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SocialPage> createState() => _SocialPageState();
+}
+
+class _SocialPageState extends ConsumerState<SocialPage> {
+  bool _showOnboardingUntilFinished = false;
+
+  @override
+  Widget build(BuildContext context) {
     final profile = ref.watch(mySocialProfileProvider);
 
     return profile.when(
-      data: (profile) => _SocialTabs(profile: profile),
+      data: (profile) {
+        if (_showOnboardingUntilFinished) {
+          return _onboarding();
+        }
+        return _SocialTabs(profile: profile);
+      },
       error: (error, _) {
         if (error is ServerException && error.statusCode == 404) {
-          return SocialOnboardingPage(
-            onProfileCreated: () => ref.invalidate(mySocialProfileProvider),
-          );
+          return _onboarding();
         }
         return const Center(child: Text('Não foi possível carregar o Social.'));
       },
       loading: () => const Center(child: CircularProgressIndicator()),
+    );
+  }
+
+  Widget _onboarding() {
+    return SocialOnboardingPage(
+      onProfileCreated: () {
+        setState(() => _showOnboardingUntilFinished = true);
+        ref.invalidate(mySocialProfileProvider);
+      },
+      onFinish: () {
+        setState(() => _showOnboardingUntilFinished = false);
+        ref.invalidate(mySocialProfileProvider);
+      },
     );
   }
 }
