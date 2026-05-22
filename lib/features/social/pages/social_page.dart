@@ -15,7 +15,7 @@ import '../widgets/social_activity_card.dart';
 import '../widgets/social_empty_feed.dart';
 import 'social_onboarding_page.dart';
 
-final mySocialProfileProvider = FutureProvider<SocialProfileModel>(
+final mySocialProfileProvider = FutureProvider.autoDispose<SocialProfileModel>(
   retry: (_, _) => null,
   (ref) async {
     debugLog('[SocialProfile] load started');
@@ -74,7 +74,6 @@ class _SocialPageState extends ConsumerState<SocialPage> {
     return SocialOnboardingPage(
       onProfileCreated: () {
         setState(() => _showOnboardingUntilFinished = true);
-        ref.invalidate(mySocialProfileProvider);
       },
       onFinish: () {
         setState(() => _showOnboardingUntilFinished = false);
