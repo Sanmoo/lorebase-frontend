@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/errors/exceptions.dart';
+import '../../../../core/logging/debug_log.dart';
 import '../data/models/social_profile_model.dart';
 import '../data/repositories/social_repository.dart';
 import '../viewmodels/social_discover_viewmodel.dart';
@@ -16,7 +17,27 @@ import 'social_onboarding_page.dart';
 
 final mySocialProfileProvider = FutureProvider<SocialProfileModel>(
   retry: (_, _) => null,
-  (ref) => ref.watch(socialRepositoryProvider).getMyProfile(),
+  (ref) async {
+    debugLog('[SocialProfile] load started');
+    try {
+      final profile = await ref.watch(socialRepositoryProvider).getMyProfile();
+      debugLog('[SocialProfile] load success');
+      return profile;
+    } on ServerException catch (error) {
+      if (error.statusCode == 404) {
+        debugLog('[SocialProfile] load missing status=404');
+      } else {
+        debugLog(
+          '[SocialProfile] load failed status=${error.statusCode} '
+          'type=ServerException',
+        );
+      }
+      rethrow;
+    } catch (error) {
+      debugLog('[SocialProfile] load failed type=${error.runtimeType}');
+      rethrow;
+    }
+  },
 );
 
 class SocialPage extends ConsumerWidget {

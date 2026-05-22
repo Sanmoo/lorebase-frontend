@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/errors/exceptions.dart';
+import '../../../../core/logging/debug_log.dart';
 import '../../../../core/providers/core_providers.dart';
 import '../models/activity_event_model.dart';
 import '../models/discover_user_model.dart';
@@ -69,7 +70,31 @@ class SocialRepositoryImpl implements SocialRepository {
 
   @override
   Future<SocialProfileModel> getMyProfile() async {
-    return _getProfile('/profiles/me', 'Failed to load profile');
+    debugLog(
+      '[SocialProfile] repository getMyProfile started path=/profiles/me',
+    );
+    try {
+      final profile = await _getProfile(
+        '/profiles/me',
+        'Failed to load profile',
+      );
+      debugLog(
+        '[SocialProfile] repository getMyProfile success path=/profiles/me',
+      );
+      return profile;
+    } on ServerException catch (error) {
+      debugLog(
+        '[SocialProfile] repository getMyProfile failed '
+        'path=/profiles/me status=${error.statusCode}',
+      );
+      rethrow;
+    } catch (error) {
+      debugLog(
+        '[SocialProfile] repository getMyProfile failed '
+        'path=/profiles/me type=${error.runtimeType}',
+      );
+      rethrow;
+    }
   }
 
   @override
