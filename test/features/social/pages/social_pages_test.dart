@@ -31,6 +31,29 @@ void main() {
     expect(repository.getMyProfileCallCount, 1);
   });
 
+  testWidgets('Social page checks profile again after leaving missing state', (
+    tester,
+  ) async {
+    final repository = _FakeSocialRepository(missingProfile: true);
+    await tester.pumpSocial(const SocialPage(), repository);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Crie seu perfil social'), findsOneWidget);
+    expect(repository.getMyProfileCallCount, 1);
+
+    await tester.pumpWidget(const MaterialApp(home: Text('Home')));
+    await tester.pumpAndSettle();
+
+    repository.missingProfile = false;
+    await tester.pumpSocial(const SocialPage(), repository);
+    await tester.pumpAndSettle();
+
+    expect(repository.getMyProfileCallCount, 2);
+    expect(find.text('Crie seu perfil social'), findsNothing);
+    expect(find.text('Feed'), findsOneWidget);
+    expect(find.text('Discover'), findsOneWidget);
+  });
+
   testWidgets(
     'Social page existing profile renders compact profile link and tabs',
     (tester) async {
@@ -97,6 +120,36 @@ void main() {
     expect(find.text('Feed'), findsOneWidget);
     expect(find.text('Discover'), findsOneWidget);
   });
+
+  testWidgets(
+    'Social page does not show onboarding again after save without finish',
+    (tester) async {
+      final repository = _FakeSocialRepository(missingProfile: true);
+      await tester.pumpSocial(const SocialPage(), repository);
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextFormField).first, 'Fulano');
+      await tester.tap(find.text('Público'));
+      await tester.pump();
+      await tester.tap(find.text('Salvar perfil'));
+      await tester.pumpAndSettle();
+
+      expect(repository.savedProfile, isTrue);
+      expect(find.text('Sugestões para seguir'), findsOneWidget);
+      expect(find.text('Crie seu perfil social'), findsNothing);
+
+      await tester.pumpWidget(const MaterialApp(home: Text('Home')));
+      await tester.pumpAndSettle();
+
+      await tester.pumpSocial(const SocialPage(), repository);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Crie seu perfil social'), findsNothing);
+      expect(find.text('Feed'), findsOneWidget);
+      expect(find.text('Discover'), findsOneWidget);
+      expect(repository.getMyProfileCallCount, greaterThanOrEqualTo(2));
+    },
+  );
 
   testWidgets('Edit social profile loads current profile before saving', (
     tester,
