@@ -35,17 +35,18 @@ void main() {
     tester,
   ) async {
     final repository = _FakeSocialRepository(missingProfile: true);
-    await tester.pumpSocial(const SocialPage(), repository);
+    final child = ValueNotifier<Widget>(const SocialPage());
+    await tester.pumpSocialHost(child, repository);
     await tester.pumpAndSettle();
 
     expect(find.text('Crie seu perfil social'), findsOneWidget);
     expect(repository.getMyProfileCallCount, 1);
 
-    await tester.pumpWidget(const MaterialApp(home: Text('Home')));
+    child.value = const Text('Home');
     await tester.pumpAndSettle();
 
     repository.missingProfile = false;
-    await tester.pumpSocial(const SocialPage(), repository);
+    child.value = const SocialPage();
     await tester.pumpAndSettle();
 
     expect(repository.getMyProfileCallCount, 2);
@@ -125,7 +126,8 @@ void main() {
     'Social page does not show onboarding again after save without finish',
     (tester) async {
       final repository = _FakeSocialRepository(missingProfile: true);
-      await tester.pumpSocial(const SocialPage(), repository);
+      final child = ValueNotifier<Widget>(const SocialPage());
+      await tester.pumpSocialHost(child, repository);
       await tester.pumpAndSettle();
 
       await tester.enterText(find.byType(TextFormField).first, 'Fulano');
@@ -138,16 +140,16 @@ void main() {
       expect(find.text('Sugestões para seguir'), findsOneWidget);
       expect(find.text('Crie seu perfil social'), findsNothing);
 
-      await tester.pumpWidget(const MaterialApp(home: Text('Home')));
+      child.value = const Text('Home');
       await tester.pumpAndSettle();
 
-      await tester.pumpSocial(const SocialPage(), repository);
+      child.value = const SocialPage();
       await tester.pumpAndSettle();
 
       expect(find.text('Crie seu perfil social'), findsNothing);
       expect(find.text('Feed'), findsOneWidget);
       expect(find.text('Discover'), findsOneWidget);
-      expect(repository.getMyProfileCallCount, greaterThanOrEqualTo(2));
+      expect(repository.getMyProfileCallCount, 2);
     },
   );
 
@@ -317,6 +319,25 @@ extension on WidgetTester {
       ProviderScope(
         overrides: [socialRepositoryProvider.overrideWithValue(repository)],
         child: MaterialApp(home: Scaffold(body: child)),
+      ),
+    );
+  }
+
+  Future<void> pumpSocialHost(
+    ValueNotifier<Widget> child,
+    SocialRepository repository,
+  ) {
+    return pumpWidget(
+      ProviderScope(
+        overrides: [socialRepositoryProvider.overrideWithValue(repository)],
+        child: MaterialApp(
+          home: Scaffold(
+            body: ValueListenableBuilder<Widget>(
+              valueListenable: child,
+              builder: (context, value, _) => value,
+            ),
+          ),
+        ),
       ),
     );
   }
