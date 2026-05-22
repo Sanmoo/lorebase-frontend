@@ -58,10 +58,9 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
 
   void _loadTrackingForTab(int index) {
     final status = TrackingStatus.values[index].value;
-    ref.read(trackingListViewModelProvider.notifier).loadTracking(
-          status: status,
-          mediaType: _selectedType,
-        );
+    ref
+        .read(trackingListViewModelProvider.notifier)
+        .loadTracking(status: status, mediaType: _selectedType);
   }
 
   @override
@@ -69,9 +68,9 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
     final t = context.t;
     ref.listen<String?>(trackingBackgroundErrorProvider, (prev, next) {
       if (next != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(next)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(next)));
         ref.read(trackingBackgroundErrorProvider.notifier).state = null;
       }
     });
@@ -91,7 +90,8 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
             ),
           ),
           Container(
-            color: Theme.of(context).appBarTheme.backgroundColor ??
+            color:
+                Theme.of(context).appBarTheme.backgroundColor ??
                 Theme.of(context).primaryColor,
             child: TabBar(
               controller: _tabController,
@@ -116,10 +116,14 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
                     if (trackings.isEmpty) {
                       return EmptyStateWidget(
                         message: _selectedType == MediaType.series
-                            ? t.tracking_empty.replaceFirst('{status}',
-                                TrackingStatus.values[index].label(t))
-                            : t.tracking_empty_movies.replaceFirst('{status}',
-                                TrackingStatus.values[index].label(t)),
+                            ? t.tracking_empty.replaceFirst(
+                                '{status}',
+                                TrackingStatus.values[index].label(t),
+                              )
+                            : t.tracking_empty_movies.replaceFirst(
+                                '{status}',
+                                TrackingStatus.values[index].label(t),
+                              ),
                         icon: Icons.tv_off,
                       );
                     }
@@ -127,11 +131,11 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
                       padding: const EdgeInsets.all(16.0),
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        childAspectRatio: 0.50,
-                        crossAxisSpacing: 12,
-                        mainAxisSpacing: 12,
-                      ),
+                            crossAxisCount: 3,
+                            childAspectRatio: 0.50,
+                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 12,
+                          ),
                       itemCount: trackings.length,
                       itemBuilder: (context, i) {
                         final tracking = trackings[i];
@@ -147,16 +151,18 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
                               TrackedMediaPoster(
                                 media: media,
                                 width: constraints.maxWidth,
-                                onTap: () {
+                                onTap: () async {
                                   final id = media.mediaId.isNotEmpty
                                       ? media.mediaId
                                       : tracking.mediaId;
                                   if (id.isEmpty) return;
                                   final path =
                                       tracking.mediaType == MediaType.series
-                                          ? '/series/$id'
-                                          : '/movies/$id';
-                                  context.push(path);
+                                      ? '/series/$id'
+                                      : '/movies/$id';
+                                  await context.push(path);
+                                  if (!context.mounted) return;
+                                  _loadTrackingForTab(_tabController.index);
                                 },
                               ),
                               const SizedBox(height: 4),

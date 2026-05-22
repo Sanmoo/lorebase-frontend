@@ -39,6 +39,7 @@ TrackedMediaSummaryModel _media(int id) => TrackedMediaSummaryModel(
 
 class FakeTrackingListVM extends TrackingListViewModel {
   final AsyncValue<List<TrackedMediaModel>> testState;
+  int loadTrackingCallCount = 0;
   FakeTrackingListVM({AsyncValue<List<TrackedMediaModel>>? state})
     : testState = state ?? const AsyncValue.data([]);
 
@@ -48,7 +49,10 @@ class FakeTrackingListVM extends TrackingListViewModel {
   Future<void> loadTracking({
     String? status,
     MediaType mediaType = MediaType.series,
-  }) async {}
+  }) async {
+    loadTrackingCallCount++;
+  }
+
   @override
   Future<void> loadMore() async {}
   @override
@@ -77,6 +81,15 @@ Widget _wrap(ProviderContainer container) {
             GoRoute(
               path: '/tracking',
               builder: (_, _) => const TrackingListPage(),
+            ),
+            GoRoute(
+              path: '/series/:tmdbId',
+              builder: (context, _) => Scaffold(
+                body: TextButton(
+                  onPressed: () => context.pop(),
+                  child: const Text('Back from detail'),
+                ),
+              ),
             ),
           ],
         ),
@@ -254,6 +267,34 @@ Future<void> main() async {
       await tester.pump(const Duration(milliseconds: 100));
 
       expect(find.text('Test'), findsOneWidget);
+    });
+
+    testWidgets('reloads current tab after returning from detail', (
+      tester,
+    ) async {
+      const media = TrackedMediaSummaryModel(
+        mediaId: '5',
+        title: 'Test',
+        mediaType: MediaType.series,
+      );
+      final fakeVM = FakeTrackingListVM(
+        state: AsyncValue.data([
+          _tracking('t1', 'WANT_TO_WATCH', media: media),
+        ]),
+      );
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+      expect(fakeVM.loadTrackingCallCount, 1);
+
+      await tester.tap(find.text('Test'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Back from detail'));
+      await tester.pumpAndSettle();
+
+      expect(fakeVM.loadTrackingCallCount, 2);
     });
 
     testWidgets('switching to Movies shows movie empty state copy', (
