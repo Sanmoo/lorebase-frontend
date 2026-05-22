@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -121,6 +123,39 @@ void main() {
     expect(find.text('Feed'), findsOneWidget);
     expect(find.text('Discover'), findsOneWidget);
   });
+
+  testWidgets(
+    'Social page keeps onboarding suggestions during profile refresh',
+    (tester) async {
+      final repository = _FakeSocialRepository(
+        missingProfile: true,
+        discoverItems: [_discoverUser()],
+      );
+      await tester.pumpSocial(const SocialPage(), repository);
+      await tester.pumpAndSettle();
+
+      repository.pauseNextProfileLoad();
+      await tester.enterText(find.byType(TextFormField).first, 'Fulano');
+      await tester.tap(find.text('Público'));
+      await tester.pump();
+      await tester.tap(find.text('Salvar perfil'));
+      await tester.pump();
+      await tester.pump();
+
+      expect(repository.savedProfile, isTrue);
+      expect(find.text('Sugestões para seguir'), findsOneWidget);
+      expect(find.text('Ciclano'), findsOneWidget);
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.text('Crie seu perfil social'), findsNothing);
+
+      repository.resumeProfileLoad();
+      await tester.pumpAndSettle();
+
+      expect(find.text('Sugestões para seguir'), findsOneWidget);
+      expect(find.text('Ciclano'), findsOneWidget);
+      expect(find.text('Crie seu perfil social'), findsNothing);
+    },
+  );
 
   testWidgets(
     'Social page does not show onboarding again after save without finish',
@@ -404,13 +439,27 @@ class _FakeSocialRepository implements SocialRepository {
   final List<ActivityEventModel> activityItems;
   bool savedProfile = false;
   int getMyProfileCallCount = 0;
+  Completer<void>? _profileLoadCompleter;
   String? savedDisplayName;
   String? savedAvatarUrl;
   bool? savedIsPublic;
 
+  void pauseNextProfileLoad() {
+    _profileLoadCompleter = Completer<void>();
+  }
+
+  void resumeProfileLoad() {
+    _profileLoadCompleter?.complete();
+    _profileLoadCompleter = null;
+  }
+
   @override
   Future<SocialProfileModel> getMyProfile() async {
     getMyProfileCallCount += 1;
+    final profileLoadCompleter = _profileLoadCompleter;
+    if (profileLoadCompleter != null) {
+      await profileLoadCompleter.future;
+    }
     if (missingProfile) {
       throw const ServerException(message: 'Missing', statusCode: 404);
     }

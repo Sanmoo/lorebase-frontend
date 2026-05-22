@@ -52,15 +52,14 @@ class _SocialPageState extends ConsumerState<SocialPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_showOnboardingUntilFinished) {
+      return _onboarding();
+    }
+
     final profile = ref.watch(mySocialProfileProvider);
 
     return profile.when(
-      data: (profile) {
-        if (_showOnboardingUntilFinished) {
-          return _onboarding();
-        }
-        return _SocialTabs(profile: profile);
-      },
+      data: (profile) => _SocialTabs(profile: profile),
       error: (error, _) {
         if (error is ServerException && error.statusCode == 404) {
           return _onboarding();

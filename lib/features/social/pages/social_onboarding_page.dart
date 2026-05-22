@@ -125,8 +125,14 @@ class _SocialOnboardingPageState extends ConsumerState<SocialOnboardingPage> {
               : _avatarUrlController.text.trim(),
           privacy: privacy,
         );
+    if (!mounted) {
+      return;
+    }
     if (ref.read(socialOnboardingViewModelProvider).profile != null) {
       widget.onProfileCreated?.call();
+      if (!mounted) {
+        return;
+      }
       setState(() => _showSuggestions = true);
     }
   }
