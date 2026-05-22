@@ -80,7 +80,7 @@ class SocialRepositoryImpl implements SocialRepository {
   }) async {
     try {
       final response = await _dio.put(
-        '/profiles/me',
+        '/users/me/profile',
         data: {
           'displayName': displayName,
           'avatarUrl': avatarUrl,

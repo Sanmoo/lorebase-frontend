@@ -140,7 +140,7 @@ void main() {
     );
 
     test(
-      'updateMyProfile calls PUT /profiles/me with profile fields',
+      'updateMyProfile calls PUT /users/me/profile with profile fields',
       () async {
         String? capturedMethod;
         String? capturedPath;
@@ -163,7 +163,7 @@ void main() {
         );
 
         expect(capturedMethod, 'PUT');
-        expect(capturedPath, '/profiles/me');
+        expect(capturedPath, '/users/me/profile');
         expect(capturedData, {
           'displayName': 'Fulano',
           'avatarUrl': 'https://example.com/a.jpg',
