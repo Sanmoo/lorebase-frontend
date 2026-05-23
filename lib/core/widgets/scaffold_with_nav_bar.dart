@@ -45,10 +45,12 @@ class ScaffoldWithNavBar extends ConsumerWidget {
         title: Text(t.app_title),
         actions: [
           IconButton(
+            tooltip: 'Change language',
             icon: const Icon(Icons.language),
             onPressed: () => _showLanguageSheet(context, ref, t),
           ),
           IconButton(
+            tooltip: 'Sign out',
             icon: const Icon(Icons.logout),
             onPressed: () => ref.read(authViewModelProvider.notifier).signOut(),
           ),

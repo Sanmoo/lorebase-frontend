@@ -117,11 +117,14 @@ Future<void> main() async {
       expect(find.text('Recommend'), findsNothing);
     });
 
-    testWidgets('renders logout icon button', (tester) async {
+    testWidgets('renders header buttons with accessible labels', (
+      tester,
+    ) async {
       await tester.pumpWidget(_wrapWithRouter(const Text('Content')));
       await tester.pumpAndSettle();
 
-      expect(find.byIcon(Icons.logout), findsOneWidget);
+      expect(find.byTooltip('Change language'), findsOneWidget);
+      expect(find.byTooltip('Sign out'), findsOneWidget);
     });
 
     testWidgets('logout button calls signOut', (tester) async {

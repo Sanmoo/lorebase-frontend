@@ -191,6 +191,19 @@ Future<void> main() async {
       expect(tester.testTextInput.isVisible, isTrue);
     });
 
+    testWidgets('clear search button has an accessible label', (tester) async {
+      final fakeVM = FakeSearchVM();
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.enterText(find.byType(TextField), 'breaking');
+      await tester.pump();
+
+      expect(find.byTooltip('Clear search'), findsOneWidget);
+    });
+
     testWidgets('typing text triggers debounced search', (tester) async {
       final fakeVM = FakeSearchVM();
       final container = createContainer(fakeVM);

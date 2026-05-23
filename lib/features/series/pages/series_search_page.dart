@@ -28,10 +28,22 @@ class _SeriesSearchPageState extends ConsumerState<SeriesSearchPage> {
   MediaType _selectedType = MediaType.series;
 
   @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(_onSearchTextChanged);
+  }
+
+  @override
   void dispose() {
     _debounceTimer?.cancel();
-    _searchController.dispose();
+    _searchController
+      ..removeListener(_onSearchTextChanged)
+      ..dispose();
     super.dispose();
+  }
+
+  void _onSearchTextChanged() {
+    setState(() {});
   }
 
   void _onTypeChanged(MediaType type) {
@@ -82,6 +94,7 @@ class _SeriesSearchPageState extends ConsumerState<SeriesSearchPage> {
             border: InputBorder.none,
             suffixIcon: _searchController.text.isNotEmpty
                 ? IconButton(
+                    tooltip: 'Clear search',
                     icon: const Icon(Icons.clear),
                     onPressed: _onClear,
                   )
@@ -133,10 +146,8 @@ class _SearchResultsBody extends ConsumerWidget {
     if (mediaType == MediaType.series) {
       return seriesState.when(
         loading: () => const LoadingWidget(),
-        error: (error, _) => AppErrorWidget(
-          message: error.toString(),
-          onRetry: onRetry,
-        ),
+        error: (error, _) =>
+            AppErrorWidget(message: error.toString(), onRetry: onRetry),
         data: (series) {
           if (series.isEmpty && query.isEmpty) {
             return EmptyStateWidget(
@@ -171,10 +182,8 @@ class _SearchResultsBody extends ConsumerWidget {
     } else {
       return movieState.when(
         loading: () => const LoadingWidget(),
-        error: (error, _) => AppErrorWidget(
-          message: error.toString(),
-          onRetry: onRetry,
-        ),
+        error: (error, _) =>
+            AppErrorWidget(message: error.toString(), onRetry: onRetry),
         data: (movies) {
           if (movies.isEmpty && query.isEmpty) {
             return EmptyStateWidget(
