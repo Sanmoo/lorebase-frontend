@@ -1,0 +1,6 @@
+schema_version: 1
+repo_id: lorebase-frontend
+main_branch: main
+default_backlog:
+    claim_policy:
+        stale_after: 1d
