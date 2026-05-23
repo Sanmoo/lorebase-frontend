@@ -264,7 +264,22 @@ class SocialRepositoryImpl implements SocialRepository {
     if (normalizedJson['updatedAt'] == '') {
       normalizedJson['updatedAt'] = null;
     }
+    normalizedJson['media'] ??= _mediaFromPublicListJson(normalizedJson);
     return PublicListItemModel.fromJson(normalizedJson);
+  }
+
+  Map<String, dynamic>? _mediaFromPublicListJson(Map<String, dynamic> json) {
+    final title = (json['title'] as String?)?.trim();
+    if (title == null || title.isEmpty) {
+      return null;
+    }
+
+    return {
+      'mediaId': json['mediaId'],
+      'mediaType': json['mediaType'],
+      'title': title,
+      'posterUrl': json['posterUrl'],
+    };
   }
 
   SocialProfileModel _profileFromResponse(dynamic data) {
