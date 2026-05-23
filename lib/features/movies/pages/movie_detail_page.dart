@@ -112,9 +112,8 @@ class MovieDetailPage extends ConsumerWidget {
             : null,
         removeLabel: ctx.t.series_detail_remove_from_list,
         removeConfirmTitle: ctx.t.series_detail_remove_from_list,
-        removeConfirmMessage: ctx.t.series_detail_remove_confirm.replaceFirst(
-          '{title}',
-          movie.title,
+        removeConfirmMessage: ctx.t.series_detail_remove_confirm(
+          title: movie.title,
         ),
       ),
     );
