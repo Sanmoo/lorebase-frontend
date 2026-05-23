@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/errors/exceptions.dart';
+import '../../../../core/logging/debug_log.dart';
 import '../data/models/social_profile_model.dart';
 import '../data/repositories/social_repository.dart';
 import '../viewmodels/social_discover_viewmodel.dart';
@@ -14,29 +15,70 @@ import '../widgets/social_activity_card.dart';
 import '../widgets/social_empty_feed.dart';
 import 'social_onboarding_page.dart';
 
-final mySocialProfileProvider = FutureProvider<SocialProfileModel>(
+final mySocialProfileProvider = FutureProvider.autoDispose<SocialProfileModel>(
   retry: (_, _) => null,
-  (ref) => ref.watch(socialRepositoryProvider).getMyProfile(),
+  (ref) async {
+    debugLog('[SocialProfile] load started');
+    try {
+      final profile = await ref.watch(socialRepositoryProvider).getMyProfile();
+      debugLog('[SocialProfile] load success');
+      return profile;
+    } on ServerException catch (error) {
+      if (error.statusCode == 404) {
+        debugLog('[SocialProfile] load missing status=404');
+      } else {
+        debugLog(
+          '[SocialProfile] load failed status=${error.statusCode} '
+          'type=ServerException',
+        );
+      }
+      rethrow;
+    } catch (error) {
+      debugLog('[SocialProfile] load failed type=${error.runtimeType}');
+      rethrow;
+    }
+  },
 );
 
-class SocialPage extends ConsumerWidget {
+class SocialPage extends ConsumerStatefulWidget {
   const SocialPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SocialPage> createState() => _SocialPageState();
+}
+
+class _SocialPageState extends ConsumerState<SocialPage> {
+  bool _showOnboardingUntilFinished = false;
+
+  @override
+  Widget build(BuildContext context) {
+    if (_showOnboardingUntilFinished) {
+      return _onboarding();
+    }
+
     final profile = ref.watch(mySocialProfileProvider);
 
     return profile.when(
       data: (profile) => _SocialTabs(profile: profile),
       error: (error, _) {
         if (error is ServerException && error.statusCode == 404) {
-          return SocialOnboardingPage(
-            onProfileCreated: () => ref.invalidate(mySocialProfileProvider),
-          );
+          return _onboarding();
         }
         return const Center(child: Text('Não foi possível carregar o Social.'));
       },
       loading: () => const Center(child: CircularProgressIndicator()),
+    );
+  }
+
+  Widget _onboarding() {
+    return SocialOnboardingPage(
+      onProfileCreated: () {
+        setState(() => _showOnboardingUntilFinished = true);
+      },
+      onFinish: () {
+        setState(() => _showOnboardingUntilFinished = false);
+        ref.invalidate(mySocialProfileProvider);
+      },
     );
   }
 }

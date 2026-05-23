@@ -9,9 +9,10 @@ import '../viewmodels/social_onboarding_viewmodel.dart';
 import '../widgets/discover_user_card.dart';
 
 class SocialOnboardingPage extends ConsumerStatefulWidget {
-  const SocialOnboardingPage({super.key, this.onProfileCreated});
+  const SocialOnboardingPage({super.key, this.onProfileCreated, this.onFinish});
 
   final VoidCallback? onProfileCreated;
+  final VoidCallback? onFinish;
 
   @override
   ConsumerState<SocialOnboardingPage> createState() =>
@@ -38,9 +39,7 @@ class _SocialOnboardingPageState extends ConsumerState<SocialOnboardingPage> {
     final state = ref.watch(socialOnboardingViewModelProvider);
 
     if (_showSuggestions) {
-      return _OnboardingSuggestions(
-        onFinish: () => widget.onProfileCreated?.call(),
-      );
+      return _OnboardingSuggestions(onFinish: () => widget.onFinish?.call());
     }
 
     return SingleChildScrollView(
@@ -126,7 +125,14 @@ class _SocialOnboardingPageState extends ConsumerState<SocialOnboardingPage> {
               : _avatarUrlController.text.trim(),
           privacy: privacy,
         );
+    if (!mounted) {
+      return;
+    }
     if (ref.read(socialOnboardingViewModelProvider).profile != null) {
+      widget.onProfileCreated?.call();
+      if (!mounted) {
+        return;
+      }
       setState(() => _showSuggestions = true);
     }
   }
@@ -172,9 +178,8 @@ class _OnboardingSuggestions extends ConsumerWidget {
                 },
               );
             },
-            error: (_, _) => const Center(
-              child: Text('Erro ao descobrir pessoas.'),
-            ),
+            error: (_, _) =>
+                const Center(child: Text('Erro ao descobrir pessoas.')),
             loading: () => const Center(child: CircularProgressIndicator()),
           ),
         ),
