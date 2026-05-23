@@ -128,6 +128,45 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// pt-BR: 'Mostrar menos'
 	String get series_detail_show_less => 'Mostrar menos';
 
+	/// pt-BR: 'Episódios'
+	String get series_detail_episodes => 'Episódios';
+
+	/// pt-BR: 'Nota TMDB'
+	String get series_detail_tmdb_rating => 'Nota TMDB';
+
+	/// pt-BR: '{count} votos'
+	String get series_detail_vote_count => '{count} votos';
+
+	/// pt-BR: 'Mais detalhes'
+	String get series_detail_more_details => 'Mais detalhes';
+
+	/// pt-BR: 'Criado por'
+	String get series_detail_created_by => 'Criado por';
+
+	/// pt-BR: 'País de origem'
+	String get series_detail_origin_country => 'País de origem';
+
+	/// pt-BR: 'Tipo'
+	String get series_detail_type => 'Tipo';
+
+	/// pt-BR: 'Popularidade'
+	String get series_detail_popularity => 'Popularidade';
+
+	/// pt-BR: 'Último episódio'
+	String get series_detail_last_episode => 'Último episódio';
+
+	/// pt-BR: 'Próximo episódio'
+	String get series_detail_next_episode => 'Próximo episódio';
+
+	/// pt-BR: 'T{season}E{episode}'
+	String get series_detail_episode_code => 'T{season}E{episode}';
+
+	/// pt-BR: '{code} · {date}'
+	String get series_detail_episode_date => '{code} · {date}';
+
+	/// pt-BR: '—'
+	String get series_detail_not_available => '—';
+
 	/// pt-BR: 'Primeira Exibição'
 	String get series_detail_first_air_date => 'Primeira Exibição';
 
@@ -394,6 +433,19 @@ extension on Translations {
 			'series_detail_no_description' => 'Nenhuma descrição disponível.',
 			'series_detail_show_more' => 'Mostrar mais',
 			'series_detail_show_less' => 'Mostrar menos',
+			'series_detail_episodes' => 'Episódios',
+			'series_detail_tmdb_rating' => 'Nota TMDB',
+			'series_detail_vote_count' => '{count} votos',
+			'series_detail_more_details' => 'Mais detalhes',
+			'series_detail_created_by' => 'Criado por',
+			'series_detail_origin_country' => 'País de origem',
+			'series_detail_type' => 'Tipo',
+			'series_detail_popularity' => 'Popularidade',
+			'series_detail_last_episode' => 'Último episódio',
+			'series_detail_next_episode' => 'Próximo episódio',
+			'series_detail_episode_code' => 'T{season}E{episode}',
+			'series_detail_episode_date' => '{code} · {date}',
+			'series_detail_not_available' => '—',
 			'series_detail_first_air_date' => 'Primeira Exibição',
 			'series_detail_seasons' => 'Temporadas',
 			'series_detail_networks' => 'Redes',
