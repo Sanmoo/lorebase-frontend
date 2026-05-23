@@ -526,8 +526,8 @@ return $default(_that.tmdbId,_that.title,_that.overview,_that.posterPath,_that.b
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(explicitToJson: true)
 class _SeriesModel implements SeriesModel {
   const _SeriesModel({@JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson) required this.tmdbId, required this.title, this.overview, this.posterPath, this.backdropPath, this.firstAirDate, final  List<String> genres = const [], final  List<String> networks = const [], this.seasonCount = 0, this.status, this.seriesId, this.createdAt, this.voteAverage, this.voteCount, this.popularity, final  List<String> originCountry = const [], final  List<int> episodeRunTime = const [], this.numberOfEpisodes = 0, final  List<String> createdBy = const [], this.type, this.lastEpisodeToAir, this.nextEpisodeToAir}): _genres = genres,_networks = networks,_originCountry = originCountry,_episodeRunTime = episodeRunTime,_createdBy = createdBy;
   factory _SeriesModel.fromJson(Map<String, dynamic> json) => _$SeriesModelFromJson(json);

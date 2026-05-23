@@ -20,6 +20,7 @@ abstract class EpisodeAirInfoModel with _$EpisodeAirInfoModel {
 
 @freezed
 abstract class SeriesModel with _$SeriesModel {
+  @JsonSerializable(explicitToJson: true)
   const factory SeriesModel({
     @JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)
     required int tmdbId,

@@ -129,6 +129,62 @@ void main() {
       expect(restored.status, original.status);
     });
 
+    test(
+      'toJson() → fromJson() roundtrip preserves nested episode metadata',
+      () {
+        final original = SeriesModel.fromJson({
+          ...completeJson,
+          'seriesId': 'series-123',
+          'createdAt': '2026-05-23T19:49:39Z',
+          'voteAverage': 8.461,
+          'voteCount': 26839,
+          'popularity': 188.7155,
+          'originCountry': ['US'],
+          'episodeRunTime': [57, 60],
+          'numberOfEpisodes': 73,
+          'createdBy': ['David Benioff', 'D. B. Weiss'],
+          'type': 'Scripted',
+          'lastEpisodeToAir': {
+            'airDate': '2019-05-19',
+            'episodeNumber': 6,
+            'seasonNumber': 8,
+            'name': 'The Iron Throne',
+            'overview': 'Final episode.',
+          },
+          'nextEpisodeToAir': {
+            'airDate': '2026-01-01',
+            'episodeNumber': 1,
+            'seasonNumber': 9,
+            'name': 'Future Episode',
+            'overview': 'A future episode.',
+          },
+        });
+        final json = original.toJson();
+        final restored = SeriesModel.fromJson(json);
+
+        expect(restored.seriesId, original.seriesId);
+        expect(restored.createdAt, original.createdAt);
+        expect(restored.voteAverage, original.voteAverage);
+        expect(restored.voteCount, original.voteCount);
+        expect(restored.popularity, original.popularity);
+        expect(restored.originCountry, original.originCountry);
+        expect(restored.episodeRunTime, original.episodeRunTime);
+        expect(restored.numberOfEpisodes, original.numberOfEpisodes);
+        expect(restored.createdBy, original.createdBy);
+        expect(restored.type, original.type);
+        expect(restored.lastEpisodeToAir?.name, 'The Iron Throne');
+        expect(restored.lastEpisodeToAir?.airDate, '2019-05-19');
+        expect(restored.lastEpisodeToAir?.episodeNumber, 6);
+        expect(restored.lastEpisodeToAir?.seasonNumber, 8);
+        expect(restored.lastEpisodeToAir?.overview, 'Final episode.');
+        expect(restored.nextEpisodeToAir?.name, 'Future Episode');
+        expect(restored.nextEpisodeToAir?.airDate, '2026-01-01');
+        expect(restored.nextEpisodeToAir?.episodeNumber, 1);
+        expect(restored.nextEpisodeToAir?.seasonNumber, 9);
+        expect(restored.nextEpisodeToAir?.overview, 'A future episode.');
+      },
+    );
+
     test('fromJson accepts tmdbId as String', () {
       const jsonWithStringId = {
         'tmdbId': '123',

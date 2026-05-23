@@ -94,6 +94,6 @@ Map<String, dynamic> _$SeriesModelToJson(_SeriesModel instance) =>
       'numberOfEpisodes': instance.numberOfEpisodes,
       'createdBy': instance.createdBy,
       'type': instance.type,
-      'lastEpisodeToAir': instance.lastEpisodeToAir,
-      'nextEpisodeToAir': instance.nextEpisodeToAir,
+      'lastEpisodeToAir': instance.lastEpisodeToAir?.toJson(),
+      'nextEpisodeToAir': instance.nextEpisodeToAir?.toJson(),
     };
