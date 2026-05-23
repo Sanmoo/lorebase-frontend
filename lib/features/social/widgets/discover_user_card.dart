@@ -8,11 +8,13 @@ class DiscoverUserCard extends StatelessWidget {
     required this.user,
     required this.onFollow,
     this.onUserTap,
+    this.isFollowing = false,
   });
 
   final DiscoverUserModel user;
   final VoidCallback onFollow;
   final VoidCallback? onUserTap;
+  final bool isFollowing;
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +45,18 @@ class DiscoverUserCard extends StatelessWidget {
                     ),
                   ),
                   FilledButton.tonal(
-                    onPressed: user.isFollowedByMe ? null : onFollow,
-                    child: Text(user.isFollowedByMe ? 'Seguindo' : 'Seguir'),
+                    onPressed: user.isFollowedByMe || isFollowing
+                        ? null
+                        : onFollow,
+                    child: isFollowing
+                        ? Semantics(
+                            label: 'Seguindo usuário',
+                            child: const SizedBox.square(
+                              dimension: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          )
+                        : Text(user.isFollowedByMe ? 'Seguindo' : 'Seguir'),
                   ),
                 ],
               ),

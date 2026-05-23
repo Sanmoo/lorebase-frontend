@@ -320,6 +320,58 @@ void main() {
     );
   });
 
+  testWidgets(
+    'Discover follow shows loading and updates to followed on success',
+    (tester) async {
+      final repository = _FakeSocialRepository(
+        discoverItems: [_discoverUser()],
+      );
+      repository.pauseNextFollow();
+      await tester.pumpSocial(const SocialPage(), repository);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Discover'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Seguir'));
+      await tester.pump();
+
+      expect(repository.followedUserIds, ['user-2']);
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(find.bySemanticsLabel('Seguindo usuário'), findsOneWidget);
+      expect(find.text('Seguir'), findsNothing);
+
+      repository.resumeFollow();
+      await tester.pumpAndSettle();
+
+      expect(find.text('Seguindo'), findsOneWidget);
+      expect(find.text('Não foi possível seguir este usuário.'), findsNothing);
+    },
+  );
+
+  testWidgets('Discover follow failure shows feedback and restores button', (
+    tester,
+  ) async {
+    final repository = _FakeSocialRepository(discoverItems: [_discoverUser()])
+      ..followError = const ServerException(
+        message: 'Follow failed',
+        statusCode: 500,
+      );
+    await tester.pumpSocial(const SocialPage(), repository);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Discover'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Seguir'));
+    await tester.pumpAndSettle();
+
+    expect(repository.followedUserIds, ['user-2']);
+    expect(find.text('Seguir'), findsOneWidget);
+    expect(find.text('Seguindo'), findsNothing);
+    expect(find.text('Não foi possível seguir este usuário.'), findsOneWidget);
+  });
+
   testWidgets('Discover timeout shows retry and recovers after tapping it', (
     tester,
   ) async {
@@ -510,7 +562,10 @@ class _FakeSocialRepository implements SocialRepository {
   int discoverCallCount = 0;
   bool savedProfile = false;
   int getMyProfileCallCount = 0;
+  final followedUserIds = <String>[];
+  Object? followError;
   Completer<void>? _profileLoadCompleter;
+  Completer<void>? _followCompleter;
   String? savedDisplayName;
   String? savedAvatarUrl;
   bool? savedIsPublic;
@@ -522,6 +577,15 @@ class _FakeSocialRepository implements SocialRepository {
   void resumeProfileLoad() {
     _profileLoadCompleter?.complete();
     _profileLoadCompleter = null;
+  }
+
+  void pauseNextFollow() {
+    _followCompleter = Completer<void>();
+  }
+
+  void resumeFollow() {
+    _followCompleter?.complete();
+    _followCompleter = null;
   }
 
   @override
@@ -613,7 +677,17 @@ class _FakeSocialRepository implements SocialRepository {
   }) async => _empty();
 
   @override
-  Future<void> followUser(String userId) async {}
+  Future<void> followUser(String userId) async {
+    followedUserIds.add(userId);
+    final followCompleter = _followCompleter;
+    if (followCompleter != null) {
+      await followCompleter.future;
+    }
+    final error = followError;
+    if (error != null) {
+      throw error;
+    }
+  }
 
   @override
   Future<void> unfollowUser(String userId) async {}

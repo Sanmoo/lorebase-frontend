@@ -155,11 +155,18 @@ class _FeedTab extends ConsumerWidget {
   }
 }
 
-class _DiscoverTab extends ConsumerWidget {
+class _DiscoverTab extends ConsumerStatefulWidget {
   const _DiscoverTab();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_DiscoverTab> createState() => _DiscoverTabState();
+}
+
+class _DiscoverTabState extends ConsumerState<_DiscoverTab> {
+  final Set<String> _followingUserIds = <String>{};
+
+  @override
+  Widget build(BuildContext context) {
     final discover = ref.watch(socialDiscoverViewModelProvider);
     return discover.when(
       data: (data) {
@@ -172,9 +179,8 @@ class _DiscoverTab extends ConsumerWidget {
             final user = data.items[index];
             return DiscoverUserCard(
               user: user,
-              onFollow: () => ref
-                  .read(socialDiscoverViewModelProvider.notifier)
-                  .followUser(user.userId),
+              isFollowing: _followingUserIds.contains(user.userId),
+              onFollow: () => _followUser(user.userId),
               onUserTap: () => context.go('/social/profile/${user.userId}'),
             );
           },
@@ -189,6 +195,30 @@ class _DiscoverTab extends ConsumerWidget {
       ),
       loading: () => const Center(child: CircularProgressIndicator()),
     );
+  }
+
+  Future<void> _followUser(String userId) async {
+    if (_followingUserIds.contains(userId)) {
+      return;
+    }
+
+    setState(() => _followingUserIds.add(userId));
+    try {
+      await ref
+          .read(socialDiscoverViewModelProvider.notifier)
+          .followUser(userId);
+    } catch (_) {
+      if (!mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Não foi possível seguir este usuário.')),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _followingUserIds.remove(userId));
+      }
+    }
   }
 }
 
