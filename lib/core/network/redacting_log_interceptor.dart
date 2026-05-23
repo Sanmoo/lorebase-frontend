@@ -1,18 +1,35 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 
 const _redactedValue = '[REDACTED]';
-const _sensitiveHeaderNames = <String>{
+const _sensitiveKeyNames = <String>{
   'authorization',
   'cookie',
   'set-cookie',
   'x-api-key',
   'api-key',
   'proxy-authorization',
+  'password',
+  'token',
+  'access-token',
+  'accesstoken',
+  'refresh-token',
+  'refreshtoken',
+  'id-token',
+  'idtoken',
+  'secret',
+  'credential',
+  'code',
 };
+
+typedef RedactingLogPrint = void Function(Object? object);
+
+bool _isSensitiveKey(String key) =>
+    _sensitiveKeyNames.contains(key.toLowerCase());
 
 Map<String, dynamic> redactSensitiveHeaders(Map<String, dynamic> headers) {
   return headers.map((key, value) {
-    if (_sensitiveHeaderNames.contains(key.toLowerCase())) {
+    if (_isSensitiveKey(key)) {
       return MapEntry<String, dynamic>(key, _redactedValue);
     }
 
@@ -20,26 +37,75 @@ Map<String, dynamic> redactSensitiveHeaders(Map<String, dynamic> headers) {
   });
 }
 
-class RedactingLogInterceptor extends LogInterceptor {
-  RedactingLogInterceptor({
-    super.request,
-    super.requestUrl,
-    super.requestHeader,
-    super.requestBody,
-    super.responseUrl,
-    super.responseHeader,
-    super.responseBody,
-    super.error,
-    super.logPrint,
+dynamic redactSensitiveData(dynamic data) {
+  if (data is Map) {
+    return data.map((key, value) {
+      final stringKey = key.toString();
+      if (_isSensitiveKey(stringKey)) {
+        return MapEntry<dynamic, dynamic>(key, _redactedValue);
+      }
+
+      return MapEntry<dynamic, dynamic>(key, redactSensitiveData(value));
+    });
+  }
+
+  if (data is List) {
+    return data.map(redactSensitiveData).toList(growable: false);
+  }
+
+  return data;
+}
+
+Uri redactSensitiveUri(Uri uri) {
+  if (uri.queryParametersAll.isEmpty) {
+    return uri;
+  }
+
+  final redactedQueryParameters = uri.queryParametersAll.map((key, value) {
+    if (_isSensitiveKey(key)) {
+      return MapEntry<String, Iterable<String>>(key, const [_redactedValue]);
+    }
+
+    return MapEntry<String, Iterable<String>>(key, value);
   });
+
+  return uri.replace(queryParameters: redactedQueryParameters);
+}
+
+class RedactingLogInterceptor extends Interceptor {
+  RedactingLogInterceptor({
+    this.request = true,
+    this.requestUrl = true,
+    this.requestHeader = true,
+    this.requestBody = false,
+    this.responseUrl = true,
+    this.responseHeader = true,
+    this.responseBody = false,
+    this.error = true,
+    RedactingLogPrint? logPrint,
+  }) : _logPrint = logPrint ?? ((object) => debugPrint(object?.toString()));
+
+  final bool request;
+  final bool requestUrl;
+  final bool requestHeader;
+  final bool requestBody;
+  final bool responseUrl;
+  final bool responseHeader;
+  final bool responseBody;
+  final bool error;
+  final RedactingLogPrint _logPrint;
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    final redactedOptions = options.copyWith(
-      headers: redactSensitiveHeaders(options.headers),
-    );
-
-    super.onRequest(redactedOptions, RequestInterceptorHandler());
+    if (request) {
+      _logPrint('--> ${options.method} ${_safeUri(options)}');
+    }
+    if (requestHeader) {
+      _logPrint('Request headers: ${redactSensitiveHeaders(options.headers)}');
+    }
+    if (requestBody) {
+      _logPrint('Request body: ${redactSensitiveData(options.data)}');
+    }
     handler.next(options);
   }
 
@@ -48,39 +114,49 @@ class RedactingLogInterceptor extends LogInterceptor {
     Response<dynamic> response,
     ResponseInterceptorHandler handler,
   ) {
-    super.onResponse(_redactResponse(response), ResponseInterceptorHandler());
+    if (responseUrl) {
+      _logPrint(
+        '<-- ${response.statusCode} ${_safeUri(response.requestOptions)}',
+      );
+    }
+    if (responseHeader) {
+      _logPrint(
+        'Response headers: ${redactSensitiveHeaders(response.headers.map)}',
+      );
+    }
+    if (responseBody) {
+      _logPrint('Response body: ${redactSensitiveData(response.data)}');
+    }
     handler.next(response);
   }
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    final response = err.response;
-    final redactedError = response == null
-        ? err
-        : err.copyWith(response: _redactResponse(response));
-
-    super.onError(redactedError, ErrorInterceptorHandler());
+    if (error) {
+      _logPrint(
+        '<-- ERROR ${err.response?.statusCode ?? err.type.name} '
+        '${_safeUri(err.requestOptions)}',
+      );
+      _logPrint('Error message: ${err.message}');
+      _logPrint(
+        'Error request headers: '
+        '${redactSensitiveHeaders(err.requestOptions.headers)}',
+      );
+      final response = err.response;
+      if (response != null) {
+        _logPrint(
+          'Error response headers: '
+          '${redactSensitiveHeaders(response.headers.map)}',
+        );
+        if (responseBody) {
+          _logPrint(
+            'Error response body: ${redactSensitiveData(response.data)}',
+          );
+        }
+      }
+    }
     handler.next(err);
   }
 
-  Response<dynamic> _redactResponse(Response<dynamic> response) {
-    return Response<dynamic>(
-      data: response.data,
-      headers: Headers.fromMap(
-        redactSensitiveHeaders(response.headers.map).map(
-          (key, value) => MapEntry(
-            key,
-            value is List<String> ? value : <String>[value.toString()],
-          ),
-        ),
-        preserveHeaderCase: response.headers.preserveHeaderCase,
-      ),
-      requestOptions: response.requestOptions,
-      statusCode: response.statusCode,
-      statusMessage: response.statusMessage,
-      isRedirect: response.isRedirect,
-      redirects: response.redirects,
-      extra: response.extra,
-    );
-  }
+  Uri _safeUri(RequestOptions options) => redactSensitiveUri(options.uri);
 }
