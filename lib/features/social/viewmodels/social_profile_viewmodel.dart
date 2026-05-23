@@ -49,8 +49,12 @@ class SocialProfileViewModel extends _$SocialProfileViewModel {
         : await repository.getProfile(userId);
     final resolvedUserId = profile.userId;
     final (activity, publicLists) = await (
-      repository.getUserActivity(resolvedUserId),
-      repository.getPublicLists(resolvedUserId),
+      repository
+          .getUserActivity(resolvedUserId)
+          .catchError((_) => _emptyActivityResponse()),
+      repository
+          .getPublicLists(resolvedUserId)
+          .catchError((_) => _emptyPublicListsResponse()),
     ).wait;
 
     return SocialProfileDetailState(
@@ -130,4 +134,20 @@ class SocialProfileViewModel extends _$SocialProfileViewModel {
       _ => null,
     };
   }
+}
+
+PaginatedSocialResponse<ActivityEventModel> _emptyActivityResponse() {
+  return const PaginatedSocialResponse(
+    items: [],
+    nextCursor: null,
+    hasMore: false,
+  );
+}
+
+PaginatedSocialResponse<PublicListItemModel> _emptyPublicListsResponse() {
+  return const PaginatedSocialResponse(
+    items: [],
+    nextCursor: null,
+    hasMore: false,
+  );
 }
