@@ -140,6 +140,54 @@ void main() {
     );
 
     test(
+      'getMyProfile normalizes missing optional BFF profile fields',
+      () async {
+        final dio = Dio()
+          ..httpClientAdapter = MockAdapter(
+            onFetch: (_) => _jsonBody({
+              'userId': 'user-1',
+              'displayName': '  ',
+              'username': '  fulano  ',
+              'avatarUrl': '   ',
+              'isFollowing': true,
+            }),
+          );
+        final repo = SocialRepositoryImpl(dio);
+
+        final result = await repo.getMyProfile();
+
+        expect(result.displayName, 'fulano');
+        expect(result.avatarUrl, isNull);
+        expect(result.isPublic, isTrue);
+        expect(result.followingCount, 0);
+        expect(result.followerCount, 0);
+        expect(result.isFollowedByMe, isTrue);
+      },
+    );
+
+    test(
+      'getMyProfile falls back to generic displayName without username',
+      () async {
+        final dio = Dio()
+          ..httpClientAdapter = MockAdapter(
+            onFetch: (_) => _jsonBody({
+              'userId': 'user-1',
+              'displayName': '',
+              'avatarUrl': null,
+              'isPublic': true,
+              'followingCount': 0,
+              'followerCount': 0,
+            }),
+          );
+        final repo = SocialRepositoryImpl(dio);
+
+        final result = await repo.getMyProfile();
+
+        expect(result.displayName, 'Usuário');
+      },
+    );
+
+    test(
       'updateMyProfile calls PUT /users/me/profile with profile fields',
       () async {
         String? capturedMethod;

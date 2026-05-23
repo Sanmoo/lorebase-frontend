@@ -276,10 +276,35 @@ class SocialRepositoryImpl implements SocialRepository {
     const epoch = '1970-01-01T00:00:00.000Z';
     json['createdAt'] ??= epoch;
     json['updatedAt'] ??= epoch;
+    json['displayName'] = _profileDisplayName(json);
+    json['avatarUrl'] = _profileAvatarUrl(json['avatarUrl']);
+    json['isPublic'] ??= true;
+    json['followingCount'] ??= 0;
+    json['followerCount'] ??= 0;
     if (json['isFollowedByMe'] == null && json['isFollowing'] is bool) {
       json['isFollowedByMe'] = json['isFollowing'];
     }
     return SocialProfileModel.fromJson(json);
+  }
+
+  String _profileDisplayName(Map<String, dynamic> json) {
+    final displayName = (json['displayName'] as String?)?.trim();
+    if (displayName != null && displayName.isNotEmpty) {
+      return displayName;
+    }
+    final username = (json['username'] as String?)?.trim();
+    if (username != null && username.isNotEmpty) {
+      return username;
+    }
+    return 'Usuário';
+  }
+
+  String? _profileAvatarUrl(dynamic avatarUrl) {
+    final url = avatarUrl as String?;
+    if (url == null || url.trim().isEmpty) {
+      return null;
+    }
+    return url;
   }
 
   Map<String, dynamic> _responseMap(dynamic data) {
