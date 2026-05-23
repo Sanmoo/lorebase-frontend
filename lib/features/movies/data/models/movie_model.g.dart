@@ -14,7 +14,9 @@ _MovieModel _$MovieModelFromJson(Map<String, dynamic> json) => _MovieModel(
   backdropPath: json['backdropPath'] as String?,
   releaseDate: json['releaseDate'] as String?,
   genres:
-      (json['genres'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+      (_readGenres(json, 'genres') as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList() ??
       const [],
   runtimeMinutes: flexibleNullableIntFromJson(
     _readRuntimeMinutes(json, 'runtimeMinutes'),

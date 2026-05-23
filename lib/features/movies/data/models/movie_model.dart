@@ -7,6 +7,14 @@ part 'movie_model.g.dart';
 Object? _readRuntimeMinutes(Map<dynamic, dynamic> json, String key) =>
     json[key] ?? json['runtime'];
 
+Object? _readGenres(Map<dynamic, dynamic> json, String key) {
+  final genres = json[key];
+  if (genres is List && genres.isNotEmpty) return genres;
+  final genre = json['genre'];
+  if (genre is String && genre.isNotEmpty) return [genre];
+  return genres;
+}
+
 @freezed
 abstract class MovieModel with _$MovieModel {
   const factory MovieModel({
@@ -17,7 +25,7 @@ abstract class MovieModel with _$MovieModel {
     String? posterPath,
     String? backdropPath,
     String? releaseDate,
-    @Default([]) List<String> genres,
+    @JsonKey(readValue: _readGenres) @Default([]) List<String> genres,
     @JsonKey(
       readValue: _readRuntimeMinutes,
       fromJson: flexibleNullableIntFromJson,
