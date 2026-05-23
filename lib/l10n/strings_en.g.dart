@@ -112,7 +112,7 @@ class TranslationsEn extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get series_detail_cancel => 'Cancel';
 	@override String get series_detail_episodes => 'Episodes';
 	@override String get series_detail_tmdb_rating => 'TMDB Rating';
-	@override String get series_detail_vote_count => '{count} votes';
+	@override String series_detail_vote_count({required Object count}) => '${count} votes';
 	@override String get series_detail_more_details => 'More details';
 	@override String get series_detail_created_by => 'Created by';
 	@override String get series_detail_origin_country => 'Origin country';
@@ -120,7 +120,7 @@ class TranslationsEn extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get series_detail_popularity => 'Popularity';
 	@override String get series_detail_last_episode => 'Last episode';
 	@override String get series_detail_next_episode => 'Next episode';
-	@override String get series_detail_episode_code => 'S{season}E{episode}';
+	@override String series_detail_episode_code({required Object season, required Object episode}) => 'S${season}E${episode}';
 	@override String get series_detail_episode_date => '{code} · {date}';
 	@override String get series_detail_not_available => '—';
 	@override String get series_detail_first_air_date => 'First Air Date';
@@ -131,7 +131,7 @@ class TranslationsEn extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get series_detail_overview => 'Overview';
 	@override String get series_detail_rating => 'Rating';
 	@override String get series_detail_remove => 'Remove';
-	@override String get series_detail_remove_confirm => 'Remove "{title}" from your list?';
+	@override String series_detail_remove_confirm({required Object title}) => 'Remove "${title}" from your list?';
 	@override String get series_detail_remove_from_list => 'Remove from List';
 	@override String get series_detail_review => 'Review (optional)';
 	@override String get series_detail_save_changes => 'Save Changes';
@@ -240,7 +240,7 @@ extension on TranslationsEn {
 			'series_detail_cancel' => 'Cancel',
 			'series_detail_episodes' => 'Episodes',
 			'series_detail_tmdb_rating' => 'TMDB Rating',
-			'series_detail_vote_count' => '{count} votes',
+			'series_detail_vote_count' => ({required Object count}) => '${count} votes',
 			'series_detail_more_details' => 'More details',
 			'series_detail_created_by' => 'Created by',
 			'series_detail_origin_country' => 'Origin country',
@@ -248,7 +248,7 @@ extension on TranslationsEn {
 			'series_detail_popularity' => 'Popularity',
 			'series_detail_last_episode' => 'Last episode',
 			'series_detail_next_episode' => 'Next episode',
-			'series_detail_episode_code' => 'S{season}E{episode}',
+			'series_detail_episode_code' => ({required Object season, required Object episode}) => 'S${season}E${episode}',
 			'series_detail_episode_date' => '{code} · {date}',
 			'series_detail_not_available' => '—',
 			'series_detail_first_air_date' => 'First Air Date',
@@ -259,7 +259,7 @@ extension on TranslationsEn {
 			'series_detail_overview' => 'Overview',
 			'series_detail_rating' => 'Rating',
 			'series_detail_remove' => 'Remove',
-			'series_detail_remove_confirm' => 'Remove "{title}" from your list?',
+			'series_detail_remove_confirm' => ({required Object title}) => 'Remove "${title}" from your list?',
 			'series_detail_remove_from_list' => 'Remove from List',
 			'series_detail_review' => 'Review (optional)',
 			'series_detail_save_changes' => 'Save Changes',

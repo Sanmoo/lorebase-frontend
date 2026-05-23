@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cached_network_image_platform_interface/cached_network_image_platform_interface.dart';
+import 'package:intl/intl.dart';
 import '../../../../core/i18n/date_formatter.dart';
 import '../../../../core/widgets/error_widget.dart';
 import '../../../../core/widgets/loading_widget.dart';
@@ -110,9 +111,8 @@ class SeriesDetailPage extends ConsumerWidget {
             : null,
         removeLabel: ctx.t.series_detail_remove_from_list,
         removeConfirmTitle: ctx.t.series_detail_remove_from_list,
-        removeConfirmMessage: ctx.t.series_detail_remove_confirm.replaceFirst(
-          '{title}',
-          series.title,
+        removeConfirmMessage: ctx.t.series_detail_remove_confirm(
+          title: series.title,
         ),
       ),
     );
@@ -461,24 +461,35 @@ class _OverviewSectionState extends State<_OverviewSection> {
   }
 }
 
-String _formatDecimal(double value) => value.toStringAsFixed(1);
+String _localeName(BuildContext context) =>
+    Intl.canonicalizedLocale(Localizations.localeOf(context).toString());
+
+String _formatDecimal(BuildContext context, double value) =>
+    NumberFormat.decimalPatternDigits(
+      locale: _localeName(context),
+      decimalDigits: 1,
+    ).format(value);
 
 String _formatRating(BuildContext context, SeriesModel series) {
   final t = context.t;
   final rating = series.voteAverage;
   if (rating == null || rating <= 0) return t.series_detail_not_available;
-  final ratingText = _formatDecimal(rating);
+  final ratingText = _formatDecimal(context, rating);
   final voteText = series.voteCount != null && series.voteCount! > 0
-      ? ' · ${t.series_detail_vote_count.replaceFirst('{count}', '${series.voteCount!}')}'
+      ? ' · ${t.series_detail_vote_count(count: _formatInteger(context, series.voteCount!))}'
       : '';
   return '$ratingText$voteText';
 }
 
+String _formatInteger(BuildContext context, int value) =>
+    NumberFormat.decimalPattern(_localeName(context)).format(value);
+
 String _formatEpisodeCode(BuildContext context, EpisodeAirInfoModel episode) {
   final t = context.t;
-  return t.series_detail_episode_code
-      .replaceFirst('{season}', '${episode.seasonNumber}')
-      .replaceFirst('{episode}', '${episode.episodeNumber}');
+  return t.series_detail_episode_code(
+    season: episode.seasonNumber,
+    episode: episode.episodeNumber,
+  );
 }
 
 bool _hasMoreDetails(SeriesModel series) =>
@@ -556,7 +567,7 @@ class _MoreDetailsSection extends StatelessWidget {
           if (series.popularity != null && series.popularity! > 0)
             _DetailRow(
               label: t.series_detail_popularity,
-              value: _formatDecimal(series.popularity!),
+              value: _formatDecimal(context, series.popularity!),
             ),
           if (lastEpisode != null)
             _DetailRow(

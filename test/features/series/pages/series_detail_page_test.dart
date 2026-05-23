@@ -176,7 +176,7 @@ Future<void> main() async {
       expect(find.text('Episodes'), findsOneWidget);
       expect(find.text('73'), findsOneWidget);
       expect(find.text('TMDB Rating'), findsOneWidget);
-      expect(find.text('8.5 · 26839 votes'), findsOneWidget);
+      expect(find.text('8.5 · 26,839 votes'), findsOneWidget);
       expect(find.text('More details'), findsOneWidget);
       expect(find.text('Created by'), findsOneWidget);
       expect(find.text('David Benioff, D. B. Weiss'), findsOneWidget);
@@ -188,6 +188,38 @@ Future<void> main() async {
       expect(find.text('188.7'), findsOneWidget);
       expect(find.text('Last episode'), findsOneWidget);
       expect(find.text('The Iron Throne'), findsOneWidget);
+    });
+
+    testWidgets('rating omits vote count and episode falls back to code', (
+      tester,
+    ) async {
+      final series = _richSeries().copyWith(
+        voteCount: null,
+        lastEpisodeToAir: const EpisodeAirInfoModel(
+          airDate: '2024-03-01',
+          episodeNumber: 3,
+          seasonNumber: 2,
+          name: null,
+        ),
+      );
+      final detail = SeriesDetailState(series: series, tracking: null);
+      final container = ProviderContainer(
+        overrides: [
+          seriesDetailViewModelProvider(
+            1399,
+          ).overrideWith(() => FakeDetailVM(data: detail)),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container, tmdbId: 1399));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.text('8.5'), findsOneWidget);
+      expect(find.textContaining('votes'), findsNothing);
+      expect(find.text('S2E3'), findsOneWidget);
     });
 
     testWidgets(
@@ -569,6 +601,8 @@ Future<void> main() async {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
 
+      await tester.ensureVisible(find.text('Remove from List'));
+      await tester.pump();
       await tester.tap(find.text('Remove from List'));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));

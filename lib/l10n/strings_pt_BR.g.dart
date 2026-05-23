@@ -134,8 +134,8 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// pt-BR: 'Nota TMDB'
 	String get series_detail_tmdb_rating => 'Nota TMDB';
 
-	/// pt-BR: '{count} votos'
-	String get series_detail_vote_count => '{count} votos';
+	/// pt-BR: '$count votos'
+	String series_detail_vote_count({required Object count}) => '${count} votos';
 
 	/// pt-BR: 'Mais detalhes'
 	String get series_detail_more_details => 'Mais detalhes';
@@ -158,8 +158,8 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// pt-BR: 'Próximo episódio'
 	String get series_detail_next_episode => 'Próximo episódio';
 
-	/// pt-BR: 'T{season}E{episode}'
-	String get series_detail_episode_code => 'T{season}E{episode}';
+	/// pt-BR: 'T${season}E$episode'
+	String series_detail_episode_code({required Object season, required Object episode}) => 'T${season}E${episode}';
 
 	/// pt-BR: '{code} · {date}'
 	String get series_detail_episode_date => '{code} · {date}';
@@ -191,8 +191,8 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// pt-BR: 'Remover da Lista'
 	String get series_detail_remove_from_list => 'Remover da Lista';
 
-	/// pt-BR: 'Remover "{title}" da sua lista?'
-	String get series_detail_remove_confirm => 'Remover "{title}" da sua lista?';
+	/// pt-BR: 'Remover "$title" da sua lista?'
+	String series_detail_remove_confirm({required Object title}) => 'Remover "${title}" da sua lista?';
 
 	/// pt-BR: 'Cancelar'
 	String get series_detail_cancel => 'Cancelar';
@@ -435,7 +435,7 @@ extension on Translations {
 			'series_detail_show_less' => 'Mostrar menos',
 			'series_detail_episodes' => 'Episódios',
 			'series_detail_tmdb_rating' => 'Nota TMDB',
-			'series_detail_vote_count' => '{count} votos',
+			'series_detail_vote_count' => ({required Object count}) => '${count} votos',
 			'series_detail_more_details' => 'Mais detalhes',
 			'series_detail_created_by' => 'Criado por',
 			'series_detail_origin_country' => 'País de origem',
@@ -443,7 +443,7 @@ extension on Translations {
 			'series_detail_popularity' => 'Popularidade',
 			'series_detail_last_episode' => 'Último episódio',
 			'series_detail_next_episode' => 'Próximo episódio',
-			'series_detail_episode_code' => 'T{season}E{episode}',
+			'series_detail_episode_code' => ({required Object season, required Object episode}) => 'T${season}E${episode}',
 			'series_detail_episode_date' => '{code} · {date}',
 			'series_detail_not_available' => '—',
 			'series_detail_first_air_date' => 'Primeira Exibição',
@@ -454,7 +454,7 @@ extension on Translations {
 			'series_detail_review' => 'Review (opcional)',
 			'series_detail_save_changes' => 'Salvar Alterações',
 			'series_detail_remove_from_list' => 'Remover da Lista',
-			'series_detail_remove_confirm' => 'Remover "{title}" da sua lista?',
+			'series_detail_remove_confirm' => ({required Object title}) => 'Remover "${title}" da sua lista?',
 			'series_detail_cancel' => 'Cancelar',
 			'series_detail_remove' => 'Remover',
 			'series_detail_loading' => 'Carregando detalhes da série...',
