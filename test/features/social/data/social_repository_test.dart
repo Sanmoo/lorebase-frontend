@@ -510,6 +510,32 @@ void main() {
       },
     );
 
+    test(
+      'getPublicLists tolerates BFF list items with empty updatedAt',
+      () async {
+        final dio = Dio()
+          ..httpClientAdapter = MockAdapter(
+            onFetch: (_) => _jsonBody({
+              'items': [
+                {
+                  ..._publicListItemJson(),
+                  'status': 'PLAN_TO_WATCH',
+                  'updatedAt': '',
+                },
+              ],
+              'nextCursor': null,
+              'hasMore': false,
+            }),
+          );
+        final repo = SocialRepositoryImpl(dio);
+
+        final result = await repo.getPublicLists('user-1');
+
+        expect(result.items.single.status, 'PLAN_TO_WATCH');
+        expect(result.items.single.updatedAt, isNull);
+      },
+    );
+
     test('getPublicLists calls lists endpoint and parses list items', () async {
       String? capturedPath;
       Map<String, dynamic>? capturedParams;

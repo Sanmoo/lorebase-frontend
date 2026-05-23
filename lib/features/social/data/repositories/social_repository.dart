@@ -225,7 +225,7 @@ class SocialRepositoryImpl implements SocialRepository {
         'limit': limit,
         'cursor': ?cursor,
       },
-      fromJson: PublicListItemModel.fromJson,
+      fromJson: _publicListItemFromJson,
       fallbackMessage: 'Failed to load public lists',
     );
   }
@@ -261,6 +261,14 @@ class SocialRepositoryImpl implements SocialRepository {
 
   Map<String, dynamic> _paginationParams({required int limit, String? cursor}) {
     return {'limit': limit, 'cursor': ?cursor};
+  }
+
+  PublicListItemModel _publicListItemFromJson(Map<String, dynamic> json) {
+    final normalizedJson = Map<String, dynamic>.from(json);
+    if (normalizedJson['updatedAt'] == '') {
+      normalizedJson['updatedAt'] = null;
+    }
+    return PublicListItemModel.fromJson(normalizedJson);
   }
 
   SocialProfileModel _profileFromResponse(dynamic data) {
