@@ -68,6 +68,19 @@ class TranslationsEs extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get series_detail_no_description => 'No hay descripción disponible.';
 	@override String get series_detail_show_more => 'Mostrar más';
 	@override String get series_detail_show_less => 'Mostrar menos';
+	@override String get series_detail_episodes => 'Episodios';
+	@override String get series_detail_tmdb_rating => 'Valoración TMDB';
+	@override String series_detail_vote_count({required Object count}) => '${count} votos';
+	@override String get series_detail_more_details => 'Más detalles';
+	@override String get series_detail_created_by => 'Creado por';
+	@override String get series_detail_origin_country => 'País de origen';
+	@override String get series_detail_type => 'Tipo';
+	@override String get series_detail_popularity => 'Popularidad';
+	@override String get series_detail_last_episode => 'Último episodio';
+	@override String get series_detail_next_episode => 'Próximo episodio';
+	@override String series_detail_episode_code({required Object season, required Object episode}) => 'T${season}E${episode}';
+	@override String get series_detail_episode_date => '{code} · {date}';
+	@override String get series_detail_not_available => '—';
 	@override String get series_detail_first_air_date => 'Primera Emisión';
 	@override String get series_detail_seasons => 'Temporadas';
 	@override String get series_detail_networks => 'Redes';
@@ -76,7 +89,7 @@ class TranslationsEs extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get series_detail_review => 'Reseña (opcional)';
 	@override String get series_detail_save_changes => 'Guardar Cambios';
 	@override String get series_detail_remove_from_list => 'Eliminar de Lista';
-	@override String get series_detail_remove_confirm => '¿Eliminar "{title}" de tu lista?';
+	@override String series_detail_remove_confirm({required Object title}) => '¿Eliminar "${title}" de tu lista?';
 	@override String get series_detail_cancel => 'Cancelar';
 	@override String get series_detail_remove => 'Eliminar';
 	@override String get series_detail_loading => 'Cargando detalles de la serie...';
@@ -183,6 +196,19 @@ extension on TranslationsEs {
 			'series_detail_no_description' => 'No hay descripción disponible.',
 			'series_detail_show_more' => 'Mostrar más',
 			'series_detail_show_less' => 'Mostrar menos',
+			'series_detail_episodes' => 'Episodios',
+			'series_detail_tmdb_rating' => 'Valoración TMDB',
+			'series_detail_vote_count' => ({required Object count}) => '${count} votos',
+			'series_detail_more_details' => 'Más detalles',
+			'series_detail_created_by' => 'Creado por',
+			'series_detail_origin_country' => 'País de origen',
+			'series_detail_type' => 'Tipo',
+			'series_detail_popularity' => 'Popularidad',
+			'series_detail_last_episode' => 'Último episodio',
+			'series_detail_next_episode' => 'Próximo episodio',
+			'series_detail_episode_code' => ({required Object season, required Object episode}) => 'T${season}E${episode}',
+			'series_detail_episode_date' => '{code} · {date}',
+			'series_detail_not_available' => '—',
 			'series_detail_first_air_date' => 'Primera Emisión',
 			'series_detail_seasons' => 'Temporadas',
 			'series_detail_networks' => 'Redes',
@@ -191,7 +217,7 @@ extension on TranslationsEs {
 			'series_detail_review' => 'Reseña (opcional)',
 			'series_detail_save_changes' => 'Guardar Cambios',
 			'series_detail_remove_from_list' => 'Eliminar de Lista',
-			'series_detail_remove_confirm' => '¿Eliminar "{title}" de tu lista?',
+			'series_detail_remove_confirm' => ({required Object title}) => '¿Eliminar "${title}" de tu lista?',
 			'series_detail_cancel' => 'Cancelar',
 			'series_detail_remove' => 'Eliminar',
 			'series_detail_loading' => 'Cargando detalles de la serie...',

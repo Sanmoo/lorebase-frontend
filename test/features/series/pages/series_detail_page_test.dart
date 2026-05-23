@@ -26,6 +26,31 @@ SeriesModel _testSeries() => const SeriesModel(
   networks: ['HBO'],
 );
 
+SeriesModel _richSeries() => const SeriesModel(
+  tmdbId: 1399,
+  title: 'Game of Thrones',
+  overview: 'A fantasy series',
+  genres: ['Sci-Fi'],
+  seasonCount: 8,
+  status: 'Ended',
+  firstAirDate: '2011-04-17',
+  networks: ['HBO'],
+  voteAverage: 8.461,
+  voteCount: 26839,
+  popularity: 188.7155,
+  originCountry: ['US'],
+  numberOfEpisodes: 73,
+  createdBy: ['David Benioff', 'D. B. Weiss'],
+  type: 'Scripted',
+  lastEpisodeToAir: EpisodeAirInfoModel(
+    airDate: '2019-05-19',
+    episodeNumber: 6,
+    seasonNumber: 8,
+    name: 'The Iron Throne',
+    overview: 'The final episode.',
+  ),
+);
+
 class FakeDetailVM extends SeriesDetailViewModel {
   final SeriesDetailState data;
   bool failAddTracking = false;
@@ -81,7 +106,7 @@ class FakeAuthVM extends AuthViewModel {
   Future<void> signOut() async {}
 }
 
-Widget _wrap(ProviderContainer container) {
+Widget _wrap(ProviderContainer container, {int tmdbId = 1}) {
   return UncontrolledProviderScope(
     container: container,
     child: TranslationProvider(
@@ -90,7 +115,7 @@ Widget _wrap(ProviderContainer container) {
         supportedLocales: AppLocaleUtils.supportedLocales,
         localizationsDelegates: GlobalMaterialLocalizations.delegates,
         routerConfig: GoRouter(
-          initialLocation: '/series/1',
+          initialLocation: '/series/$tmdbId',
           routes: [
             GoRoute(
               path: '/series/:tmdbId',
@@ -129,6 +154,97 @@ Future<void> main() async {
 
       expect(find.text('Add to List'), findsOneWidget);
     });
+
+    testWidgets('renders additional series metadata when available', (
+      tester,
+    ) async {
+      final detail = SeriesDetailState(series: _richSeries(), tracking: null);
+      final container = ProviderContainer(
+        overrides: [
+          seriesDetailViewModelProvider(
+            1399,
+          ).overrideWith(() => FakeDetailVM(data: detail)),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container, tmdbId: 1399));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.text('Episodes'), findsOneWidget);
+      expect(find.text('73'), findsOneWidget);
+      expect(find.text('TMDB Rating'), findsOneWidget);
+      expect(find.text('8.5 · 26,839 votes'), findsOneWidget);
+      expect(find.text('More details'), findsOneWidget);
+      expect(find.text('Created by'), findsOneWidget);
+      expect(find.text('David Benioff, D. B. Weiss'), findsOneWidget);
+      expect(find.text('Origin country'), findsOneWidget);
+      expect(find.text('US'), findsOneWidget);
+      expect(find.text('Type'), findsOneWidget);
+      expect(find.text('Scripted'), findsOneWidget);
+      expect(find.text('Popularity'), findsOneWidget);
+      expect(find.text('188.7'), findsOneWidget);
+      expect(find.text('Last episode'), findsOneWidget);
+      expect(find.text('The Iron Throne'), findsOneWidget);
+    });
+
+    testWidgets('rating omits vote count and episode falls back to code', (
+      tester,
+    ) async {
+      final series = _richSeries().copyWith(
+        voteCount: null,
+        lastEpisodeToAir: const EpisodeAirInfoModel(
+          airDate: '2024-03-01',
+          episodeNumber: 3,
+          seasonNumber: 2,
+          name: null,
+        ),
+      );
+      final detail = SeriesDetailState(series: series, tracking: null);
+      final container = ProviderContainer(
+        overrides: [
+          seriesDetailViewModelProvider(
+            1399,
+          ).overrideWith(() => FakeDetailVM(data: detail)),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container, tmdbId: 1399));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.text('8.5'), findsOneWidget);
+      expect(find.textContaining('votes'), findsNothing);
+      expect(find.text('S2E3'), findsOneWidget);
+    });
+
+    testWidgets(
+      'omits additional metadata section when all extra fields are empty',
+      (tester) async {
+        final detail = SeriesDetailState(series: _testSeries(), tracking: null);
+        final container = ProviderContainer(
+          overrides: [
+            seriesDetailViewModelProvider(
+              1,
+            ).overrideWith(() => FakeDetailVM(data: detail)),
+            authViewModelProvider.overrideWith(() => FakeAuthVM()),
+          ],
+        );
+        addTearDown(container.dispose);
+
+        await tester.pumpWidget(_wrap(container));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 100));
+
+        expect(find.text('More details'), findsNothing);
+        expect(find.text('Episodes'), findsNothing);
+        expect(find.text('TMDB Rating'), findsNothing);
+      },
+    );
 
     testWidgets('loading state shows LoadingWidget', (tester) async {
       final container = ProviderContainer(
@@ -485,6 +601,8 @@ Future<void> main() async {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
 
+      await tester.ensureVisible(find.text('Remove from List'));
+      await tester.pump();
       await tester.tap(find.text('Remove from List'));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));

@@ -16,10 +16,7 @@ void main() {
       'status': 'Ended',
     };
 
-    const minimalJson = {
-      'tmdbId': 456,
-      'title': 'Minimal Series',
-    };
+    const minimalJson = {'tmdbId': 456, 'title': 'Minimal Series'};
 
     test('fromJson with complete JSON maps all fields correctly', () {
       final model = SeriesModel.fromJson(completeJson);
@@ -51,6 +48,70 @@ void main() {
       expect(model.status, isNull);
     });
 
+    test('fromJson maps additional detail metadata', () {
+      final model = SeriesModel.fromJson({
+        ...completeJson,
+        'seriesId': 'series-123',
+        'createdAt': '2026-05-23T19:49:39Z',
+        'voteAverage': 8.461,
+        'voteCount': 26839,
+        'popularity': 188.7155,
+        'originCountry': ['US'],
+        'episodeRunTime': [57, 60],
+        'numberOfEpisodes': 73,
+        'createdBy': ['David Benioff', 'D. B. Weiss'],
+        'type': 'Scripted',
+        'lastEpisodeToAir': {
+          'airDate': '2019-05-19',
+          'episodeNumber': 6,
+          'seasonNumber': 8,
+          'name': 'The Iron Throne',
+          'overview': 'Final episode.',
+        },
+        'nextEpisodeToAir': {
+          'airDate': '2026-01-01',
+          'episodeNumber': 1,
+          'seasonNumber': 9,
+          'name': 'Future Episode',
+          'overview': 'A future episode.',
+        },
+      });
+
+      expect(model.seriesId, 'series-123');
+      expect(model.createdAt, '2026-05-23T19:49:39Z');
+      expect(model.voteAverage, 8.461);
+      expect(model.voteCount, 26839);
+      expect(model.popularity, 188.7155);
+      expect(model.originCountry, ['US']);
+      expect(model.episodeRunTime, [57, 60]);
+      expect(model.numberOfEpisodes, 73);
+      expect(model.createdBy, ['David Benioff', 'D. B. Weiss']);
+      expect(model.type, 'Scripted');
+      expect(model.lastEpisodeToAir?.airDate, '2019-05-19');
+      expect(model.lastEpisodeToAir?.episodeNumber, 6);
+      expect(model.lastEpisodeToAir?.seasonNumber, 8);
+      expect(model.lastEpisodeToAir?.name, 'The Iron Throne');
+      expect(model.lastEpisodeToAir?.overview, 'Final episode.');
+      expect(model.nextEpisodeToAir?.name, 'Future Episode');
+    });
+
+    test('fromJson with missing additional metadata uses safe defaults', () {
+      final model = SeriesModel.fromJson(minimalJson);
+
+      expect(model.seriesId, isNull);
+      expect(model.createdAt, isNull);
+      expect(model.voteAverage, isNull);
+      expect(model.voteCount, isNull);
+      expect(model.popularity, isNull);
+      expect(model.originCountry, isEmpty);
+      expect(model.episodeRunTime, isEmpty);
+      expect(model.numberOfEpisodes, 0);
+      expect(model.createdBy, isEmpty);
+      expect(model.type, isNull);
+      expect(model.lastEpisodeToAir, isNull);
+      expect(model.nextEpisodeToAir, isNull);
+    });
+
     test('toJson() → fromJson() roundtrip preserves data', () {
       final original = SeriesModel.fromJson(completeJson);
       final json = original.toJson();
@@ -67,6 +128,62 @@ void main() {
       expect(restored.seasonCount, original.seasonCount);
       expect(restored.status, original.status);
     });
+
+    test(
+      'toJson() → fromJson() roundtrip preserves nested episode metadata',
+      () {
+        final original = SeriesModel.fromJson({
+          ...completeJson,
+          'seriesId': 'series-123',
+          'createdAt': '2026-05-23T19:49:39Z',
+          'voteAverage': 8.461,
+          'voteCount': 26839,
+          'popularity': 188.7155,
+          'originCountry': ['US'],
+          'episodeRunTime': [57, 60],
+          'numberOfEpisodes': 73,
+          'createdBy': ['David Benioff', 'D. B. Weiss'],
+          'type': 'Scripted',
+          'lastEpisodeToAir': {
+            'airDate': '2019-05-19',
+            'episodeNumber': 6,
+            'seasonNumber': 8,
+            'name': 'The Iron Throne',
+            'overview': 'Final episode.',
+          },
+          'nextEpisodeToAir': {
+            'airDate': '2026-01-01',
+            'episodeNumber': 1,
+            'seasonNumber': 9,
+            'name': 'Future Episode',
+            'overview': 'A future episode.',
+          },
+        });
+        final json = original.toJson();
+        final restored = SeriesModel.fromJson(json);
+
+        expect(restored.seriesId, original.seriesId);
+        expect(restored.createdAt, original.createdAt);
+        expect(restored.voteAverage, original.voteAverage);
+        expect(restored.voteCount, original.voteCount);
+        expect(restored.popularity, original.popularity);
+        expect(restored.originCountry, original.originCountry);
+        expect(restored.episodeRunTime, original.episodeRunTime);
+        expect(restored.numberOfEpisodes, original.numberOfEpisodes);
+        expect(restored.createdBy, original.createdBy);
+        expect(restored.type, original.type);
+        expect(restored.lastEpisodeToAir?.name, 'The Iron Throne');
+        expect(restored.lastEpisodeToAir?.airDate, '2019-05-19');
+        expect(restored.lastEpisodeToAir?.episodeNumber, 6);
+        expect(restored.lastEpisodeToAir?.seasonNumber, 8);
+        expect(restored.lastEpisodeToAir?.overview, 'Final episode.');
+        expect(restored.nextEpisodeToAir?.name, 'Future Episode');
+        expect(restored.nextEpisodeToAir?.airDate, '2026-01-01');
+        expect(restored.nextEpisodeToAir?.episodeNumber, 1);
+        expect(restored.nextEpisodeToAir?.seasonNumber, 9);
+        expect(restored.nextEpisodeToAir?.overview, 'A future episode.');
+      },
+    );
 
     test('fromJson accepts tmdbId as String', () {
       const jsonWithStringId = {

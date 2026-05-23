@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cached_network_image_platform_interface/cached_network_image_platform_interface.dart';
+import 'package:intl/intl.dart';
 import '../../../../core/i18n/date_formatter.dart';
 import '../../../../core/widgets/error_widget.dart';
 import '../../../../core/widgets/loading_widget.dart';
@@ -110,9 +111,8 @@ class SeriesDetailPage extends ConsumerWidget {
             : null,
         removeLabel: ctx.t.series_detail_remove_from_list,
         removeConfirmTitle: ctx.t.series_detail_remove_from_list,
-        removeConfirmMessage: ctx.t.series_detail_remove_confirm.replaceFirst(
-          '{title}',
-          series.title,
+        removeConfirmMessage: ctx.t.series_detail_remove_confirm(
+          title: series.title,
         ),
       ),
     );
@@ -351,6 +351,36 @@ class _SeriesDetailLoaded extends StatelessWidget {
                       ),
                     ],
                   ),
+                  if (series.numberOfEpisodes > 0 ||
+                      (series.voteAverage != null &&
+                          series.voteAverage! > 0)) ...[
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _InfoCard(
+                            icon: Icons.movie_filter,
+                            label: t.series_detail_episodes,
+                            value: series.numberOfEpisodes > 0
+                                ? '${series.numberOfEpisodes}'
+                                : t.series_detail_not_available,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _InfoCard(
+                            icon: Icons.star,
+                            label: t.series_detail_tmdb_rating,
+                            value: _formatRating(context, series),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                  if (_hasMoreDetails(series)) ...[
+                    const SizedBox(height: 16),
+                    _MoreDetailsSection(series: series),
+                  ],
                 ],
               ),
             ),
@@ -427,6 +457,132 @@ class _OverviewSectionState extends State<_OverviewSection> {
           ),
         ),
       ],
+    );
+  }
+}
+
+String _localeName(BuildContext context) =>
+    Intl.canonicalizedLocale(Localizations.localeOf(context).toString());
+
+String _formatDecimal(BuildContext context, double value) =>
+    NumberFormat.decimalPatternDigits(
+      locale: _localeName(context),
+      decimalDigits: 1,
+    ).format(value);
+
+String _formatRating(BuildContext context, SeriesModel series) {
+  final t = context.t;
+  final rating = series.voteAverage;
+  if (rating == null || rating <= 0) return t.series_detail_not_available;
+  final ratingText = _formatDecimal(context, rating);
+  final voteText = series.voteCount != null && series.voteCount! > 0
+      ? ' · ${t.series_detail_vote_count(count: _formatInteger(context, series.voteCount!))}'
+      : '';
+  return '$ratingText$voteText';
+}
+
+String _formatInteger(BuildContext context, int value) =>
+    NumberFormat.decimalPattern(_localeName(context)).format(value);
+
+String _formatEpisodeCode(BuildContext context, EpisodeAirInfoModel episode) {
+  final t = context.t;
+  return t.series_detail_episode_code(
+    season: episode.seasonNumber,
+    episode: episode.episodeNumber,
+  );
+}
+
+bool _hasMoreDetails(SeriesModel series) =>
+    series.createdBy.isNotEmpty ||
+    series.originCountry.isNotEmpty ||
+    (series.type != null && series.type!.isNotEmpty) ||
+    (series.popularity != null && series.popularity! > 0) ||
+    series.lastEpisodeToAir != null ||
+    series.nextEpisodeToAir != null;
+
+class _DetailRow extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _DetailRow({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text(
+              label,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            flex: 3,
+            child: Text(value, style: theme.textTheme.bodyMedium),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MoreDetailsSection extends StatelessWidget {
+  final SeriesModel series;
+
+  const _MoreDetailsSection({required this.series});
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.t;
+    final lastEpisode = series.lastEpisodeToAir;
+    final nextEpisode = series.nextEpisodeToAir;
+
+    return Card(
+      child: ExpansionTile(
+        initiallyExpanded: true,
+        title: Text(t.series_detail_more_details),
+        childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        children: [
+          if (series.createdBy.isNotEmpty)
+            _DetailRow(
+              label: t.series_detail_created_by,
+              value: series.createdBy.join(', '),
+            ),
+          if (series.originCountry.isNotEmpty)
+            _DetailRow(
+              label: t.series_detail_origin_country,
+              value: series.originCountry.join(', '),
+            ),
+          if (series.type != null && series.type!.isNotEmpty)
+            _DetailRow(label: t.series_detail_type, value: series.type!),
+          if (series.popularity != null && series.popularity! > 0)
+            _DetailRow(
+              label: t.series_detail_popularity,
+              value: _formatDecimal(context, series.popularity!),
+            ),
+          if (lastEpisode != null)
+            _DetailRow(
+              label: t.series_detail_last_episode,
+              value:
+                  lastEpisode.name ?? _formatEpisodeCode(context, lastEpisode),
+            ),
+          if (nextEpisode != null)
+            _DetailRow(
+              label: t.series_detail_next_episode,
+              value:
+                  nextEpisode.name ?? _formatEpisodeCode(context, nextEpisode),
+            ),
+        ],
+      ),
     );
   }
 }

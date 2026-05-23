@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MovieModel {
 
-@JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson) int get tmdbId; String get title; String? get overview; String? get posterPath; String? get backdropPath; String? get releaseDate; List<String> get genres;@JsonKey(readValue: _readRuntimeMinutes, fromJson: flexibleNullableIntFromJson, toJson: flexibleNullableIntToJson) int? get runtimeMinutes; String? get status;
+@JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson) int get tmdbId; String get title; String? get overview; String? get posterPath; String? get backdropPath; String? get releaseDate;@JsonKey(readValue: _readGenres) List<String> get genres;@JsonKey(readValue: _readRuntimeMinutes, fromJson: flexibleNullableIntFromJson, toJson: flexibleNullableIntToJson) int? get runtimeMinutes; String? get status;
 /// Create a copy of MovieModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $MovieModelCopyWith<$Res>  {
   factory $MovieModelCopyWith(MovieModel value, $Res Function(MovieModel) _then) = _$MovieModelCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson) int tmdbId, String title, String? overview, String? posterPath, String? backdropPath, String? releaseDate, List<String> genres,@JsonKey(readValue: _readRuntimeMinutes, fromJson: flexibleNullableIntFromJson, toJson: flexibleNullableIntToJson) int? runtimeMinutes, String? status
+@JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson) int tmdbId, String title, String? overview, String? posterPath, String? backdropPath, String? releaseDate,@JsonKey(readValue: _readGenres) List<String> genres,@JsonKey(readValue: _readRuntimeMinutes, fromJson: flexibleNullableIntFromJson, toJson: flexibleNullableIntToJson) int? runtimeMinutes, String? status
 });
 
 
@@ -161,7 +161,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)  int tmdbId,  String title,  String? overview,  String? posterPath,  String? backdropPath,  String? releaseDate,  List<String> genres, @JsonKey(readValue: _readRuntimeMinutes, fromJson: flexibleNullableIntFromJson, toJson: flexibleNullableIntToJson)  int? runtimeMinutes,  String? status)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)  int tmdbId,  String title,  String? overview,  String? posterPath,  String? backdropPath,  String? releaseDate, @JsonKey(readValue: _readGenres)  List<String> genres, @JsonKey(readValue: _readRuntimeMinutes, fromJson: flexibleNullableIntFromJson, toJson: flexibleNullableIntToJson)  int? runtimeMinutes,  String? status)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MovieModel() when $default != null:
 return $default(_that.tmdbId,_that.title,_that.overview,_that.posterPath,_that.backdropPath,_that.releaseDate,_that.genres,_that.runtimeMinutes,_that.status);case _:
@@ -182,7 +182,7 @@ return $default(_that.tmdbId,_that.title,_that.overview,_that.posterPath,_that.b
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)  int tmdbId,  String title,  String? overview,  String? posterPath,  String? backdropPath,  String? releaseDate,  List<String> genres, @JsonKey(readValue: _readRuntimeMinutes, fromJson: flexibleNullableIntFromJson, toJson: flexibleNullableIntToJson)  int? runtimeMinutes,  String? status)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)  int tmdbId,  String title,  String? overview,  String? posterPath,  String? backdropPath,  String? releaseDate, @JsonKey(readValue: _readGenres)  List<String> genres, @JsonKey(readValue: _readRuntimeMinutes, fromJson: flexibleNullableIntFromJson, toJson: flexibleNullableIntToJson)  int? runtimeMinutes,  String? status)  $default,) {final _that = this;
 switch (_that) {
 case _MovieModel():
 return $default(_that.tmdbId,_that.title,_that.overview,_that.posterPath,_that.backdropPath,_that.releaseDate,_that.genres,_that.runtimeMinutes,_that.status);case _:
@@ -202,7 +202,7 @@ return $default(_that.tmdbId,_that.title,_that.overview,_that.posterPath,_that.b
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)  int tmdbId,  String title,  String? overview,  String? posterPath,  String? backdropPath,  String? releaseDate,  List<String> genres, @JsonKey(readValue: _readRuntimeMinutes, fromJson: flexibleNullableIntFromJson, toJson: flexibleNullableIntToJson)  int? runtimeMinutes,  String? status)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson)  int tmdbId,  String title,  String? overview,  String? posterPath,  String? backdropPath,  String? releaseDate, @JsonKey(readValue: _readGenres)  List<String> genres, @JsonKey(readValue: _readRuntimeMinutes, fromJson: flexibleNullableIntFromJson, toJson: flexibleNullableIntToJson)  int? runtimeMinutes,  String? status)?  $default,) {final _that = this;
 switch (_that) {
 case _MovieModel() when $default != null:
 return $default(_that.tmdbId,_that.title,_that.overview,_that.posterPath,_that.backdropPath,_that.releaseDate,_that.genres,_that.runtimeMinutes,_that.status);case _:
@@ -217,7 +217,7 @@ return $default(_that.tmdbId,_that.title,_that.overview,_that.posterPath,_that.b
 @JsonSerializable()
 
 class _MovieModel implements MovieModel {
-  const _MovieModel({@JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson) required this.tmdbId, required this.title, this.overview, this.posterPath, this.backdropPath, this.releaseDate, final  List<String> genres = const [], @JsonKey(readValue: _readRuntimeMinutes, fromJson: flexibleNullableIntFromJson, toJson: flexibleNullableIntToJson) this.runtimeMinutes, this.status}): _genres = genres;
+  const _MovieModel({@JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson) required this.tmdbId, required this.title, this.overview, this.posterPath, this.backdropPath, this.releaseDate, @JsonKey(readValue: _readGenres) final  List<String> genres = const [], @JsonKey(readValue: _readRuntimeMinutes, fromJson: flexibleNullableIntFromJson, toJson: flexibleNullableIntToJson) this.runtimeMinutes, this.status}): _genres = genres;
   factory _MovieModel.fromJson(Map<String, dynamic> json) => _$MovieModelFromJson(json);
 
 @override@JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson) final  int tmdbId;
@@ -227,7 +227,7 @@ class _MovieModel implements MovieModel {
 @override final  String? backdropPath;
 @override final  String? releaseDate;
  final  List<String> _genres;
-@override@JsonKey() List<String> get genres {
+@override@JsonKey(readValue: _readGenres) List<String> get genres {
   if (_genres is EqualUnmodifiableListView) return _genres;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_genres);
@@ -269,7 +269,7 @@ abstract mixin class _$MovieModelCopyWith<$Res> implements $MovieModelCopyWith<$
   factory _$MovieModelCopyWith(_MovieModel value, $Res Function(_MovieModel) _then) = __$MovieModelCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson) int tmdbId, String title, String? overview, String? posterPath, String? backdropPath, String? releaseDate, List<String> genres,@JsonKey(readValue: _readRuntimeMinutes, fromJson: flexibleNullableIntFromJson, toJson: flexibleNullableIntToJson) int? runtimeMinutes, String? status
+@JsonKey(fromJson: flexibleIntFromJson, toJson: flexibleIntToJson) int tmdbId, String title, String? overview, String? posterPath, String? backdropPath, String? releaseDate,@JsonKey(readValue: _readGenres) List<String> genres,@JsonKey(readValue: _readRuntimeMinutes, fromJson: flexibleNullableIntFromJson, toJson: flexibleNullableIntToJson) int? runtimeMinutes, String? status
 });
 
 

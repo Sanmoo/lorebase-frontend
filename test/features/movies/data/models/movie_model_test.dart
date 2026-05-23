@@ -15,10 +15,7 @@ void main() {
       'status': 'Released',
     };
 
-    const minimalJson = {
-      'tmdbId': 77,
-      'title': 'Memento',
-    };
+    const minimalJson = {'tmdbId': 77, 'title': 'Memento'};
 
     test('fromJson with complete JSON maps all fields correctly', () {
       final movie = MovieModel.fromJson(completeJson);
@@ -83,12 +80,35 @@ void main() {
     });
 
     test('fromJson accepts runtime field from API', () {
-      final movie = MovieModel.fromJson({
-        ...minimalJson,
-        'runtime': 113,
-      });
+      final movie = MovieModel.fromJson({...minimalJson, 'runtime': 113});
 
       expect(movie.runtimeMinutes, 113);
+    });
+
+    test('fromJson accepts singular genre field from movie detail API', () {
+      final movie = MovieModel.fromJson({...minimalJson, 'genre': 'Drama'});
+
+      expect(movie.genres, ['Drama']);
+    });
+
+    test('fromJson prefers genres list when both genre shapes are present', () {
+      final movie = MovieModel.fromJson({
+        ...minimalJson,
+        'genre': 'Drama',
+        'genres': ['Drama', 'Thriller'],
+      });
+
+      expect(movie.genres, ['Drama', 'Thriller']);
+    });
+
+    test('fromJson prefers empty genres list over singular genre', () {
+      final movie = MovieModel.fromJson({
+        ...minimalJson,
+        'genres': [],
+        'genre': 'Drama',
+      });
+
+      expect(movie.genres, isEmpty);
     });
   });
 }
