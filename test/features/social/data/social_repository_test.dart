@@ -635,6 +635,51 @@ void main() {
       },
     );
 
+    test(
+      'getPublicLists normalizes top-level media title and posterUrl',
+      () async {
+        final dio = Dio()
+          ..httpClientAdapter = MockAdapter(
+            onFetch: (_) => _jsonBody({
+              'items': [
+                {
+                  'mediaId': '1422',
+                  'mediaType': 'SERIES',
+                  'status': 'WATCHING',
+                  'title': 'The Middle: Uma Família Perdida no Meio do Nada',
+                  'posterUrl':
+                      'https://image.tmdb.org/t/p/w500/a3hPMvgOe9vOpEEHkuta63AtYnJ.jpg',
+                  'rating': 6,
+                  'updatedAt': '',
+                },
+              ],
+              'nextCursor': '',
+              'hasMore': false,
+            }),
+          );
+        final repo = SocialRepositoryImpl(dio);
+
+        final result = await repo.getPublicLists('user-1');
+        final item = result.items.single;
+
+        expect(item.mediaId, '1422');
+        expect(item.mediaType, 'SERIES');
+        expect(item.status, 'WATCHING');
+        expect(item.rating, 6);
+        expect(item.updatedAt, isNull);
+        expect(item.media?.mediaId, '1422');
+        expect(item.media?.mediaType, 'SERIES');
+        expect(
+          item.media?.title,
+          'The Middle: Uma Família Perdida no Meio do Nada',
+        );
+        expect(
+          item.media?.posterUrl,
+          'https://image.tmdb.org/t/p/w500/a3hPMvgOe9vOpEEHkuta63AtYnJ.jpg',
+        );
+      },
+    );
+
     test('getPublicLists calls lists endpoint and parses list items', () async {
       String? capturedPath;
       Map<String, dynamic>? capturedParams;
