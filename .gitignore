@@ -81,3 +81,6 @@ coverage/
 terraform/.terraform*
 terraform/terraform.tfstate*
 terraform/*.tfplan
+
+# Playwright MCP artifacts
+.playwright-mcp/
