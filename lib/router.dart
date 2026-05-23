@@ -30,6 +30,7 @@ String? authRedirect(AuthState authState, String location) {
   ].contains(location);
   final isAuthenticated = authState.isAuthenticated;
 
+  if (authState.isLoading) return null;
   if (!isAuthenticated && !isAuthRoute) return '/login';
   if (isAuthenticated && isAuthRoute) return '/dashboard';
   return null;

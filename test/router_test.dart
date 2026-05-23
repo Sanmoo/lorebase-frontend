@@ -22,7 +22,10 @@ void main() {
         expect(authRedirect(unauthenticated, '/tracking'), '/login');
         expect(authRedirect(unauthenticated, '/recommend'), '/login');
         expect(authRedirect(unauthenticated, '/social'), '/login');
-        expect(authRedirect(unauthenticated, '/social/profile/user-1'), '/login');
+        expect(
+          authRedirect(unauthenticated, '/social/profile/user-1'),
+          '/login',
+        );
         expect(
           authRedirect(unauthenticated, '/social/profile/user-1/followers'),
           '/login',
@@ -68,9 +71,12 @@ void main() {
     group('unknown', () {
       const unknown = AuthState.unknown();
 
-      test('redirects to /login on protected routes', () {
-        expect(authRedirect(unknown, '/dashboard'), '/login');
-        expect(authRedirect(unknown, '/search'), '/login');
+      test('does not redirect protected deep links while auth is loading', () {
+        expect(authRedirect(unknown, '/dashboard'), isNull);
+        expect(authRedirect(unknown, '/search'), isNull);
+        expect(authRedirect(unknown, '/tracking'), isNull);
+        expect(authRedirect(unknown, '/social'), isNull);
+        expect(authRedirect(unknown, '/recommend'), isNull);
       });
 
       test('stays on auth routes', () {
@@ -83,11 +89,13 @@ void main() {
 
   group('routerProvider', () {
     test('creates GoRouter with initialLocation /login', () {
-      final container = ProviderContainer(overrides: [
-        authViewModelProvider.overrideWith(
-          () => _FakeAuthVM(const AuthState.unknown()),
-        ),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          authViewModelProvider.overrideWith(
+            () => _FakeAuthVM(const AuthState.unknown()),
+          ),
+        ],
+      );
       addTearDown(container.dispose);
 
       final router = container.read(routerProvider);
@@ -95,11 +103,13 @@ void main() {
     });
 
     test('router redirect redirects unauthenticated to /login', () async {
-      final container = ProviderContainer(overrides: [
-        authViewModelProvider.overrideWith(
-          () => _FakeAuthVM(const AuthState.unauthenticated()),
-        ),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          authViewModelProvider.overrideWith(
+            () => _FakeAuthVM(const AuthState.unauthenticated()),
+          ),
+        ],
+      );
       addTearDown(container.dispose);
 
       final router = container.read(routerProvider);
@@ -135,10 +145,13 @@ void main() {
   });
 
   group('authRedirect edge cases', () {
-    test('unknown with unknown state redirects to login', () {
-      const unknown = AuthState.unknown();
-      expect(authRedirect(unknown, '/unknown'), '/login');
-    });
+    test(
+      'unknown with unknown state does not redirect while auth is loading',
+      () {
+        const unknown = AuthState.unknown();
+        expect(authRedirect(unknown, '/unknown'), isNull);
+      },
+    );
 
     test('authenticated on unknown non-auth route stays', () {
       const authenticated = AuthState.authenticated('user1');
@@ -158,11 +171,13 @@ void main() {
 }
 
 GoRouter _routerForTest() {
-  final container = ProviderContainer(overrides: [
-    authViewModelProvider.overrideWith(
-      () => _FakeAuthVM(const AuthState.authenticated('user1')),
-    ),
-  ]);
+  final container = ProviderContainer(
+    overrides: [
+      authViewModelProvider.overrideWith(
+        () => _FakeAuthVM(const AuthState.authenticated('user1')),
+      ),
+    ],
+  );
   addTearDown(container.dispose);
   return container.read(routerProvider);
 }
