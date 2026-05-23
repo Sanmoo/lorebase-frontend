@@ -251,6 +251,26 @@ void main() {
     );
   });
 
+  testWidgets('My profile renders header when activity and lists are empty', (
+    tester,
+  ) async {
+    await tester.pumpSocial(
+      const SocialProfilePage(userId: 'me', isMe: true),
+      _FakeSocialRepository(),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Fulano'), findsOneWidget);
+    expect(find.text('Editar perfil'), findsOneWidget);
+    expect(find.text('0 seguidores'), findsOneWidget);
+    expect(find.text('0 seguindo'), findsOneWidget);
+    expect(find.text('Nenhuma atividade pública ainda.'), findsOneWidget);
+    expect(
+      find.text('Este perfil não está disponível no momento.'),
+      findsNothing,
+    );
+  });
+
   testWidgets('Feed activity cards navigate to user and media', (tester) async {
     final router = _router(
       const SocialPage(),
