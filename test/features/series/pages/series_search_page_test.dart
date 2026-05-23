@@ -77,6 +77,16 @@ Widget _wrap(ProviderContainer container) {
   );
 }
 
+Widget _wrapWithSeriesDetailRoute(
+  ProviderContainer container, {
+  required GoRouter router,
+}) {
+  return UncontrolledProviderScope(
+    container: container,
+    child: TranslationProvider(child: MaterialApp.router(routerConfig: router)),
+  );
+}
+
 Future<void> main() async {
   await LocaleSettings.setLocale(AppLocale.enUs);
 
@@ -263,6 +273,41 @@ Future<void> main() async {
       await tester.pump();
 
       expect(find.text('Breaking Bad'), findsOneWidget);
+    });
+
+    testWidgets('tapping series item updates location to series detail route', (
+      tester,
+    ) async {
+      final results = [const SeriesModel(tmdbId: 1, title: 'Breaking Bad')];
+      final fakeVM = FakeSearchVM(state: AsyncValue.data(results));
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      late final GoRouter router;
+      router = GoRouter(
+        initialLocation: '/search',
+        routes: [
+          GoRoute(path: '/search', builder: (_, _) => const SeriesSearchPage()),
+          GoRoute(
+            path: '/series/:tmdbId',
+            builder: (_, state) => Text(
+              'Series detail ${state.pathParameters['tmdbId']}',
+              textDirection: TextDirection.ltr,
+            ),
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        _wrapWithSeriesDetailRoute(container, router: router),
+      );
+      await tester.pump();
+
+      await tester.tap(find.text('Breaking Bad'));
+      await tester.pumpAndSettle();
+
+      expect(router.routeInformationProvider.value.uri.path, '/series/1');
+      expect(find.text('Series detail 1'), findsOneWidget);
     });
 
     testWidgets('switching to Movies shows the movie hint', (tester) async {
