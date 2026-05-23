@@ -100,5 +100,15 @@ void main() {
 
       expect(movie.genres, ['Drama', 'Thriller']);
     });
+
+    test('fromJson prefers empty genres list over singular genre', () {
+      final movie = MovieModel.fromJson({
+        ...minimalJson,
+        'genres': [],
+        'genre': 'Drama',
+      });
+
+      expect(movie.genres, isEmpty);
+    });
   });
 }

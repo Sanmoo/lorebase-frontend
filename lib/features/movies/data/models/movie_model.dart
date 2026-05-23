@@ -9,7 +9,7 @@ Object? _readRuntimeMinutes(Map<dynamic, dynamic> json, String key) =>
 
 Object? _readGenres(Map<dynamic, dynamic> json, String key) {
   final genres = json[key];
-  if (genres is List && genres.isNotEmpty) return genres;
+  if (genres is List) return genres;
   final genre = json['genre'];
   if (genre is String && genre.isNotEmpty) return [genre];
   return genres;
