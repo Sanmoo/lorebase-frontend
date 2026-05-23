@@ -22,7 +22,7 @@ final class SocialFollowListViewModelProvider
     required SocialFollowListViewModelFamily super.from,
     required (String, SocialFollowListKind) super.argument,
   }) : super(
-         retry: null,
+         retry: _noSocialFollowListRetry,
          name: r'socialFollowListViewModelProvider',
          isAutoDispose: true,
          dependencies: null,
@@ -56,7 +56,7 @@ final class SocialFollowListViewModelProvider
 }
 
 String _$socialFollowListViewModelHash() =>
-    r'449b6d0800f49bc0bd07608332ef5526b7dea3c1';
+    r'101814f729681628281a253b6bb9408bfb8b4813';
 
 final class SocialFollowListViewModelFamily extends $Family
     with
@@ -69,7 +69,7 @@ final class SocialFollowListViewModelFamily extends $Family
         > {
   SocialFollowListViewModelFamily._()
     : super(
-        retry: null,
+        retry: _noSocialFollowListRetry,
         name: r'socialFollowListViewModelProvider',
         dependencies: null,
         $allTransitiveDependencies: null,

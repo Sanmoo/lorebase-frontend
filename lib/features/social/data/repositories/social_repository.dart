@@ -181,9 +181,7 @@ class SocialRepositoryImpl implements SocialRepository {
     int limit = 20,
     String? cursor,
   }) async {
-    final path = userId == 'me'
-        ? '/follows/me/followers'
-        : '/follows/$userId/followers';
+    final path = '/users/$userId/followers';
     return _getPaginated(
       path,
       queryParameters: _paginationParams(limit: limit, cursor: cursor),
@@ -198,9 +196,7 @@ class SocialRepositoryImpl implements SocialRepository {
     int limit = 20,
     String? cursor,
   }) async {
-    final path = userId == 'me'
-        ? '/follows/me/following'
-        : '/follows/$userId/following';
+    final path = '/users/$userId/following';
     return _getPaginated(
       path,
       queryParameters: _paginationParams(limit: limit, cursor: cursor),

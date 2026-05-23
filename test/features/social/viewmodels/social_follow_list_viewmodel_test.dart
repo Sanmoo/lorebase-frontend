@@ -10,6 +10,13 @@ import 'package:lorebase/features/social/data/repositories/social_repository.dar
 import 'package:lorebase/features/social/viewmodels/social_follow_list_viewmodel.dart';
 
 void main() {
+  test('Social follow list provider disables automatic retry', () {
+    final retry = socialFollowListViewModelProvider.retry;
+
+    expect(retry, isNotNull);
+    expect(retry!(0, Exception('route not found')), isNull);
+  });
+
   test('followers mode calls getFollowers', () async {
     final repo = _FakeSocialRepository();
     final container = ProviderContainer(

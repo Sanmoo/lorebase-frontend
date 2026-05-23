@@ -279,6 +279,27 @@ void main() {
     );
   });
 
+  testWidgets('Profile followers failure shows error instead of spinner', (
+    tester,
+  ) async {
+    final repository = _FakeSocialRepository()
+      ..followersError = const ServerException(
+        message: 'Route not found',
+        statusCode: 404,
+      );
+    await tester.pumpSocial(
+      const SocialProfilePage(userId: 'me', isMe: true),
+      repository,
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Followers'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Erro ao carregar lista.'), findsOneWidget);
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+  });
+
   testWidgets('Feed activity cards navigate to user and media', (tester) async {
     final router = _router(
       const SocialPage(),
@@ -564,6 +585,7 @@ class _FakeSocialRepository implements SocialRepository {
   int getMyProfileCallCount = 0;
   final followedUserIds = <String>[];
   Object? followError;
+  Object? followersError;
   Completer<void>? _profileLoadCompleter;
   Completer<void>? _followCompleter;
   String? savedDisplayName;
@@ -658,7 +680,13 @@ class _FakeSocialRepository implements SocialRepository {
     String userId, {
     int limit = 20,
     String? cursor,
-  }) async => _empty();
+  }) async {
+    final error = followersError;
+    if (error != null) {
+      throw error;
+    }
+    return _empty();
+  }
 
   @override
   Future<PaginatedSocialResponse<FollowRelationshipModel>> getFollowing(

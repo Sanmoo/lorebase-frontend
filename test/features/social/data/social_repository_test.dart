@@ -518,7 +518,7 @@ void main() {
           cursor: 'cursor-4',
         );
 
-        expect(capturedPath, '/follows/user-2/followers');
+        expect(capturedPath, '/users/user-2/followers');
         expect(capturedParams, {'limit': 7, 'cursor': 'cursor-4'});
         expect(result, isA<PaginatedSocialResponse<FollowRelationshipModel>>());
         expect(result.items.single.followerId, 'user-1');
@@ -551,12 +551,64 @@ void main() {
           cursor: 'cursor-5',
         );
 
-        expect(capturedPath, '/follows/user-1/following');
+        expect(capturedPath, '/users/user-1/following');
         expect(capturedParams, {'limit': 8, 'cursor': 'cursor-5'});
         expect(result, isA<PaginatedSocialResponse<FollowRelationshipModel>>());
         expect(result.items.single.followedId, 'user-2');
       },
     );
+
+
+
+    test('getFollowers calls users followers BFF endpoint for me', () async {
+      String? capturedPath;
+      Map<String, dynamic>? capturedParams;
+      final dio = Dio(
+        BaseOptions(baseUrl: 'https://api.example.test'),
+      )..httpClientAdapter = MockAdapter(
+          onFetch: (options) {
+            capturedPath = options.path;
+            capturedParams = options.queryParameters;
+            return _jsonBody({
+              'items': <Map<String, dynamic>>[],
+              'nextCursor': null,
+              'hasMore': false,
+            });
+          },
+        );
+      final repository = SocialRepositoryImpl(dio);
+
+      final response = await repository.getFollowers('me');
+
+      expect(capturedPath, '/users/me/followers');
+      expect(capturedParams, {'limit': 20});
+      expect(response.items, isEmpty);
+    });
+
+    test('getFollowing calls users following BFF endpoint for public profile', () async {
+      String? capturedPath;
+      Map<String, dynamic>? capturedParams;
+      final dio = Dio(
+        BaseOptions(baseUrl: 'https://api.example.test'),
+      )..httpClientAdapter = MockAdapter(
+          onFetch: (options) {
+            capturedPath = options.path;
+            capturedParams = options.queryParameters;
+            return _jsonBody({
+              'items': <Map<String, dynamic>>[],
+              'nextCursor': null,
+              'hasMore': false,
+            });
+          },
+        );
+      final repository = SocialRepositoryImpl(dio);
+
+      final response = await repository.getFollowing('user-1');
+
+      expect(capturedPath, '/users/user-1/following');
+      expect(capturedParams, {'limit': 20});
+      expect(response.items, isEmpty);
+    });
 
     test(
       'getPublicLists tolerates BFF list items with empty updatedAt',

@@ -8,7 +8,9 @@ part 'social_follow_list_viewmodel.g.dart';
 
 enum SocialFollowListKind { followers, following }
 
-@riverpod
+Duration? _noSocialFollowListRetry(int retryCount, Object error) => null;
+
+@Riverpod(retry: _noSocialFollowListRetry)
 class SocialFollowListViewModel extends _$SocialFollowListViewModel {
   @override
   Future<PaginatedSocialResponse<FollowRelationshipModel>> build(
