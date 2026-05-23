@@ -171,7 +171,7 @@ class _SearchResultsBody extends ConsumerWidget {
                 child: SeriesCard(
                   series: item,
                   onTap: item.tmdbId != 0
-                      ? () => context.push('/series/${item.tmdbId}')
+                      ? () => context.go('/series/${item.tmdbId}')
                       : null,
                 ),
               );

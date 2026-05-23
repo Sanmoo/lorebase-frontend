@@ -297,6 +297,7 @@ Future<void> main() async {
           ),
         ],
       );
+      addTearDown(router.dispose);
 
       await tester.pumpWidget(
         _wrapWithSeriesDetailRoute(container, router: router),
