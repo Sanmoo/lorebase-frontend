@@ -4,6 +4,7 @@ import '../constants/api_constants.dart';
 import 'auth_interceptor.dart';
 import 'error_interceptor.dart';
 import 'locale_interceptor.dart';
+import 'redacting_log_interceptor.dart';
 
 class DioClient {
   static Dio create(Ref ref) {
@@ -23,10 +24,7 @@ class DioClient {
       AuthInterceptor(),
       LocaleInterceptor(ref),
       ErrorInterceptor(ref),
-      LogInterceptor(
-        requestBody: true,
-        responseBody: true,
-      ),
+      RedactingLogInterceptor(requestBody: true, responseBody: true),
     ]);
 
     return dio;
