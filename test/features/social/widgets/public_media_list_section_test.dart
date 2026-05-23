@@ -80,7 +80,7 @@ void main() {
     expect(find.text('Interestelar'), findsOneWidget);
     expect(find.text('Reacher'), findsOneWidget);
     expect(find.text('Batman Begins'), findsOneWidget);
-    expect(find.text('⭐ 9/10'), findsOneWidget);
+    expect(find.text('Filme • ⭐ 9/10'), findsOneWidget);
     expect(find.text('Série'), findsOneWidget);
     expect(find.text('PLAN_TO_WATCH'), findsNothing);
     expect(find.text('WATCHING'), findsNothing);
@@ -89,6 +89,35 @@ void main() {
     expect(find.byType(ListTile), findsNothing);
 
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('renders public media cards with bordered aligned layout', (
+    tester,
+  ) async {
+    await pumpSection(
+      tester,
+      items: [
+        item(
+          status: 'COMPLETED',
+          title: 'Batman: O Cavaleiro das Trevas',
+          rating: 10,
+        ),
+      ],
+    );
+
+    final inkWidgets = tester.widgetList<Ink>(
+      find.descendant(of: find.byType(InkWell), matching: find.byType(Ink)),
+    );
+
+    expect(
+      inkWidgets.any((ink) {
+        final decoration = ink.decoration;
+        return decoration is BoxDecoration && decoration.border != null;
+      }),
+      isTrue,
+    );
+    expect(find.text('Batman: O Cavaleiro das Trevas'), findsOneWidget);
+    expect(find.text('Filme • ⭐ 10/10'), findsOneWidget);
   });
 
   testWidgets('keeps known statuses in stable display order', (tester) async {
@@ -206,8 +235,7 @@ void main() {
       find.text('Título longo para testar quebra em duas linhas'),
       findsOneWidget,
     );
-    expect(find.text('Filme'), findsOneWidget);
-    expect(find.text('⭐ 8/10'), findsOneWidget);
+    expect(find.text('Filme • ⭐ 8/10'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

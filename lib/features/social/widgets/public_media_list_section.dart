@@ -13,7 +13,7 @@ class PublicMediaListSection extends StatelessWidget {
   });
 
   static const double _carouselHeight = 180;
-  static const double _cardWidth = 96;
+  static const double _cardWidth = 124;
 
   final String title;
   final List<PublicListItemModel> items;
@@ -87,26 +87,40 @@ class _PublicMediaCard extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(14),
           onTap: onItemTap == null ? null : () => onItemTap!(item),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(child: _Poster(item: item)),
-              const SizedBox(height: 6),
-              Text(
-                title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodyMedium,
+          child: Ink(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outlineVariant,
               ),
-              const SizedBox(height: 2),
-              if (showMediaTypeMetadata || ratingLabel != null)
-                _Metadata(
-                  mediaTypeLabel: showMediaTypeMetadata ? mediaTypeLabel : null,
-                  ratingLabel: ratingLabel,
-                ),
-            ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(child: _Poster(item: item)),
+                  const SizedBox(height: 8),
+                  Text(
+                    title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.start,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 4),
+                  _Metadata(
+                    mediaTypeLabel: showMediaTypeMetadata
+                        ? mediaTypeLabel
+                        : null,
+                    ratingLabel: ratingLabel,
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -122,31 +136,16 @@ class _Metadata extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textStyle = Theme.of(context).textTheme.bodySmall;
+    final parts = [?mediaTypeLabel, ?ratingLabel];
+    final textStyle = Theme.of(context).textTheme.bodySmall?.copyWith(
+      color: Theme.of(context).colorScheme.onSurfaceVariant,
+    );
 
-    return Row(
-      children: [
-        if (mediaTypeLabel != null)
-          Flexible(
-            child: Text(
-              mediaTypeLabel!,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: textStyle,
-            ),
-          ),
-        if (mediaTypeLabel != null && ratingLabel != null)
-          Text(' • ', style: textStyle),
-        if (ratingLabel != null)
-          Flexible(
-            child: Text(
-              ratingLabel!,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: textStyle,
-            ),
-          ),
-      ],
+    return Text(
+      parts.join(' • '),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: textStyle,
     );
   }
 }
