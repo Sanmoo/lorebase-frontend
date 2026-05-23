@@ -120,7 +120,7 @@ class SocialRepositoryImpl implements SocialRepository {
   @override
   Future<void> followUser(String userId) async {
     try {
-      await _dio.post('/follows/$userId');
+      await _dio.post('/users/$userId/follow');
     } on DioException catch (e) {
       throw _repositoryException(e, 'Failed to follow user');
     }
@@ -129,7 +129,7 @@ class SocialRepositoryImpl implements SocialRepository {
   @override
   Future<void> unfollowUser(String userId) async {
     try {
-      await _dio.delete('/follows/$userId');
+      await _dio.delete('/users/$userId/follow');
     } on DioException catch (e) {
       throw _repositoryException(e, 'Failed to unfollow user');
     }
