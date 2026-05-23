@@ -34,7 +34,10 @@ void main() {
     List<PublicListItemModel> items = const [],
     ValueChanged<PublicListItemModel>? onItemTap,
     TextScaler textScaler = TextScaler.noScaling,
-  }) {
+  }) async {
+    await tester.binding.setSurfaceSize(const Size(800, 1600));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
     return tester.pumpWidget(
       MaterialApp(
         home: MediaQuery(
@@ -118,6 +121,35 @@ void main() {
     );
     expect(find.text('Batman: O Cavaleiro das Trevas'), findsOneWidget);
     expect(find.text('Filme • ⭐ 10/10'), findsOneWidget);
+  });
+
+  testWidgets('uses padded content and vertical poster cards', (tester) async {
+    await pumpSection(
+      tester,
+      items: [item(status: 'WATCHING', title: 'The Middle')],
+    );
+
+    final listView = tester.widget<ListView>(find.byType(ListView).first);
+    expect(listView.padding, const EdgeInsets.fromLTRB(16, 12, 16, 24));
+
+    final pageTitle = tester.widget<Text>(find.text('Favoritos'));
+    expect(pageTitle.style?.fontWeight, FontWeight.w700);
+
+    final sectionTitle = tester.widget<Text>(find.text('Assistindo'));
+    expect(sectionTitle.style?.fontWeight, FontWeight.w700);
+
+    final posterSizedBox = tester.widget<SizedBox>(
+      find.ancestor(
+        of: find.byIcon(Icons.movie),
+        matching: find.byWidgetPredicate(
+          (widget) =>
+              widget is SizedBox && widget.width == 124 && widget.height == 186,
+        ),
+      ),
+    );
+
+    expect(posterSizedBox.width, 124);
+    expect(posterSizedBox.height, 186);
   });
 
   testWidgets('keeps known statuses in stable display order', (tester) async {

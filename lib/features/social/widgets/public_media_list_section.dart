@@ -12,8 +12,13 @@ class PublicMediaListSection extends StatelessWidget {
     this.onItemTap,
   });
 
-  static const double _carouselHeight = 180;
-  static const double _cardWidth = 124;
+  static const double _posterWidth = 124;
+  static const double _posterHeight = 186;
+  static const double _textAreaHeight = 64;
+  static const double _cardPadding = 8;
+  static const double _cardBorderWidth = 1;
+  static const double _cardWidth =
+      _posterWidth + (_cardPadding * 2) + (_cardBorderWidth * 2);
 
   final String title;
   final List<PublicListItemModel> items;
@@ -24,14 +29,20 @@ class PublicMediaListSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final groupedItems = _groupItemsByStatus(items);
     final textScaler = MediaQuery.textScalerOf(context);
-    final carouselHeight = textScaler.scale(_carouselHeight);
+    final carouselHeight =
+        _posterHeight + textScaler.scale(_textAreaHeight) + (_cardPadding * 2);
 
     return ListView(
-      padding: EdgeInsets.zero,
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
       cacheExtent: 1000,
       shrinkWrap: true,
       children: [
-        Text(title, style: Theme.of(context).textTheme.titleMedium),
+        Text(
+          title,
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+        ),
         const SizedBox(height: 8),
         if (items.isEmpty)
           Text(emptyMessage)
@@ -39,10 +50,12 @@ class PublicMediaListSection extends StatelessWidget {
           for (final entry in groupedItems.entries)
             if (entry.value.isNotEmpty) ...[
               Padding(
-                padding: const EdgeInsets.only(top: 8, bottom: 8),
+                padding: const EdgeInsets.only(top: 16, bottom: 10),
                 child: Text(
                   _statusLabel(entry.key),
-                  style: Theme.of(context).textTheme.titleSmall,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
               SizedBox(
@@ -80,6 +93,7 @@ class _PublicMediaCard extends StatelessWidget {
     final mediaTypeLabel = _mediaTypeLabel(mediaType);
     final ratingLabel = item.rating == null ? null : '⭐ ${item.rating}/10';
     final showMediaTypeMetadata = title != mediaTypeLabel;
+    final textScaler = MediaQuery.textScalerOf(context);
 
     return Semantics(
       button: onItemTap != null,
@@ -98,25 +112,45 @@ class _PublicMediaCard extends StatelessWidget {
               ),
             ),
             child: Padding(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(
+                PublicMediaListSection._cardPadding,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Expanded(child: _Poster(item: item)),
-                  const SizedBox(height: 8),
-                  Text(
-                    title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.start,
-                    style: Theme.of(context).textTheme.bodyMedium,
+                  SizedBox(
+                    width: PublicMediaListSection._posterWidth,
+                    height: PublicMediaListSection._posterHeight,
+                    child: _Poster(item: item),
                   ),
-                  const SizedBox(height: 4),
-                  _Metadata(
-                    mediaTypeLabel: showMediaTypeMetadata
-                        ? mediaTypeLabel
-                        : null,
-                    ratingLabel: ratingLabel,
+                  SizedBox(
+                    height:
+                        textScaler.scale(
+                          PublicMediaListSection._textAreaHeight,
+                        ) -
+                        (PublicMediaListSection._cardBorderWidth * 2),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const SizedBox(height: 8),
+                        Expanded(
+                          child: Text(
+                            title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.start,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        _Metadata(
+                          mediaTypeLabel: showMediaTypeMetadata
+                              ? mediaTypeLabel
+                              : null,
+                          ratingLabel: ratingLabel,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
