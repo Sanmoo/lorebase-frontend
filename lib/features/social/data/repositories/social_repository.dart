@@ -70,28 +70,22 @@ class SocialRepositoryImpl implements SocialRepository {
 
   @override
   Future<SocialProfileModel> getMyProfile() async {
-    debugLog(
-      '[SocialProfile] repository getMyProfile started path=/profiles/me',
-    );
+    const path = '/users/me/profile';
+    debugLog('[SocialProfile] repository getMyProfile started path=$path');
     try {
-      final profile = await _getProfile(
-        '/profiles/me',
-        'Failed to load profile',
-      );
-      debugLog(
-        '[SocialProfile] repository getMyProfile success path=/profiles/me',
-      );
+      final profile = await _getProfile(path, 'Failed to load profile');
+      debugLog('[SocialProfile] repository getMyProfile success path=$path');
       return profile;
     } on ServerException catch (error) {
       debugLog(
         '[SocialProfile] repository getMyProfile failed '
-        'path=/profiles/me status=${error.statusCode}',
+        'path=$path status=${error.statusCode}',
       );
       rethrow;
     } catch (error) {
       debugLog(
         '[SocialProfile] repository getMyProfile failed '
-        'path=/profiles/me type=${error.runtimeType}',
+        'path=$path type=${error.runtimeType}',
       );
       rethrow;
     }
