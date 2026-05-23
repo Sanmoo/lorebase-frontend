@@ -52,6 +52,42 @@ void main() {
     },
   );
 
+  test('build keeps profile when user activity fails', () async {
+    final repo = _FakeSocialRepository(activityError: Exception('boom'));
+    final container = ProviderContainer(
+      overrides: [socialRepositoryProvider.overrideWithValue(repo)],
+    );
+    addTearDown(container.dispose);
+
+    final state = await container.read(
+      socialProfileViewModelProvider('user-1').future,
+    );
+
+    expect(state.profile.userId, 'user-1');
+    expect(state.activity.items, isEmpty);
+    expect(state.activity.nextCursor, isNull);
+    expect(state.activity.hasMore, isFalse);
+    expect(state.publicLists.items.single.mediaId, 'media-1');
+  });
+
+  test('build keeps profile when public lists fail', () async {
+    final repo = _FakeSocialRepository(publicListsError: Exception('boom'));
+    final container = ProviderContainer(
+      overrides: [socialRepositoryProvider.overrideWithValue(repo)],
+    );
+    addTearDown(container.dispose);
+
+    final state = await container.read(
+      socialProfileViewModelProvider('user-1').future,
+    );
+
+    expect(state.profile.userId, 'user-1');
+    expect(state.activity.items.single.eventId, 'evt-1');
+    expect(state.publicLists.items, isEmpty);
+    expect(state.publicLists.nextCursor, isNull);
+    expect(state.publicLists.hasMore, isFalse);
+  });
+
   test(
     'follow and unfollow while loading leave loading state intact',
     () async {
@@ -223,12 +259,16 @@ class _FakeSocialRepository implements SocialRepository {
     this.initiallyFollowed = false,
     this.followCompleter,
     this.followError,
+    this.activityError,
+    this.publicListsError,
     this.myProfileUserId = 'me',
   });
   final int initialFollowerCount;
   final bool initiallyFollowed;
   final Completer<void>? followCompleter;
   final Object? followError;
+  final Object? activityError;
+  final Object? publicListsError;
   final String myProfileUserId;
   var myProfileCalls = 0;
   final profileUserIds = <String>[];
@@ -259,6 +299,9 @@ class _FakeSocialRepository implements SocialRepository {
     String? cursor,
   }) async {
     activityUserIds.add(userId);
+    if (activityError != null) {
+      throw activityError!;
+    }
     return PaginatedSocialResponse(
       items: [_activity()],
       nextCursor: null,
@@ -275,6 +318,9 @@ class _FakeSocialRepository implements SocialRepository {
     String? cursor,
   }) async {
     publicListUserIds.add(userId);
+    if (publicListsError != null) {
+      throw publicListsError!;
+    }
     return const PaginatedSocialResponse(
       items: [
         PublicListItemModel(
