@@ -7,7 +7,9 @@ import '../data/repositories/social_repository.dart';
 
 part 'social_discover_viewmodel.g.dart';
 
-@riverpod
+Duration? _noSocialDiscoverRetry(int retryCount, Object error) => null;
+
+@Riverpod(retry: _noSocialDiscoverRetry)
 class SocialDiscoverViewModel extends _$SocialDiscoverViewModel {
   @override
   Future<PaginatedSocialResponse<DiscoverUserModel>> build() async {

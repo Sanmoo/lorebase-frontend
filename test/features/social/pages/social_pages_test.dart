@@ -18,8 +18,16 @@ import 'package:lorebase/features/social/pages/edit_social_profile_page.dart';
 import 'package:lorebase/features/social/pages/social_onboarding_page.dart';
 import 'package:lorebase/features/social/pages/social_page.dart';
 import 'package:lorebase/features/social/pages/social_profile_page.dart';
+import 'package:lorebase/features/social/viewmodels/social_discover_viewmodel.dart';
 
 void main() {
+  test('Social discover provider disables automatic retry', () {
+    final retry = socialDiscoverViewModelProvider.retry;
+
+    expect(retry, isNotNull);
+    expect(retry!(0, Exception('timeout')), isNull);
+  });
+
   testWidgets('Social page missing profile state renders onboarding once', (
     tester,
   ) async {
