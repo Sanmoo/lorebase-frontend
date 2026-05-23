@@ -142,13 +142,21 @@ void main() {
       () {
         final logs = <Object?>[];
         final interceptor = RedactingLogInterceptor(
+          enabled: true,
           requestBody: true,
           logPrint: logs.add,
         );
         final handler = _TestRequestHandler();
-        final body = <String, dynamic>{'password': 'secret-pass'};
+        final body = <String, dynamic>{
+          'password': 'secret-pass',
+          'access_token': 'snake-access-secret',
+          'client_secret': 'snake-client-secret',
+          'id_token': 'snake-id-secret',
+        };
         final options = RequestOptions(
-          path: '/test?token=query-secret&name=public',
+          path:
+              '/test?refresh_token=snake-refresh-secret&access_token='
+              'snake-query-access-secret&name=public',
           headers: <String, dynamic>{
             'Authorization': 'Bearer secret',
             'Cookie': 'session=value',
@@ -163,15 +171,26 @@ void main() {
         expect(combinedLogs, contains('Authorization: [REDACTED]'));
         expect(combinedLogs, contains('Cookie: [REDACTED]'));
         expect(combinedLogs, contains('password: [REDACTED]'));
+        expect(combinedLogs, contains('access_token: [REDACTED]'));
+        expect(combinedLogs, contains('client_secret: [REDACTED]'));
+        expect(combinedLogs, contains('id_token: [REDACTED]'));
+        expect(combinedLogs, contains('refresh_token=%5BREDACTED%5D'));
+        expect(combinedLogs, contains('access_token=%5BREDACTED%5D'));
         expect(combinedLogs, contains('name=public'));
         expect(combinedLogs, isNot(contains('Bearer secret')));
         expect(combinedLogs, isNot(contains('session=value')));
         expect(combinedLogs, isNot(contains('secret-pass')));
-        expect(combinedLogs, isNot(contains('query-secret')));
+        expect(combinedLogs, isNot(contains('snake-access-secret')));
+        expect(combinedLogs, isNot(contains('snake-client-secret')));
+        expect(combinedLogs, isNot(contains('snake-id-secret')));
+        expect(combinedLogs, isNot(contains('snake-refresh-secret')));
+        expect(combinedLogs, isNot(contains('snake-query-access-secret')));
         expect(handler.capturedOptions, same(options));
         expect(options.headers['Authorization'], 'Bearer secret');
         expect(options.headers['Cookie'], 'session=value');
         expect(body['password'], 'secret-pass');
+        expect(body['access_token'], 'snake-access-secret');
+        expect(body['id_token'], 'snake-id-secret');
       },
     );
 
@@ -180,6 +199,7 @@ void main() {
       () {
         final logs = <Object?>[];
         final interceptor = RedactingLogInterceptor(
+          enabled: true,
           responseBody: true,
           logPrint: logs.add,
         );
@@ -200,6 +220,11 @@ void main() {
 
         final combinedLogs = logs.join('\n');
         expect(combinedLogs, contains('set-cookie: [REDACTED]'));
+        expect(combinedLogs, contains('content-type: application/json'));
+        expect(
+          combinedLogs,
+          isNot(contains('content-type: [application/json]')),
+        );
         expect(combinedLogs, contains('refreshToken: [REDACTED]'));
         expect(combinedLogs, isNot(contains('session=value')));
         expect(combinedLogs, isNot(contains('refresh-secret')));
@@ -209,11 +234,32 @@ void main() {
       },
     );
 
+    test('does not log when disabled but still forwards requests', () {
+      final logs = <Object?>[];
+      final interceptor = RedactingLogInterceptor(
+        enabled: false,
+        requestBody: true,
+        responseBody: true,
+        logPrint: logs.add,
+      );
+      final handler = _TestRequestHandler();
+      final options = RequestOptions(
+        path: '/test?token=query-secret',
+        data: <String, dynamic>{'password': 'secret'},
+      );
+
+      interceptor.onRequest(options, handler);
+
+      expect(logs, isEmpty);
+      expect(handler.capturedOptions, same(options));
+    });
+
     test(
       'logs redacted error request and response metadata without mutating error',
       () {
         final logs = <Object?>[];
         final interceptor = RedactingLogInterceptor(
+          enabled: true,
           responseBody: true,
           logPrint: logs.add,
         );
@@ -237,7 +283,8 @@ void main() {
         final error = DioException(
           requestOptions: requestOptions,
           response: response,
-          message: 'failed',
+          type: DioExceptionType.badResponse,
+          message: 'failed with token raw-error-secret',
         );
 
         interceptor.onError(error, handler);
@@ -248,8 +295,10 @@ void main() {
         expect(combinedLogs, contains('secret: [REDACTED]'));
         expect(combinedLogs, isNot(contains('key-secret')));
         expect(combinedLogs, isNot(contains('session=value')));
+        expect(combinedLogs, contains('badResponse'));
         expect(combinedLogs, isNot(contains('body-secret')));
         expect(combinedLogs, isNot(contains('code-secret')));
+        expect(combinedLogs, isNot(contains('raw-error-secret')));
         expect(handler.capturedError, same(error));
         expect(requestOptions.headers['X-Api-Key'], 'key-secret');
         expect(response.headers.value('set-cookie'), 'session=value');

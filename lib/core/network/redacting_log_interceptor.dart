@@ -12,11 +12,17 @@ const _sensitiveKeyNames = <String>{
   'password',
   'token',
   'access-token',
+  'access_token',
   'accesstoken',
   'refresh-token',
+  'refresh_token',
   'refreshtoken',
   'id-token',
+  'id_token',
   'idtoken',
+  'client-secret',
+  'client_secret',
+  'clientsecret',
   'secret',
   'credential',
   'code',
@@ -33,8 +39,16 @@ Map<String, dynamic> redactSensitiveHeaders(Map<String, dynamic> headers) {
       return MapEntry<String, dynamic>(key, _redactedValue);
     }
 
-    return MapEntry<String, dynamic>(key, value);
+    return MapEntry<String, dynamic>(key, _flattenHeaderValue(value));
   });
+}
+
+Object? _flattenHeaderValue(Object? value) {
+  if (value is List && value.length == 1) {
+    return value.single;
+  }
+
+  return value;
 }
 
 dynamic redactSensitiveData(dynamic data) {
@@ -82,6 +96,7 @@ class RedactingLogInterceptor extends Interceptor {
     this.responseHeader = true,
     this.responseBody = false,
     this.error = true,
+    this.enabled = kDebugMode,
     RedactingLogPrint? logPrint,
   }) : _logPrint = logPrint ?? ((object) => debugPrint(object?.toString()));
 
@@ -93,10 +108,16 @@ class RedactingLogInterceptor extends Interceptor {
   final bool responseHeader;
   final bool responseBody;
   final bool error;
+  final bool enabled;
   final RedactingLogPrint _logPrint;
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    if (!enabled) {
+      handler.next(options);
+      return;
+    }
+
     if (request) {
       _logPrint('--> ${options.method} ${_safeUri(options)}');
     }
@@ -114,6 +135,11 @@ class RedactingLogInterceptor extends Interceptor {
     Response<dynamic> response,
     ResponseInterceptorHandler handler,
   ) {
+    if (!enabled) {
+      handler.next(response);
+      return;
+    }
+
     if (responseUrl) {
       _logPrint(
         '<-- ${response.statusCode} ${_safeUri(response.requestOptions)}',
@@ -132,12 +158,17 @@ class RedactingLogInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
+    if (!enabled) {
+      handler.next(err);
+      return;
+    }
+
     if (error) {
       _logPrint(
         '<-- ERROR ${err.response?.statusCode ?? err.type.name} '
         '${_safeUri(err.requestOptions)}',
       );
-      _logPrint('Error message: ${err.message}');
+      _logPrint('Error type: ${err.type.name}');
       _logPrint(
         'Error request headers: '
         '${redactSensitiveHeaders(err.requestOptions.headers)}',
