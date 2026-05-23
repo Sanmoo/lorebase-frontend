@@ -312,6 +312,43 @@ void main() {
     );
   });
 
+  testWidgets('Discover timeout shows retry and recovers after tapping it', (
+    tester,
+  ) async {
+    final repository = _FakeSocialRepository(
+      discoverItems: [_discoverUser()],
+      discoverErrors: const [
+        ServerException(message: 'upstream request timed out', statusCode: 504),
+      ],
+    );
+    await tester.pumpSocial(const SocialPage(), repository);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Discover'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text(
+        'O Discover demorou para responder. Tente novamente em instantes.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('Tentar novamente'), findsOneWidget);
+    expect(repository.discoverCallCount, 1);
+
+    await tester.tap(find.text('Tentar novamente'));
+    await tester.pumpAndSettle();
+
+    expect(repository.discoverCallCount, 2);
+    expect(find.text('Ciclano'), findsOneWidget);
+    expect(
+      find.text(
+        'O Discover demorou para responder. Tente novamente em instantes.',
+      ),
+      findsNothing,
+    );
+  });
+
   testWidgets('Profile edit and activity cards navigate', (tester) async {
     final router = _router(
       const SocialProfilePage(userId: 'me', isMe: true),
@@ -377,6 +414,7 @@ extension on WidgetTester {
   Future<void> pumpSocial(Widget child, SocialRepository repository) {
     return pumpWidget(
       ProviderScope(
+        retry: (_, _) => null,
         overrides: [socialRepositoryProvider.overrideWithValue(repository)],
         child: MaterialApp(home: Scaffold(body: child)),
       ),
@@ -389,6 +427,7 @@ extension on WidgetTester {
   ) {
     return pumpWidget(
       ProviderScope(
+        retry: (_, _) => null,
         overrides: [socialRepositoryProvider.overrideWithValue(repository)],
         child: MaterialApp(
           home: Scaffold(
@@ -414,6 +453,7 @@ GoRouter _router(Widget child, SocialRepository repository) {
       GoRoute(
         path: '/',
         builder: (context, state) => ProviderScope(
+          retry: (_, _) => null,
           overrides: [socialRepositoryProvider.overrideWithValue(repository)],
           child: Scaffold(body: child),
         ),
@@ -449,7 +489,8 @@ class _FakeSocialRepository implements SocialRepository {
     this.feedItems = const [],
     this.discoverItems = const [],
     this.activityItems = const [],
-  });
+    List<Object> discoverErrors = const [],
+  }) : _discoverErrors = List<Object>.from(discoverErrors);
 
   bool missingProfile;
   final bool unavailableProfile;
@@ -457,6 +498,8 @@ class _FakeSocialRepository implements SocialRepository {
   final List<ActivityEventModel> feedItems;
   final List<DiscoverUserModel> discoverItems;
   final List<ActivityEventModel> activityItems;
+  final List<Object> _discoverErrors;
+  int discoverCallCount = 0;
   bool savedProfile = false;
   int getMyProfileCallCount = 0;
   Completer<void>? _profileLoadCompleter;
@@ -522,7 +565,14 @@ class _FakeSocialRepository implements SocialRepository {
   Future<PaginatedSocialResponse<DiscoverUserModel>> discoverUsers({
     int limit = 20,
     String? cursor,
-  }) async => _page(discoverItems);
+  }) async {
+    discoverCallCount += 1;
+    if (_discoverErrors.isNotEmpty) {
+      final error = _discoverErrors.removeAt(0);
+      throw error;
+    }
+    return _page(discoverItems);
+  }
 
   @override
   Future<PaginatedSocialResponse<ActivityEventModel>> getUserActivity(

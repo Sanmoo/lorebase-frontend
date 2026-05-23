@@ -180,8 +180,41 @@ class _DiscoverTab extends ConsumerWidget {
           },
         );
       },
-      error: (_, _) => const Center(child: Text('Erro ao descobrir pessoas.')),
+      error: (error, _) => _DiscoverErrorState(
+        message: error is ServerException && error.statusCode == 504
+            ? 'O Discover demorou para responder. Tente novamente em instantes.'
+            : 'Erro ao descobrir pessoas.',
+        onRetry: () =>
+            ref.read(socialDiscoverViewModelProvider.notifier).refresh(),
+      ),
       loading: () => const Center(child: CircularProgressIndicator()),
+    );
+  }
+}
+
+class _DiscoverErrorState extends StatelessWidget {
+  const _DiscoverErrorState({required this.message, required this.onRetry});
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(message, textAlign: TextAlign.center),
+            const SizedBox(height: 12),
+            OutlinedButton(
+              onPressed: onRetry,
+              child: const Text('Tentar novamente'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
