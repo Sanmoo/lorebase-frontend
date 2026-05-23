@@ -20,11 +20,16 @@ void main() {
     WidgetTester tester,
     DiscoverUserModel user, {
     VoidCallback? onFollow,
+    bool isFollowing = false,
   }) {
     return tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: DiscoverUserCard(user: user, onFollow: onFollow ?? () {}),
+          body: DiscoverUserCard(
+            user: user,
+            onFollow: onFollow ?? () {},
+            isFollowing: isFollowing,
+          ),
         ),
       ),
     );
@@ -56,5 +61,21 @@ void main() {
     await pumpCard(tester, user(followed: true));
 
     expect(find.text('Seguindo'), findsOneWidget);
+  });
+
+  testWidgets('follow button shows spinner and disables while following', (
+    tester,
+  ) async {
+    var calls = 0;
+    await pumpCard(tester, user(), isFollowing: true, onFollow: () => calls++);
+
+    final button = tester.widget<FilledButton>(find.byType(FilledButton));
+    expect(button.onPressed, isNull);
+    expect(find.text('Seguir'), findsNothing);
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    expect(find.bySemanticsLabel('Seguindo usuário'), findsOneWidget);
+
+    await tester.tap(find.byType(FilledButton));
+    expect(calls, 0);
   });
 }
