@@ -269,7 +269,7 @@ void main() {
       expect(result.items.single.displayName, 'Maria');
     });
 
-    test('followUser calls POST /follows/{userId}', () async {
+    test('followUser calls POST /users/{userId}/follow', () async {
       String? capturedMethod;
       String? capturedPath;
       final dio = Dio()
@@ -285,10 +285,10 @@ void main() {
       await repo.followUser('user-2');
 
       expect(capturedMethod, 'POST');
-      expect(capturedPath, '/follows/user-2');
+      expect(capturedPath, '/users/user-2/follow');
     });
 
-    test('unfollowUser calls DELETE /follows/{userId}', () async {
+    test('unfollowUser calls DELETE /users/{userId}/follow', () async {
       String? capturedMethod;
       String? capturedPath;
       final dio = Dio()
@@ -304,7 +304,7 @@ void main() {
       await repo.unfollowUser('user-2');
 
       expect(capturedMethod, 'DELETE');
-      expect(capturedPath, '/follows/user-2');
+      expect(capturedPath, '/users/user-2/follow');
     });
 
     test('getMyProfile propagates 404 as ServerException', () async {
