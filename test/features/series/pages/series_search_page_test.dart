@@ -261,20 +261,6 @@ Future<void> main() async {
       expect(fakeVM.retryCalled, true);
     });
 
-    testWidgets('tapping series item does not crash', (tester) async {
-      final results = [const SeriesModel(tmdbId: 1, title: 'Breaking Bad')];
-      final fakeVM = FakeSearchVM(state: AsyncValue.data(results));
-      final container = createContainer(fakeVM);
-      addTearDown(container.dispose);
-      await tester.pumpWidget(_wrap(container));
-      await tester.pump();
-
-      await tester.tap(find.text('Breaking Bad'));
-      await tester.pump();
-
-      expect(find.text('Breaking Bad'), findsOneWidget);
-    });
-
     testWidgets('tapping series item updates location to series detail route', (
       tester,
     ) async {
@@ -308,6 +294,7 @@ Future<void> main() async {
       await tester.pumpAndSettle();
 
       expect(router.routeInformationProvider.value.uri.path, '/series/1');
+      expect(router.canPop(), isFalse);
       expect(find.text('Series detail 1'), findsOneWidget);
     });
 
