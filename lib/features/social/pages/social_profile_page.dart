@@ -217,12 +217,33 @@ class _FollowListTab extends ConsumerWidget {
         return ListView(
           children: [
             for (final relationship in data.items)
-              ListTile(
-                title: Text(
-                  kind == SocialFollowListKind.followers
-                      ? relationship.followerId ?? 'Usuário'
-                      : relationship.followedId ?? 'Usuário',
-                ),
+              Builder(
+                builder: (context) {
+                  final trimmedDisplayName = relationship.displayName.trim();
+                  final trimmedUsername = relationship.username?.trim();
+                  final displayInitial = trimmedDisplayName.isNotEmpty
+                      ? trimmedDisplayName.characters.first
+                      : null;
+                  return ListTile(
+                    leading: CircleAvatar(
+                      backgroundImage: relationship.avatarUrl != null
+                          ? NetworkImage(relationship.avatarUrl!)
+                          : null,
+                      child: relationship.avatarUrl == null
+                          ? displayInitial != null
+                                ? Text(displayInitial)
+                                : const Icon(Icons.person)
+                          : null,
+                    ),
+                    title: Text(relationship.displayName),
+                    subtitle:
+                        trimmedUsername != null && trimmedUsername.isNotEmpty
+                        ? Text('@$trimmedUsername')
+                        : null,
+                    onTap: () =>
+                        context.go('/social/profile/${relationship.userId}'),
+                  );
+                },
               ),
           ],
         );

@@ -9,17 +9,19 @@ part of 'follow_relationship_model.dart';
 _FollowRelationshipModel _$FollowRelationshipModelFromJson(
   Map<String, dynamic> json,
 ) => _FollowRelationshipModel(
-  followerId: json['followerId'] as String?,
-  followedId: json['followedId'] as String?,
-  followedAt: json['followedAt'] == null
-      ? null
-      : DateTime.parse(json['followedAt'] as String),
+  userId: json['userId'] as String,
+  username: json['username'] as String?,
+  displayName: json['displayName'] as String,
+  avatarUrl: json['avatarUrl'] as String?,
+  isFollowing: json['isFollowing'] as bool,
 );
 
 Map<String, dynamic> _$FollowRelationshipModelToJson(
   _FollowRelationshipModel instance,
 ) => <String, dynamic>{
-  'followerId': instance.followerId,
-  'followedId': instance.followedId,
-  'followedAt': instance.followedAt?.toIso8601String(),
+  'userId': instance.userId,
+  'username': instance.username,
+  'displayName': instance.displayName,
+  'avatarUrl': instance.avatarUrl,
+  'isFollowing': instance.isFollowing,
 };

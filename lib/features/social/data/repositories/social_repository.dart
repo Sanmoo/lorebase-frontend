@@ -114,7 +114,7 @@ class SocialRepositoryImpl implements SocialRepository {
 
   @override
   Future<SocialProfileModel> getProfile(String userId) async {
-    return _getProfile('/profiles/$userId', 'Failed to load profile');
+    return _getProfile('/users/$userId/profile', 'Failed to load profile');
   }
 
   @override

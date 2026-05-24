@@ -144,36 +144,36 @@ void main() {
       expect(user.isFollowedByMe, isFalse);
     });
 
-    test('parses follow relationship', () {
+    test('parses enriched follow user from BFF contract', () {
       final relationship = FollowRelationshipModel.fromJson({
-        'followerId': 'user-1',
-        'followedId': 'user-2',
-        'followedAt': '2026-05-20T10:00:00Z',
+        'userId': 'user-3',
+        'username': 'ciclano',
+        'displayName': 'Ciclano Silva',
+        'avatarUrl': 'https://example.com/avatar.png',
+        'isFollowing': true,
       });
 
-      expect(relationship.followerId, 'user-1');
-      expect(relationship.followedId, 'user-2');
-      expect(relationship.followedAt, DateTime.parse('2026-05-20T10:00:00Z'));
+      expect(relationship.userId, 'user-3');
+      expect(relationship.username, 'ciclano');
+      expect(relationship.displayName, 'Ciclano Silva');
+      expect(relationship.avatarUrl, 'https://example.com/avatar.png');
+      expect(relationship.isFollowing, isTrue);
     });
 
-    test('allows omitted follow relationship optional fields', () {
-      final relationship = FollowRelationshipModel.fromJson({});
-
-      expect(relationship.followerId, isNull);
-      expect(relationship.followedId, isNull);
-      expect(relationship.followedAt, isNull);
-    });
-
-    test('allows null follow relationship optional fields', () {
+    test('allows nullable follow user optional fields', () {
       final relationship = FollowRelationshipModel.fromJson({
-        'followerId': null,
-        'followedId': null,
-        'followedAt': null,
+        'userId': 'user-3',
+        'username': null,
+        'displayName': 'Ciclano Silva',
+        'avatarUrl': null,
+        'isFollowing': false,
       });
 
-      expect(relationship.followerId, isNull);
-      expect(relationship.followedId, isNull);
-      expect(relationship.followedAt, isNull);
+      expect(relationship.userId, 'user-3');
+      expect(relationship.username, isNull);
+      expect(relationship.displayName, 'Ciclano Silva');
+      expect(relationship.avatarUrl, isNull);
+      expect(relationship.isFollowing, isFalse);
     });
 
     test('parses public list item', () {

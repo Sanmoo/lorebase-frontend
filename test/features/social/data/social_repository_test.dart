@@ -71,9 +71,11 @@ Map<String, dynamic> _discoverUserJson() => {
 };
 
 Map<String, dynamic> _followRelationshipJson() => {
-  'followerId': 'user-1',
-  'followedId': 'user-2',
-  'followedAt': '2026-05-20T10:00:00Z',
+  'userId': 'user-2',
+  'username': 'maria',
+  'displayName': 'Maria Souza',
+  'avatarUrl': 'https://example.com/maria.png',
+  'isFollowing': true,
 };
 
 Map<String, dynamic> _publicListItemJson() => {
@@ -407,7 +409,7 @@ void main() {
 
       final result = await repo.getProfile('user-2');
 
-      expect(capturedPath, '/profiles/user-2');
+      expect(capturedPath, '/users/user-2/profile');
       expect(result.displayName, 'Fulano');
     });
 
@@ -521,7 +523,11 @@ void main() {
         expect(capturedPath, '/users/user-2/followers');
         expect(capturedParams, {'limit': 7, 'cursor': 'cursor-4'});
         expect(result, isA<PaginatedSocialResponse<FollowRelationshipModel>>());
-        expect(result.items.single.followerId, 'user-1');
+        expect(result.items.single.userId, 'user-2');
+        expect(result.items.single.username, 'maria');
+        expect(result.items.single.displayName, 'Maria Souza');
+        expect(result.items.single.avatarUrl, 'https://example.com/maria.png');
+        expect(result.items.single.isFollowing, isTrue);
         expect(result.nextCursor, 'next-followers');
       },
     );
@@ -554,7 +560,8 @@ void main() {
         expect(capturedPath, '/users/user-1/following');
         expect(capturedParams, {'limit': 8, 'cursor': 'cursor-5'});
         expect(result, isA<PaginatedSocialResponse<FollowRelationshipModel>>());
-        expect(result.items.single.followedId, 'user-2');
+        expect(result.items.single.userId, 'user-2');
+        expect(result.items.single.displayName, 'Maria Souza');
       },
     );
 

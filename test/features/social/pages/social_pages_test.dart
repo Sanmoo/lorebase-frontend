@@ -15,10 +15,12 @@ import 'package:lorebase/features/social/data/models/social_profile_model.dart';
 import 'package:lorebase/features/social/data/models/social_user_model.dart';
 import 'package:lorebase/features/social/data/repositories/social_repository.dart';
 import 'package:lorebase/features/social/pages/edit_social_profile_page.dart';
+import 'package:lorebase/features/social/pages/social_follow_list_page.dart';
 import 'package:lorebase/features/social/pages/social_onboarding_page.dart';
 import 'package:lorebase/features/social/pages/social_page.dart';
 import 'package:lorebase/features/social/pages/social_profile_page.dart';
 import 'package:lorebase/features/social/viewmodels/social_discover_viewmodel.dart';
+import 'package:lorebase/features/social/viewmodels/social_follow_list_viewmodel.dart';
 
 void main() {
   test('Social discover provider disables automatic retry', () {
@@ -478,6 +480,99 @@ void main() {
     expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 
+  testWidgets('Profile followers tab shows real users and navigates', (
+    tester,
+  ) async {
+    final repository = _FakeSocialRepository(
+      followersItems: [
+        _followUser(),
+        _followUser(userId: 'user-blank', username: '   ', displayName: ''),
+      ],
+    );
+    final router = _router(
+      const SocialProfilePage(userId: 'me', isMe: true),
+      repository,
+    );
+    await tester.pumpRouter(router);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Followers'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Ciclano Silva'), findsOneWidget);
+    expect(find.text('@ciclano'), findsOneWidget);
+    expect(find.text('@   '), findsNothing);
+    expect(find.byIcon(Icons.person), findsOneWidget);
+    expect(find.text('Usuário'), findsNothing);
+
+    await tester.tap(find.text('Ciclano Silva'));
+    await tester.pumpAndSettle();
+
+    expect(
+      router.routeInformationProvider.value.uri.path,
+      '/social/profile/user-3',
+    );
+  });
+
+  testWidgets('Standalone following page shows real users and navigates', (
+    tester,
+  ) async {
+    final repository = _FakeSocialRepository(
+      followingItems: [
+        _followUser(
+          userId: 'user-4',
+          username: ' beltrano ',
+          displayName: 'Beltrano Lima',
+          isFollowing: true,
+        ),
+        _followUser(
+          userId: 'user-blank',
+          username: '   ',
+          displayName: '',
+          isFollowing: true,
+        ),
+      ],
+    );
+    final router = GoRouter(
+      initialLocation: '/',
+      routes: [
+        GoRoute(
+          path: '/',
+          builder: (context, state) => ProviderScope(
+            retry: (_, _) => null,
+            overrides: [socialRepositoryProvider.overrideWithValue(repository)],
+            child: const SocialFollowListPage(
+              userId: 'me',
+              kind: SocialFollowListKind.following,
+            ),
+          ),
+        ),
+        GoRoute(
+          path: '/social/profile/:userId',
+          builder: (context, state) =>
+              Text('profile ${state.pathParameters['userId']}'),
+        ),
+      ],
+    );
+    await tester.pumpRouter(router);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Beltrano Lima'), findsOneWidget);
+    expect(find.text('@beltrano'), findsOneWidget);
+    expect(find.text('@ beltrano '), findsNothing);
+    expect(find.text('@   '), findsNothing);
+    expect(find.byIcon(Icons.person), findsOneWidget);
+    expect(find.text('Usuário'), findsNothing);
+
+    await tester.tap(find.text('Beltrano Lima'));
+    await tester.pumpAndSettle();
+
+    expect(
+      router.routeInformationProvider.value.uri.path,
+      '/social/profile/user-4',
+    );
+  });
+
   testWidgets('Feed activity cards navigate to user and media', (tester) async {
     final router = _router(
       const SocialPage(),
@@ -769,6 +864,8 @@ class _FakeSocialRepository implements SocialRepository {
     this.feedItems = const [],
     this.discoverItems = const [],
     this.activityItems = const [],
+    this.followersItems = const [],
+    this.followingItems = const [],
     List<Object> discoverErrors = const [],
     this.publicListItemsByStatus = const {},
     this.publicListErrorsByStatus = const {},
@@ -781,6 +878,8 @@ class _FakeSocialRepository implements SocialRepository {
   final List<ActivityEventModel> feedItems;
   final List<DiscoverUserModel> discoverItems;
   final List<ActivityEventModel> activityItems;
+  final List<FollowRelationshipModel> followersItems;
+  final List<FollowRelationshipModel> followingItems;
   final Map<String, List<PublicListItemModel>> publicListItemsByStatus;
   final Map<String, Object> publicListErrorsByStatus;
   final publicListCalls = <String>[];
@@ -896,7 +995,7 @@ class _FakeSocialRepository implements SocialRepository {
     if (error != null) {
       throw error;
     }
-    return _empty();
+    return _page(followersItems);
   }
 
   @override
@@ -904,7 +1003,7 @@ class _FakeSocialRepository implements SocialRepository {
     String userId, {
     int limit = 20,
     String? cursor,
-  }) async => _empty();
+  }) async => _page(followingItems);
 
   @override
   Future<PaginatedSocialResponse<PublicListItemModel>> getPublicLists(
@@ -938,8 +1037,6 @@ class _FakeSocialRepository implements SocialRepository {
   @override
   Future<void> unfollowUser(String userId) async {}
 }
-
-PaginatedSocialResponse<T> _empty<T>() => _page(const []);
 
 PaginatedSocialResponse<T> _page<T>(List<T> items) =>
     PaginatedSocialResponse<T>(items: items, nextCursor: null, hasMore: false);
@@ -975,6 +1072,22 @@ ActivityEventModel _event({String mediaType = 'SERIES'}) {
       title: 'Série Teste',
     ),
     createdAt: DateTime.utc(2026, 5, 20),
+  );
+}
+
+FollowRelationshipModel _followUser({
+  String userId = 'user-3',
+  String? username = 'ciclano',
+  String displayName = 'Ciclano Silva',
+  String? avatarUrl,
+  bool isFollowing = false,
+}) {
+  return FollowRelationshipModel(
+    userId: userId,
+    username: username,
+    displayName: displayName,
+    avatarUrl: avatarUrl,
+    isFollowing: isFollowing,
   );
 }
 
