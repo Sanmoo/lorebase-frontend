@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$FollowRelationshipModel {
 
- String? get followerId; String? get followedId; DateTime? get followedAt;
+ String get userId; String? get username; String get displayName; String? get avatarUrl; bool get isFollowing;
 /// Create a copy of FollowRelationshipModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $FollowRelationshipModelCopyWith<FollowRelationshipModel> get copyWith => _$Foll
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is FollowRelationshipModel&&(identical(other.followerId, followerId) || other.followerId == followerId)&&(identical(other.followedId, followedId) || other.followedId == followedId)&&(identical(other.followedAt, followedAt) || other.followedAt == followedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is FollowRelationshipModel&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.username, username) || other.username == username)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.isFollowing, isFollowing) || other.isFollowing == isFollowing));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,followerId,followedId,followedAt);
+int get hashCode => Object.hash(runtimeType,userId,username,displayName,avatarUrl,isFollowing);
 
 @override
 String toString() {
-  return 'FollowRelationshipModel(followerId: $followerId, followedId: $followedId, followedAt: $followedAt)';
+  return 'FollowRelationshipModel(userId: $userId, username: $username, displayName: $displayName, avatarUrl: $avatarUrl, isFollowing: $isFollowing)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $FollowRelationshipModelCopyWith<$Res>  {
   factory $FollowRelationshipModelCopyWith(FollowRelationshipModel value, $Res Function(FollowRelationshipModel) _then) = _$FollowRelationshipModelCopyWithImpl;
 @useResult
 $Res call({
- String? followerId, String? followedId, DateTime? followedAt
+ String userId, String? username, String displayName, String? avatarUrl, bool isFollowing
 });
 
 
@@ -65,12 +65,14 @@ class _$FollowRelationshipModelCopyWithImpl<$Res>
 
 /// Create a copy of FollowRelationshipModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? followerId = freezed,Object? followedId = freezed,Object? followedAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? userId = null,Object? username = freezed,Object? displayName = null,Object? avatarUrl = freezed,Object? isFollowing = null,}) {
   return _then(_self.copyWith(
-followerId: freezed == followerId ? _self.followerId : followerId // ignore: cast_nullable_to_non_nullable
-as String?,followedId: freezed == followedId ? _self.followedId : followedId // ignore: cast_nullable_to_non_nullable
-as String?,followedAt: freezed == followedAt ? _self.followedAt : followedAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,
+userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as String,username: freezed == username ? _self.username : username // ignore: cast_nullable_to_non_nullable
+as String?,displayName: null == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
+as String,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
+as String?,isFollowing: null == isFollowing ? _self.isFollowing : isFollowing // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -155,10 +157,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? followerId,  String? followedId,  DateTime? followedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String userId,  String? username,  String displayName,  String? avatarUrl,  bool isFollowing)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _FollowRelationshipModel() when $default != null:
-return $default(_that.followerId,_that.followedId,_that.followedAt);case _:
+return $default(_that.userId,_that.username,_that.displayName,_that.avatarUrl,_that.isFollowing);case _:
   return orElse();
 
 }
@@ -176,10 +178,10 @@ return $default(_that.followerId,_that.followedId,_that.followedAt);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? followerId,  String? followedId,  DateTime? followedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String userId,  String? username,  String displayName,  String? avatarUrl,  bool isFollowing)  $default,) {final _that = this;
 switch (_that) {
 case _FollowRelationshipModel():
-return $default(_that.followerId,_that.followedId,_that.followedAt);case _:
+return $default(_that.userId,_that.username,_that.displayName,_that.avatarUrl,_that.isFollowing);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -196,10 +198,10 @@ return $default(_that.followerId,_that.followedId,_that.followedAt);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? followerId,  String? followedId,  DateTime? followedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String userId,  String? username,  String displayName,  String? avatarUrl,  bool isFollowing)?  $default,) {final _that = this;
 switch (_that) {
 case _FollowRelationshipModel() when $default != null:
-return $default(_that.followerId,_that.followedId,_that.followedAt);case _:
+return $default(_that.userId,_that.username,_that.displayName,_that.avatarUrl,_that.isFollowing);case _:
   return null;
 
 }
@@ -211,12 +213,14 @@ return $default(_that.followerId,_that.followedId,_that.followedAt);case _:
 @JsonSerializable()
 
 class _FollowRelationshipModel implements FollowRelationshipModel {
-  const _FollowRelationshipModel({this.followerId, this.followedId, this.followedAt});
+  const _FollowRelationshipModel({required this.userId, this.username, required this.displayName, this.avatarUrl, required this.isFollowing});
   factory _FollowRelationshipModel.fromJson(Map<String, dynamic> json) => _$FollowRelationshipModelFromJson(json);
 
-@override final  String? followerId;
-@override final  String? followedId;
-@override final  DateTime? followedAt;
+@override final  String userId;
+@override final  String? username;
+@override final  String displayName;
+@override final  String? avatarUrl;
+@override final  bool isFollowing;
 
 /// Create a copy of FollowRelationshipModel
 /// with the given fields replaced by the non-null parameter values.
@@ -231,16 +235,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FollowRelationshipModel&&(identical(other.followerId, followerId) || other.followerId == followerId)&&(identical(other.followedId, followedId) || other.followedId == followedId)&&(identical(other.followedAt, followedAt) || other.followedAt == followedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FollowRelationshipModel&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.username, username) || other.username == username)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.isFollowing, isFollowing) || other.isFollowing == isFollowing));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,followerId,followedId,followedAt);
+int get hashCode => Object.hash(runtimeType,userId,username,displayName,avatarUrl,isFollowing);
 
 @override
 String toString() {
-  return 'FollowRelationshipModel(followerId: $followerId, followedId: $followedId, followedAt: $followedAt)';
+  return 'FollowRelationshipModel(userId: $userId, username: $username, displayName: $displayName, avatarUrl: $avatarUrl, isFollowing: $isFollowing)';
 }
 
 
@@ -251,7 +255,7 @@ abstract mixin class _$FollowRelationshipModelCopyWith<$Res> implements $FollowR
   factory _$FollowRelationshipModelCopyWith(_FollowRelationshipModel value, $Res Function(_FollowRelationshipModel) _then) = __$FollowRelationshipModelCopyWithImpl;
 @override @useResult
 $Res call({
- String? followerId, String? followedId, DateTime? followedAt
+ String userId, String? username, String displayName, String? avatarUrl, bool isFollowing
 });
 
 
@@ -268,12 +272,14 @@ class __$FollowRelationshipModelCopyWithImpl<$Res>
 
 /// Create a copy of FollowRelationshipModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? followerId = freezed,Object? followedId = freezed,Object? followedAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? userId = null,Object? username = freezed,Object? displayName = null,Object? avatarUrl = freezed,Object? isFollowing = null,}) {
   return _then(_FollowRelationshipModel(
-followerId: freezed == followerId ? _self.followerId : followerId // ignore: cast_nullable_to_non_nullable
-as String?,followedId: freezed == followedId ? _self.followedId : followedId // ignore: cast_nullable_to_non_nullable
-as String?,followedAt: freezed == followedAt ? _self.followedAt : followedAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,
+userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as String,username: freezed == username ? _self.username : username // ignore: cast_nullable_to_non_nullable
+as String?,displayName: null == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
+as String,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
+as String?,isFollowing: null == isFollowing ? _self.isFollowing : isFollowing // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

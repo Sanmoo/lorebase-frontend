@@ -6,9 +6,11 @@ part 'follow_relationship_model.g.dart';
 @freezed
 abstract class FollowRelationshipModel with _$FollowRelationshipModel {
   const factory FollowRelationshipModel({
-    String? followerId,
-    String? followedId,
-    DateTime? followedAt,
+    required String userId,
+    String? username,
+    required String displayName,
+    String? avatarUrl,
+    required bool isFollowing,
   }) = _FollowRelationshipModel;
 
   factory FollowRelationshipModel.fromJson(Map<String, dynamic> json) =>
