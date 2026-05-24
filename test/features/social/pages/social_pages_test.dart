@@ -264,6 +264,38 @@ void main() {
     },
   );
 
+  testWidgets('Edit social profile save failure stays and shows feedback', (
+    tester,
+  ) async {
+    final repository =
+        _FakeSocialRepository(profile: _profile(displayName: 'Fulano'))
+          ..updateProfileError = const ServerException(
+            message: 'Save failed',
+            statusCode: 500,
+          );
+    final observer = _RecordingNavigatorObserver();
+    final router = _router(
+      const SocialProfilePage(userId: 'me', isMe: true),
+      repository,
+      observers: [observer],
+    );
+    await tester.pumpRouter(router);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Editar perfil'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextFormField).first, 'Nome novo');
+    await tester.tap(find.text('Salvar alterações'));
+    await tester.pumpAndSettle();
+
+    expect(observer.popCount, 0);
+    expect(find.text('Editar perfil social'), findsOneWidget);
+    expect(
+      find.text('Não foi possível salvar o perfil. Tente novamente.'),
+      findsOneWidget,
+    );
+  });
+
   testWidgets(
     'Profile page renders Activity, Lists, Followers, Following tabs',
     (tester) async {
@@ -643,6 +675,7 @@ class _FakeSocialRepository implements SocialRepository {
   int getMyProfileCallCount = 0;
   final followedUserIds = <String>[];
   Object? followError;
+  Object? updateProfileError;
   Object? followersError;
   Completer<void>? _profileLoadCompleter;
   Completer<void>? _followCompleter;
@@ -692,6 +725,10 @@ class _FakeSocialRepository implements SocialRepository {
     savedDisplayName = displayName;
     savedAvatarUrl = avatarUrl;
     savedIsPublic = isPublic;
+    final error = updateProfileError;
+    if (error != null) {
+      throw error;
+    }
     updatedProfile = _profile(
       displayName: displayName,
       avatarUrl: avatarUrl,

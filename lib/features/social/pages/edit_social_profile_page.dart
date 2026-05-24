@@ -118,9 +118,13 @@ class _EditSocialProfilePageState extends ConsumerState<EditSocialProfilePage> {
       return;
     }
     final saveState = ref.read(socialOnboardingViewModelProvider);
-    if (saveState.profile != null &&
-        saveState.errorMessage == null &&
-        saveState.validationError == null) {
+    if (saveState.errorMessage != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Não foi possível salvar o perfil. Tente novamente.'),
+        ),
+      );
+    } else if (saveState.profile != null && saveState.validationError == null) {
       ref.invalidate(mySocialProfileProvider);
       ref.invalidate(socialProfileViewModelProvider('me'));
       final router = GoRouter.maybeOf(context);
