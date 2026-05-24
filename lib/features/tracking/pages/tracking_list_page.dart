@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/providers/media_filter_provider.dart';
 import '../../../../core/widgets/empty_state_widget.dart';
 import '../../../../core/widgets/error_widget.dart';
 import '../../../../core/widgets/loading_widget.dart';
@@ -24,7 +25,6 @@ class TrackingListPage extends ConsumerStatefulWidget {
 class _TrackingListPageState extends ConsumerState<TrackingListPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  MediaType _selectedType = MediaType.series;
 
   @override
   void initState() {
@@ -50,17 +50,16 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
   }
 
   void _onMediaTypeChanged(MediaType type) {
-    setState(() {
-      _selectedType = type;
-    });
+    ref.read(selectedMediaTypeProvider.notifier).state = type;
     _loadTrackingForTab(_tabController.index);
   }
 
   void _loadTrackingForTab(int index) {
     final status = TrackingStatus.values[index].value;
+    final selectedType = ref.read(selectedMediaTypeProvider);
     ref
         .read(trackingListViewModelProvider.notifier)
-        .loadTracking(status: status, mediaType: _selectedType);
+        .loadTracking(status: status, mediaType: selectedType);
   }
 
   @override
@@ -75,6 +74,7 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
       }
     });
 
+    final selectedType = ref.watch(selectedMediaTypeProvider);
     final trackingState = ref.watch(trackingListViewModelProvider);
 
     return Material(
@@ -85,7 +85,7 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: MediaTypeToggle(
-              selectedType: _selectedType,
+              selectedType: selectedType,
               onChanged: _onMediaTypeChanged,
             ),
           ),
@@ -115,7 +115,7 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
                   data: (trackings) {
                     if (trackings.isEmpty) {
                       return EmptyStateWidget(
-                        message: _selectedType == MediaType.series
+                        message: selectedType == MediaType.series
                             ? t.tracking_empty.replaceFirst(
                                 '{status}',
                                 TrackingStatus.values[index].label(t),

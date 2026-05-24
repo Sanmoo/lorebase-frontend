@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lorebase/core/providers/media_filter_provider.dart';
 import 'package:lorebase/features/tracking/widgets/rating_stars.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -40,6 +41,7 @@ TrackedMediaSummaryModel _media(int id) => TrackedMediaSummaryModel(
 class FakeTrackingListVM extends TrackingListViewModel {
   final AsyncValue<List<TrackedMediaModel>> testState;
   int loadTrackingCallCount = 0;
+  MediaType? lastMediaType;
   FakeTrackingListVM({AsyncValue<List<TrackedMediaModel>>? state})
     : testState = state ?? const AsyncValue.data([]);
 
@@ -51,6 +53,7 @@ class FakeTrackingListVM extends TrackingListViewModel {
     MediaType mediaType = MediaType.series,
   }) async {
     loadTrackingCallCount++;
+    lastMediaType = mediaType;
   }
 
   @override
@@ -295,6 +298,33 @@ Future<void> main() async {
       await tester.pumpAndSettle();
 
       expect(fakeVM.loadTrackingCallCount, 2);
+    });
+
+    testWidgets('loads initial tab with shared media type selection', (
+      tester,
+    ) async {
+      final fakeVM = FakeTrackingListVM();
+      final container = ProviderContainer(
+        overrides: [
+          selectedMediaTypeProvider.overrideWith((ref) => MediaType.movie),
+          trackingListViewModelProvider.overrideWith(() => fakeVM),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      expect(fakeVM.loadTrackingCallCount, 1);
+      expect(fakeVM.lastMediaType, MediaType.movie);
+      expect(find.text('No Want to Watch movies yet'), findsOneWidget);
+
+      await tester.tap(find.text('Series'));
+      await tester.pumpAndSettle();
+
+      expect(container.read(selectedMediaTypeProvider), MediaType.series);
+      expect(fakeVM.lastMediaType, MediaType.series);
     });
 
     testWidgets('switching to Movies shows movie empty state copy', (
