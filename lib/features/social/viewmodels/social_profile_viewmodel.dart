@@ -48,19 +48,14 @@ class SocialProfileViewModel extends _$SocialProfileViewModel {
         ? await repository.getMyProfile()
         : await repository.getProfile(userId);
     final resolvedUserId = profile.userId;
-    final (activity, publicLists) = await (
-      repository
-          .getUserActivity(resolvedUserId)
-          .catchError((_) => _emptyActivityResponse()),
-      repository
-          .getPublicLists(resolvedUserId)
-          .catchError((_) => _emptyPublicListsResponse()),
-    ).wait;
+    final activity = await repository
+        .getUserActivity(resolvedUserId)
+        .catchError((_) => _emptyActivityResponse());
 
     return SocialProfileDetailState(
       profile: profile,
       activity: activity,
-      publicLists: publicLists,
+      publicLists: _emptyPublicListsResponse(),
     );
   }
 
