@@ -33,23 +33,33 @@ class SocialFollowListPage extends ConsumerWidget {
           return ListView(
             children: [
               for (final relationship in data.items)
-                ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: relationship.avatarUrl != null
-                        ? NetworkImage(relationship.avatarUrl!)
-                        : null,
-                    child: relationship.avatarUrl == null
-                        ? Text(relationship.displayName.characters.first)
-                        : null,
-                  ),
-                  title: Text(relationship.displayName),
-                  subtitle:
-                      relationship.username != null &&
-                          relationship.username!.trim().isNotEmpty
-                      ? Text('@${relationship.username}')
-                      : null,
-                  onTap: () =>
-                      context.go('/social/profile/${relationship.userId}'),
+                Builder(
+                  builder: (context) {
+                    final trimmedDisplayName = relationship.displayName.trim();
+                    final trimmedUsername = relationship.username?.trim();
+                    final displayInitial = trimmedDisplayName.isNotEmpty
+                        ? trimmedDisplayName.characters.first
+                        : null;
+                    return ListTile(
+                      leading: CircleAvatar(
+                        backgroundImage: relationship.avatarUrl != null
+                            ? NetworkImage(relationship.avatarUrl!)
+                            : null,
+                        child: relationship.avatarUrl == null
+                            ? displayInitial != null
+                                  ? Text(displayInitial)
+                                  : const Icon(Icons.person)
+                            : null,
+                      ),
+                      title: Text(relationship.displayName),
+                      subtitle:
+                          trimmedUsername != null && trimmedUsername.isNotEmpty
+                          ? Text('@$trimmedUsername')
+                          : null,
+                      onTap: () =>
+                          context.go('/social/profile/${relationship.userId}'),
+                    );
+                  },
                 ),
             ],
           );

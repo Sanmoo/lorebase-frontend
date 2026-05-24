@@ -483,7 +483,12 @@ void main() {
   testWidgets('Profile followers tab shows real users and navigates', (
     tester,
   ) async {
-    final repository = _FakeSocialRepository(followersItems: [_followUser()]);
+    final repository = _FakeSocialRepository(
+      followersItems: [
+        _followUser(),
+        _followUser(userId: 'user-blank', username: '   ', displayName: ''),
+      ],
+    );
     final router = _router(
       const SocialProfilePage(userId: 'me', isMe: true),
       repository,
@@ -496,6 +501,8 @@ void main() {
 
     expect(find.text('Ciclano Silva'), findsOneWidget);
     expect(find.text('@ciclano'), findsOneWidget);
+    expect(find.text('@   '), findsNothing);
+    expect(find.byIcon(Icons.person), findsOneWidget);
     expect(find.text('Usuário'), findsNothing);
 
     await tester.tap(find.text('Ciclano Silva'));
@@ -514,8 +521,14 @@ void main() {
       followingItems: [
         _followUser(
           userId: 'user-4',
-          username: 'beltrano',
+          username: ' beltrano ',
           displayName: 'Beltrano Lima',
+          isFollowing: true,
+        ),
+        _followUser(
+          userId: 'user-blank',
+          username: '   ',
+          displayName: '',
           isFollowing: true,
         ),
       ],
@@ -546,6 +559,9 @@ void main() {
 
     expect(find.text('Beltrano Lima'), findsOneWidget);
     expect(find.text('@beltrano'), findsOneWidget);
+    expect(find.text('@ beltrano '), findsNothing);
+    expect(find.text('@   '), findsNothing);
+    expect(find.byIcon(Icons.person), findsOneWidget);
     expect(find.text('Usuário'), findsNothing);
 
     await tester.tap(find.text('Beltrano Lima'));
