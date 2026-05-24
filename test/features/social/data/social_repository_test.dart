@@ -409,7 +409,7 @@ void main() {
 
       final result = await repo.getProfile('user-2');
 
-      expect(capturedPath, '/profiles/user-2');
+      expect(capturedPath, '/users/user-2/profile');
       expect(result.displayName, 'Fulano');
     });
 
