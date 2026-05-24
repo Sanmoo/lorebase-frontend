@@ -10,6 +10,7 @@ class PublicMediaListSection extends StatelessWidget {
     required this.items,
     this.emptyMessage = 'Nenhum item público ainda.',
     this.onItemTap,
+    this.padding = const EdgeInsets.fromLTRB(16, 12, 16, 24),
   });
 
   static const double _posterWidth = 124;
@@ -24,6 +25,7 @@ class PublicMediaListSection extends StatelessWidget {
   final List<PublicListItemModel> items;
   final String emptyMessage;
   final ValueChanged<PublicListItemModel>? onItemTap;
+  final EdgeInsetsGeometry padding;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +35,7 @@ class PublicMediaListSection extends StatelessWidget {
         _posterHeight + textScaler.scale(_textAreaHeight) + (_cardPadding * 2);
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+      padding: padding,
       cacheExtent: 1000,
       shrinkWrap: true,
       children: [

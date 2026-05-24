@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../viewmodels/social_follow_list_viewmodel.dart';
 import '../viewmodels/social_profile_viewmodel.dart';
+import '../viewmodels/social_public_lists_viewmodel.dart';
 import '../widgets/public_media_list_section.dart';
 import '../widgets/social_activity_card.dart';
 import '../widgets/social_profile_header.dart';
@@ -50,10 +51,7 @@ class SocialProfilePage extends ConsumerWidget {
               child: TabBarView(
                 children: [
                   _ActivityTab(state: state),
-                  PublicMediaListSection(
-                    title: 'Listas públicas',
-                    items: state.publicLists.items,
-                  ),
+                  _PublicListsTab(userId: state.profile.userId),
                   _FollowListTab(
                     userId: userId,
                     kind: SocialFollowListKind.followers,
@@ -102,6 +100,90 @@ class _ActivityTab extends StatelessWidget {
       },
     );
   }
+}
+
+class _PublicListsTab extends StatelessWidget {
+  const _PublicListsTab({required this.userId});
+
+  static const _sections = [
+    _PublicListStatusSectionConfig(status: 'PLAN_TO_WATCH', label: 'Quero ver'),
+    _PublicListStatusSectionConfig(status: 'WATCHING', label: 'Assistindo'),
+    _PublicListStatusSectionConfig(status: 'COMPLETED', label: 'Concluído'),
+    _PublicListStatusSectionConfig(status: 'DROPPED', label: 'Abandonado'),
+  ];
+
+  final String userId;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'Listas públicas',
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 8),
+          for (final section in _sections)
+            _PublicListStatusSection(userId: userId, section: section),
+        ],
+      ),
+    );
+  }
+}
+
+class _PublicListStatusSection extends ConsumerWidget {
+  const _PublicListStatusSection({required this.userId, required this.section});
+
+  final String userId;
+  final _PublicListStatusSectionConfig section;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final list = ref.watch(
+      socialPublicListsViewModelProvider(userId, status: section.status),
+    );
+    return list.when(
+      data: (data) => PublicMediaListSection(
+        title: section.label,
+        items: data.items,
+        emptyMessage: 'Nenhum item em ${section.label}.',
+        padding: EdgeInsets.zero,
+      ),
+      error: (_, _) => Padding(
+        padding: const EdgeInsets.only(top: 16),
+        child: Text('Não foi possível carregar ${section.label}.'),
+      ),
+      loading: () => Padding(
+        padding: const EdgeInsets.only(top: 16),
+        child: Row(
+          children: [
+            const SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+            const SizedBox(width: 12),
+            Text('Carregando ${section.label}...'),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PublicListStatusSectionConfig {
+  const _PublicListStatusSectionConfig({
+    required this.status,
+    required this.label,
+  });
+
+  final String status;
+  final String label;
 }
 
 class _FollowListTab extends ConsumerWidget {

@@ -312,6 +312,110 @@ void main() {
     },
   );
 
+  testWidgets('Profile Lists tab loads public lists by status sections', (
+    tester,
+  ) async {
+    final repository = _FakeSocialRepository(
+      publicListItemsByStatus: {
+        'PLAN_TO_WATCH': [
+          _publicListItem(
+            mediaId: 'movie-1',
+            status: 'PLAN_TO_WATCH',
+            title: 'Interestelar',
+          ),
+        ],
+        'WATCHING': [
+          _publicListItem(
+            mediaId: 'series-1',
+            status: 'WATCHING',
+            title: 'Reacher',
+            mediaType: 'SERIES',
+          ),
+        ],
+        'COMPLETED': [
+          _publicListItem(
+            mediaId: 'movie-2',
+            status: 'COMPLETED',
+            title: 'Batman Begins',
+          ),
+        ],
+        'DROPPED': [
+          _publicListItem(
+            mediaId: 'series-2',
+            status: 'DROPPED',
+            title: 'Série abandonada',
+            mediaType: 'SERIES',
+          ),
+        ],
+      },
+    );
+    await tester.pumpSocial(
+      const SocialProfilePage(userId: 'user-1'),
+      repository,
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Lists'));
+    await tester.pumpAndSettle();
+
+    expect(repository.publicListCalls, [
+      'user-1:PLAN_TO_WATCH',
+      'user-1:WATCHING',
+      'user-1:COMPLETED',
+      'user-1:DROPPED',
+    ]);
+    expect(find.text('Quero ver'), findsWidgets);
+    expect(find.text('Assistindo'), findsWidgets);
+    expect(find.text('Concluído'), findsWidgets);
+    expect(find.text('Abandonado'), findsWidgets);
+    expect(find.text('Interestelar'), findsOneWidget);
+    expect(find.text('Reacher'), findsOneWidget);
+    expect(find.text('Batman Begins'), findsOneWidget);
+    expect(find.text('Série abandonada'), findsOneWidget);
+  });
+
+  testWidgets('Profile Lists tab degrades only the failed status section', (
+    tester,
+  ) async {
+    final repository = _FakeSocialRepository(
+      publicListItemsByStatus: {
+        'PLAN_TO_WATCH': [
+          _publicListItem(
+            mediaId: 'movie-1',
+            status: 'PLAN_TO_WATCH',
+            title: 'Interestelar',
+          ),
+        ],
+        'COMPLETED': [
+          _publicListItem(
+            mediaId: 'movie-2',
+            status: 'COMPLETED',
+            title: 'Batman Begins',
+          ),
+        ],
+      },
+      publicListErrorsByStatus: const {
+        'WATCHING': ServerException(message: 'Failed', statusCode: 500),
+      },
+    );
+    await tester.pumpSocial(
+      const SocialProfilePage(userId: 'user-1'),
+      repository,
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Lists'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Interestelar'), findsOneWidget);
+    expect(find.text('Batman Begins'), findsOneWidget);
+    expect(find.text('Não foi possível carregar Assistindo.'), findsOneWidget);
+    expect(
+      find.text('Este perfil não está disponível no momento.'),
+      findsNothing,
+    );
+  });
+
   testWidgets('Profile page unavailable profile shows friendly message', (
     tester,
   ) async {
@@ -660,6 +764,8 @@ class _FakeSocialRepository implements SocialRepository {
     this.discoverItems = const [],
     this.activityItems = const [],
     List<Object> discoverErrors = const [],
+    this.publicListItemsByStatus = const {},
+    this.publicListErrorsByStatus = const {},
   }) : _discoverErrors = List<Object>.from(discoverErrors);
 
   bool missingProfile;
@@ -669,6 +775,9 @@ class _FakeSocialRepository implements SocialRepository {
   final List<ActivityEventModel> feedItems;
   final List<DiscoverUserModel> discoverItems;
   final List<ActivityEventModel> activityItems;
+  final Map<String, List<PublicListItemModel>> publicListItemsByStatus;
+  final Map<String, Object> publicListErrorsByStatus;
+  final publicListCalls = <String>[];
   final List<Object> _discoverErrors;
   int discoverCallCount = 0;
   bool savedProfile = false;
@@ -798,7 +907,14 @@ class _FakeSocialRepository implements SocialRepository {
     String? mediaType,
     int limit = 20,
     String? cursor,
-  }) async => _empty();
+  }) async {
+    publicListCalls.add('$userId:$status');
+    final error = publicListErrorsByStatus[status];
+    if (error != null) {
+      throw error;
+    }
+    return _page(publicListItemsByStatus[status] ?? const []);
+  }
 
   @override
   Future<void> followUser(String userId) async {
@@ -864,5 +980,23 @@ DiscoverUserModel _discoverUser() {
     commonGenres: [],
     commonMedia: [],
     isFollowedByMe: false,
+  );
+}
+
+PublicListItemModel _publicListItem({
+  required String mediaId,
+  required String status,
+  required String title,
+  String mediaType = 'MOVIE',
+}) {
+  return PublicListItemModel(
+    mediaId: mediaId,
+    mediaType: mediaType,
+    status: status,
+    media: SocialMediaModel(
+      mediaId: mediaId,
+      mediaType: mediaType,
+      title: title,
+    ),
   );
 }
