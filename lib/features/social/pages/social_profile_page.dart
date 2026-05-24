@@ -218,11 +218,22 @@ class _FollowListTab extends ConsumerWidget {
           children: [
             for (final relationship in data.items)
               ListTile(
-                title: Text(
-                  kind == SocialFollowListKind.followers
-                      ? relationship.followerId ?? 'Usuário'
-                      : relationship.followedId ?? 'Usuário',
+                leading: CircleAvatar(
+                  backgroundImage: relationship.avatarUrl != null
+                      ? NetworkImage(relationship.avatarUrl!)
+                      : null,
+                  child: relationship.avatarUrl == null
+                      ? Text(relationship.displayName.characters.first)
+                      : null,
                 ),
+                title: Text(relationship.displayName),
+                subtitle:
+                    relationship.username != null &&
+                        relationship.username!.trim().isNotEmpty
+                    ? Text('@${relationship.username}')
+                    : null,
+                onTap: () =>
+                    context.go('/social/profile/${relationship.userId}'),
               ),
           ],
         );

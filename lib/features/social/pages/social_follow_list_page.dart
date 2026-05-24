@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../viewmodels/social_follow_list_viewmodel.dart';
 
@@ -33,11 +34,22 @@ class SocialFollowListPage extends ConsumerWidget {
             children: [
               for (final relationship in data.items)
                 ListTile(
-                  title: Text(
-                    kind == SocialFollowListKind.followers
-                        ? relationship.followerId ?? 'Usuário'
-                        : relationship.followedId ?? 'Usuário',
+                  leading: CircleAvatar(
+                    backgroundImage: relationship.avatarUrl != null
+                        ? NetworkImage(relationship.avatarUrl!)
+                        : null,
+                    child: relationship.avatarUrl == null
+                        ? Text(relationship.displayName.characters.first)
+                        : null,
                   ),
+                  title: Text(relationship.displayName),
+                  subtitle:
+                      relationship.username != null &&
+                          relationship.username!.trim().isNotEmpty
+                      ? Text('@${relationship.username}')
+                      : null,
+                  onTap: () =>
+                      context.go('/social/profile/${relationship.userId}'),
                 ),
             ],
           );
