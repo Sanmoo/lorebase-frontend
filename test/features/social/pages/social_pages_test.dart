@@ -364,10 +364,10 @@ void main() {
       'user-1:COMPLETED',
       'user-1:DROPPED',
     ]);
-    expect(find.text('Quero ver'), findsWidgets);
-    expect(find.text('Assistindo'), findsWidgets);
-    expect(find.text('Concluído'), findsWidgets);
-    expect(find.text('Abandonado'), findsWidgets);
+    expect(find.text('Quero ver'), findsOneWidget);
+    expect(find.text('Assistindo'), findsOneWidget);
+    expect(find.text('Concluído'), findsOneWidget);
+    expect(find.text('Abandonado'), findsOneWidget);
     expect(find.text('Interestelar'), findsOneWidget);
     expect(find.text('Reacher'), findsOneWidget);
     expect(find.text('Batman Begins'), findsOneWidget);

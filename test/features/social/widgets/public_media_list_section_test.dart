@@ -152,6 +152,41 @@ void main() {
     expect(posterSizedBox.height, 186);
   });
 
+  testWidgets(
+    'renders embedded content without vertical scroll or status headings',
+    (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: PublicMediaListSection(
+              title: 'Concluído',
+              items: [item(status: 'COMPLETED', title: 'Matrix')],
+              scrollable: false,
+              showGroupedStatusHeadings: false,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Concluído'), findsOneWidget);
+      expect(find.text('Matrix'), findsOneWidget);
+      expect(
+        find.byWidgetPredicate(
+          (widget) =>
+              widget is ListView && widget.scrollDirection == Axis.vertical,
+        ),
+        findsNothing,
+      );
+      expect(
+        find.byWidgetPredicate(
+          (widget) =>
+              widget is ListView && widget.scrollDirection == Axis.horizontal,
+        ),
+        findsOneWidget,
+      );
+    },
+  );
+
   testWidgets('keeps known statuses in stable display order', (tester) async {
     await pumpSection(
       tester,

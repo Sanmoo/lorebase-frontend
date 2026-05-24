@@ -153,6 +153,8 @@ class _PublicListStatusSection extends ConsumerWidget {
         items: data.items,
         emptyMessage: 'Nenhum item em ${section.label}.',
         padding: EdgeInsets.zero,
+        scrollable: false,
+        showGroupedStatusHeadings: false,
       ),
       error: (_, _) => Padding(
         padding: const EdgeInsets.only(top: 16),
