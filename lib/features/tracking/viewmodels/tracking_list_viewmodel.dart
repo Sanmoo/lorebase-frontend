@@ -41,6 +41,7 @@ class TrackingListViewModel extends _$TrackingListViewModel {
       final items = _parseItems(hit.json);
       if (_isCurrent(requestGeneration, status, mediaType, 1)) {
         state = AsyncValue.data(items);
+        _isFetching = false;
       }
       if (!hit.isFresh) {
         _backgroundRefresh(cacheKey, status, mediaType, 1, requestGeneration);

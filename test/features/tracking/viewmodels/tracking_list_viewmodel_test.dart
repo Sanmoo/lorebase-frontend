@@ -222,6 +222,77 @@ void main() {
       },
     );
 
+    test(
+      'cached loadTracking() clears fetching so loadMore works after stale request',
+      () async {
+        final repo = QueuedTrackingRepo();
+        final cache = CacheService();
+        final moviePage1 = _makeTracking(
+          'movie-1',
+          'WATCHING',
+          mediaType: MediaType.movie,
+        );
+        await cache.set(
+          'tracking:v2:${MediaType.movie.apiValue}:WATCHING:1',
+          CacheEntry(
+            json: jsonEncode([moviePage1.toJson()]),
+            cachedAt: DateTime.now(),
+            ttl: const Duration(hours: 6),
+          ),
+        );
+        final container = createContainer(repo, cache: cache);
+        addTearDown(container.dispose);
+
+        final subscription = container.listen(
+          trackingListViewModelProvider,
+          (_, _) {},
+        );
+        addTearDown(subscription.close);
+
+        final notifier = container.read(trackingListViewModelProvider.notifier);
+        final seriesFuture = notifier.loadTracking(
+          status: 'WATCHING',
+          mediaType: MediaType.series,
+        );
+        await Future<void>.delayed(Duration.zero);
+
+        await notifier.loadTracking(
+          status: 'WATCHING',
+          mediaType: MediaType.movie,
+        );
+
+        expect(repo.calls, hasLength(1));
+        expect(repo.calls.single.mediaType, MediaType.series);
+        expect(container.read(trackingListViewModelProvider).value, [
+          moviePage1,
+        ]);
+
+        final seriesItem = _makeTracking('series-1', 'WATCHING');
+        repo.calls.single.completer.complete([seriesItem]);
+        await seriesFuture;
+
+        final moviePage2 = _makeTracking(
+          'movie-2',
+          'WATCHING',
+          mediaType: MediaType.movie,
+        );
+        final loadMoreFuture = notifier.loadMore();
+        await Future<void>.delayed(Duration.zero);
+
+        expect(repo.calls, hasLength(2));
+        expect(repo.calls.last.mediaType, MediaType.movie);
+        expect(repo.calls.last.page, 2);
+
+        repo.calls.last.completer.complete([moviePage2]);
+        await loadMoreFuture;
+
+        expect(container.read(trackingListViewModelProvider).value, [
+          moviePage1,
+          moviePage2,
+        ]);
+      },
+    );
+
     test('loadMore() appends to existing list', () async {
       final firstPage = [_makeTracking('t-1', 'WATCHING')];
       final repo = FakeTrackingRepo()..results = firstPage;
