@@ -12,7 +12,7 @@ import 'package:lorebase/features/social/data/repositories/social_repository.dar
 import 'package:lorebase/features/social/viewmodels/social_profile_viewmodel.dart';
 
 void main() {
-  test('build loads profile, activity, and public lists for userId', () async {
+  test('build loads profile and activity for userId', () async {
     final repo = _FakeSocialRepository();
     final container = ProviderContainer(
       overrides: [socialRepositoryProvider.overrideWithValue(repo)],
@@ -25,10 +25,10 @@ void main() {
 
     expect(state.profile.userId, 'user-1');
     expect(state.activity.items.single.eventId, 'evt-1');
-    expect(state.publicLists.items.single.mediaId, 'media-1');
+    expect(state.publicLists.items, isEmpty);
     expect(repo.profileUserIds, ['user-1']);
     expect(repo.activityUserIds, ['user-1']);
-    expect(repo.publicListUserIds, ['user-1']);
+    expect(repo.publicListUserIds, isEmpty);
   });
 
   test(
@@ -48,7 +48,7 @@ void main() {
       expect(repo.myProfileCalls, 1);
       expect(repo.profileUserIds, isEmpty);
       expect(repo.activityUserIds, ['current-user']);
-      expect(repo.publicListUserIds, ['current-user']);
+      expect(repo.publicListUserIds, isEmpty);
     },
   );
 
@@ -67,25 +67,7 @@ void main() {
     expect(state.activity.items, isEmpty);
     expect(state.activity.nextCursor, isNull);
     expect(state.activity.hasMore, isFalse);
-    expect(state.publicLists.items.single.mediaId, 'media-1');
-  });
-
-  test('build keeps profile when public lists fail', () async {
-    final repo = _FakeSocialRepository(publicListsError: Exception('boom'));
-    final container = ProviderContainer(
-      overrides: [socialRepositoryProvider.overrideWithValue(repo)],
-    );
-    addTearDown(container.dispose);
-
-    final state = await container.read(
-      socialProfileViewModelProvider('user-1').future,
-    );
-
-    expect(state.profile.userId, 'user-1');
-    expect(state.activity.items.single.eventId, 'evt-1');
     expect(state.publicLists.items, isEmpty);
-    expect(state.publicLists.nextCursor, isNull);
-    expect(state.publicLists.hasMore, isFalse);
   });
 
   test(
@@ -260,7 +242,6 @@ class _FakeSocialRepository implements SocialRepository {
     this.followCompleter,
     this.followError,
     this.activityError,
-    this.publicListsError,
     this.myProfileUserId = 'me',
   });
   final int initialFollowerCount;
@@ -268,7 +249,6 @@ class _FakeSocialRepository implements SocialRepository {
   final Completer<void>? followCompleter;
   final Object? followError;
   final Object? activityError;
-  final Object? publicListsError;
   final String myProfileUserId;
   var myProfileCalls = 0;
   final profileUserIds = <String>[];
@@ -318,9 +298,6 @@ class _FakeSocialRepository implements SocialRepository {
     String? cursor,
   }) async {
     publicListUserIds.add(userId);
-    if (publicListsError != null) {
-      throw publicListsError!;
-    }
     return const PaginatedSocialResponse(
       items: [
         PublicListItemModel(

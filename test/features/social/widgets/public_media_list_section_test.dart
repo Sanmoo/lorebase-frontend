@@ -94,18 +94,14 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('renders public media cards with bordered aligned layout', (
+  testWidgets('renders two-line card title with metadata without clipping', (
     tester,
   ) async {
+    const longTitle = 'Batman: O Cavaleiro das Trevas Ressurge novamente';
+
     await pumpSection(
       tester,
-      items: [
-        item(
-          status: 'COMPLETED',
-          title: 'Batman: O Cavaleiro das Trevas',
-          rating: 10,
-        ),
-      ],
+      items: [item(status: 'COMPLETED', title: longTitle, rating: 10)],
     );
 
     final inkWidgets = tester.widgetList<Ink>(
@@ -119,8 +115,24 @@ void main() {
       }),
       isTrue,
     );
-    expect(find.text('Batman: O Cavaleiro das Trevas'), findsOneWidget);
+    expect(find.text(longTitle), findsOneWidget);
     expect(find.text('Filme • ⭐ 10/10'), findsOneWidget);
+
+    final horizontalCarousel = tester.widget<SizedBox>(
+      find
+          .ancestor(
+            of: find.text(longTitle),
+            matching: find.byWidgetPredicate(
+              (widget) =>
+                  widget is SizedBox &&
+                  widget.height == 274 &&
+                  widget.child is ListView,
+            ),
+          )
+          .first,
+    );
+    expect(horizontalCarousel.height, 274);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('uses padded content and vertical poster cards', (tester) async {
@@ -151,6 +163,41 @@ void main() {
     expect(posterSizedBox.width, 124);
     expect(posterSizedBox.height, 186);
   });
+
+  testWidgets(
+    'renders embedded content without vertical scroll or status headings',
+    (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: PublicMediaListSection(
+              title: 'Concluído',
+              items: [item(status: 'COMPLETED', title: 'Matrix')],
+              scrollable: false,
+              showGroupedStatusHeadings: false,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Concluído'), findsOneWidget);
+      expect(find.text('Matrix'), findsOneWidget);
+      expect(
+        find.byWidgetPredicate(
+          (widget) =>
+              widget is ListView && widget.scrollDirection == Axis.vertical,
+        ),
+        findsNothing,
+      );
+      expect(
+        find.byWidgetPredicate(
+          (widget) =>
+              widget is ListView && widget.scrollDirection == Axis.horizontal,
+        ),
+        findsOneWidget,
+      );
+    },
+  );
 
   testWidgets('keeps known statuses in stable display order', (tester) async {
     await pumpSection(

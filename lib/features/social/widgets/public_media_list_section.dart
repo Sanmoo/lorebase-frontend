@@ -10,11 +10,14 @@ class PublicMediaListSection extends StatelessWidget {
     required this.items,
     this.emptyMessage = 'Nenhum item público ainda.',
     this.onItemTap,
+    this.padding = const EdgeInsets.fromLTRB(16, 12, 16, 24),
+    this.scrollable = true,
+    this.showGroupedStatusHeadings = true,
   });
 
   static const double _posterWidth = 124;
   static const double _posterHeight = 186;
-  static const double _textAreaHeight = 64;
+  static const double _textAreaHeight = 72;
   static const double _cardPadding = 8;
   static const double _cardBorderWidth = 1;
   static const double _cardWidth =
@@ -24,6 +27,9 @@ class PublicMediaListSection extends StatelessWidget {
   final List<PublicListItemModel> items;
   final String emptyMessage;
   final ValueChanged<PublicListItemModel>? onItemTap;
+  final EdgeInsetsGeometry padding;
+  final bool scrollable;
+  final bool showGroupedStatusHeadings;
 
   @override
   Widget build(BuildContext context) {
@@ -32,23 +38,20 @@ class PublicMediaListSection extends StatelessWidget {
     final carouselHeight =
         _posterHeight + textScaler.scale(_textAreaHeight) + (_cardPadding * 2);
 
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-      cacheExtent: 1000,
-      shrinkWrap: true,
-      children: [
-        Text(
-          title,
-          style: Theme.of(
-            context,
-          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
-        ),
-        const SizedBox(height: 8),
-        if (items.isEmpty)
-          Text(emptyMessage)
-        else
-          for (final entry in groupedItems.entries)
-            if (entry.value.isNotEmpty) ...[
+    final children = [
+      Text(
+        title,
+        style: Theme.of(
+          context,
+        ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+      ),
+      const SizedBox(height: 8),
+      if (items.isEmpty)
+        Text(emptyMessage)
+      else
+        for (final entry in groupedItems.entries)
+          if (entry.value.isNotEmpty) ...[
+            if (showGroupedStatusHeadings)
               Padding(
                 padding: const EdgeInsets.only(top: 16, bottom: 10),
                 child: Text(
@@ -57,24 +60,42 @@ class PublicMediaListSection extends StatelessWidget {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-              ),
-              SizedBox(
-                height: carouselHeight,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: entry.value.length,
-                  separatorBuilder: (_, _) => const SizedBox(width: 12),
-                  itemBuilder: (context, index) => SizedBox(
-                    width: _cardWidth,
-                    child: _PublicMediaCard(
-                      item: entry.value[index],
-                      onItemTap: onItemTap,
-                    ),
+              )
+            else
+              const SizedBox(height: 8),
+            SizedBox(
+              height: carouselHeight,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: entry.value.length,
+                separatorBuilder: (_, _) => const SizedBox(width: 12),
+                itemBuilder: (context, index) => SizedBox(
+                  width: _cardWidth,
+                  child: _PublicMediaCard(
+                    item: entry.value[index],
+                    onItemTap: onItemTap,
                   ),
                 ),
               ),
-            ],
-      ],
+            ),
+          ],
+    ];
+
+    if (!scrollable) {
+      return Padding(
+        padding: padding,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: children,
+        ),
+      );
+    }
+
+    return ListView(
+      padding: padding,
+      cacheExtent: 1000,
+      shrinkWrap: true,
+      children: children,
     );
   }
 }
