@@ -372,6 +372,12 @@ void main() {
     expect(find.text('Reacher'), findsOneWidget);
     expect(find.text('Batman Begins'), findsOneWidget);
     expect(find.text('Série abandonada'), findsOneWidget);
+    expect(
+      find.byWidgetPredicate(
+        (widget) => widget is SizedBox && widget.height == 24,
+      ),
+      findsAtLeastNWidgets(3),
+    );
   });
 
   testWidgets('Profile Lists tab degrades only the failed status section', (

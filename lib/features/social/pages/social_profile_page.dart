@@ -128,11 +128,23 @@ class _PublicListsTab extends StatelessWidget {
             ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 8),
-          for (final section in _sections)
-            _PublicListStatusSection(userId: userId, section: section),
+          ..._sectionWidgets(),
         ],
       ),
     );
+  }
+
+  List<Widget> _sectionWidgets() {
+    final widgets = <Widget>[];
+    for (var index = 0; index < _sections.length; index += 1) {
+      if (index > 0) {
+        widgets.add(const SizedBox(height: 24));
+      }
+      widgets.add(
+        _PublicListStatusSection(userId: userId, section: _sections[index]),
+      );
+    }
+    return widgets;
   }
 }
 
