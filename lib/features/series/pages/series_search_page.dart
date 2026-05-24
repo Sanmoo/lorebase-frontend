@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/providers/media_filter_provider.dart';
 import '../../../../core/widgets/empty_state_widget.dart';
 import '../../../../core/widgets/error_widget.dart';
 import '../../../../core/widgets/loading_widget.dart';
@@ -25,7 +26,6 @@ class SeriesSearchPage extends ConsumerStatefulWidget {
 class _SeriesSearchPageState extends ConsumerState<SeriesSearchPage> {
   Timer? _debounceTimer;
   final _searchController = TextEditingController();
-  MediaType _selectedType = MediaType.series;
 
   @override
   void initState() {
@@ -47,26 +47,26 @@ class _SeriesSearchPageState extends ConsumerState<SeriesSearchPage> {
   }
 
   void _onTypeChanged(MediaType type) {
-    setState(() {
-      _selectedType = type;
-    });
+    ref.read(selectedMediaTypeProvider.notifier).state = type;
     _searchController.clear();
     ref.read(seriesSearchViewModelProvider.notifier).clear();
     ref.read(movieSearchViewModelProvider.notifier).clear();
   }
 
   void _onSearchChanged(String query) {
+    final selectedType = ref.read(selectedMediaTypeProvider);
     _debounceTimer?.cancel();
     if (query.length >= 2) {
       _debounceTimer = Timer(AppConstants.kSearchDebounceDuration, () {
-        if (_selectedType == MediaType.series) {
+        final currentType = ref.read(selectedMediaTypeProvider);
+        if (currentType == MediaType.series) {
           ref.read(seriesSearchViewModelProvider.notifier).search(query);
         } else {
           ref.read(movieSearchViewModelProvider.notifier).search(query);
         }
       });
     } else if (query.isEmpty) {
-      if (_selectedType == MediaType.series) {
+      if (selectedType == MediaType.series) {
         ref.read(seriesSearchViewModelProvider.notifier).clear();
       } else {
         ref.read(movieSearchViewModelProvider.notifier).clear();
@@ -82,13 +82,15 @@ class _SeriesSearchPageState extends ConsumerState<SeriesSearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    final selectedType = ref.watch(selectedMediaTypeProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: TextField(
           controller: _searchController,
           autofocus: true,
           decoration: InputDecoration(
-            hintText: _selectedType == MediaType.series
+            hintText: selectedType == MediaType.series
                 ? context.t.search_hint
                 : context.t.search_hint_movies,
             border: InputBorder.none,
@@ -109,13 +111,13 @@ class _SeriesSearchPageState extends ConsumerState<SeriesSearchPage> {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: MediaTypeToggle(
-              selectedType: _selectedType,
+              selectedType: selectedType,
               onChanged: _onTypeChanged,
             ),
           ),
           Expanded(
             child: _SearchResultsBody(
-              mediaType: _selectedType,
+              mediaType: selectedType,
               query: _searchController.text,
               onRetry: () => _onSearchChanged(_searchController.text),
             ),

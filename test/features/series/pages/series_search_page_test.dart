@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lorebase/core/providers/media_filter_provider.dart';
 import 'package:lorebase/features/series/pages/series_search_page.dart';
 import 'package:lorebase/features/series/viewmodels/series_search_viewmodel.dart';
 import 'package:lorebase/features/series/data/models/series_model.dart';
@@ -9,6 +10,7 @@ import 'package:lorebase/features/auth/viewmodels/auth_viewmodel.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_state.dart';
 import 'package:lorebase/features/movies/data/models/movie_model.dart';
 import 'package:lorebase/features/movies/viewmodels/movie_search_viewmodel.dart';
+import 'package:lorebase/features/tracking/data/models/media_type.dart';
 import 'package:lorebase/l10n/strings.g.dart';
 
 class FakeSearchVM extends SeriesSearchViewModel {
@@ -296,6 +298,30 @@ Future<void> main() async {
       expect(router.routeInformationProvider.value.uri.path, '/series/1');
       expect(router.canPop(), isFalse);
       expect(find.text('Series detail 1'), findsOneWidget);
+    });
+
+    testWidgets('uses and updates shared media type selection', (tester) async {
+      final container = ProviderContainer(
+        overrides: [
+          selectedMediaTypeProvider.overrideWith((ref) => MediaType.movie),
+          seriesSearchViewModelProvider.overrideWith(() => FakeSearchVM()),
+          movieSearchViewModelProvider.overrideWith(() => FakeMovieSearchVM()),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      expect(find.text('Search movies...'), findsOneWidget);
+      expect(container.read(selectedMediaTypeProvider), MediaType.movie);
+
+      await tester.tap(find.text('Series'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Search series...'), findsOneWidget);
+      expect(container.read(selectedMediaTypeProvider), MediaType.series);
     });
 
     testWidgets('switching to Movies shows the movie hint', (tester) async {
