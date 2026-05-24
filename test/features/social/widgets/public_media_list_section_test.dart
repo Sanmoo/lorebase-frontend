@@ -94,18 +94,14 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('renders public media cards with bordered aligned layout', (
+  testWidgets('renders two-line card title with metadata without clipping', (
     tester,
   ) async {
+    const longTitle = 'Batman: O Cavaleiro das Trevas Ressurge novamente';
+
     await pumpSection(
       tester,
-      items: [
-        item(
-          status: 'COMPLETED',
-          title: 'Batman: O Cavaleiro das Trevas',
-          rating: 10,
-        ),
-      ],
+      items: [item(status: 'COMPLETED', title: longTitle, rating: 10)],
     );
 
     final inkWidgets = tester.widgetList<Ink>(
@@ -119,8 +115,24 @@ void main() {
       }),
       isTrue,
     );
-    expect(find.text('Batman: O Cavaleiro das Trevas'), findsOneWidget);
+    expect(find.text(longTitle), findsOneWidget);
     expect(find.text('Filme • ⭐ 10/10'), findsOneWidget);
+
+    final horizontalCarousel = tester.widget<SizedBox>(
+      find
+          .ancestor(
+            of: find.text(longTitle),
+            matching: find.byWidgetPredicate(
+              (widget) =>
+                  widget is SizedBox &&
+                  widget.height == 274 &&
+                  widget.child is ListView,
+            ),
+          )
+          .first,
+    );
+    expect(horizontalCarousel.height, 274);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('uses padded content and vertical poster cards', (tester) async {

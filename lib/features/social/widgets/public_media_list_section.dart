@@ -17,7 +17,7 @@ class PublicMediaListSection extends StatelessWidget {
 
   static const double _posterWidth = 124;
   static const double _posterHeight = 186;
-  static const double _textAreaHeight = 64;
+  static const double _textAreaHeight = 72;
   static const double _cardPadding = 8;
   static const double _cardBorderWidth = 1;
   static const double _cardWidth =
