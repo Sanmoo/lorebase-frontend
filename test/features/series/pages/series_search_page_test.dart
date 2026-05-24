@@ -11,6 +11,9 @@ import 'package:lorebase/features/auth/viewmodels/auth_state.dart';
 import 'package:lorebase/features/movies/data/models/movie_model.dart';
 import 'package:lorebase/features/movies/viewmodels/movie_search_viewmodel.dart';
 import 'package:lorebase/features/tracking/data/models/media_type.dart';
+import 'package:lorebase/features/tracking/data/models/tracked_media_model.dart';
+import 'package:lorebase/features/tracking/pages/tracking_list_page.dart';
+import 'package:lorebase/features/tracking/viewmodels/tracking_list_viewmodel.dart';
 import 'package:lorebase/l10n/strings.g.dart';
 
 class FakeSearchVM extends SeriesSearchViewModel {
@@ -58,6 +61,27 @@ class FakeAuthVM extends AuthViewModel {
   void setUnauthenticated() {}
   @override
   Future<void> signOut() async {}
+}
+
+class FakeTrackingListVM extends TrackingListViewModel {
+  MediaType? lastMediaType;
+
+  @override
+  AsyncValue<List<TrackedMediaModel>> build() => const AsyncValue.data([]);
+
+  @override
+  Future<void> loadTracking({
+    String? status,
+    MediaType mediaType = MediaType.series,
+  }) async {
+    lastMediaType = mediaType;
+  }
+
+  @override
+  Future<void> loadMore() async {}
+
+  @override
+  Future<void> refresh() async {}
 }
 
 Widget _wrap(ProviderContainer container) {
@@ -341,6 +365,48 @@ Future<void> main() async {
       await tester.pumpAndSettle();
 
       expect(find.text('Search movies...'), findsOneWidget);
+    });
+
+    testWidgets('movie selection in search is reused by tracking page', (
+      tester,
+    ) async {
+      final trackingVM = FakeTrackingListVM();
+      final container = ProviderContainer(
+        overrides: [
+          seriesSearchViewModelProvider.overrideWith(() => FakeSearchVM()),
+          movieSearchViewModelProvider.overrideWith(() => FakeMovieSearchVM()),
+          trackingListViewModelProvider.overrideWith(() => trackingVM),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      final router = GoRouter(
+        initialLocation: '/search',
+        routes: [
+          GoRoute(path: '/search', builder: (_, _) => const SeriesSearchPage()),
+          GoRoute(
+            path: '/tracking',
+            builder: (_, _) => const TrackingListPage(),
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+
+      await tester.pumpWidget(
+        _wrapWithSeriesDetailRoute(container, router: router),
+      );
+      await tester.pump();
+
+      await tester.tap(find.text('Movies'));
+      await tester.pumpAndSettle();
+
+      router.go('/tracking');
+      await tester.pumpAndSettle();
+
+      expect(container.read(selectedMediaTypeProvider), MediaType.movie);
+      expect(trackingVM.lastMediaType, MediaType.movie);
+      expect(find.text('No Want to Watch movies yet'), findsOneWidget);
     });
 
     testWidgets(
