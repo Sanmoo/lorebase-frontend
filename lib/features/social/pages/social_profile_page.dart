@@ -35,7 +35,7 @@ class SocialProfilePage extends ConsumerWidget {
               onUnfollow: () => ref
                   .read(socialProfileViewModelProvider(userId).notifier)
                   .unfollow(),
-              onEdit: () => context.go('/social/profile/edit'),
+              onEdit: () => context.push('/social/profile/edit'),
             ),
             const TabBar(
               isScrollable: true,

@@ -2,9 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../data/models/social_privacy.dart';
 import '../viewmodels/social_onboarding_viewmodel.dart';
+import '../viewmodels/social_profile_viewmodel.dart';
 import 'social_page.dart';
 
 class EditSocialProfilePage extends ConsumerStatefulWidget {
@@ -120,6 +122,11 @@ class _EditSocialProfilePageState extends ConsumerState<EditSocialProfilePage> {
         saveState.errorMessage == null &&
         saveState.validationError == null) {
       ref.invalidate(mySocialProfileProvider);
+      ref.invalidate(socialProfileViewModelProvider('me'));
+      final router = GoRouter.maybeOf(context);
+      if (router != null && router.canPop()) {
+        router.pop();
+      }
     }
   }
 }

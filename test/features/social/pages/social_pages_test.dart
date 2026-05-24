@@ -229,6 +229,42 @@ void main() {
   });
 
   testWidgets(
+    'Edit social profile save returns and refreshes previous profile',
+    (tester) async {
+      final repository = _FakeSocialRepository(
+        profile: _profile(displayName: 'Nome antigo'),
+      );
+      final observer = _RecordingNavigatorObserver();
+      final router = _router(
+        const SocialProfilePage(userId: 'me', isMe: true),
+        repository,
+        observers: [observer],
+      );
+      await tester.pumpRouter(router);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Nome antigo'), findsOneWidget);
+
+      await tester.tap(find.text('Editar perfil'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Editar perfil social'), findsOneWidget);
+      expect(observer.pushCount, greaterThan(1));
+
+      await tester.enterText(find.byType(TextFormField).first, 'Nome novo');
+      await tester.tap(find.text('Salvar alterações'));
+      await tester.pumpAndSettle();
+
+      expect(router.routeInformationProvider.value.uri.path, '/');
+      expect(observer.popCount, 1);
+      expect(repository.savedDisplayName, 'Nome novo');
+      expect(find.text('Editar perfil social'), findsNothing);
+      expect(find.text('Nome novo'), findsOneWidget);
+      expect(find.text('Nome antigo'), findsNothing);
+    },
+  );
+
+  testWidgets(
     'Profile page renders Activity, Lists, Followers, Following tabs',
     (tester) async {
       await tester.pumpSocial(
@@ -440,10 +476,7 @@ void main() {
 
     await tester.tap(find.text('Editar perfil'));
     await tester.pumpAndSettle();
-    expect(
-      router.routeInformationProvider.value.uri.path,
-      '/social/profile/edit',
-    );
+    expect(find.text('Editar perfil social'), findsOneWidget);
 
     router.go('/');
     await tester.pumpAndSettle();
@@ -527,39 +560,63 @@ extension on WidgetTester {
   }
 }
 
-GoRouter _router(Widget child, SocialRepository repository) {
+GoRouter _router(
+  Widget child,
+  SocialRepository repository, {
+  List<NavigatorObserver> observers = const [],
+}) {
   return GoRouter(
     initialLocation: '/',
+    observers: observers,
     routes: [
-      GoRoute(
-        path: '/',
-        builder: (context, state) => ProviderScope(
+      ShellRoute(
+        builder: (context, state, child) => ProviderScope(
           retry: (_, _) => null,
           overrides: [socialRepositoryProvider.overrideWithValue(repository)],
           child: Scaffold(body: child),
         ),
-      ),
-      GoRoute(
-        path: '/social/profile/edit',
-        builder: (context, state) => const Text('edit destination'),
-      ),
-      GoRoute(
-        path: '/social/profile/:userId',
-        builder: (context, state) =>
-            Text('profile ${state.pathParameters['userId']}'),
-      ),
-      GoRoute(
-        path: '/series/:tmdbId',
-        builder: (context, state) =>
-            Text('series ${state.pathParameters['tmdbId']}'),
-      ),
-      GoRoute(
-        path: '/movies/:tmdbId',
-        builder: (context, state) =>
-            Text('movie ${state.pathParameters['tmdbId']}'),
+        routes: [
+          GoRoute(path: '/', builder: (context, state) => child),
+          GoRoute(
+            path: '/social/profile/edit',
+            builder: (context, state) => const EditSocialProfilePage(),
+          ),
+          GoRoute(
+            path: '/social/profile/:userId',
+            builder: (context, state) =>
+                Text('profile ${state.pathParameters['userId']}'),
+          ),
+          GoRoute(
+            path: '/series/:tmdbId',
+            builder: (context, state) =>
+                Text('series ${state.pathParameters['tmdbId']}'),
+          ),
+          GoRoute(
+            path: '/movies/:tmdbId',
+            builder: (context, state) =>
+                Text('movie ${state.pathParameters['tmdbId']}'),
+          ),
+        ],
       ),
     ],
   );
+}
+
+class _RecordingNavigatorObserver extends NavigatorObserver {
+  int pushCount = 0;
+  int popCount = 0;
+
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    pushCount += 1;
+    super.didPush(route, previousRoute);
+  }
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    popCount += 1;
+    super.didPop(route, previousRoute);
+  }
 }
 
 class _FakeSocialRepository implements SocialRepository {
@@ -576,6 +633,7 @@ class _FakeSocialRepository implements SocialRepository {
   bool missingProfile;
   final bool unavailableProfile;
   final SocialProfileModel? profile;
+  SocialProfileModel? updatedProfile;
   final List<ActivityEventModel> feedItems;
   final List<DiscoverUserModel> discoverItems;
   final List<ActivityEventModel> activityItems;
@@ -620,7 +678,7 @@ class _FakeSocialRepository implements SocialRepository {
     if (missingProfile) {
       throw const ServerException(message: 'Missing', statusCode: 404);
     }
-    return profile ?? _profile();
+    return updatedProfile ?? profile ?? _profile();
   }
 
   @override
@@ -634,11 +692,12 @@ class _FakeSocialRepository implements SocialRepository {
     savedDisplayName = displayName;
     savedAvatarUrl = avatarUrl;
     savedIsPublic = isPublic;
-    return _profile(
+    updatedProfile = _profile(
       displayName: displayName,
       avatarUrl: avatarUrl,
       isPublic: isPublic,
     );
+    return updatedProfile!;
   }
 
   @override
