@@ -47,6 +47,7 @@ class _SeriesSearchPageState extends ConsumerState<SeriesSearchPage> {
   }
 
   void _onTypeChanged(MediaType type) {
+    _debounceTimer?.cancel();
     ref.read(selectedMediaTypeProvider.notifier).state = type;
     _searchController.clear();
     ref.read(seriesSearchViewModelProvider.notifier).clear();

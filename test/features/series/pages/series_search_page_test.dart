@@ -342,5 +342,34 @@ Future<void> main() async {
 
       expect(find.text('Search movies...'), findsOneWidget);
     });
+
+    testWidgets(
+      'switching media type before debounce fires cancels stale search',
+      (tester) async {
+        final fakeSeriesVM = FakeSearchVM();
+        final fakeMovieVM = FakeMovieSearchVM();
+        final container = ProviderContainer(
+          overrides: [
+            seriesSearchViewModelProvider.overrideWith(() => fakeSeriesVM),
+            movieSearchViewModelProvider.overrideWith(() => fakeMovieVM),
+            authViewModelProvider.overrideWith(() => FakeAuthVM()),
+          ],
+        );
+        addTearDown(container.dispose);
+
+        await tester.pumpWidget(_wrap(container));
+        await tester.pump();
+
+        await tester.enterText(find.byType(TextField), 'breaking');
+        await tester.pump();
+
+        await tester.tap(find.text('Movies'));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 1100));
+
+        expect(fakeSeriesVM.retryCalled, isFalse);
+        expect(fakeMovieVM.searchCalled, isFalse);
+      },
+    );
   });
 }
