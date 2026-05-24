@@ -18,7 +18,7 @@ import 'package:lorebase/l10n/strings.g.dart';
 
 class FakeSearchVM extends SeriesSearchViewModel {
   final AsyncValue<List<SeriesModel>> testState;
-  bool retryCalled = false;
+  bool searchCalled = false;
   FakeSearchVM({AsyncValue<List<SeriesModel>>? state})
     : testState = state ?? const AsyncValue.data([]);
 
@@ -26,7 +26,7 @@ class FakeSearchVM extends SeriesSearchViewModel {
   AsyncValue<List<SeriesModel>> build() => testState;
   @override
   Future<void> search(String query) async {
-    retryCalled = true;
+    searchCalled = true;
   }
 
   @override
@@ -251,7 +251,7 @@ Future<void> main() async {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 1100));
 
-      expect(fakeVM.retryCalled, true);
+      expect(fakeVM.searchCalled, true);
     });
 
     testWidgets('retry button calls search', (tester) async {
@@ -270,7 +270,7 @@ Future<void> main() async {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 1100));
 
-      expect(fakeVM.retryCalled, true);
+      expect(fakeVM.searchCalled, true);
     });
 
     testWidgets('typing text triggers onChanged with debounce', (tester) async {
@@ -284,7 +284,7 @@ Future<void> main() async {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 1100));
 
-      expect(fakeVM.retryCalled, true);
+      expect(fakeVM.searchCalled, true);
     });
 
     testWidgets('tapping series item updates location to series detail route', (
@@ -433,7 +433,7 @@ Future<void> main() async {
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 1100));
 
-        expect(fakeSeriesVM.retryCalled, isFalse);
+        expect(fakeSeriesVM.searchCalled, isFalse);
         expect(fakeMovieVM.searchCalled, isFalse);
       },
     );

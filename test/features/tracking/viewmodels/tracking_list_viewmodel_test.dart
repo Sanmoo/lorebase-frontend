@@ -12,10 +12,14 @@ import 'package:lorebase/features/tracking/data/models/media_type.dart';
 
 final now = DateTime.now();
 
-TrackedMediaModel _makeTracking(String id, String status) => TrackedMediaModel(
+TrackedMediaModel _makeTracking(
+  String id,
+  String status, {
+  MediaType mediaType = MediaType.series,
+}) => TrackedMediaModel(
   trackingId: id,
   userId: 'user-1',
-  mediaType: MediaType.series,
+  mediaType: mediaType,
   mediaId: '123',
   status: status,
   addedAt: now,
@@ -65,6 +69,43 @@ class FakeTrackingRepo implements TrackingRepository {
     String mediaId, {
     required MediaType mediaType,
   }) async {}
+}
+
+class QueuedTrackingRepo extends FakeTrackingRepo {
+  final calls = <TrackingRequest>[];
+
+  @override
+  Future<List<TrackedMediaModel>> getTracking({
+    String? status,
+    MediaType? mediaType,
+    int page = 1,
+    int pageSize = 20,
+  }) {
+    getTrackingCallCount++;
+    lastMediaType = mediaType;
+    final request = TrackingRequest(
+      status: status,
+      mediaType: mediaType,
+      page: page,
+      completer: Completer<List<TrackedMediaModel>>(),
+    );
+    calls.add(request);
+    return request.completer.future;
+  }
+}
+
+class TrackingRequest {
+  TrackingRequest({
+    required this.status,
+    required this.mediaType,
+    required this.page,
+    required this.completer,
+  });
+
+  final String? status;
+  final MediaType? mediaType;
+  final int page;
+  final Completer<List<TrackedMediaModel>> completer;
 }
 
 void main() {
@@ -120,6 +161,66 @@ void main() {
       final state = container.read(trackingListViewModelProvider);
       expect(state.hasError, true);
     });
+
+    test(
+      'stale loadTracking() response cannot overwrite newer media type',
+      () async {
+        final repo = QueuedTrackingRepo();
+        final cache = CacheService();
+        final container = createContainer(repo, cache: cache);
+        addTearDown(container.dispose);
+
+        final subscription = container.listen(
+          trackingListViewModelProvider,
+          (_, _) {},
+        );
+        addTearDown(subscription.close);
+
+        final notifier = container.read(trackingListViewModelProvider.notifier);
+        final seriesFuture = notifier.loadTracking(
+          status: 'WATCHING',
+          mediaType: MediaType.series,
+        );
+        await Future<void>.delayed(Duration.zero);
+
+        final movieFuture = notifier.loadTracking(
+          status: 'WATCHING',
+          mediaType: MediaType.movie,
+        );
+        await Future<void>.delayed(Duration.zero);
+
+        expect(repo.calls, hasLength(2));
+        expect(repo.calls[0].mediaType, MediaType.series);
+        expect(repo.calls[1].mediaType, MediaType.movie);
+
+        final movieItem = _makeTracking(
+          'movie-1',
+          'WATCHING',
+          mediaType: MediaType.movie,
+        );
+        repo.calls[1].completer.complete([movieItem]);
+        await movieFuture;
+
+        expect(container.read(trackingListViewModelProvider).value, [
+          movieItem,
+        ]);
+
+        final seriesItem = _makeTracking('series-1', 'WATCHING');
+        repo.calls[0].completer.complete([seriesItem]);
+        await seriesFuture;
+
+        final state = container.read(trackingListViewModelProvider);
+        expect(state.value, [movieItem]);
+        expect(
+          cache.getSync('tracking:v2:${MediaType.movie.apiValue}:WATCHING:1'),
+          isNotNull,
+        );
+        expect(
+          cache.getSync('tracking:v2:${MediaType.series.apiValue}:WATCHING:1'),
+          isNull,
+        );
+      },
+    );
 
     test('loadMore() appends to existing list', () async {
       final firstPage = [_makeTracking('t-1', 'WATCHING')];

@@ -13,6 +13,7 @@ class TrackingListViewModel extends _$TrackingListViewModel {
   String? _currentStatus;
   MediaType _currentMediaType = MediaType.series;
   int _page = 1;
+  int _requestGeneration = 0;
   bool _isFetching = false;
   static const int _pageSize = 20;
 
@@ -28,6 +29,7 @@ class TrackingListViewModel extends _$TrackingListViewModel {
     _currentStatus = status;
     _currentMediaType = mediaType;
     _page = 1;
+    final requestGeneration = ++_requestGeneration;
 
     final cacheKey = _buildCacheKey();
     final cacheService = ref.read(cacheServiceProvider);
@@ -37,9 +39,11 @@ class TrackingListViewModel extends _$TrackingListViewModel {
 
     if (hit != null) {
       final items = _parseItems(hit.json);
-      state = AsyncValue.data(items);
+      if (_isCurrent(requestGeneration, status, mediaType, 1)) {
+        state = AsyncValue.data(items);
+      }
       if (!hit.isFresh) {
-        _backgroundRefresh(cacheKey);
+        _backgroundRefresh(cacheKey, status, mediaType, 1, requestGeneration);
       }
       return;
     }
@@ -47,25 +51,52 @@ class TrackingListViewModel extends _$TrackingListViewModel {
     state = const AsyncValue.loading();
     _isFetching = true;
     try {
-      await _fetch(append: false);
+      await _fetch(
+        status: status,
+        mediaType: mediaType,
+        page: 1,
+        cacheKey: cacheKey,
+        requestGeneration: requestGeneration,
+        append: false,
+      );
     } finally {
-      _isFetching = false;
+      if (requestGeneration == _requestGeneration) {
+        _isFetching = false;
+      }
     }
   }
 
   Future<void> loadMore() async {
     if (_isFetching) return;
     _page++;
+    final page = _page;
+    final status = _currentStatus;
+    final mediaType = _currentMediaType;
+    final cacheKey = _buildCacheKey();
+    final requestGeneration = _requestGeneration;
     _isFetching = true;
     try {
-      await _fetch(append: true);
+      await _fetch(
+        status: status,
+        mediaType: mediaType,
+        page: page,
+        cacheKey: cacheKey,
+        requestGeneration: requestGeneration,
+        append: true,
+      );
     } finally {
-      _isFetching = false;
+      if (requestGeneration == _requestGeneration) {
+        _isFetching = false;
+      }
     }
   }
 
   Future<void> refresh() async {
     final cacheService = ref.read(cacheServiceProvider);
+    final status = _currentStatus;
+    final mediaType = _currentMediaType;
+    final page = _page;
+    final requestGeneration = ++_requestGeneration;
     final key = _buildCacheKey();
     final staleEntry = cacheService.getSync(key);
     await cacheService.remove(key);
@@ -74,11 +105,12 @@ class TrackingListViewModel extends _$TrackingListViewModel {
     try {
       final repository = ref.read(trackingRepositoryProvider);
       final items = await repository.getTracking(
-        status: _currentStatus,
-        mediaType: _currentMediaType,
-        page: _page,
+        status: status,
+        mediaType: mediaType,
+        page: page,
         pageSize: _pageSize,
       );
+      if (!_isCurrent(requestGeneration, status, mediaType, page)) return;
       final entry = CacheEntry(
         json: jsonEncode(items.map((e) => e.toJson()).toList()),
         cachedAt: DateTime.now(),
@@ -87,6 +119,7 @@ class TrackingListViewModel extends _$TrackingListViewModel {
       await cacheService.set(key, entry);
       state = AsyncValue.data(items);
     } catch (error, stackTrace) {
+      if (!_isCurrent(requestGeneration, status, mediaType, page)) return;
       if (staleEntry != null) {
         await cacheService.set(key, staleEntry);
         state = AsyncValue.data(_parseItems(staleEntry.json));
@@ -96,24 +129,32 @@ class TrackingListViewModel extends _$TrackingListViewModel {
     }
   }
 
-  Future<void> _fetch({bool append = false}) async {
+  Future<void> _fetch({
+    required String? status,
+    required MediaType mediaType,
+    required int page,
+    required String cacheKey,
+    required int requestGeneration,
+    bool append = false,
+  }) async {
     try {
       final repository = ref.read(trackingRepositoryProvider);
       final cacheService = ref.read(cacheServiceProvider);
 
       final items = await repository.getTracking(
-        status: _currentStatus,
-        mediaType: _currentMediaType,
-        page: _page,
+        status: status,
+        mediaType: mediaType,
+        page: page,
         pageSize: _pageSize,
       );
+      if (!_isCurrent(requestGeneration, status, mediaType, page)) return;
 
       final entry = CacheEntry(
         json: jsonEncode(items.map((e) => e.toJson()).toList()),
         cachedAt: DateTime.now(),
         ttl: const Duration(hours: 6),
       );
-      await cacheService.set(_buildCacheKey(), entry);
+      await cacheService.set(cacheKey, entry);
 
       if (append && state.hasValue) {
         state = AsyncValue.data([...state.value!, ...items]);
@@ -121,17 +162,22 @@ class TrackingListViewModel extends _$TrackingListViewModel {
         state = AsyncValue.data(items);
       }
     } catch (error, stackTrace) {
-      state = AsyncValue.error(error, stackTrace);
+      if (_isCurrent(requestGeneration, status, mediaType, page)) {
+        state = AsyncValue.error(error, stackTrace);
+      }
     }
   }
 
-  void _backgroundRefresh(String key) {
+  void _backgroundRefresh(
+    String key,
+    String? status,
+    MediaType mediaType,
+    int page,
+    int requestGeneration,
+  ) {
     final repository = ref.read(trackingRepositoryProvider);
     final cacheService = ref.read(cacheServiceProvider);
     final errorNotifier = ref.read(trackingBackgroundErrorProvider.notifier);
-    final status = _currentStatus;
-    final mediaType = _currentMediaType;
-    final page = _page;
     final pageSize = _pageSize;
 
     Future(() async {
@@ -142,6 +188,7 @@ class TrackingListViewModel extends _$TrackingListViewModel {
           page: page,
           pageSize: pageSize,
         );
+        if (!_isCurrent(requestGeneration, status, mediaType, page)) return;
         final entry = CacheEntry(
           json: jsonEncode(items.map((e) => e.toJson()).toList()),
           cachedAt: DateTime.now(),
@@ -155,6 +202,17 @@ class TrackingListViewModel extends _$TrackingListViewModel {
       }
     });
   }
+
+  bool _isCurrent(
+    int requestGeneration,
+    String? status,
+    MediaType mediaType,
+    int page,
+  ) =>
+      requestGeneration == _requestGeneration &&
+      status == _currentStatus &&
+      mediaType == _currentMediaType &&
+      page == _page;
 
   String _buildCacheKey() =>
       'tracking:v2:${_currentMediaType.apiValue}:${_currentStatus ?? "all"}:$_page';
