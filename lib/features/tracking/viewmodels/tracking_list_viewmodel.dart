@@ -118,11 +118,13 @@ class TrackingListViewModel extends _$TrackingListViewModel {
         ttl: const Duration(hours: 6),
       );
       await cacheService.set(key, entry);
+      if (!_isCurrent(requestGeneration, status, mediaType, page)) return;
       state = AsyncValue.data(items);
     } catch (error, stackTrace) {
       if (!_isCurrent(requestGeneration, status, mediaType, page)) return;
       if (staleEntry != null) {
         await cacheService.set(key, staleEntry);
+        if (!_isCurrent(requestGeneration, status, mediaType, page)) return;
         state = AsyncValue.data(_parseItems(staleEntry.json));
       } else {
         state = AsyncValue.error(error, stackTrace);
@@ -156,6 +158,7 @@ class TrackingListViewModel extends _$TrackingListViewModel {
         ttl: const Duration(hours: 6),
       );
       await cacheService.set(cacheKey, entry);
+      if (!_isCurrent(requestGeneration, status, mediaType, page)) return;
 
       if (append && state.hasValue) {
         state = AsyncValue.data([...state.value!, ...items]);
@@ -196,10 +199,13 @@ class TrackingListViewModel extends _$TrackingListViewModel {
           ttl: const Duration(hours: 6),
         );
         await cacheService.set(key, entry);
+        if (!_isCurrent(requestGeneration, status, mediaType, page)) return;
         if (!ref.mounted) return; // coverage:ignore-line
         state = AsyncValue.data(items);
       } catch (_) {
-        errorNotifier.state = 'Could not refresh. Pull down to retry.';
+        if (_isCurrent(requestGeneration, status, mediaType, page)) {
+          errorNotifier.state = 'Could not refresh. Pull down to retry.';
+        }
       }
     });
   }

@@ -108,6 +108,22 @@ class TrackingRequest {
   final Completer<List<TrackedMediaModel>> completer;
 }
 
+class DelayedSetCacheService extends CacheService {
+  final setStarted = Completer<void>();
+  final allowSet = Completer<void>();
+
+  Future<void> seed(String key, CacheEntry entry) => super.set(key, entry);
+
+  @override
+  Future<void> set(String key, CacheEntry entry) async {
+    if (!setStarted.isCompleted) {
+      setStarted.complete();
+      await allowSet.future;
+    }
+    await super.set(key, entry);
+  }
+}
+
 void main() {
   group('TrackingListViewModel', () {
     ProviderContainer createContainer(
@@ -219,6 +235,57 @@ void main() {
           cache.getSync('tracking:v2:${MediaType.series.apiValue}:WATCHING:1'),
           isNull,
         );
+      },
+    );
+
+    test(
+      'loadTracking() response that becomes stale during cache set cannot overwrite',
+      () async {
+        final repo = QueuedTrackingRepo();
+        final cache = DelayedSetCacheService();
+        final movieItem = _makeTracking(
+          'movie-1',
+          'WATCHING',
+          mediaType: MediaType.movie,
+        );
+        await cache.seed(
+          'tracking:v2:${MediaType.movie.apiValue}:WATCHING:1',
+          CacheEntry(
+            json: jsonEncode([movieItem.toJson()]),
+            cachedAt: DateTime.now(),
+            ttl: const Duration(hours: 6),
+          ),
+        );
+        final container = createContainer(repo, cache: cache);
+        addTearDown(container.dispose);
+
+        final subscription = container.listen(
+          trackingListViewModelProvider,
+          (_, _) {},
+        );
+        addTearDown(subscription.close);
+
+        final notifier = container.read(trackingListViewModelProvider.notifier);
+        final seriesFuture = notifier.loadTracking(
+          status: 'WATCHING',
+          mediaType: MediaType.series,
+        );
+        await Future<void>.delayed(Duration.zero);
+
+        final seriesItem = _makeTracking('series-1', 'WATCHING');
+        repo.calls.single.completer.complete([seriesItem]);
+        await cache.setStarted.future;
+
+        await notifier.loadTracking(
+          status: 'WATCHING',
+          mediaType: MediaType.movie,
+        );
+        cache.allowSet.complete();
+        await seriesFuture;
+
+        expect(container.read(trackingListViewModelProvider).value, [
+          movieItem,
+        ]);
       },
     );
 
@@ -444,6 +511,66 @@ void main() {
 
         final error = container.read(trackingBackgroundErrorProvider);
         expect(error, isNotNull);
+      },
+    );
+
+    test(
+      'stale background refresh failure does not set error provider',
+      () async {
+        final cache = CacheService();
+        final seriesItem = _makeTracking('series-1', 'WATCHING');
+        await cache.set(
+          'tracking:v2:${MediaType.series.apiValue}:WATCHING:1',
+          CacheEntry(
+            json: jsonEncode([seriesItem.toJson()]),
+            cachedAt: DateTime.now().subtract(const Duration(days: 1)),
+            ttl: const Duration(hours: 6),
+          ),
+        );
+        final movieItem = _makeTracking(
+          'movie-1',
+          'WATCHING',
+          mediaType: MediaType.movie,
+        );
+        await cache.set(
+          'tracking:v2:${MediaType.movie.apiValue}:WATCHING:1',
+          CacheEntry(
+            json: jsonEncode([movieItem.toJson()]),
+            cachedAt: DateTime.now(),
+            ttl: const Duration(hours: 6),
+          ),
+        );
+
+        final repo = QueuedTrackingRepo();
+        final container = createContainer(repo, cache: cache);
+        addTearDown(container.dispose);
+
+        final subscription = container.listen(
+          trackingListViewModelProvider,
+          (_, _) {},
+        );
+        addTearDown(subscription.close);
+
+        final notifier = container.read(trackingListViewModelProvider.notifier);
+        await notifier.loadTracking(
+          status: 'WATCHING',
+          mediaType: MediaType.series,
+        );
+        await Future<void>.delayed(Duration.zero);
+
+        await notifier.loadTracking(
+          status: 'WATCHING',
+          mediaType: MediaType.movie,
+        );
+
+        expect(repo.calls, hasLength(1));
+        repo.calls.single.completer.completeError(Exception('Failed'));
+        await Future<void>.delayed(Duration.zero);
+
+        expect(container.read(trackingBackgroundErrorProvider), isNull);
+        expect(container.read(trackingListViewModelProvider).value, [
+          movieItem,
+        ]);
       },
     );
 
