@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -33,6 +34,46 @@ class FakeDashboardRepo implements DashboardRepository {
     dropped: DashboardSectionModel(),
     stats: DashboardStatsModel(),
   );
+}
+
+class ControlledDashboardRepo implements DashboardRepository {
+  final Map<MediaType, List<Completer<DashboardModel>>> completers = {
+    MediaType.series: [],
+    MediaType.movie: [],
+  };
+
+  @override
+  Future<DashboardModel> getDashboard({
+    MediaType mediaType = MediaType.series,
+  }) {
+    final completer = Completer<DashboardModel>();
+    completers[mediaType]!.add(completer);
+    return completer.future;
+  }
+
+  void complete(MediaType mediaType, DashboardModel dashboard) {
+    completers[mediaType]!.removeAt(0).complete(dashboard);
+  }
+}
+
+class BackgroundFailureDashboardRepo implements DashboardRepository {
+  final Completer<DashboardModel> seriesCompleter = Completer<DashboardModel>();
+
+  @override
+  Future<DashboardModel> getDashboard({
+    MediaType mediaType = MediaType.series,
+  }) {
+    if (mediaType == MediaType.series) return seriesCompleter.future;
+    return Future.value(
+      const DashboardModel(
+        watching: DashboardSectionModel(),
+        wantToWatch: DashboardSectionModel(),
+        completed: DashboardSectionModel(),
+        dropped: DashboardSectionModel(),
+        stats: DashboardStatsModel(watchingCount: 9),
+      ),
+    );
+  }
 }
 
 void main() {
@@ -130,6 +171,117 @@ void main() {
 
       subscription.close();
     });
+
+    test('ignores out-of-order stale media type responses', () async {
+      final cacheService = CacheService();
+      final repo = ControlledDashboardRepo();
+      final container = ProviderContainer(
+        overrides: [
+          dashboardRepositoryProvider.overrideWith((ref) => repo),
+          cacheServiceProvider.overrideWith((ref) => cacheService),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      final subscription = container.listen(
+        dashboardViewModelProvider,
+        (_, _) {},
+      );
+      await Future<void>.delayed(Duration.zero);
+      expect(repo.completers[MediaType.series], hasLength(1));
+
+      final movieLoad = container
+          .read(dashboardViewModelProvider.notifier)
+          .loadDashboard(mediaType: MediaType.movie);
+      await Future<void>.delayed(Duration.zero);
+      expect(repo.completers[MediaType.movie], hasLength(1));
+
+      const movieDashboard = DashboardModel(
+        watching: DashboardSectionModel(),
+        wantToWatch: DashboardSectionModel(),
+        completed: DashboardSectionModel(),
+        dropped: DashboardSectionModel(),
+        stats: DashboardStatsModel(watchingCount: 20, totalTracked: 20),
+      );
+      const seriesDashboard = DashboardModel(
+        watching: DashboardSectionModel(),
+        wantToWatch: DashboardSectionModel(),
+        completed: DashboardSectionModel(),
+        dropped: DashboardSectionModel(),
+        stats: DashboardStatsModel(watchingCount: 10, totalTracked: 10),
+      );
+
+      repo.complete(MediaType.movie, movieDashboard);
+      await movieLoad;
+      expect(
+        container.read(dashboardViewModelProvider).value!.stats.totalTracked,
+        20,
+      );
+
+      repo.complete(MediaType.series, seriesDashboard);
+      await Future<void>.delayed(Duration.zero);
+
+      final state = container.read(dashboardViewModelProvider);
+      expect(state.hasValue, true);
+      expect(state.value!.stats.totalTracked, 20);
+
+      final movieCache = cacheService.getSync('dashboard:v2:MOVIE');
+      expect(movieCache, isNotNull);
+      final cachedMovie = DashboardModel.fromJson(
+        jsonDecode(movieCache!.json) as Map<String, dynamic>,
+      );
+      expect(cachedMovie.stats.totalTracked, 20);
+
+      subscription.close();
+    });
+
+    test(
+      'stale background refresh failure does not set background error',
+      () async {
+        final cacheService = CacheService();
+        await cacheService.set(
+          'dashboard:v2:SERIES',
+          CacheEntry(
+            json: jsonEncode(
+              const DashboardModel(
+                watching: DashboardSectionModel(),
+                wantToWatch: DashboardSectionModel(),
+                completed: DashboardSectionModel(),
+                dropped: DashboardSectionModel(),
+                stats: DashboardStatsModel(watchingCount: 3),
+              ).toJson(),
+            ),
+            cachedAt: DateTime.now().subtract(const Duration(days: 1)),
+            ttl: const Duration(hours: 6),
+          ),
+        );
+        final repo = BackgroundFailureDashboardRepo();
+        final container = ProviderContainer(
+          overrides: [
+            dashboardRepositoryProvider.overrideWith((ref) => repo),
+            cacheServiceProvider.overrideWith((ref) => cacheService),
+          ],
+        );
+        addTearDown(container.dispose);
+
+        final subscription = container.listen(
+          dashboardViewModelProvider,
+          (_, _) {},
+        );
+        expect(container.read(dashboardViewModelProvider).hasValue, true);
+        await Future<void>.delayed(Duration.zero);
+
+        await container
+            .read(dashboardViewModelProvider.notifier)
+            .loadDashboard(mediaType: MediaType.movie);
+        repo.seriesCompleter.completeError(Exception('Failed'));
+        await Future<void>.delayed(Duration.zero);
+
+        expect(container.read(dashboardBackgroundErrorProvider), isNull);
+
+        subscription.close();
+      },
+    );
 
     test('refresh() reloads dashboard', () async {
       final repo = FakeDashboardRepo();

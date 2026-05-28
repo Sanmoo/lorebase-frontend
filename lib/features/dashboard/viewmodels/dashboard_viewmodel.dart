@@ -12,12 +12,15 @@ part 'dashboard_viewmodel.g.dart';
 @riverpod
 class DashboardViewModel extends _$DashboardViewModel {
   MediaType _currentMediaType = MediaType.series;
+  int _requestGeneration = 0;
 
   @override
   AsyncValue<DashboardModel> build() {
     _currentMediaType = ref.watch(selectedMediaTypeProvider);
+    final requestGeneration = ++_requestGeneration;
+    final mediaType = _currentMediaType;
     final cacheService = ref.read(cacheServiceProvider);
-    final cacheKey = _cacheKey;
+    final cacheKey = _cacheKeyFor(mediaType);
 
     var hit = cacheService.getSync(cacheKey);
     hit ??= cacheService.getFromDiskSync(cacheKey);
@@ -27,65 +30,115 @@ class DashboardViewModel extends _$DashboardViewModel {
         jsonDecode(hit.json) as Map<String, dynamic>,
       );
       if (!hit.isFresh) {
-        _backgroundRefresh();
+        _backgroundRefresh(
+          mediaType: mediaType,
+          cacheKey: cacheKey,
+          requestGeneration: requestGeneration,
+        );
       }
       return AsyncValue.data(data);
     }
 
-    _loadFromNetwork();
+    _loadFromNetwork(
+      mediaType: mediaType,
+      cacheKey: cacheKey,
+      requestGeneration: requestGeneration,
+    );
     return const AsyncValue.loading();
   }
 
-  String get _cacheKey => 'dashboard:v2:${_currentMediaType.apiValue}';
-
   Future<void> loadDashboard({MediaType? mediaType}) async {
     _currentMediaType = mediaType ?? ref.read(selectedMediaTypeProvider);
+    final requestGeneration = ++_requestGeneration;
+    final requestMediaType = _currentMediaType;
+    final cacheKey = _cacheKeyFor(requestMediaType);
     state = const AsyncValue.loading();
-    await _loadFromNetwork();
+    await _loadFromNetwork(
+      mediaType: requestMediaType,
+      cacheKey: cacheKey,
+      requestGeneration: requestGeneration,
+    );
   }
 
-  Future<void> _loadFromNetwork() async {
+  Future<void> _loadFromNetwork({
+    required MediaType mediaType,
+    required String cacheKey,
+    required int requestGeneration,
+  }) async {
     try {
-      final data = await _fetchAndCache();
+      final data = await _fetchAndCache(
+        mediaType: mediaType,
+        cacheKey: cacheKey,
+        requestGeneration: requestGeneration,
+      );
+      if (!_isCurrent(requestGeneration, mediaType) || data == null) return;
       state = AsyncValue.data(data);
     } catch (error, stackTrace) {
-      state = AsyncValue.error(error, stackTrace);
+      if (_isCurrent(requestGeneration, mediaType)) {
+        state = AsyncValue.error(error, stackTrace);
+      }
     }
   }
 
-  Future<DashboardModel> _fetchAndCache() async {
+  Future<DashboardModel?> _fetchAndCache({
+    required MediaType mediaType,
+    required String cacheKey,
+    required int requestGeneration,
+  }) async {
     final repository = ref.read(dashboardRepositoryProvider);
     final cacheService = ref.read(cacheServiceProvider);
-    final data = await repository.getDashboard(mediaType: _currentMediaType);
+    final data = await repository.getDashboard(mediaType: mediaType);
+    if (!_isCurrent(requestGeneration, mediaType)) return null;
     final entry = CacheEntry(
       json: jsonEncode(data.toJson()),
       cachedAt: DateTime.now(),
       ttl: const Duration(hours: 6),
     );
-    await cacheService.set(_cacheKey, entry);
+    await cacheService.set(cacheKey, entry);
+    if (!_isCurrent(requestGeneration, mediaType)) return null;
     return data;
   }
 
-  void _backgroundRefresh() {
+  void _backgroundRefresh({
+    required MediaType mediaType,
+    required String cacheKey,
+    required int requestGeneration,
+  }) {
     Future(() async {
       try {
-        final data = await _fetchAndCache();
+        final data = await _fetchAndCache(
+          mediaType: mediaType,
+          cacheKey: cacheKey,
+          requestGeneration: requestGeneration,
+        );
+        if (!_isCurrent(requestGeneration, mediaType) || data == null) return;
         state = AsyncValue.data(data);
       } catch (_) {
-        ref.read(dashboardBackgroundErrorProvider.notifier).state =
-            'Could not refresh. Pull down to retry.';
+        if (_isCurrent(requestGeneration, mediaType)) {
+          ref.read(dashboardBackgroundErrorProvider.notifier).state =
+              'Could not refresh. Pull down to retry.';
+        }
       }
     });
   }
 
   Future<void> refresh() async {
+    final requestGeneration = ++_requestGeneration;
+    final mediaType = _currentMediaType;
+    final cacheKey = _cacheKeyFor(mediaType);
     state = const AsyncValue.loading();
     try {
-      final data = await _fetchAndCache();
+      final data = await _fetchAndCache(
+        mediaType: mediaType,
+        cacheKey: cacheKey,
+        requestGeneration: requestGeneration,
+      );
+      if (!_isCurrent(requestGeneration, mediaType) || data == null) return;
       state = AsyncValue.data(data);
     } catch (error, stackTrace) {
+      if (!_isCurrent(requestGeneration, mediaType)) return;
       final cacheService = ref.read(cacheServiceProvider);
-      final hit = cacheService.getSync(_cacheKey);
+      final hit = cacheService.getSync(cacheKey);
       if (hit != null) {
         try {
           state = AsyncValue.data(
@@ -99,4 +152,10 @@ class DashboardViewModel extends _$DashboardViewModel {
       state = AsyncValue.error(error, stackTrace);
     }
   }
+
+  bool _isCurrent(int requestGeneration, MediaType mediaType) =>
+      requestGeneration == _requestGeneration && mediaType == _currentMediaType;
+
+  String _cacheKeyFor(MediaType mediaType) =>
+      'dashboard:v2:${mediaType.apiValue}';
 }
