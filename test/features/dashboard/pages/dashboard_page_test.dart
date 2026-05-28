@@ -36,7 +36,7 @@ class FakeDashboardVM extends DashboardViewModel {
   }
 
   @override
-  Future<void> loadDashboard({MediaType mediaType = MediaType.series}) async {}
+  Future<void> loadDashboard({MediaType? mediaType}) async {}
 }
 
 DashboardModel _emptyDashboard() => const DashboardModel(

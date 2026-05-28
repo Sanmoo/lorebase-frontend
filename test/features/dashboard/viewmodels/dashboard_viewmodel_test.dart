@@ -318,6 +318,26 @@ void main() {
       expect(error, isNotNull);
     });
 
+    test('loadDashboard() without media type uses shared selection', () async {
+      final repo = FakeDashboardRepo();
+      final container = ProviderContainer(
+        overrides: [
+          selectedMediaTypeProvider.overrideWith((ref) => MediaType.movie),
+          dashboardRepositoryProvider.overrideWith((ref) => repo),
+          cacheServiceProvider.overrideWith((ref) => CacheService()),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      final sub = container.listen(dashboardViewModelProvider, (_, _) {});
+
+      await container.read(dashboardViewModelProvider.notifier).loadDashboard();
+
+      expect(repo.lastMediaType, MediaType.movie);
+
+      sub.close();
+    });
+
     test('loadDashboard() switches media type and reloads', () async {
       final cacheService = CacheService();
       final repo = FakeDashboardRepo()

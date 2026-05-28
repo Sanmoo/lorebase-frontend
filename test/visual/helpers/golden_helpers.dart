@@ -70,35 +70,41 @@ class FakeDashboardVM extends DashboardViewModel {
   Future<void> refresh() async {}
 
   @override
-  Future<void> loadDashboard({MediaType mediaType = MediaType.series}) async {}
+  Future<void> loadDashboard({MediaType? mediaType}) async {}
 }
 
 class FakeSeriesDetailVM extends SeriesDetailViewModel {
   @override
   Future<SeriesDetailState> build(int tmdbId) async => const SeriesDetailState(
-        series: SeriesModel(
-          tmdbId: 1,
-          title: 'Breaking Bad',
-          overview:
-              'A high school chemistry teacher diagnosed with inoperable lung '
-              'cancer turns to manufacturing and selling methamphetamine in '
-              'order to secure his family\'s future.',
-          genres: ['Drama', 'Crime', 'Thriller'],
-          seasonCount: 5,
-          status: 'Ended',
-          firstAirDate: '2008-01-20',
-          networks: ['AMC'],
-        ),
-        tracking: null,
-      );
+    series: SeriesModel(
+      tmdbId: 1,
+      title: 'Breaking Bad',
+      overview:
+          'A high school chemistry teacher diagnosed with inoperable lung '
+          'cancer turns to manufacturing and selling methamphetamine in '
+          'order to secure his family\'s future.',
+      genres: ['Drama', 'Crime', 'Thriller'],
+      seasonCount: 5,
+      status: 'Ended',
+      firstAirDate: '2008-01-20',
+      networks: ['AMC'],
+    ),
+    tracking: null,
+  );
 
   @override
-  Future<void> addTracking(String status,
-      {int? rating, String? review}) async {}
+  Future<void> addTracking(
+    String status, {
+    int? rating,
+    String? review,
+  }) async {}
 
   @override
-  Future<void> updateTracking(
-      {String? status, int? rating, String? review}) async {}
+  Future<void> updateTracking({
+    String? status,
+    int? rating,
+    String? review,
+  }) async {}
 
   @override
   Future<void> removeTracking() async {}
@@ -107,26 +113,32 @@ class FakeSeriesDetailVM extends SeriesDetailViewModel {
 class FakeMovieDetailVM extends MovieDetailViewModel {
   @override
   Future<MovieDetailState> build(int tmdbId) async => const MovieDetailState(
-        movie: MovieModel(
-          tmdbId: 7,
-          title: 'Se7en',
-          overview:
-              'Two detectives, a rookie and a veteran, hunt a serial killer '
-              'who uses the seven deadly sins as his motives.',
-          releaseDate: '1995-09-22',
-          runtimeMinutes: 127,
-          genres: ['Crime', 'Mystery', 'Thriller'],
-        ),
-        tracking: null,
-      );
+    movie: MovieModel(
+      tmdbId: 7,
+      title: 'Se7en',
+      overview:
+          'Two detectives, a rookie and a veteran, hunt a serial killer '
+          'who uses the seven deadly sins as his motives.',
+      releaseDate: '1995-09-22',
+      runtimeMinutes: 127,
+      genres: ['Crime', 'Mystery', 'Thriller'],
+    ),
+    tracking: null,
+  );
 
   @override
-  Future<void> addTracking(String status,
-      {int? rating, String? review}) async {}
+  Future<void> addTracking(
+    String status, {
+    int? rating,
+    String? review,
+  }) async {}
 
   @override
-  Future<void> updateTracking(
-      {String? status, int? rating, String? review}) async {}
+  Future<void> updateTracking({
+    String? status,
+    int? rating,
+    String? review,
+  }) async {}
 
   @override
   Future<void> removeTracking() async {}
@@ -160,8 +172,10 @@ class FakeTrackingListVM extends TrackingListViewModel {
       AsyncValue.data(_trackingItems());
 
   @override
-  Future<void> loadTracking(
-      {String? status, MediaType mediaType = MediaType.series}) async {}
+  Future<void> loadTracking({
+    String? status,
+    MediaType mediaType = MediaType.series,
+  }) async {}
 
   @override
   Future<void> loadMore() async {}
@@ -193,102 +207,103 @@ DashboardModel _dashboardWithData() {
 }
 
 List<SeriesModel> _searchResults() => const [
-      SeriesModel(tmdbId: 1, title: 'Breaking Bad'),
-      SeriesModel(tmdbId: 2, title: 'Better Call Saul'),
-      SeriesModel(tmdbId: 3, title: 'Stranger Things'),
-    ];
+  SeriesModel(tmdbId: 1, title: 'Breaking Bad'),
+  SeriesModel(tmdbId: 2, title: 'Better Call Saul'),
+  SeriesModel(tmdbId: 3, title: 'Stranger Things'),
+];
 
 final _now = DateTime(2025, 1, 1);
 
 List<TrackedMediaModel> _trackingItems() => [
-      TrackedMediaModel(
-        trackingId: 't1',
-        userId: 'golden-user-1',
-        mediaType: MediaType.series,
-        mediaId: '1',
-        status: 'WATCHING',
-        media: const TrackedMediaSummaryModel(
-          mediaId: '1',
-          title: 'Breaking Bad',
-          mediaType: MediaType.series,
-        ),
-        rating: 9,
-        addedAt: _now,
-        lastUpdated: _now,
-      ),
-      TrackedMediaModel(
-        trackingId: 't2',
-        userId: 'golden-user-1',
-        mediaType: MediaType.series,
-        mediaId: '2',
-        status: 'WATCHING',
-        media: const TrackedMediaSummaryModel(
-          mediaId: '2',
-          title: 'Better Call Saul',
-          mediaType: MediaType.series,
-        ),
-        rating: 8,
-        addedAt: _now,
-        lastUpdated: _now,
-      ),
-      TrackedMediaModel(
-        trackingId: 't3',
-        userId: 'golden-user-1',
-        mediaType: MediaType.series,
-        mediaId: '3',
-        status: 'WATCHING',
-        media: const TrackedMediaSummaryModel(
-            mediaId: '3',
-            title: 'Stranger Things',
-            mediaType: MediaType.series),
-        rating: 7,
-        addedAt: _now,
-        lastUpdated: _now,
-      ),
-    ];
+  TrackedMediaModel(
+    trackingId: 't1',
+    userId: 'golden-user-1',
+    mediaType: MediaType.series,
+    mediaId: '1',
+    status: 'WATCHING',
+    media: const TrackedMediaSummaryModel(
+      mediaId: '1',
+      title: 'Breaking Bad',
+      mediaType: MediaType.series,
+    ),
+    rating: 9,
+    addedAt: _now,
+    lastUpdated: _now,
+  ),
+  TrackedMediaModel(
+    trackingId: 't2',
+    userId: 'golden-user-1',
+    mediaType: MediaType.series,
+    mediaId: '2',
+    status: 'WATCHING',
+    media: const TrackedMediaSummaryModel(
+      mediaId: '2',
+      title: 'Better Call Saul',
+      mediaType: MediaType.series,
+    ),
+    rating: 8,
+    addedAt: _now,
+    lastUpdated: _now,
+  ),
+  TrackedMediaModel(
+    trackingId: 't3',
+    userId: 'golden-user-1',
+    mediaType: MediaType.series,
+    mediaId: '3',
+    status: 'WATCHING',
+    media: const TrackedMediaSummaryModel(
+      mediaId: '3',
+      title: 'Stranger Things',
+      mediaType: MediaType.series,
+    ),
+    rating: 7,
+    addedAt: _now,
+    lastUpdated: _now,
+  ),
+];
 
 // ─── Override Helpers ───────────────────────────────────
 
 List<Override> authOverride() => [
-      authViewModelProvider.overrideWith(() => FakeAuthVM()),
-    ];
+  authViewModelProvider.overrideWith(() => FakeAuthVM()),
+];
 
 List<Override> unauthOverride() => [
-      authViewModelProvider.overrideWith(() => FakeUnauthVM()),
-    ];
+  authViewModelProvider.overrideWith(() => FakeUnauthVM()),
+];
 
 List<Override> dashboardGoldenOverrides() => [
-      dashboardViewModelProvider.overrideWith(() => FakeDashboardVM()),
-      ...authOverride(),
-    ];
+  dashboardViewModelProvider.overrideWith(() => FakeDashboardVM()),
+  ...authOverride(),
+];
 
 List<Override> loginGoldenOverrides() => [
-      loginViewModelProvider.overrideWith(() => FakeLoginVM()),
-      ...unauthOverride(),
-    ];
+  loginViewModelProvider.overrideWith(() => FakeLoginVM()),
+  ...unauthOverride(),
+];
 
 List<Override> registerGoldenOverrides() => [
-      registerViewModelProvider.overrideWith(() => FakeRegisterVM()),
-      ...unauthOverride(),
-    ];
+  registerViewModelProvider.overrideWith(() => FakeRegisterVM()),
+  ...unauthOverride(),
+];
 
 List<Override> seriesDetailGoldenOverrides() => [
-      seriesDetailViewModelProvider(1).overrideWith(() => FakeSeriesDetailVM()),
-      ...authOverride(),
-    ];
+  seriesDetailViewModelProvider(1).overrideWith(() => FakeSeriesDetailVM()),
+  ...authOverride(),
+];
 
 List<Override> seriesSearchGoldenOverrides() => [
-      seriesSearchViewModelProvider.overrideWith(() => FakeSeriesSearchVM()),
-      movieSearchViewModelProvider.overrideWith(() => FakeMovieSearchVM()),
-      ...authOverride(),
-    ];
+  seriesSearchViewModelProvider.overrideWith(() => FakeSeriesSearchVM()),
+  movieSearchViewModelProvider.overrideWith(() => FakeMovieSearchVM()),
+  ...authOverride(),
+];
 
 List<Override> movieDetailGoldenOverrides() => [
-      movieDetailViewModelProvider(7).overrideWith(() => FakeMovieDetailVM()),
-      ...authOverride(),
-    ];
+  movieDetailViewModelProvider(7).overrideWith(() => FakeMovieDetailVM()),
+  ...authOverride(),
+];
 
 List<Override> trackingListGoldenOverrides() => [
-      trackingListViewModelProvider.overrideWith(() => FakeTrackingListVM()),
-      ...authOverride(),
-    ];
+  trackingListViewModelProvider.overrideWith(() => FakeTrackingListVM()),
+  ...authOverride(),
+];
