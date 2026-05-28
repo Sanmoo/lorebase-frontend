@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../core/cache/cache_entry.dart';
 import '../../../core/cache/cache_providers.dart';
+import '../../../core/providers/media_filter_provider.dart';
 import '../../../features/tracking/data/models/media_type.dart';
 import '../data/models/dashboard_model.dart';
 import '../data/repositories/dashboard_repository.dart';
@@ -14,6 +15,7 @@ class DashboardViewModel extends _$DashboardViewModel {
 
   @override
   AsyncValue<DashboardModel> build() {
+    _currentMediaType = ref.watch(selectedMediaTypeProvider);
     final cacheService = ref.read(cacheServiceProvider);
     final cacheKey = _cacheKey;
 
@@ -36,9 +38,7 @@ class DashboardViewModel extends _$DashboardViewModel {
 
   String get _cacheKey => 'dashboard:v2:${_currentMediaType.apiValue}';
 
-  Future<void> loadDashboard({
-    MediaType mediaType = MediaType.series,
-  }) async {
+  Future<void> loadDashboard({MediaType mediaType = MediaType.series}) async {
     _currentMediaType = mediaType;
     state = const AsyncValue.loading();
     await _loadFromNetwork();
@@ -56,9 +56,7 @@ class DashboardViewModel extends _$DashboardViewModel {
   Future<DashboardModel> _fetchAndCache() async {
     final repository = ref.read(dashboardRepositoryProvider);
     final cacheService = ref.read(cacheServiceProvider);
-    final data = await repository.getDashboard(
-      mediaType: _currentMediaType,
-    );
+    final data = await repository.getDashboard(mediaType: _currentMediaType);
     final entry = CacheEntry(
       json: jsonEncode(data.toJson()),
       cachedAt: DateTime.now(),
@@ -90,9 +88,11 @@ class DashboardViewModel extends _$DashboardViewModel {
       final hit = cacheService.getSync(_cacheKey);
       if (hit != null) {
         try {
-          state = AsyncValue.data(DashboardModel.fromJson(
-            jsonDecode(hit.json) as Map<String, dynamic>,
-          ));
+          state = AsyncValue.data(
+            DashboardModel.fromJson(
+              jsonDecode(hit.json) as Map<String, dynamic>,
+            ),
+          );
           return;
         } catch (_) {}
       }

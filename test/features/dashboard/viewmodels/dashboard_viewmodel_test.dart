@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lorebase/core/cache/cache_entry.dart';
 import 'package:lorebase/core/cache/cache_service.dart';
 import 'package:lorebase/core/cache/cache_providers.dart';
+import 'package:lorebase/core/providers/media_filter_provider.dart';
 import 'package:lorebase/features/dashboard/viewmodels/dashboard_viewmodel.dart';
 import 'package:lorebase/features/dashboard/data/repositories/dashboard_repository.dart';
 import 'package:lorebase/features/dashboard/data/models/dashboard_model.dart';
@@ -14,11 +15,13 @@ import 'package:lorebase/features/tracking/data/models/media_type.dart';
 class FakeDashboardRepo implements DashboardRepository {
   DashboardModel? result;
   bool shouldThrow = false;
+  MediaType? lastMediaType;
 
   @override
   Future<DashboardModel> getDashboard({
     MediaType mediaType = MediaType.series,
   }) async {
+    lastMediaType = mediaType;
     if (shouldThrow) throw Exception('Failed');
     return result ?? _defaultDashboard();
   }
@@ -46,6 +49,29 @@ void main() {
 
       final state = container.read(dashboardViewModelProvider);
       expect(state.isLoading, true);
+    });
+
+    test('build() uses shared media type selection', () async {
+      final repo = FakeDashboardRepo();
+      final container = ProviderContainer(
+        overrides: [
+          selectedMediaTypeProvider.overrideWith((ref) => MediaType.movie),
+          dashboardRepositoryProvider.overrideWith((ref) => repo),
+          cacheServiceProvider.overrideWith((ref) => CacheService()),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      final subscription = container.listen(
+        dashboardViewModelProvider,
+        (prev, next) {},
+      );
+
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+
+      expect(repo.lastMediaType, MediaType.movie);
+
+      subscription.close();
     });
 
     test('build() loads dashboard data on success', () async {

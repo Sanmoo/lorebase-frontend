@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/empty_state_widget.dart';
 import '../../../../core/widgets/error_widget.dart';
 import '../../../../core/widgets/loading_widget.dart';
+import '../../../../core/providers/media_filter_provider.dart';
 import '../../../../core/widgets/media_type_toggle.dart';
 import '../../../l10n/strings.g.dart';
 import '../../tracking/data/models/media_type.dart';
@@ -35,13 +36,8 @@ class DashboardPage extends ConsumerStatefulWidget {
 }
 
 class _DashboardPageState extends ConsumerState<DashboardPage> {
-  MediaType _selectedType = MediaType.series;
-
   void _onMediaTypeChanged(MediaType type) {
-    setState(() => _selectedType = type);
-    ref
-        .read(dashboardViewModelProvider.notifier)
-        .loadDashboard(mediaType: type);
+    ref.read(selectedMediaTypeProvider.notifier).state = type;
   }
 
   Future<void> _refreshDashboardAndSocialFeed() {
@@ -63,6 +59,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
       }
     });
 
+    final selectedType = ref.watch(selectedMediaTypeProvider);
     final dashboardState = ref.watch(dashboardViewModelProvider);
     final socialFeedState = ref.watch(socialFeedViewModelProvider);
     final socialProfileState = ref.watch(mySocialProfileProvider);
@@ -83,7 +80,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                 child: MediaTypeToggle(
-                  selectedType: _selectedType,
+                  selectedType: selectedType,
                   onChanged: _onMediaTypeChanged,
                 ),
               ),
@@ -219,7 +216,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                     SizedBox(
                       height: 260,
                       child: EmptyStateWidget(
-                        message: _selectedType == MediaType.series
+                        message: selectedType == MediaType.series
                             ? t.dashboard_empty
                             : t.dashboard_empty_movies,
                         icon: Icons.tv_off,

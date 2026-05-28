@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lorebase/core/providers/media_filter_provider.dart';
 import 'package:lorebase/features/dashboard/pages/dashboard_page.dart';
 import 'package:lorebase/features/dashboard/viewmodels/dashboard_viewmodel.dart';
 import 'package:lorebase/features/dashboard/data/models/dashboard_model.dart';
@@ -160,6 +161,35 @@ Future<void> main() async {
       await tester.pump();
 
       expect(find.text('Retry'), findsOneWidget);
+    });
+
+    testWidgets('uses and updates shared media type selection', (tester) async {
+      final fakeVM = FakeDashboardVM(
+        testState: AsyncValue.data(_emptyDashboard()),
+      );
+      final container = ProviderContainer(
+        overrides: [
+          selectedMediaTypeProvider.overrideWith((ref) => MediaType.movie),
+          dashboardViewModelProvider.overrideWith(() => fakeVM),
+          socialFeedViewModelProvider.overrideWith(
+            () => FakeSocialFeedVM(testState: AsyncValue.data(_feed())),
+          ),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      expect(find.textContaining('No movies tracked'), findsOneWidget);
+      expect(container.read(selectedMediaTypeProvider), MediaType.movie);
+
+      await tester.tap(find.text('Series'));
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('No series tracked'), findsOneWidget);
+      expect(container.read(selectedMediaTypeProvider), MediaType.series);
     });
 
     testWidgets('empty data shows EmptyStateWidget', (tester) async {
