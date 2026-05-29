@@ -171,5 +171,13 @@
   "dashboard_social_preview_cta": "Abrir Social",
   "dashboard_recommendation_title": "Recomendaciones para ti",
   "dashboard_recommendation_body": "Encuentra algo personalizado para ver después.",
-  "dashboard_recommendation_cta": "Obtener recomendaciones"
+  "dashboard_recommendation_cta": "Obtener recomendaciones",
+  "nav_change_language_tooltip": "Cambiar idioma",
+  "nav_sign_out_tooltip": "Cerrar sesión",
+  "search_clear_tooltip": "Borrar búsqueda",
+  "auth_resend_confirmation_code": "Reenviar código de confirmación",
+  "social_public_list_empty_default": "Aún no hay elementos públicos.",
+  "social_open_media_semantics": "Abrir $title",
+  "social_media_type_movie": "Película",
+  "social_media_type_series": "Serie"
 }

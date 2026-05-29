@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import '../../../l10n/strings.g.dart';
 import '../data/models/public_list_item_model.dart';
 
 class PublicMediaListSection extends StatelessWidget {
@@ -8,7 +9,7 @@ class PublicMediaListSection extends StatelessWidget {
     super.key,
     required this.title,
     required this.items,
-    this.emptyMessage = 'Nenhum item público ainda.',
+    this.emptyMessage,
     this.onItemTap,
     this.padding = const EdgeInsets.fromLTRB(16, 12, 16, 24),
     this.scrollable = true,
@@ -25,7 +26,7 @@ class PublicMediaListSection extends StatelessWidget {
 
   final String title;
   final List<PublicListItemModel> items;
-  final String emptyMessage;
+  final String? emptyMessage;
   final ValueChanged<PublicListItemModel>? onItemTap;
   final EdgeInsetsGeometry padding;
   final bool scrollable;
@@ -47,7 +48,7 @@ class PublicMediaListSection extends StatelessWidget {
       ),
       const SizedBox(height: 8),
       if (items.isEmpty)
-        Text(emptyMessage)
+        Text(emptyMessage ?? t.social_public_list_empty_default)
       else
         for (final entry in groupedItems.entries)
           if (entry.value.isNotEmpty) ...[
@@ -55,7 +56,7 @@ class PublicMediaListSection extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(top: 16, bottom: 10),
                 child: Text(
-                  _statusLabel(entry.key),
+                  _statusLabel(entry.key, t),
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
@@ -110,15 +111,18 @@ class _PublicMediaCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final media = item.media;
     final mediaType = media?.mediaType ?? item.mediaType;
-    final title = media?.title ?? _mediaTypeLabel(mediaType);
-    final mediaTypeLabel = _mediaTypeLabel(mediaType);
+    final translations = t;
+    final title = media?.title ?? _mediaTypeLabel(mediaType, translations);
+    final mediaTypeLabel = _mediaTypeLabel(mediaType, translations);
     final ratingLabel = item.rating == null ? null : '⭐ ${item.rating}/10';
     final showMediaTypeMetadata = title != mediaTypeLabel;
     final textScaler = MediaQuery.textScalerOf(context);
 
     return Semantics(
       button: onItemTap != null,
-      label: onItemTap == null ? null : 'Abrir $title',
+      label: onItemTap == null
+          ? null
+          : translations.social_open_media_semantics(title: title),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
@@ -281,16 +285,16 @@ Map<String, List<PublicListItemModel>> _groupItemsByStatus(
   return orderedGrouped;
 }
 
-String _statusLabel(String status) {
+String _statusLabel(String status, Translations translations) {
   switch (status.toUpperCase()) {
     case 'PLAN_TO_WATCH':
-      return 'Quero ver';
+      return translations.social_status_plan_to_watch;
     case 'WATCHING':
-      return 'Assistindo';
+      return translations.social_status_watching;
     case 'COMPLETED':
-      return 'Concluído';
+      return translations.social_status_completed;
     case 'DROPPED':
-      return 'Abandonado';
+      return translations.social_status_dropped;
     default:
       return status
           .toLowerCase()
@@ -301,14 +305,14 @@ String _statusLabel(String status) {
   }
 }
 
-String _mediaTypeLabel(String mediaType) {
+String _mediaTypeLabel(String mediaType, Translations translations) {
   switch (mediaType.toUpperCase()) {
     case 'MOVIE':
     case 'FILME':
-      return 'Filme';
+      return translations.social_media_type_movie;
     case 'SERIES':
     case 'TV':
-      return 'Série';
+      return translations.social_media_type_series;
     default:
       return mediaType;
   }

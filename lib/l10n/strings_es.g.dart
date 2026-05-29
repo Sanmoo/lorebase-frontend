@@ -212,6 +212,14 @@ class TranslationsEs extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get dashboard_recommendation_title => 'Recomendaciones para ti';
 	@override String get dashboard_recommendation_body => 'Encuentra algo personalizado para ver después.';
 	@override String get dashboard_recommendation_cta => 'Obtener recomendaciones';
+	@override String get nav_change_language_tooltip => 'Cambiar idioma';
+	@override String get nav_sign_out_tooltip => 'Cerrar sesión';
+	@override String get search_clear_tooltip => 'Borrar búsqueda';
+	@override String get auth_resend_confirmation_code => 'Reenviar código de confirmación';
+	@override String get social_public_list_empty_default => 'Aún no hay elementos públicos.';
+	@override String social_open_media_semantics({required Object title}) => 'Abrir ${title}';
+	@override String get social_media_type_movie => 'Película';
+	@override String get social_media_type_series => 'Serie';
 }
 
 /// The flat map containing all translations for locale <es>.
@@ -392,6 +400,14 @@ extension on TranslationsEs {
 			'dashboard_recommendation_title' => 'Recomendaciones para ti',
 			'dashboard_recommendation_body' => 'Encuentra algo personalizado para ver después.',
 			'dashboard_recommendation_cta' => 'Obtener recomendaciones',
+			'nav_change_language_tooltip' => 'Cambiar idioma',
+			'nav_sign_out_tooltip' => 'Cerrar sesión',
+			'search_clear_tooltip' => 'Borrar búsqueda',
+			'auth_resend_confirmation_code' => 'Reenviar código de confirmación',
+			'social_public_list_empty_default' => 'Aún no hay elementos públicos.',
+			'social_open_media_semantics' => ({required Object title}) => 'Abrir ${title}',
+			'social_media_type_movie' => 'Película',
+			'social_media_type_series' => 'Serie',
 			_ => null,
 		};
 	}

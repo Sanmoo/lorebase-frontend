@@ -249,9 +249,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               onPressed: () => ref
                   .read(registerViewModelProvider.notifier)
                   .resendExistingAccountCode(),
-              child: const Text(
-                'Reenviar código de confirmação',
-                style: TextStyle(color: Colors.white),
+              child: Text(
+                t.auth_resend_confirmation_code,
+                style: const TextStyle(color: Colors.white),
               ),
             ),
           ],

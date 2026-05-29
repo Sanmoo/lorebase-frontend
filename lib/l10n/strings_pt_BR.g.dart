@@ -553,6 +553,30 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// pt-BR: 'Receber recomendações'
 	String get dashboard_recommendation_cta => 'Receber recomendações';
+
+	/// pt-BR: 'Alterar idioma'
+	String get nav_change_language_tooltip => 'Alterar idioma';
+
+	/// pt-BR: 'Sair'
+	String get nav_sign_out_tooltip => 'Sair';
+
+	/// pt-BR: 'Limpar busca'
+	String get search_clear_tooltip => 'Limpar busca';
+
+	/// pt-BR: 'Reenviar código de confirmação'
+	String get auth_resend_confirmation_code => 'Reenviar código de confirmação';
+
+	/// pt-BR: 'Nenhum item público ainda.'
+	String get social_public_list_empty_default => 'Nenhum item público ainda.';
+
+	/// pt-BR: 'Abrir $title'
+	String social_open_media_semantics({required Object title}) => 'Abrir ${title}';
+
+	/// pt-BR: 'Filme'
+	String get social_media_type_movie => 'Filme';
+
+	/// pt-BR: 'Série'
+	String get social_media_type_series => 'Série';
 }
 
 /// The flat map containing all translations for locale <pt-BR>.
@@ -733,6 +757,14 @@ extension on Translations {
 			'dashboard_recommendation_title' => 'Recomendações para você',
 			'dashboard_recommendation_body' => 'Encontre algo personalizado para assistir em seguida.',
 			'dashboard_recommendation_cta' => 'Receber recomendações',
+			'nav_change_language_tooltip' => 'Alterar idioma',
+			'nav_sign_out_tooltip' => 'Sair',
+			'search_clear_tooltip' => 'Limpar busca',
+			'auth_resend_confirmation_code' => 'Reenviar código de confirmação',
+			'social_public_list_empty_default' => 'Nenhum item público ainda.',
+			'social_open_media_semantics' => ({required Object title}) => 'Abrir ${title}',
+			'social_media_type_movie' => 'Filme',
+			'social_media_type_series' => 'Série',
 			_ => null,
 		};
 	}

@@ -97,7 +97,7 @@ class _SeriesSearchPageState extends ConsumerState<SeriesSearchPage> {
             border: InputBorder.none,
             suffixIcon: _searchController.text.isNotEmpty
                 ? IconButton(
-                    tooltip: 'Clear search',
+                    tooltip: context.t.search_clear_tooltip,
                     icon: const Icon(Icons.clear),
                     onPressed: _onClear,
                   )

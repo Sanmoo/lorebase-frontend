@@ -171,5 +171,13 @@
   "dashboard_social_preview_cta": "Open Social",
   "dashboard_recommendation_title": "Recommendations for you",
   "dashboard_recommendation_body": "Find something tailored to watch next.",
-  "dashboard_recommendation_cta": "Get recommendations"
+  "dashboard_recommendation_cta": "Get recommendations",
+  "nav_change_language_tooltip": "Change language",
+  "nav_sign_out_tooltip": "Sign out",
+  "search_clear_tooltip": "Clear search",
+  "auth_resend_confirmation_code": "Resend confirmation code",
+  "social_public_list_empty_default": "No public items yet.",
+  "social_open_media_semantics": "Open $title",
+  "social_media_type_movie": "Movie",
+  "social_media_type_series": "Series"
 }

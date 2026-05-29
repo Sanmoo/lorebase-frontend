@@ -212,6 +212,14 @@ class TranslationsEn extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get dashboard_recommendation_title => 'Recommendations for you';
 	@override String get dashboard_recommendation_body => 'Find something tailored to watch next.';
 	@override String get dashboard_recommendation_cta => 'Get recommendations';
+	@override String get nav_change_language_tooltip => 'Change language';
+	@override String get nav_sign_out_tooltip => 'Sign out';
+	@override String get search_clear_tooltip => 'Clear search';
+	@override String get auth_resend_confirmation_code => 'Resend confirmation code';
+	@override String get social_public_list_empty_default => 'No public items yet.';
+	@override String social_open_media_semantics({required Object title}) => 'Open ${title}';
+	@override String get social_media_type_movie => 'Movie';
+	@override String get social_media_type_series => 'Series';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -392,6 +400,14 @@ extension on TranslationsEn {
 			'dashboard_recommendation_title' => 'Recommendations for you',
 			'dashboard_recommendation_body' => 'Find something tailored to watch next.',
 			'dashboard_recommendation_cta' => 'Get recommendations',
+			'nav_change_language_tooltip' => 'Change language',
+			'nav_sign_out_tooltip' => 'Sign out',
+			'search_clear_tooltip' => 'Clear search',
+			'auth_resend_confirmation_code' => 'Resend confirmation code',
+			'social_public_list_empty_default' => 'No public items yet.',
+			'social_open_media_semantics' => ({required Object title}) => 'Open ${title}',
+			'social_media_type_movie' => 'Movie',
+			'social_media_type_series' => 'Series',
 			_ => null,
 		};
 	}
