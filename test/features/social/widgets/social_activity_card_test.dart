@@ -72,6 +72,34 @@ void main() {
     }
   });
 
+  testWidgets(
+    'ADDED_TO_LIST renders media followed by list name when present',
+    (tester) async {
+      await pumpCard(
+        tester,
+        event(type: 'ADDED_TO_LIST', metadata: const {'listName': 'Favoritos'}),
+      );
+
+      expect(find.text('Fulano'), findsOneWidget);
+      expect(find.text('adicionou'), findsOneWidget);
+      expect(find.text('One Piece'), findsOneWidget);
+      expect(find.text('à lista Favoritos'), findsOneWidget);
+      expect(find.textContaining('adicionou à lista'), findsNothing);
+    },
+  );
+
+  testWidgets('ADDED_TO_LIST keeps current fallback without list name', (
+    tester,
+  ) async {
+    await pumpCard(
+      tester,
+      event(type: 'ADDED_TO_LIST', metadata: const {'status': 'WANT_TO_WATCH'}),
+    );
+
+    expect(find.textContaining('adicionou à lista'), findsOneWidget);
+    expect(find.text('One Piece'), findsOneWidget);
+  });
+
   testWidgets('does not render empty review text', (tester) async {
     await pumpCard(tester, event(metadata: const {'review': ''}));
 
