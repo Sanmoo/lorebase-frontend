@@ -137,7 +137,7 @@ class TranslationsEnUs extends Translations with BaseTranslations<AppLocale, Tra
 	@override String get search_no_results_movies => 'No movies found';
 	@override String get tracking_empty_movies => 'No {status} movies yet';
 	@override String get dashboard_empty_movies => 'No movies tracked yet.\nSearch and add your first movie!';
-	@override String get movie_detail_error => 'Error: {message}';
+	@override String movie_detail_error({required Object message}) => 'Error: ${message}';
 	@override String get movie_detail_loading => 'Loading movie details...';
 	@override String get movie_detail_release_date => 'Release Date';
 	@override String get movie_detail_runtime => 'Runtime';
@@ -175,11 +175,14 @@ class TranslationsEnUs extends Translations with BaseTranslations<AppLocale, Tra
 	@override String get social_following => 'Following';
 	@override String get social_profile_unavailable => 'This profile is not available right now.';
 	@override String get social_empty_public_activity => 'No public activity yet.';
-	@override String get social_section_load_error => 'Could not load {section}.';
-	@override String get social_section_loading => 'Loading {section}...';
-	@override String get social_followers_count => '{count} {count, plural, one{follower} other{followers}}';
-	@override String get social_following_count => '{count} following';
-	@override String get social_affinity => '{percent}% affinity';
+	@override String social_section_load_error({required Object section}) => 'Could not load ${section}.';
+	@override String social_section_loading({required Object section}) => 'Loading ${section}...';
+	@override String social_followers_count({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(count,
+		one: '${count} follower',
+		other: '${count} followers',
+	);
+	@override String social_following_count({required Object count}) => '${count} following';
+	@override String social_affinity({required Object percent}) => '${percent}% affinity';
 	@override String get social_follow => 'Follow';
 	@override String get social_following_action => 'Following';
 	@override String get social_feed => 'Feed';
@@ -301,7 +304,7 @@ extension on TranslationsEnUs {
 			'search_no_results_movies' => 'No movies found',
 			'tracking_empty_movies' => 'No {status} movies yet',
 			'dashboard_empty_movies' => 'No movies tracked yet.\nSearch and add your first movie!',
-			'movie_detail_error' => 'Error: {message}',
+			'movie_detail_error' => ({required Object message}) => 'Error: ${message}',
 			'movie_detail_loading' => 'Loading movie details...',
 			'movie_detail_release_date' => 'Release Date',
 			'movie_detail_runtime' => 'Runtime',
@@ -339,11 +342,11 @@ extension on TranslationsEnUs {
 			'social_following' => 'Following',
 			'social_profile_unavailable' => 'This profile is not available right now.',
 			'social_empty_public_activity' => 'No public activity yet.',
-			'social_section_load_error' => 'Could not load {section}.',
-			'social_section_loading' => 'Loading {section}...',
-			'social_followers_count' => '{count} {count, plural, one{follower} other{followers}}',
-			'social_following_count' => '{count} following',
-			'social_affinity' => '{percent}% affinity',
+			'social_section_load_error' => ({required Object section}) => 'Could not load ${section}.',
+			'social_section_loading' => ({required Object section}) => 'Loading ${section}...',
+			'social_followers_count' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(count, one: '${count} follower', other: '${count} followers', ), 
+			'social_following_count' => ({required Object count}) => '${count} following',
+			'social_affinity' => ({required Object percent}) => '${percent}% affinity',
 			'social_follow' => 'Follow',
 			'social_following_action' => 'Following',
 			'social_feed' => 'Feed',

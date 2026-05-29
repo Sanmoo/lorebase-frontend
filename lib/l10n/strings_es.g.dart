@@ -137,7 +137,7 @@ class TranslationsEs extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get search_no_results_movies => 'No se encontraron películas';
 	@override String get tracking_empty_movies => 'Aún no hay películas en {status}';
 	@override String get dashboard_empty_movies => 'Todavía no hay películas registradas.\nBusca y agrega tu primera película!';
-	@override String get movie_detail_error => 'Error: {message}';
+	@override String movie_detail_error({required Object message}) => 'Error: ${message}';
 	@override String get movie_detail_loading => 'Cargando detalles de la película...';
 	@override String get movie_detail_release_date => 'Fecha de estreno';
 	@override String get movie_detail_runtime => 'Duración';
@@ -175,11 +175,14 @@ class TranslationsEs extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get social_following => 'Siguiendo';
 	@override String get social_profile_unavailable => 'Este perfil no está disponible en este momento.';
 	@override String get social_empty_public_activity => 'Aún no hay actividad pública.';
-	@override String get social_section_load_error => 'No se pudo cargar {section}.';
-	@override String get social_section_loading => 'Cargando {section}...';
-	@override String get social_followers_count => '{count} {count, plural, one{seguidor} other{seguidores}}';
-	@override String get social_following_count => '{count} siguiendo';
-	@override String get social_affinity => '{percent}% de afinidad';
+	@override String social_section_load_error({required Object section}) => 'No se pudo cargar ${section}.';
+	@override String social_section_loading({required Object section}) => 'Cargando ${section}...';
+	@override String social_followers_count({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('es'))(count,
+		one: '${count} seguidor',
+		other: '${count} seguidores',
+	);
+	@override String social_following_count({required Object count}) => '${count} siguiendo';
+	@override String social_affinity({required Object percent}) => '${percent}% de afinidad';
 	@override String get social_follow => 'Seguir';
 	@override String get social_following_action => 'Siguiendo';
 	@override String get social_feed => 'Feed';
@@ -301,7 +304,7 @@ extension on TranslationsEs {
 			'search_no_results_movies' => 'No se encontraron películas',
 			'tracking_empty_movies' => 'Aún no hay películas en {status}',
 			'dashboard_empty_movies' => 'Todavía no hay películas registradas.\nBusca y agrega tu primera película!',
-			'movie_detail_error' => 'Error: {message}',
+			'movie_detail_error' => ({required Object message}) => 'Error: ${message}',
 			'movie_detail_loading' => 'Cargando detalles de la película...',
 			'movie_detail_release_date' => 'Fecha de estreno',
 			'movie_detail_runtime' => 'Duración',
@@ -339,11 +342,11 @@ extension on TranslationsEs {
 			'social_following' => 'Siguiendo',
 			'social_profile_unavailable' => 'Este perfil no está disponible en este momento.',
 			'social_empty_public_activity' => 'Aún no hay actividad pública.',
-			'social_section_load_error' => 'No se pudo cargar {section}.',
-			'social_section_loading' => 'Cargando {section}...',
-			'social_followers_count' => '{count} {count, plural, one{seguidor} other{seguidores}}',
-			'social_following_count' => '{count} siguiendo',
-			'social_affinity' => '{percent}% de afinidad',
+			'social_section_load_error' => ({required Object section}) => 'No se pudo cargar ${section}.',
+			'social_section_loading' => ({required Object section}) => 'Cargando ${section}...',
+			'social_followers_count' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('es'))(count, one: '${count} seguidor', other: '${count} seguidores', ), 
+			'social_following_count' => ({required Object count}) => '${count} siguiendo',
+			'social_affinity' => ({required Object percent}) => '${percent}% de afinidad',
 			'social_follow' => 'Seguir',
 			'social_following_action' => 'Siguiendo',
 			'social_feed' => 'Feed',
