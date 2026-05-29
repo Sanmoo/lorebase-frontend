@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../l10n/strings.g.dart';
 import '../viewmodels/social_follow_list_viewmodel.dart';
 import '../viewmodels/social_profile_viewmodel.dart';
 import '../viewmodels/social_public_lists_viewmodel.dart';
@@ -38,13 +39,13 @@ class SocialProfilePage extends ConsumerWidget {
                   .unfollow(),
               onEdit: () => context.push('/social/profile/edit'),
             ),
-            const TabBar(
+            TabBar(
               isScrollable: true,
               tabs: [
-                Tab(text: 'Activity'),
-                Tab(text: 'Lists'),
-                Tab(text: 'Followers'),
-                Tab(text: 'Following'),
+                Tab(text: context.t.social_activity),
+                Tab(text: context.t.social_lists),
+                Tab(text: context.t.social_followers),
+                Tab(text: context.t.social_following),
               ],
             ),
             Expanded(
@@ -66,9 +67,8 @@ class SocialProfilePage extends ConsumerWidget {
           ],
         ),
       ),
-      error: (_, _) => const Center(
-        child: Text('Este perfil não está disponível no momento.'),
-      ),
+      error: (_, _) =>
+          Center(child: Text(context.t.social_profile_unavailable)),
       loading: () => const Center(child: CircularProgressIndicator()),
     );
   }
@@ -82,7 +82,7 @@ class _ActivityTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (state.activity.items.isEmpty) {
-      return const Center(child: Text('Nenhuma atividade pública ainda.'));
+      return Center(child: Text(context.t.social_empty_public_activity));
     }
     return ListView.builder(
       itemCount: state.activity.items.length,
@@ -170,7 +170,9 @@ class _PublicListStatusSection extends ConsumerWidget {
       ),
       error: (_, _) => Padding(
         padding: const EdgeInsets.only(top: 16),
-        child: Text('Não foi possível carregar ${section.label}.'),
+        child: Text(
+          context.t.social_section_load_error(section: section.label),
+        ),
       ),
       loading: () => Padding(
         padding: const EdgeInsets.only(top: 16),
@@ -182,7 +184,7 @@ class _PublicListStatusSection extends ConsumerWidget {
               child: CircularProgressIndicator(strokeWidth: 2),
             ),
             const SizedBox(width: 12),
-            Text('Carregando ${section.label}...'),
+            Text(context.t.social_section_loading(section: section.label)),
           ],
         ),
       ),
@@ -212,7 +214,7 @@ class _FollowListTab extends ConsumerWidget {
     return list.when(
       data: (data) {
         if (data.items.isEmpty) {
-          return const Center(child: Text('Nenhuma pessoa para mostrar.'));
+          return Center(child: Text(context.t.social_empty_people));
         }
         return ListView(
           children: [
@@ -248,7 +250,7 @@ class _FollowListTab extends ConsumerWidget {
           ],
         );
       },
-      error: (_, _) => const Center(child: Text('Erro ao carregar lista.')),
+      error: (_, _) => Center(child: Text(context.t.social_list_load_error)),
       loading: () => const Center(child: CircularProgressIndicator()),
     );
   }

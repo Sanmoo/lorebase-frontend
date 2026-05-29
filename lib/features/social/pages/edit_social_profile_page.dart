@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../l10n/strings.g.dart';
 import '../data/models/social_privacy.dart';
 import '../viewmodels/social_onboarding_viewmodel.dart';
 import '../viewmodels/social_profile_viewmodel.dart';
@@ -35,6 +36,7 @@ class _EditSocialProfilePageState extends ConsumerState<EditSocialProfilePage> {
   Widget build(BuildContext context) {
     final profile = ref.watch(mySocialProfileProvider);
     final state = ref.watch(socialOnboardingViewModelProvider);
+    final t = context.t;
 
     return profile.when(
       data: (profile) {
@@ -61,9 +63,7 @@ class _EditSocialProfilePageState extends ConsumerState<EditSocialProfilePage> {
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _displayNameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Nome de exibição',
-                  ),
+                  decoration: InputDecoration(labelText: t.social_display_name),
                   validator: (value) => value == null || value.trim().isEmpty
                       ? 'Informe um nome de exibição'
                       : null,
@@ -71,11 +71,11 @@ class _EditSocialProfilePageState extends ConsumerState<EditSocialProfilePage> {
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _avatarUrlController,
-                  decoration: const InputDecoration(labelText: 'URL do avatar'),
+                  decoration: InputDecoration(labelText: t.social_avatar_url),
                 ),
                 const SizedBox(height: 12),
                 SwitchListTile(
-                  title: const Text('Perfil público'),
+                  title: Text(t.social_public_profile),
                   value: _privacy == SocialPrivacy.public,
                   onChanged: (value) => setState(
                     () => _privacy = value
@@ -87,16 +87,14 @@ class _EditSocialProfilePageState extends ConsumerState<EditSocialProfilePage> {
                 const SizedBox(height: 20),
                 FilledButton(
                   onPressed: state.isSaving ? null : _submit,
-                  child: const Text('Salvar alterações'),
+                  child: Text(t.social_save_changes),
                 ),
               ],
             ),
           ),
         );
       },
-      error: (_, _) => const Center(
-        child: Text('Não foi possível carregar seu perfil social.'),
-      ),
+      error: (_, _) => Center(child: Text(t.social_profile_load_error)),
       loading: () => const Center(child: CircularProgressIndicator()),
     );
   }
@@ -120,9 +118,7 @@ class _EditSocialProfilePageState extends ConsumerState<EditSocialProfilePage> {
     final saveState = ref.read(socialOnboardingViewModelProvider);
     if (saveState.errorMessage != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Não foi possível salvar o perfil. Tente novamente.'),
-        ),
+        SnackBar(content: Text(context.t.social_profile_save_error)),
       );
     } else if (saveState.profile != null && saveState.validationError == null) {
       ref.invalidate(mySocialProfileProvider);

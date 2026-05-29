@@ -21,6 +21,7 @@ import 'package:lorebase/features/social/pages/social_page.dart';
 import 'package:lorebase/features/social/pages/social_profile_page.dart';
 import 'package:lorebase/features/social/viewmodels/social_discover_viewmodel.dart';
 import 'package:lorebase/features/social/viewmodels/social_follow_list_viewmodel.dart';
+import 'package:lorebase/l10n/strings.g.dart';
 
 void main() {
   test('Social discover provider disables automatic retry', () {
@@ -63,8 +64,8 @@ void main() {
 
     expect(repository.getMyProfileCallCount, 2);
     expect(find.text('Crie seu perfil social'), findsNothing);
-    expect(find.text('Feed'), findsOneWidget);
-    expect(find.text('Discover'), findsOneWidget);
+    expect(find.text(t.social_feed), findsOneWidget);
+    expect(find.text(t.social_discover), findsOneWidget);
   });
 
   testWidgets(
@@ -73,10 +74,10 @@ void main() {
       await tester.pumpSocial(const SocialPage(), _FakeSocialRepository());
       await tester.pumpAndSettle();
 
-      expect(find.text('Meu perfil →'), findsOneWidget);
+      expect(find.text(t.social_my_profile), findsOneWidget);
       expect(find.text('Meu perfil social'), findsNothing);
-      expect(find.text('Feed'), findsOneWidget);
-      expect(find.text('Discover'), findsOneWidget);
+      expect(find.text(t.social_feed), findsOneWidget);
+      expect(find.text(t.social_discover), findsOneWidget);
     },
   );
 
@@ -93,7 +94,7 @@ void main() {
       _FakeSocialRepository(),
     );
     await tester.enterText(find.byType(TextFormField).first, 'Fulano');
-    await tester.tap(find.text('Salvar perfil'));
+    await tester.tap(find.text(t.social_save_profile));
     await tester.pump();
 
     expect(find.text('Escolha a privacidade do perfil'), findsOneWidget);
@@ -103,9 +104,9 @@ void main() {
     final repository = _FakeSocialRepository();
     await tester.pumpSocial(const SocialOnboardingPage(), repository);
     await tester.enterText(find.byType(TextFormField).first, 'Fulano');
-    await tester.tap(find.text('Público'));
+    await tester.tap(find.text(t.social_public));
     await tester.pump();
-    await tester.tap(find.text('Salvar perfil'));
+    await tester.tap(find.text(t.social_save_profile));
     await tester.pumpAndSettle();
 
     expect(repository.savedProfile, isTrue);
@@ -119,19 +120,19 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.enterText(find.byType(TextFormField).first, 'Fulano');
-    await tester.tap(find.text('Público'));
+    await tester.tap(find.text(t.social_public));
     await tester.pump();
-    await tester.tap(find.text('Salvar perfil'));
+    await tester.tap(find.text(t.social_save_profile));
     await tester.pumpAndSettle();
 
     expect(repository.savedProfile, isTrue);
     expect(find.text('Sugestões para seguir'), findsOneWidget);
 
-    await tester.tap(find.text('Finalizar'));
+    await tester.tap(find.text(t.social_finish));
     await tester.pumpAndSettle();
 
-    expect(find.text('Feed'), findsOneWidget);
-    expect(find.text('Discover'), findsOneWidget);
+    expect(find.text(t.social_feed), findsOneWidget);
+    expect(find.text(t.social_discover), findsOneWidget);
   });
 
   testWidgets(
@@ -146,9 +147,9 @@ void main() {
 
       repository.pauseNextProfileLoad();
       await tester.enterText(find.byType(TextFormField).first, 'Fulano');
-      await tester.tap(find.text('Público'));
+      await tester.tap(find.text(t.social_public));
       await tester.pump();
-      await tester.tap(find.text('Salvar perfil'));
+      await tester.tap(find.text(t.social_save_profile));
       await tester.pump();
       await tester.pump();
 
@@ -176,9 +177,9 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.enterText(find.byType(TextFormField).first, 'Fulano');
-      await tester.tap(find.text('Público'));
+      await tester.tap(find.text(t.social_public));
       await tester.pump();
-      await tester.tap(find.text('Salvar perfil'));
+      await tester.tap(find.text(t.social_save_profile));
       await tester.pumpAndSettle();
 
       expect(repository.savedProfile, isTrue);
@@ -192,8 +193,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Crie seu perfil social'), findsNothing);
-      expect(find.text('Feed'), findsOneWidget);
-      expect(find.text('Discover'), findsOneWidget);
+      expect(find.text(t.social_feed), findsOneWidget);
+      expect(find.text(t.social_discover), findsOneWidget);
       expect(repository.getMyProfileCallCount, 2);
     },
   );
@@ -221,7 +222,7 @@ void main() {
       isFalse,
     );
 
-    await tester.tap(find.text('Salvar alterações'));
+    await tester.tap(find.text(t.social_save_changes));
     await tester.pumpAndSettle();
 
     expect(repository.savedDisplayName, 'Beltrano');
@@ -254,7 +255,7 @@ void main() {
       expect(observer.pushCount, greaterThan(1));
 
       await tester.enterText(find.byType(TextFormField).first, 'Nome novo');
-      await tester.tap(find.text('Salvar alterações'));
+      await tester.tap(find.text(t.social_save_changes));
       await tester.pumpAndSettle();
 
       expect(router.routeInformationProvider.value.uri.path, '/');
@@ -287,15 +288,12 @@ void main() {
     await tester.tap(find.text('Editar perfil'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextFormField).first, 'Nome novo');
-    await tester.tap(find.text('Salvar alterações'));
+    await tester.tap(find.text(t.social_save_changes));
     await tester.pumpAndSettle();
 
     expect(observer.popCount, 0);
     expect(find.text('Editar perfil social'), findsOneWidget);
-    expect(
-      find.text('Não foi possível salvar o perfil. Tente novamente.'),
-      findsOneWidget,
-    );
+    expect(find.text(t.social_profile_save_error), findsOneWidget);
   });
 
   testWidgets(
@@ -307,10 +305,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Activity'), findsOneWidget);
-      expect(find.text('Lists'), findsOneWidget);
-      expect(find.text('Followers'), findsOneWidget);
-      expect(find.text('Following'), findsOneWidget);
+      expect(find.text(t.social_activity), findsOneWidget);
+      expect(find.text(t.social_lists), findsOneWidget);
+      expect(find.text(t.social_followers), findsOneWidget);
+      expect(find.text(t.social_following), findsOneWidget);
     },
   );
 
@@ -357,7 +355,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Lists'));
+    await tester.tap(find.text(t.social_lists));
     await tester.pumpAndSettle();
 
     expect(repository.publicListCalls, [
@@ -412,16 +410,13 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Lists'));
+    await tester.tap(find.text(t.social_lists));
     await tester.pumpAndSettle();
 
     expect(find.text('Interestelar'), findsOneWidget);
     expect(find.text('Batman Begins'), findsOneWidget);
     expect(find.text('Não foi possível carregar Assistindo.'), findsOneWidget);
-    expect(
-      find.text('Este perfil não está disponível no momento.'),
-      findsNothing,
-    );
+    expect(find.text(t.social_profile_unavailable), findsNothing);
   });
 
   testWidgets('Profile page unavailable profile shows friendly message', (
@@ -433,10 +428,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(
-      find.text('Este perfil não está disponível no momento.'),
-      findsOneWidget,
-    );
+    expect(find.text(t.social_profile_unavailable), findsOneWidget);
   });
 
   testWidgets('My profile renders header when activity and lists are empty', (
@@ -452,11 +444,8 @@ void main() {
     expect(find.text('Editar perfil'), findsOneWidget);
     expect(find.text('0 seguidores'), findsOneWidget);
     expect(find.text('0 seguindo'), findsOneWidget);
-    expect(find.text('Nenhuma atividade pública ainda.'), findsOneWidget);
-    expect(
-      find.text('Este perfil não está disponível no momento.'),
-      findsNothing,
-    );
+    expect(find.text(t.social_empty_public_activity), findsOneWidget);
+    expect(find.text(t.social_profile_unavailable), findsNothing);
   });
 
   testWidgets('Profile followers failure shows error instead of spinner', (
@@ -473,10 +462,10 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Followers'));
+    await tester.tap(find.text(t.social_followers));
     await tester.pumpAndSettle();
 
-    expect(find.text('Erro ao carregar lista.'), findsOneWidget);
+    expect(find.text(t.social_list_load_error), findsOneWidget);
     expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 
@@ -496,7 +485,7 @@ void main() {
     await tester.pumpRouter(router);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Followers'));
+    await tester.tap(find.text(t.social_followers));
     await tester.pumpAndSettle();
 
     expect(find.text('Ciclano Silva'), findsOneWidget);
@@ -603,7 +592,7 @@ void main() {
     await tester.pumpRouter(router);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Discover'));
+    await tester.tap(find.text(t.social_discover));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Ciclano'));
     await tester.pumpAndSettle();
@@ -624,7 +613,7 @@ void main() {
       await tester.pumpSocial(const SocialPage(), repository);
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Discover'));
+      await tester.tap(find.text(t.social_discover));
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Seguir'));
@@ -639,7 +628,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Seguindo'), findsOneWidget);
-      expect(find.text('Não foi possível seguir este usuário.'), findsNothing);
+      expect(find.text(t.social_follow_error), findsNothing);
     },
   );
 
@@ -654,7 +643,7 @@ void main() {
     await tester.pumpSocial(const SocialPage(), repository);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Discover'));
+    await tester.tap(find.text(t.social_discover));
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('Seguir'));
@@ -663,7 +652,7 @@ void main() {
     expect(repository.followedUserIds, ['user-2']);
     expect(find.text('Seguir'), findsOneWidget);
     expect(find.text('Seguindo'), findsNothing);
-    expect(find.text('Não foi possível seguir este usuário.'), findsOneWidget);
+    expect(find.text(t.social_follow_error), findsOneWidget);
   });
 
   testWidgets('Discover timeout shows retry and recovers after tapping it', (
@@ -678,7 +667,7 @@ void main() {
     await tester.pumpSocial(const SocialPage(), repository);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Discover'));
+    await tester.tap(find.text(t.social_discover));
     await tester.pumpAndSettle();
 
     expect(
@@ -687,10 +676,10 @@ void main() {
       ),
       findsOneWidget,
     );
-    expect(find.text('Tentar novamente'), findsOneWidget);
+    expect(find.text(t.social_try_again), findsOneWidget);
     expect(repository.discoverCallCount, 1);
 
-    await tester.tap(find.text('Tentar novamente'));
+    await tester.tap(find.text(t.social_try_again));
     await tester.pumpAndSettle();
 
     expect(repository.discoverCallCount, 2);
@@ -746,9 +735,9 @@ void main() {
     );
 
     await tester.enterText(find.byType(TextFormField).first, 'Fulano');
-    await tester.tap(find.text('Público'));
+    await tester.tap(find.text(t.social_public));
     await tester.pump();
-    await tester.tap(find.text('Salvar perfil'));
+    await tester.tap(find.text(t.social_save_profile));
     await tester.pumpAndSettle();
 
     expect(created, isTrue);
@@ -756,7 +745,7 @@ void main() {
     expect(find.text('Sugestões para seguir'), findsOneWidget);
     expect(find.text('Ciclano'), findsOneWidget);
 
-    await tester.tap(find.text('Finalizar'));
+    await tester.tap(find.text(t.social_finish));
     expect(finished, isTrue);
   });
 }
@@ -764,10 +753,12 @@ void main() {
 extension on WidgetTester {
   Future<void> pumpSocial(Widget child, SocialRepository repository) {
     return pumpWidget(
-      ProviderScope(
-        retry: (_, _) => null,
-        overrides: [socialRepositoryProvider.overrideWithValue(repository)],
-        child: MaterialApp(home: Scaffold(body: child)),
+      TranslationProvider(
+        child: ProviderScope(
+          retry: (_, _) => null,
+          overrides: [socialRepositoryProvider.overrideWithValue(repository)],
+          child: MaterialApp(home: Scaffold(body: child)),
+        ),
       ),
     );
   }
@@ -777,14 +768,16 @@ extension on WidgetTester {
     SocialRepository repository,
   ) {
     return pumpWidget(
-      ProviderScope(
-        retry: (_, _) => null,
-        overrides: [socialRepositoryProvider.overrideWithValue(repository)],
-        child: MaterialApp(
-          home: Scaffold(
-            body: ValueListenableBuilder<Widget>(
-              valueListenable: child,
-              builder: (context, value, _) => value,
+      TranslationProvider(
+        child: ProviderScope(
+          retry: (_, _) => null,
+          overrides: [socialRepositoryProvider.overrideWithValue(repository)],
+          child: MaterialApp(
+            home: Scaffold(
+              body: ValueListenableBuilder<Widget>(
+                valueListenable: child,
+                builder: (context, value, _) => value,
+              ),
             ),
           ),
         ),
@@ -793,7 +786,9 @@ extension on WidgetTester {
   }
 
   Future<void> pumpRouter(GoRouter router) {
-    return pumpWidget(MaterialApp.router(routerConfig: router));
+    return pumpWidget(
+      TranslationProvider(child: MaterialApp.router(routerConfig: router)),
+    );
   }
 }
 
