@@ -57,7 +57,7 @@ class _EditSocialProfilePageState extends ConsumerState<EditSocialProfilePage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  'Editar perfil social',
+                  t.social_edit_profile_title,
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const SizedBox(height: 16),
@@ -65,7 +65,7 @@ class _EditSocialProfilePageState extends ConsumerState<EditSocialProfilePage> {
                   controller: _displayNameController,
                   decoration: InputDecoration(labelText: t.social_display_name),
                   validator: (value) => value == null || value.trim().isEmpty
-                      ? 'Informe um nome de exibição'
+                      ? t.social_display_name_required
                       : null,
                 ),
                 const SizedBox(height: 12),

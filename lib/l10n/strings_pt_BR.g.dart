@@ -488,6 +488,45 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// pt-BR: 'Descobrir pessoas'
 	String get social_discover_people => 'Descobrir pessoas';
 
+	/// pt-BR: 'Crie seu perfil social'
+	String get social_create_profile_title => 'Crie seu perfil social';
+
+	/// pt-BR: 'Informe um nome de exibição'
+	String get social_display_name_required => 'Informe um nome de exibição';
+
+	/// pt-BR: 'Escolha a privacidade do perfil'
+	String get social_privacy_required => 'Escolha a privacidade do perfil';
+
+	/// pt-BR: 'Sugestões para seguir'
+	String get social_follow_suggestions => 'Sugestões para seguir';
+
+	/// pt-BR: 'O Discover demorou para responder. Tente novamente em instantes.'
+	String get social_discover_timeout => 'O Discover demorou para responder. Tente novamente em instantes.';
+
+	/// pt-BR: 'Erro ao descobrir pessoas.'
+	String get social_discover_error => 'Erro ao descobrir pessoas.';
+
+	/// pt-BR: 'Editar perfil social'
+	String get social_edit_profile_title => 'Editar perfil social';
+
+	/// pt-BR: 'Listas públicas'
+	String get social_public_lists_title => 'Listas públicas';
+
+	/// pt-BR: 'Quero ver'
+	String get social_status_plan_to_watch => 'Quero ver';
+
+	/// pt-BR: 'Assistindo'
+	String get social_status_watching => 'Assistindo';
+
+	/// pt-BR: 'Concluído'
+	String get social_status_completed => 'Concluído';
+
+	/// pt-BR: 'Abandonado'
+	String get social_status_dropped => 'Abandonado';
+
+	/// pt-BR: 'Nenhum item em $section.'
+	String social_public_list_empty({required Object section}) => 'Nenhum item em ${section}.';
+
 	/// pt-BR: 'Atividade social'
 	String get dashboard_social_preview_title => 'Atividade social';
 
@@ -663,6 +702,19 @@ extension on Translations {
 			'social_empty_feed_title' => 'Seu feed ainda está quieto',
 			'social_empty_feed_body' => 'Siga pessoas para ver avaliações, reviews e atividades recentes.',
 			'social_discover_people' => 'Descobrir pessoas',
+			'social_create_profile_title' => 'Crie seu perfil social',
+			'social_display_name_required' => 'Informe um nome de exibição',
+			'social_privacy_required' => 'Escolha a privacidade do perfil',
+			'social_follow_suggestions' => 'Sugestões para seguir',
+			'social_discover_timeout' => 'O Discover demorou para responder. Tente novamente em instantes.',
+			'social_discover_error' => 'Erro ao descobrir pessoas.',
+			'social_edit_profile_title' => 'Editar perfil social',
+			'social_public_lists_title' => 'Listas públicas',
+			'social_status_plan_to_watch' => 'Quero ver',
+			'social_status_watching' => 'Assistindo',
+			'social_status_completed' => 'Concluído',
+			'social_status_dropped' => 'Abandonado',
+			'social_public_list_empty' => ({required Object section}) => 'Nenhum item em ${section}.',
 			'dashboard_social_preview_title' => 'Atividade social',
 			'dashboard_social_preview_body' => 'Veja o que outros fãs estão assistindo e avaliando.',
 			'dashboard_social_preview_cta' => 'Abrir Social',

@@ -169,6 +169,7 @@ class _DiscoverTabState extends ConsumerState<_DiscoverTab> {
   @override
   Widget build(BuildContext context) {
     final discover = ref.watch(socialDiscoverViewModelProvider);
+    final t = context.t;
     return discover.when(
       data: (data) {
         if (data.items.isEmpty) {
@@ -189,8 +190,8 @@ class _DiscoverTabState extends ConsumerState<_DiscoverTab> {
       },
       error: (error, _) => _DiscoverErrorState(
         message: error is ServerException && error.statusCode == 504
-            ? 'O Discover demorou para responder. Tente novamente em instantes.'
-            : 'Erro ao descobrir pessoas.',
+            ? t.social_discover_timeout
+            : t.social_discover_error,
         onRetry: () =>
             ref.read(socialDiscoverViewModelProvider.notifier).refresh(),
       ),

@@ -106,10 +106,22 @@ class _PublicListsTab extends StatelessWidget {
   const _PublicListsTab({required this.userId});
 
   static const _sections = [
-    _PublicListStatusSectionConfig(status: 'PLAN_TO_WATCH', label: 'Quero ver'),
-    _PublicListStatusSectionConfig(status: 'WATCHING', label: 'Assistindo'),
-    _PublicListStatusSectionConfig(status: 'COMPLETED', label: 'Concluído'),
-    _PublicListStatusSectionConfig(status: 'DROPPED', label: 'Abandonado'),
+    _PublicListStatusSectionConfig(
+      status: 'PLAN_TO_WATCH',
+      label: _PublicListStatusLabel.planToWatch,
+    ),
+    _PublicListStatusSectionConfig(
+      status: 'WATCHING',
+      label: _PublicListStatusLabel.watching,
+    ),
+    _PublicListStatusSectionConfig(
+      status: 'COMPLETED',
+      label: _PublicListStatusLabel.completed,
+    ),
+    _PublicListStatusSectionConfig(
+      status: 'DROPPED',
+      label: _PublicListStatusLabel.dropped,
+    ),
   ];
 
   final String userId;
@@ -122,7 +134,7 @@ class _PublicListsTab extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Listas públicas',
+            context.t.social_public_lists_title,
             style: Theme.of(
               context,
             ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
@@ -159,20 +171,19 @@ class _PublicListStatusSection extends ConsumerWidget {
     final list = ref.watch(
       socialPublicListsViewModelProvider(userId, status: section.status),
     );
+    final sectionLabel = section.localizedLabel(context);
     return list.when(
       data: (data) => PublicMediaListSection(
-        title: section.label,
+        title: sectionLabel,
         items: data.items,
-        emptyMessage: 'Nenhum item em ${section.label}.',
+        emptyMessage: context.t.social_public_list_empty(section: sectionLabel),
         padding: EdgeInsets.zero,
         scrollable: false,
         showGroupedStatusHeadings: false,
       ),
       error: (_, _) => Padding(
         padding: const EdgeInsets.only(top: 16),
-        child: Text(
-          context.t.social_section_load_error(section: section.label),
-        ),
+        child: Text(context.t.social_section_load_error(section: sectionLabel)),
       ),
       loading: () => Padding(
         padding: const EdgeInsets.only(top: 16),
@@ -184,13 +195,15 @@ class _PublicListStatusSection extends ConsumerWidget {
               child: CircularProgressIndicator(strokeWidth: 2),
             ),
             const SizedBox(width: 12),
-            Text(context.t.social_section_loading(section: section.label)),
+            Text(context.t.social_section_loading(section: sectionLabel)),
           ],
         ),
       ),
     );
   }
 }
+
+enum _PublicListStatusLabel { planToWatch, watching, completed, dropped }
 
 class _PublicListStatusSectionConfig {
   const _PublicListStatusSectionConfig({
@@ -199,7 +212,17 @@ class _PublicListStatusSectionConfig {
   });
 
   final String status;
-  final String label;
+  final _PublicListStatusLabel label;
+
+  String localizedLabel(BuildContext context) {
+    final t = context.t;
+    return switch (label) {
+      _PublicListStatusLabel.planToWatch => t.social_status_plan_to_watch,
+      _PublicListStatusLabel.watching => t.social_status_watching,
+      _PublicListStatusLabel.completed => t.social_status_completed,
+      _PublicListStatusLabel.dropped => t.social_status_dropped,
+    };
+  }
 }
 
 class _FollowListTab extends ConsumerWidget {

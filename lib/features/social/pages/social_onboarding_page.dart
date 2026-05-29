@@ -52,7 +52,7 @@ class _SocialOnboardingPageState extends ConsumerState<SocialOnboardingPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Crie seu perfil social',
+              t.social_create_profile_title,
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 16),
@@ -60,7 +60,7 @@ class _SocialOnboardingPageState extends ConsumerState<SocialOnboardingPage> {
               controller: _displayNameController,
               decoration: InputDecoration(labelText: t.social_display_name),
               validator: (value) => value == null || value.trim().isEmpty
-                  ? 'Informe um nome de exibição'
+                  ? t.social_display_name_required
                   : null,
             ),
             const SizedBox(height: 12),
@@ -97,7 +97,7 @@ class _SocialOnboardingPageState extends ConsumerState<SocialOnboardingPage> {
             ),
             if (_showPrivacyError)
               Text(
-                'Escolha a privacidade do perfil',
+                t.social_privacy_required,
                 style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
             if (state.validationError != null) Text(state.validationError!),
@@ -159,7 +159,7 @@ class _OnboardingSuggestions extends ConsumerWidget {
         Padding(
           padding: const EdgeInsets.all(24),
           child: Text(
-            'Sugestões para seguir',
+            t.social_follow_suggestions,
             style: Theme.of(context).textTheme.headlineSmall,
           ),
         ),

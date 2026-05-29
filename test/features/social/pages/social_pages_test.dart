@@ -40,7 +40,7 @@ void main() {
     await tester.pump();
     await tester.pump();
 
-    expect(find.text('Crie seu perfil social'), findsOneWidget);
+    expect(find.text(t.social_create_profile_title), findsOneWidget);
     expect(repository.getMyProfileCallCount, 1);
   });
 
@@ -52,7 +52,7 @@ void main() {
     await tester.pumpSocialHost(child, repository);
     await tester.pumpAndSettle();
 
-    expect(find.text('Crie seu perfil social'), findsOneWidget);
+    expect(find.text(t.social_create_profile_title), findsOneWidget);
     expect(repository.getMyProfileCallCount, 1);
 
     child.value = const Text('Home');
@@ -63,7 +63,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(repository.getMyProfileCallCount, 2);
-    expect(find.text('Crie seu perfil social'), findsNothing);
+    expect(find.text(t.social_create_profile_title), findsNothing);
     expect(find.text(t.social_feed), findsOneWidget);
     expect(find.text(t.social_discover), findsOneWidget);
   });
@@ -97,7 +97,7 @@ void main() {
     await tester.tap(find.text(t.social_save_profile));
     await tester.pump();
 
-    expect(find.text('Escolha a privacidade do perfil'), findsOneWidget);
+    expect(find.text(t.social_privacy_required), findsOneWidget);
   });
 
   testWidgets('Onboarding page submit calls saveProfile', (tester) async {
@@ -126,7 +126,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(repository.savedProfile, isTrue);
-    expect(find.text('Sugestões para seguir'), findsOneWidget);
+    expect(find.text(t.social_follow_suggestions), findsOneWidget);
 
     await tester.tap(find.text(t.social_finish));
     await tester.pumpAndSettle();
@@ -154,17 +154,17 @@ void main() {
       await tester.pump();
 
       expect(repository.savedProfile, isTrue);
-      expect(find.text('Sugestões para seguir'), findsOneWidget);
+      expect(find.text(t.social_follow_suggestions), findsOneWidget);
       expect(find.text('Ciclano'), findsOneWidget);
       expect(find.byType(CircularProgressIndicator), findsNothing);
-      expect(find.text('Crie seu perfil social'), findsNothing);
+      expect(find.text(t.social_create_profile_title), findsNothing);
 
       repository.resumeProfileLoad();
       await tester.pumpAndSettle();
 
-      expect(find.text('Sugestões para seguir'), findsOneWidget);
+      expect(find.text(t.social_follow_suggestions), findsOneWidget);
       expect(find.text('Ciclano'), findsOneWidget);
-      expect(find.text('Crie seu perfil social'), findsNothing);
+      expect(find.text(t.social_create_profile_title), findsNothing);
     },
   );
 
@@ -183,8 +183,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(repository.savedProfile, isTrue);
-      expect(find.text('Sugestões para seguir'), findsOneWidget);
-      expect(find.text('Crie seu perfil social'), findsNothing);
+      expect(find.text(t.social_follow_suggestions), findsOneWidget);
+      expect(find.text(t.social_create_profile_title), findsNothing);
 
       child.value = const Text('Home');
       await tester.pumpAndSettle();
@@ -192,7 +192,7 @@ void main() {
       child.value = const SocialPage();
       await tester.pumpAndSettle();
 
-      expect(find.text('Crie seu perfil social'), findsNothing);
+      expect(find.text(t.social_create_profile_title), findsNothing);
       expect(find.text(t.social_feed), findsOneWidget);
       expect(find.text(t.social_discover), findsOneWidget);
       expect(repository.getMyProfileCallCount, 2);
@@ -251,7 +251,7 @@ void main() {
       await tester.tap(find.text('Editar perfil'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Editar perfil social'), findsOneWidget);
+      expect(find.text(t.social_edit_profile_title), findsOneWidget);
       expect(observer.pushCount, greaterThan(1));
 
       await tester.enterText(find.byType(TextFormField).first, 'Nome novo');
@@ -261,7 +261,7 @@ void main() {
       expect(router.routeInformationProvider.value.uri.path, '/');
       expect(observer.popCount, 1);
       expect(repository.savedDisplayName, 'Nome novo');
-      expect(find.text('Editar perfil social'), findsNothing);
+      expect(find.text(t.social_edit_profile_title), findsNothing);
       expect(find.text('Nome novo'), findsOneWidget);
       expect(find.text('Nome antigo'), findsNothing);
     },
@@ -292,7 +292,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(observer.popCount, 0);
-    expect(find.text('Editar perfil social'), findsOneWidget);
+    expect(find.text(t.social_edit_profile_title), findsOneWidget);
     expect(find.text(t.social_profile_save_error), findsOneWidget);
   });
 
@@ -364,10 +364,10 @@ void main() {
       'user-1:COMPLETED',
       'user-1:DROPPED',
     ]);
-    expect(find.text('Quero ver'), findsOneWidget);
-    expect(find.text('Assistindo'), findsOneWidget);
-    expect(find.text('Concluído'), findsOneWidget);
-    expect(find.text('Abandonado'), findsOneWidget);
+    expect(find.text(t.social_status_plan_to_watch), findsOneWidget);
+    expect(find.text(t.social_status_watching), findsOneWidget);
+    expect(find.text(t.social_status_completed), findsOneWidget);
+    expect(find.text(t.social_status_dropped), findsOneWidget);
     expect(find.text('Interestelar'), findsOneWidget);
     expect(find.text('Reacher'), findsOneWidget);
     expect(find.text('Batman Begins'), findsOneWidget);
@@ -670,12 +670,7 @@ void main() {
     await tester.tap(find.text(t.social_discover));
     await tester.pumpAndSettle();
 
-    expect(
-      find.text(
-        'O Discover demorou para responder. Tente novamente em instantes.',
-      ),
-      findsOneWidget,
-    );
+    expect(find.text(t.social_discover_timeout), findsOneWidget);
     expect(find.text(t.social_try_again), findsOneWidget);
     expect(repository.discoverCallCount, 1);
 
@@ -684,12 +679,7 @@ void main() {
 
     expect(repository.discoverCallCount, 2);
     expect(find.text('Ciclano'), findsOneWidget);
-    expect(
-      find.text(
-        'O Discover demorou para responder. Tente novamente em instantes.',
-      ),
-      findsNothing,
-    );
+    expect(find.text(t.social_discover_timeout), findsNothing);
   });
 
   testWidgets('Profile edit and activity cards navigate', (tester) async {
@@ -702,7 +692,7 @@ void main() {
 
     await tester.tap(find.text('Editar perfil'));
     await tester.pumpAndSettle();
-    expect(find.text('Editar perfil social'), findsOneWidget);
+    expect(find.text(t.social_edit_profile_title), findsOneWidget);
 
     router.go('/');
     await tester.pumpAndSettle();
@@ -742,7 +732,7 @@ void main() {
 
     expect(created, isTrue);
     expect(finished, isFalse);
-    expect(find.text('Sugestões para seguir'), findsOneWidget);
+    expect(find.text(t.social_follow_suggestions), findsOneWidget);
     expect(find.text('Ciclano'), findsOneWidget);
 
     await tester.tap(find.text(t.social_finish));
