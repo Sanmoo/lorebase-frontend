@@ -43,7 +43,7 @@ Future<void> main() async {
   testWidgets('renders affinity as percentage', (tester) async {
     await pumpCard(tester, user());
 
-    expect(find.text('83% de afinidade'), findsOneWidget);
+    expect(find.text(t.social_affinity(percent: 83)), findsOneWidget);
   });
 
   testWidgets('renders common genre chips', (tester) async {

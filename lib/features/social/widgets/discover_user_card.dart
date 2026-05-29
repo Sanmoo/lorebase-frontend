@@ -42,7 +42,7 @@ class DiscoverUserCard extends StatelessWidget {
                           user.displayName,
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
-                        Text('$affinity% de afinidade'),
+                        Text(t.social_affinity(percent: affinity)),
                       ],
                     ),
                   ),
