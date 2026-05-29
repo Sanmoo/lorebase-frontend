@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../l10n/strings.g.dart';
 import '../data/models/social_privacy.dart';
 import '../viewmodels/social_discover_viewmodel.dart';
 import '../viewmodels/social_onboarding_viewmodel.dart';
@@ -37,6 +38,7 @@ class _SocialOnboardingPageState extends ConsumerState<SocialOnboardingPage> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(socialOnboardingViewModelProvider);
+    final t = context.t;
 
     if (_showSuggestions) {
       return _OnboardingSuggestions(onFinish: () => widget.onFinish?.call());
@@ -50,26 +52,29 @@ class _SocialOnboardingPageState extends ConsumerState<SocialOnboardingPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Crie seu perfil social',
+              t.social_create_profile_title,
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 16),
             TextFormField(
               controller: _displayNameController,
-              decoration: const InputDecoration(labelText: 'Nome de exibição'),
+              decoration: InputDecoration(labelText: t.social_display_name),
               validator: (value) => value == null || value.trim().isEmpty
-                  ? 'Informe um nome de exibição'
+                  ? t.social_display_name_required
                   : null,
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _avatarUrlController,
-              decoration: const InputDecoration(labelText: 'URL do avatar'),
+              decoration: InputDecoration(labelText: t.social_avatar_url),
             ),
             const SizedBox(height: 16),
-            Text('Privacidade', style: Theme.of(context).textTheme.titleMedium),
+            Text(
+              t.social_privacy,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
             RadioListTile<SocialPrivacy>(
-              title: const Text('Público'),
+              title: Text(t.social_public),
               value: SocialPrivacy.public,
               // ignore: deprecated_member_use
               groupValue: _privacy,
@@ -80,7 +85,7 @@ class _SocialOnboardingPageState extends ConsumerState<SocialOnboardingPage> {
               }),
             ),
             RadioListTile<SocialPrivacy>(
-              title: const Text('Privado'),
+              title: Text(t.social_private),
               value: SocialPrivacy.private,
               // ignore: deprecated_member_use
               groupValue: _privacy,
@@ -92,7 +97,7 @@ class _SocialOnboardingPageState extends ConsumerState<SocialOnboardingPage> {
             ),
             if (_showPrivacyError)
               Text(
-                'Escolha a privacidade do perfil',
+                t.social_privacy_required,
                 style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
             if (state.validationError != null) Text(state.validationError!),
@@ -102,7 +107,7 @@ class _SocialOnboardingPageState extends ConsumerState<SocialOnboardingPage> {
               onPressed: state.isSaving ? null : _submit,
               child: state.isSaving
                   ? const CircularProgressIndicator()
-                  : const Text('Salvar perfil'),
+                  : Text(t.social_save_profile),
             ),
           ],
         ),
@@ -146,6 +151,7 @@ class _OnboardingSuggestions extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final suggestions = ref.watch(socialDiscoverViewModelProvider);
+    final t = context.t;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -153,7 +159,7 @@ class _OnboardingSuggestions extends ConsumerWidget {
         Padding(
           padding: const EdgeInsets.all(24),
           child: Text(
-            'Sugestões para seguir',
+            t.social_follow_suggestions,
             style: Theme.of(context).textTheme.headlineSmall,
           ),
         ),
@@ -161,9 +167,7 @@ class _OnboardingSuggestions extends ConsumerWidget {
           child: suggestions.when(
             data: (data) {
               if (data.items.isEmpty) {
-                return const Center(
-                  child: Text('Nenhuma sugestão por enquanto.'),
-                );
+                return Center(child: Text(t.social_discover_empty));
               }
               return ListView.builder(
                 itemCount: data.items.length,
@@ -178,8 +182,7 @@ class _OnboardingSuggestions extends ConsumerWidget {
                 },
               );
             },
-            error: (_, _) =>
-                const Center(child: Text('Erro ao descobrir pessoas.')),
+            error: (_, _) => Center(child: Text(t.social_discover_error)),
             loading: () => const Center(child: CircularProgressIndicator()),
           ),
         ),
@@ -187,7 +190,7 @@ class _OnboardingSuggestions extends ConsumerWidget {
           padding: const EdgeInsets.all(24),
           child: FilledButton(
             onPressed: onFinish,
-            child: const Text('Finalizar'),
+            child: Text(t.social_finish),
           ),
         ),
       ],

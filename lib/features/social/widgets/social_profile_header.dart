@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lorebase/l10n/strings.g.dart';
 
 import '../data/models/social_profile_model.dart';
 import 'social_follow_button.dart';
@@ -46,15 +47,19 @@ class SocialProfileHeader extends StatelessWidget {
             spacing: 16,
             runSpacing: 4,
             children: [
-              Text('${profile.followerCount} seguidores'),
-              Text('${profile.followingCount} seguindo'),
+              Text(
+                context.t.social_followers_count(count: profile.followerCount),
+              ),
+              Text(
+                context.t.social_following_count(count: profile.followingCount),
+              ),
             ],
           ),
           const SizedBox(height: 16),
           if (isMe)
             FilledButton.tonal(
               onPressed: onEdit,
-              child: const Text('Editar perfil'),
+              child: Text(context.t.social_edit_profile),
             )
           else
             SocialFollowButton(

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../l10n/strings.g.dart';
 import '../viewmodels/social_follow_list_viewmodel.dart';
 import '../viewmodels/social_profile_viewmodel.dart';
 import '../viewmodels/social_public_lists_viewmodel.dart';
@@ -38,13 +39,13 @@ class SocialProfilePage extends ConsumerWidget {
                   .unfollow(),
               onEdit: () => context.push('/social/profile/edit'),
             ),
-            const TabBar(
+            TabBar(
               isScrollable: true,
               tabs: [
-                Tab(text: 'Activity'),
-                Tab(text: 'Lists'),
-                Tab(text: 'Followers'),
-                Tab(text: 'Following'),
+                Tab(text: context.t.social_activity),
+                Tab(text: context.t.social_lists),
+                Tab(text: context.t.social_followers),
+                Tab(text: context.t.social_following),
               ],
             ),
             Expanded(
@@ -66,9 +67,8 @@ class SocialProfilePage extends ConsumerWidget {
           ],
         ),
       ),
-      error: (_, _) => const Center(
-        child: Text('Este perfil não está disponível no momento.'),
-      ),
+      error: (_, _) =>
+          Center(child: Text(context.t.social_profile_unavailable)),
       loading: () => const Center(child: CircularProgressIndicator()),
     );
   }
@@ -82,7 +82,7 @@ class _ActivityTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (state.activity.items.isEmpty) {
-      return const Center(child: Text('Nenhuma atividade pública ainda.'));
+      return Center(child: Text(context.t.social_empty_public_activity));
     }
     return ListView.builder(
       itemCount: state.activity.items.length,
@@ -106,10 +106,22 @@ class _PublicListsTab extends StatelessWidget {
   const _PublicListsTab({required this.userId});
 
   static const _sections = [
-    _PublicListStatusSectionConfig(status: 'PLAN_TO_WATCH', label: 'Quero ver'),
-    _PublicListStatusSectionConfig(status: 'WATCHING', label: 'Assistindo'),
-    _PublicListStatusSectionConfig(status: 'COMPLETED', label: 'Concluído'),
-    _PublicListStatusSectionConfig(status: 'DROPPED', label: 'Abandonado'),
+    _PublicListStatusSectionConfig(
+      status: 'PLAN_TO_WATCH',
+      label: _PublicListStatusLabel.planToWatch,
+    ),
+    _PublicListStatusSectionConfig(
+      status: 'WATCHING',
+      label: _PublicListStatusLabel.watching,
+    ),
+    _PublicListStatusSectionConfig(
+      status: 'COMPLETED',
+      label: _PublicListStatusLabel.completed,
+    ),
+    _PublicListStatusSectionConfig(
+      status: 'DROPPED',
+      label: _PublicListStatusLabel.dropped,
+    ),
   ];
 
   final String userId;
@@ -122,7 +134,7 @@ class _PublicListsTab extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Listas públicas',
+            context.t.social_public_lists_title,
             style: Theme.of(
               context,
             ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
@@ -159,18 +171,19 @@ class _PublicListStatusSection extends ConsumerWidget {
     final list = ref.watch(
       socialPublicListsViewModelProvider(userId, status: section.status),
     );
+    final sectionLabel = section.localizedLabel(context);
     return list.when(
       data: (data) => PublicMediaListSection(
-        title: section.label,
+        title: sectionLabel,
         items: data.items,
-        emptyMessage: 'Nenhum item em ${section.label}.',
+        emptyMessage: context.t.social_public_list_empty(section: sectionLabel),
         padding: EdgeInsets.zero,
         scrollable: false,
         showGroupedStatusHeadings: false,
       ),
       error: (_, _) => Padding(
         padding: const EdgeInsets.only(top: 16),
-        child: Text('Não foi possível carregar ${section.label}.'),
+        child: Text(context.t.social_section_load_error(section: sectionLabel)),
       ),
       loading: () => Padding(
         padding: const EdgeInsets.only(top: 16),
@@ -182,13 +195,15 @@ class _PublicListStatusSection extends ConsumerWidget {
               child: CircularProgressIndicator(strokeWidth: 2),
             ),
             const SizedBox(width: 12),
-            Text('Carregando ${section.label}...'),
+            Text(context.t.social_section_loading(section: sectionLabel)),
           ],
         ),
       ),
     );
   }
 }
+
+enum _PublicListStatusLabel { planToWatch, watching, completed, dropped }
 
 class _PublicListStatusSectionConfig {
   const _PublicListStatusSectionConfig({
@@ -197,7 +212,17 @@ class _PublicListStatusSectionConfig {
   });
 
   final String status;
-  final String label;
+  final _PublicListStatusLabel label;
+
+  String localizedLabel(BuildContext context) {
+    final t = context.t;
+    return switch (label) {
+      _PublicListStatusLabel.planToWatch => t.social_status_plan_to_watch,
+      _PublicListStatusLabel.watching => t.social_status_watching,
+      _PublicListStatusLabel.completed => t.social_status_completed,
+      _PublicListStatusLabel.dropped => t.social_status_dropped,
+    };
+  }
 }
 
 class _FollowListTab extends ConsumerWidget {
@@ -212,7 +237,7 @@ class _FollowListTab extends ConsumerWidget {
     return list.when(
       data: (data) {
         if (data.items.isEmpty) {
-          return const Center(child: Text('Nenhuma pessoa para mostrar.'));
+          return Center(child: Text(context.t.social_empty_people));
         }
         return ListView(
           children: [
@@ -248,7 +273,7 @@ class _FollowListTab extends ConsumerWidget {
           ],
         );
       },
-      error: (_, _) => const Center(child: Text('Erro ao carregar lista.')),
+      error: (_, _) => Center(child: Text(context.t.social_list_load_error)),
       loading: () => const Center(child: CircularProgressIndicator()),
     );
   }

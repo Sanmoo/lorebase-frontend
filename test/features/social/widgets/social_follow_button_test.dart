@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lorebase/features/social/widgets/social_follow_button.dart';
+import 'package:lorebase/l10n/strings.g.dart';
 
-void main() {
+Future<void> main() async {
+  await LocaleSettings.setLocale(AppLocale.ptBr);
+
   Future<void> pumpButton(
     WidgetTester tester, {
     required bool isFollowedByMe,
@@ -11,13 +14,15 @@ void main() {
     bool isLoading = false,
   }) {
     return tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: SocialFollowButton(
-            isFollowedByMe: isFollowedByMe,
-            onFollow: onFollow,
-            onUnfollow: onUnfollow,
-            isLoading: isLoading,
+      TranslationProvider(
+        child: MaterialApp(
+          home: Scaffold(
+            body: SocialFollowButton(
+              isFollowedByMe: isFollowedByMe,
+              onFollow: onFollow,
+              onUnfollow: onUnfollow,
+              isLoading: isLoading,
+            ),
           ),
         ),
       ),
@@ -34,8 +39,8 @@ void main() {
       onUnfollow: () {},
     );
 
-    expect(find.text('Seguir'), findsOneWidget);
-    await tester.tap(find.text('Seguir'));
+    expect(find.text(t.social_follow), findsOneWidget);
+    await tester.tap(find.text(t.social_follow));
 
     expect(calls, 1);
   });
@@ -50,8 +55,8 @@ void main() {
       onUnfollow: () => calls++,
     );
 
-    expect(find.text('Deixar de seguir'), findsOneWidget);
-    await tester.tap(find.text('Deixar de seguir'));
+    expect(find.text(t.social_unfollow), findsOneWidget);
+    await tester.tap(find.text(t.social_unfollow));
 
     expect(calls, 1);
   });
@@ -74,8 +79,11 @@ void main() {
 
     final button = tester.widget<FilledButton>(find.byType(FilledButton));
     expect(button.onPressed, isNull);
-    expect(find.text('Seguir'), findsNothing);
+    expect(find.text(t.social_follow), findsNothing);
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
-    expect(find.bySemanticsLabel('Atualizando seguir'), findsOneWidget);
+    expect(
+      find.bySemanticsLabel(t.social_follow_updating_semantics),
+      findsOneWidget,
+    );
   });
 }

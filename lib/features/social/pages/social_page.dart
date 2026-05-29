@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../l10n/strings.g.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/logging/debug_log.dart';
 import '../data/models/social_profile_model.dart';
@@ -64,7 +65,7 @@ class _SocialPageState extends ConsumerState<SocialPage> {
         if (error is ServerException && error.statusCode == 404) {
           return _onboarding();
         }
-        return const Center(child: Text('Não foi possível carregar o Social.'));
+        return Center(child: Text(context.t.social_load_error));
       },
       loading: () => const Center(child: CircularProgressIndicator()),
     );
@@ -100,14 +101,14 @@ class _SocialTabs extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
               child: TextButton(
                 onPressed: () => context.go('/social/profile/me'),
-                child: const Text('Meu perfil →'),
+                child: Text(context.t.social_my_profile),
               ),
             ),
           ),
-          const TabBar(
+          TabBar(
             tabs: [
-              Tab(text: 'Feed'),
-              Tab(text: 'Discover'),
+              Tab(text: context.t.social_feed),
+              Tab(text: context.t.social_discover),
             ],
           ),
           const Expanded(
@@ -149,7 +150,7 @@ class _FeedTab extends ConsumerWidget {
           },
         );
       },
-      error: (_, _) => const Center(child: Text('Erro ao carregar feed.')),
+      error: (_, _) => Center(child: Text(context.t.social_feed_load_error)),
       loading: () => const Center(child: CircularProgressIndicator()),
     );
   }
@@ -168,10 +169,11 @@ class _DiscoverTabState extends ConsumerState<_DiscoverTab> {
   @override
   Widget build(BuildContext context) {
     final discover = ref.watch(socialDiscoverViewModelProvider);
+    final t = context.t;
     return discover.when(
       data: (data) {
         if (data.items.isEmpty) {
-          return const Center(child: Text('Nenhuma sugestão por enquanto.'));
+          return Center(child: Text(context.t.social_discover_empty));
         }
         return ListView.builder(
           itemCount: data.items.length,
@@ -188,8 +190,8 @@ class _DiscoverTabState extends ConsumerState<_DiscoverTab> {
       },
       error: (error, _) => _DiscoverErrorState(
         message: error is ServerException && error.statusCode == 504
-            ? 'O Discover demorou para responder. Tente novamente em instantes.'
-            : 'Erro ao descobrir pessoas.',
+            ? t.social_discover_timeout
+            : t.social_discover_error,
         onRetry: () =>
             ref.read(socialDiscoverViewModelProvider.notifier).refresh(),
       ),
@@ -211,9 +213,9 @@ class _DiscoverTabState extends ConsumerState<_DiscoverTab> {
       if (!mounted) {
         return;
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Não foi possível seguir este usuário.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.t.social_follow_error)));
     } finally {
       if (mounted) {
         setState(() => _followingUserIds.remove(userId));
@@ -240,7 +242,7 @@ class _DiscoverErrorState extends StatelessWidget {
             const SizedBox(height: 12),
             OutlinedButton(
               onPressed: onRetry,
-              child: const Text('Tentar novamente'),
+              child: Text(context.t.social_try_again),
             ),
           ],
         ),

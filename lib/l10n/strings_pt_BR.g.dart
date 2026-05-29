@@ -335,6 +335,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// pt-BR: 'Nenhum filme registrado ainda. Busque e adicione seu primeiro filme!'
 	String get dashboard_empty_movies => 'Nenhum filme registrado ainda.\nBusque e adicione seu primeiro filme!';
 
+	/// pt-BR: 'Erro: $message'
+	String movie_detail_error({required Object message}) => 'Erro: ${message}';
+
 	/// pt-BR: 'Carregando detalhes do filme...'
 	String get movie_detail_loading => 'Carregando detalhes do filme...';
 
@@ -350,6 +353,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// pt-BR: 'Funcionalidade de recomendação em breve!'
 	String get recommend_coming_soon => 'Funcionalidade de recomendação em breve!';
 
+	/// pt-BR: 'Tentar novamente'
+	String get error_retry => 'Tentar novamente';
+
 	/// pt-BR: 'Erro de rede. Verifique sua conexão.'
 	String get error_network => 'Erro de rede. Verifique sua conexão.';
 
@@ -361,6 +367,120 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// pt-BR: 'Recurso não encontrado.'
 	String get error_resource_not_found => 'Recurso não encontrado.';
+
+	/// pt-BR: 'Não foi possível carregar o Social.'
+	String get social_load_error => 'Não foi possível carregar o Social.';
+
+	/// pt-BR: 'Meu perfil →'
+	String get social_my_profile => 'Meu perfil →';
+
+	/// pt-BR: 'Erro ao carregar feed.'
+	String get social_feed_load_error => 'Erro ao carregar feed.';
+
+	/// pt-BR: 'Nenhuma sugestão por enquanto.'
+	String get social_discover_empty => 'Nenhuma sugestão por enquanto.';
+
+	/// pt-BR: 'Não foi possível seguir este usuário.'
+	String get social_follow_error => 'Não foi possível seguir este usuário.';
+
+	/// pt-BR: 'Tentar novamente'
+	String get social_try_again => 'Tentar novamente';
+
+	/// pt-BR: 'Nome de exibição'
+	String get social_display_name => 'Nome de exibição';
+
+	/// pt-BR: 'URL do avatar'
+	String get social_avatar_url => 'URL do avatar';
+
+	/// pt-BR: 'Privacidade'
+	String get social_privacy => 'Privacidade';
+
+	/// pt-BR: 'Público'
+	String get social_public => 'Público';
+
+	/// pt-BR: 'Privado'
+	String get social_private => 'Privado';
+
+	/// pt-BR: 'Salvar perfil'
+	String get social_save_profile => 'Salvar perfil';
+
+	/// pt-BR: 'Finalizar'
+	String get social_finish => 'Finalizar';
+
+	/// pt-BR: 'Descobrir pessoas'
+	String get social_discover_people_cta => 'Descobrir pessoas';
+
+	/// pt-BR: 'Editar perfil'
+	String get social_edit_profile => 'Editar perfil';
+
+	/// pt-BR: 'Perfil público'
+	String get social_public_profile => 'Perfil público';
+
+	/// pt-BR: 'Salvar alterações'
+	String get social_save_changes => 'Salvar alterações';
+
+	/// pt-BR: 'Não foi possível carregar seu perfil social.'
+	String get social_profile_load_error => 'Não foi possível carregar seu perfil social.';
+
+	/// pt-BR: 'Não foi possível salvar o perfil. Tente novamente.'
+	String get social_profile_save_error => 'Não foi possível salvar o perfil. Tente novamente.';
+
+	/// pt-BR: 'Nenhuma pessoa para mostrar.'
+	String get social_empty_people => 'Nenhuma pessoa para mostrar.';
+
+	/// pt-BR: 'Erro ao carregar lista.'
+	String get social_list_load_error => 'Erro ao carregar lista.';
+
+	/// pt-BR: 'Atividade'
+	String get social_activity => 'Atividade';
+
+	/// pt-BR: 'Listas'
+	String get social_lists => 'Listas';
+
+	/// pt-BR: 'Seguidores'
+	String get social_followers => 'Seguidores';
+
+	/// pt-BR: 'Seguindo'
+	String get social_following => 'Seguindo';
+
+	/// pt-BR: 'Este perfil não está disponível no momento.'
+	String get social_profile_unavailable => 'Este perfil não está disponível no momento.';
+
+	/// pt-BR: 'Nenhuma atividade pública ainda.'
+	String get social_empty_public_activity => 'Nenhuma atividade pública ainda.';
+
+	/// pt-BR: 'Não foi possível carregar $section.'
+	String social_section_load_error({required Object section}) => 'Não foi possível carregar ${section}.';
+
+	/// pt-BR: 'Carregando $section...'
+	String social_section_loading({required Object section}) => 'Carregando ${section}...';
+
+	/// pt-BR: '(one) {$count seguidor} (other) {$count seguidores}'
+	String social_followers_count({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('pt'))(count,
+		one: '${count} seguidor',
+		other: '${count} seguidores',
+	);
+
+	/// pt-BR: '$count seguindo'
+	String social_following_count({required Object count}) => '${count} seguindo';
+
+	/// pt-BR: '$percent% de afinidade'
+	String social_affinity({required Object percent}) => '${percent}% de afinidade';
+
+	/// pt-BR: 'Seguir'
+	String get social_follow => 'Seguir';
+
+	/// pt-BR: 'Deixar de seguir'
+	String get social_unfollow => 'Deixar de seguir';
+
+	/// pt-BR: 'Atualizando seguir'
+	String get social_follow_updating_semantics => 'Atualizando seguir';
+
+	/// pt-BR: 'Seguindo'
+	String get social_following_action => 'Seguindo';
+
+	/// pt-BR: 'Seguindo usuário'
+	String get social_following_user_semantics => 'Seguindo usuário';
 
 	/// pt-BR: 'Feed'
 	String get social_feed => 'Feed';
@@ -376,6 +496,45 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// pt-BR: 'Descobrir pessoas'
 	String get social_discover_people => 'Descobrir pessoas';
+
+	/// pt-BR: 'Crie seu perfil social'
+	String get social_create_profile_title => 'Crie seu perfil social';
+
+	/// pt-BR: 'Informe um nome de exibição'
+	String get social_display_name_required => 'Informe um nome de exibição';
+
+	/// pt-BR: 'Escolha a privacidade do perfil'
+	String get social_privacy_required => 'Escolha a privacidade do perfil';
+
+	/// pt-BR: 'Sugestões para seguir'
+	String get social_follow_suggestions => 'Sugestões para seguir';
+
+	/// pt-BR: 'O Discover demorou para responder. Tente novamente em instantes.'
+	String get social_discover_timeout => 'O Discover demorou para responder. Tente novamente em instantes.';
+
+	/// pt-BR: 'Erro ao descobrir pessoas.'
+	String get social_discover_error => 'Erro ao descobrir pessoas.';
+
+	/// pt-BR: 'Editar perfil social'
+	String get social_edit_profile_title => 'Editar perfil social';
+
+	/// pt-BR: 'Listas públicas'
+	String get social_public_lists_title => 'Listas públicas';
+
+	/// pt-BR: 'Quero ver'
+	String get social_status_plan_to_watch => 'Quero ver';
+
+	/// pt-BR: 'Assistindo'
+	String get social_status_watching => 'Assistindo';
+
+	/// pt-BR: 'Concluído'
+	String get social_status_completed => 'Concluído';
+
+	/// pt-BR: 'Abandonado'
+	String get social_status_dropped => 'Abandonado';
+
+	/// pt-BR: 'Nenhum item em $section.'
+	String social_public_list_empty({required Object section}) => 'Nenhum item em ${section}.';
 
 	/// pt-BR: 'Atividade social'
 	String get dashboard_social_preview_title => 'Atividade social';
@@ -394,6 +553,96 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// pt-BR: 'Receber recomendações'
 	String get dashboard_recommendation_cta => 'Receber recomendações';
+
+	/// pt-BR: 'Alterar idioma'
+	String get nav_change_language_tooltip => 'Alterar idioma';
+
+	/// pt-BR: 'Sair'
+	String get nav_sign_out_tooltip => 'Sair';
+
+	/// pt-BR: 'Limpar busca'
+	String get search_clear_tooltip => 'Limpar busca';
+
+	/// pt-BR: 'Reenviar código de confirmação'
+	String get auth_resend_confirmation_code => 'Reenviar código de confirmação';
+
+	/// pt-BR: 'Nenhum item público ainda.'
+	String get social_public_list_empty_default => 'Nenhum item público ainda.';
+
+	/// pt-BR: 'Abrir $title'
+	String social_open_media_semantics({required Object title}) => 'Abrir ${title}';
+
+	/// pt-BR: 'Filme'
+	String get social_media_type_movie => 'Filme';
+
+	/// pt-BR: 'Série'
+	String get social_media_type_series => 'Série';
+
+	/// pt-BR: 'Perfil social: $name'
+	String dashboard_social_profile_label({required Object name}) => 'Perfil social: ${name}';
+
+	/// pt-BR: 'avaliou'
+	String get social_activity_rated => 'avaliou';
+
+	/// pt-BR: 'escreveu uma review de'
+	String get social_activity_reviewed => 'escreveu uma review de';
+
+	/// pt-BR: 'completou'
+	String get social_activity_completed => 'completou';
+
+	/// pt-BR: 'começou'
+	String get social_activity_started_watching => 'começou';
+
+	/// pt-BR: 'abandonou'
+	String get social_activity_dropped => 'abandonou';
+
+	/// pt-BR: 'adicionou à lista'
+	String get social_activity_added_to_list => 'adicionou à lista';
+
+	/// pt-BR: 'interagiu com'
+	String get social_activity_interacted_with => 'interagiu com';
+
+	/// pt-BR: 'Preencha e-mail e senha'
+	String get auth_error_email_password_required => 'Preencha e-mail e senha';
+
+	/// pt-BR: 'E-mail ou senha incorretos'
+	String get auth_error_invalid_credentials => 'E-mail ou senha incorretos';
+
+	/// pt-BR: 'Digite seu e-mail'
+	String get auth_error_email_required => 'Digite seu e-mail';
+
+	/// pt-BR: 'Erro ao enviar código. Tente novamente.'
+	String get auth_error_send_code => 'Erro ao enviar código. Tente novamente.';
+
+	/// pt-BR: 'As senhas não coincidem'
+	String get auth_error_passwords_do_not_match => 'As senhas não coincidem';
+
+	/// pt-BR: 'Preencha todos os campos'
+	String get auth_error_fill_all_fields => 'Preencha todos os campos';
+
+	/// pt-BR: 'Erro ao redefinir senha. Tente novamente.'
+	String get auth_error_reset_password => 'Erro ao redefinir senha. Tente novamente.';
+
+	/// pt-BR: 'A senha é muito fraca'
+	String get auth_error_password_too_weak => 'A senha é muito fraca';
+
+	/// pt-BR: 'Aceite os termos de uso'
+	String get auth_error_accept_terms => 'Aceite os termos de uso';
+
+	/// pt-BR: 'Este email já está cadastrado. Faça login ou use outro email.'
+	String get auth_error_email_already_registered => 'Este email já está cadastrado. Faça login ou use outro email.';
+
+	/// pt-BR: 'Erro ao criar conta. Tente novamente.'
+	String get auth_error_create_account => 'Erro ao criar conta. Tente novamente.';
+
+	/// pt-BR: 'Digite o código de confirmação'
+	String get auth_error_confirmation_code_required => 'Digite o código de confirmação';
+
+	/// pt-BR: 'Código inválido. Tente novamente.'
+	String get auth_error_invalid_code => 'Código inválido. Tente novamente.';
+
+	/// pt-BR: 'Não foi possível reenviar o código. Tente novamente.'
+	String get auth_error_resend_code => 'Não foi possível reenviar o código. Tente novamente.';
 }
 
 /// The flat map containing all translations for locale <pt-BR>.
@@ -502,26 +751,108 @@ extension on Translations {
 			'search_no_results_movies' => 'Nenhum filme encontrado',
 			'tracking_empty_movies' => 'Nenhum filme {status} ainda',
 			'dashboard_empty_movies' => 'Nenhum filme registrado ainda.\nBusque e adicione seu primeiro filme!',
+			'movie_detail_error' => ({required Object message}) => 'Erro: ${message}',
 			'movie_detail_loading' => 'Carregando detalhes do filme...',
 			'movie_detail_release_date' => 'Data de Lançamento',
 			'movie_detail_runtime' => 'Duração',
 			'movie_detail_runtime_minutes' => '{minutes} min',
 			'recommend_coming_soon' => 'Funcionalidade de recomendação em breve!',
+			'error_retry' => 'Tentar novamente',
 			'error_network' => 'Erro de rede. Verifique sua conexão.',
 			'error_server' => 'Erro no servidor. Tente novamente mais tarde.',
 			'error_session_expired' => 'Sessão expirada. Faça login novamente.',
 			'error_resource_not_found' => 'Recurso não encontrado.',
+			'social_load_error' => 'Não foi possível carregar o Social.',
+			'social_my_profile' => 'Meu perfil →',
+			'social_feed_load_error' => 'Erro ao carregar feed.',
+			'social_discover_empty' => 'Nenhuma sugestão por enquanto.',
+			'social_follow_error' => 'Não foi possível seguir este usuário.',
+			'social_try_again' => 'Tentar novamente',
+			'social_display_name' => 'Nome de exibição',
+			'social_avatar_url' => 'URL do avatar',
+			'social_privacy' => 'Privacidade',
+			'social_public' => 'Público',
+			'social_private' => 'Privado',
+			'social_save_profile' => 'Salvar perfil',
+			'social_finish' => 'Finalizar',
+			'social_discover_people_cta' => 'Descobrir pessoas',
+			'social_edit_profile' => 'Editar perfil',
+			'social_public_profile' => 'Perfil público',
+			'social_save_changes' => 'Salvar alterações',
+			'social_profile_load_error' => 'Não foi possível carregar seu perfil social.',
+			'social_profile_save_error' => 'Não foi possível salvar o perfil. Tente novamente.',
+			'social_empty_people' => 'Nenhuma pessoa para mostrar.',
+			'social_list_load_error' => 'Erro ao carregar lista.',
+			'social_activity' => 'Atividade',
+			'social_lists' => 'Listas',
+			'social_followers' => 'Seguidores',
+			'social_following' => 'Seguindo',
+			'social_profile_unavailable' => 'Este perfil não está disponível no momento.',
+			'social_empty_public_activity' => 'Nenhuma atividade pública ainda.',
+			'social_section_load_error' => ({required Object section}) => 'Não foi possível carregar ${section}.',
+			'social_section_loading' => ({required Object section}) => 'Carregando ${section}...',
+			'social_followers_count' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('pt'))(count, one: '${count} seguidor', other: '${count} seguidores', ), 
+			'social_following_count' => ({required Object count}) => '${count} seguindo',
+			'social_affinity' => ({required Object percent}) => '${percent}% de afinidade',
+			'social_follow' => 'Seguir',
+			'social_unfollow' => 'Deixar de seguir',
+			'social_follow_updating_semantics' => 'Atualizando seguir',
+			'social_following_action' => 'Seguindo',
+			'social_following_user_semantics' => 'Seguindo usuário',
 			'social_feed' => 'Feed',
 			'social_discover' => 'Descobrir',
 			'social_empty_feed_title' => 'Seu feed ainda está quieto',
 			'social_empty_feed_body' => 'Siga pessoas para ver avaliações, reviews e atividades recentes.',
 			'social_discover_people' => 'Descobrir pessoas',
+			'social_create_profile_title' => 'Crie seu perfil social',
+			'social_display_name_required' => 'Informe um nome de exibição',
+			'social_privacy_required' => 'Escolha a privacidade do perfil',
+			'social_follow_suggestions' => 'Sugestões para seguir',
+			'social_discover_timeout' => 'O Discover demorou para responder. Tente novamente em instantes.',
+			'social_discover_error' => 'Erro ao descobrir pessoas.',
+			'social_edit_profile_title' => 'Editar perfil social',
+			'social_public_lists_title' => 'Listas públicas',
+			'social_status_plan_to_watch' => 'Quero ver',
+			'social_status_watching' => 'Assistindo',
+			'social_status_completed' => 'Concluído',
+			'social_status_dropped' => 'Abandonado',
+			'social_public_list_empty' => ({required Object section}) => 'Nenhum item em ${section}.',
 			'dashboard_social_preview_title' => 'Atividade social',
 			'dashboard_social_preview_body' => 'Veja o que outros fãs estão assistindo e avaliando.',
 			'dashboard_social_preview_cta' => 'Abrir Social',
 			'dashboard_recommendation_title' => 'Recomendações para você',
 			'dashboard_recommendation_body' => 'Encontre algo personalizado para assistir em seguida.',
 			'dashboard_recommendation_cta' => 'Receber recomendações',
+			'nav_change_language_tooltip' => 'Alterar idioma',
+			'nav_sign_out_tooltip' => 'Sair',
+			'search_clear_tooltip' => 'Limpar busca',
+			'auth_resend_confirmation_code' => 'Reenviar código de confirmação',
+			'social_public_list_empty_default' => 'Nenhum item público ainda.',
+			'social_open_media_semantics' => ({required Object title}) => 'Abrir ${title}',
+			'social_media_type_movie' => 'Filme',
+			'social_media_type_series' => 'Série',
+			'dashboard_social_profile_label' => ({required Object name}) => 'Perfil social: ${name}',
+			'social_activity_rated' => 'avaliou',
+			'social_activity_reviewed' => 'escreveu uma review de',
+			'social_activity_completed' => 'completou',
+			'social_activity_started_watching' => 'começou',
+			'social_activity_dropped' => 'abandonou',
+			'social_activity_added_to_list' => 'adicionou à lista',
+			'social_activity_interacted_with' => 'interagiu com',
+			'auth_error_email_password_required' => 'Preencha e-mail e senha',
+			'auth_error_invalid_credentials' => 'E-mail ou senha incorretos',
+			'auth_error_email_required' => 'Digite seu e-mail',
+			'auth_error_send_code' => 'Erro ao enviar código. Tente novamente.',
+			'auth_error_passwords_do_not_match' => 'As senhas não coincidem',
+			'auth_error_fill_all_fields' => 'Preencha todos os campos',
+			'auth_error_reset_password' => 'Erro ao redefinir senha. Tente novamente.',
+			'auth_error_password_too_weak' => 'A senha é muito fraca',
+			'auth_error_accept_terms' => 'Aceite os termos de uso',
+			'auth_error_email_already_registered' => 'Este email já está cadastrado. Faça login ou use outro email.',
+			'auth_error_create_account' => 'Erro ao criar conta. Tente novamente.',
+			'auth_error_confirmation_code_required' => 'Digite o código de confirmação',
+			'auth_error_invalid_code' => 'Código inválido. Tente novamente.',
+			'auth_error_resend_code' => 'Não foi possível reenviar o código. Tente novamente.',
 			_ => null,
 		};
 	}

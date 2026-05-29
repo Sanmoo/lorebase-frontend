@@ -4,6 +4,7 @@ import 'package:lorebase/features/auth/viewmodels/forgot_password_viewmodel.dart
 import 'package:lorebase/features/auth/viewmodels/auth_viewmodel.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_state.dart';
 import 'package:lorebase/features/auth/data/repositories/auth_repository.dart';
+import 'package:lorebase/l10n/strings.g.dart';
 
 class FakeAuthRepo implements AuthRepository {
   bool failResetPassword = false;
@@ -34,7 +35,10 @@ class FakeAuthRepo implements AuthRepository {
 
   @override
   Future<void> confirmResetPassword(
-      String email, String code, String newPassword) async {
+    String email,
+    String code,
+    String newPassword,
+  ) async {
     if (failConfirmResetPassword) {
       // ignore: prefer_const_constructors
       throw AuthException('Invalid code');
@@ -46,10 +50,12 @@ class FakeAuthRepo implements AuthRepository {
 void main() {
   group('ForgotPasswordViewModel', () {
     ProviderContainer createContainer(FakeAuthRepo repo) {
-      return ProviderContainer(overrides: [
-        authRepositoryProvider.overrideWith((ref) => repo),
-        authViewModelProvider.overrideWith(() => FakeAuthViewModel()),
-      ]);
+      return ProviderContainer(
+        overrides: [
+          authRepositoryProvider.overrideWith((ref) => repo),
+          authViewModelProvider.overrideWith(() => FakeAuthViewModel()),
+        ],
+      );
     }
 
     test('build() default state (phase=requestCode)', () {
@@ -71,8 +77,7 @@ void main() {
       final container = createContainer(FakeAuthRepo());
       addTearDown(container.dispose);
 
-      final notifier =
-          container.read(forgotPasswordViewModelProvider.notifier);
+      final notifier = container.read(forgotPasswordViewModelProvider.notifier);
       notifier.requestCode(); // triggers validation error
       expect(
         container.read(forgotPasswordViewModelProvider).errorMessage,
@@ -89,8 +94,7 @@ void main() {
       final container = createContainer(FakeAuthRepo());
       addTearDown(container.dispose);
 
-      final notifier =
-          container.read(forgotPasswordViewModelProvider.notifier);
+      final notifier = container.read(forgotPasswordViewModelProvider.notifier);
       // Move to resetPassword phase
       notifier.setEmail('test@email.com');
       notifier.requestCode();
@@ -111,8 +115,7 @@ void main() {
       final container = createContainer(FakeAuthRepo());
       addTearDown(container.dispose);
 
-      final notifier =
-          container.read(forgotPasswordViewModelProvider.notifier);
+      final notifier = container.read(forgotPasswordViewModelProvider.notifier);
       notifier.setEmail('test@email.com');
       notifier.requestCode();
 
@@ -132,8 +135,7 @@ void main() {
       final container = createContainer(FakeAuthRepo());
       addTearDown(container.dispose);
 
-      final notifier =
-          container.read(forgotPasswordViewModelProvider.notifier);
+      final notifier = container.read(forgotPasswordViewModelProvider.notifier);
       notifier.setEmail('test@email.com');
       notifier.requestCode();
       notifier.setCode('123456');
@@ -155,8 +157,7 @@ void main() {
       final container = createContainer(FakeAuthRepo());
       addTearDown(container.dispose);
 
-      final notifier =
-          container.read(forgotPasswordViewModelProvider.notifier);
+      final notifier = container.read(forgotPasswordViewModelProvider.notifier);
       expect(
         container.read(forgotPasswordViewModelProvider).obscurePassword,
         true,
@@ -192,8 +193,7 @@ void main() {
       final container = createContainer(FakeAuthRepo());
       addTearDown(container.dispose);
 
-      final notifier =
-          container.read(forgotPasswordViewModelProvider.notifier);
+      final notifier = container.read(forgotPasswordViewModelProvider.notifier);
       notifier.setEmail('test@email.com');
 
       final result = await notifier.requestCode();
@@ -209,15 +209,14 @@ void main() {
       final container = createContainer(repo);
       addTearDown(container.dispose);
 
-      final notifier =
-          container.read(forgotPasswordViewModelProvider.notifier);
+      final notifier = container.read(forgotPasswordViewModelProvider.notifier);
       notifier.setEmail('notfound@email.com');
 
       final result = await notifier.requestCode();
       expect(result, false);
 
       final state = container.read(forgotPasswordViewModelProvider);
-      expect(state.errorMessage, 'Email not found');
+      expect(state.errorMessage, t.auth_error_send_code);
       expect(state.isLoading, false);
     });
 
@@ -226,8 +225,7 @@ void main() {
       final container = createContainer(repo);
       addTearDown(container.dispose);
 
-      final notifier =
-          container.read(forgotPasswordViewModelProvider.notifier);
+      final notifier = container.read(forgotPasswordViewModelProvider.notifier);
       notifier.setEmail('test@email.com');
 
       final result = await notifier.requestCode();
@@ -242,8 +240,7 @@ void main() {
       final container = createContainer(FakeAuthRepo());
       addTearDown(container.dispose);
 
-      final notifier =
-          container.read(forgotPasswordViewModelProvider.notifier);
+      final notifier = container.read(forgotPasswordViewModelProvider.notifier);
       notifier.setEmail('test@email.com');
       await notifier.requestCode(); // → phase=resetPassword
       notifier.setCode('123456');
@@ -261,8 +258,7 @@ void main() {
       final container = createContainer(FakeAuthRepo());
       addTearDown(container.dispose);
 
-      final notifier =
-          container.read(forgotPasswordViewModelProvider.notifier);
+      final notifier = container.read(forgotPasswordViewModelProvider.notifier);
       notifier.setEmail('test@email.com');
       await notifier.requestCode();
       // code, newPassword, confirmPassword are all empty
@@ -278,8 +274,7 @@ void main() {
       final container = createContainer(FakeAuthRepo());
       addTearDown(container.dispose);
 
-      final notifier =
-          container.read(forgotPasswordViewModelProvider.notifier);
+      final notifier = container.read(forgotPasswordViewModelProvider.notifier);
       notifier.setEmail('test@email.com');
       await notifier.requestCode();
       notifier.setCode('123456');
@@ -298,8 +293,7 @@ void main() {
       final container = createContainer(repo);
       addTearDown(container.dispose);
 
-      final notifier =
-          container.read(forgotPasswordViewModelProvider.notifier);
+      final notifier = container.read(forgotPasswordViewModelProvider.notifier);
       notifier.setEmail('test@email.com');
       await notifier.requestCode();
       notifier.setCode('wrong');
@@ -310,31 +304,34 @@ void main() {
       expect(result, false);
 
       final state = container.read(forgotPasswordViewModelProvider);
-      expect(state.errorMessage, 'Invalid code');
+      expect(state.errorMessage, t.auth_error_reset_password);
       expect(state.isLoading, false);
     });
 
-    test('resetPassword() with generic exception sets fallback error',
-        () async {
-      final repo = FakeAuthRepo()..failWithGeneric = true;
-      final container = createContainer(repo);
-      addTearDown(container.dispose);
+    test(
+      'resetPassword() with generic exception sets fallback error',
+      () async {
+        final repo = FakeAuthRepo()..failWithGeneric = true;
+        final container = createContainer(repo);
+        addTearDown(container.dispose);
 
-      final notifier =
-          container.read(forgotPasswordViewModelProvider.notifier);
-      notifier.setEmail('test@email.com');
-      await notifier.requestCode();
-      notifier.setCode('123456');
-      notifier.setNewPassword('NewPass1');
-      notifier.setConfirmPassword('NewPass1');
+        final notifier = container.read(
+          forgotPasswordViewModelProvider.notifier,
+        );
+        notifier.setEmail('test@email.com');
+        await notifier.requestCode();
+        notifier.setCode('123456');
+        notifier.setNewPassword('NewPass1');
+        notifier.setConfirmPassword('NewPass1');
 
-      final result = await notifier.resetPassword();
-      expect(result, false);
+        final result = await notifier.resetPassword();
+        expect(result, false);
 
-      final state = container.read(forgotPasswordViewModelProvider);
-      expect(state.errorMessage, contains('Erro ao redefinir senha'));
-      expect(state.isLoading, false);
-    });
+        final state = container.read(forgotPasswordViewModelProvider);
+        expect(state.errorMessage, contains('Erro ao redefinir senha'));
+        expect(state.isLoading, false);
+      },
+    );
   });
 }
 

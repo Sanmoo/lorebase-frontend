@@ -37,7 +37,7 @@ class SocialActivityCard extends StatelessWidget {
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
-                Text(socialActivityVerbFor(event.activityType)),
+                Text(localizedSocialActivityVerb(event.activityType)),
                 InkWell(
                   onTap: onMediaTap,
                   child: Text(

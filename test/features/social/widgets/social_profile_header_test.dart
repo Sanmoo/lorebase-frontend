@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lorebase/features/social/data/models/social_profile_model.dart';
 import 'package:lorebase/features/social/widgets/social_profile_header.dart';
+import 'package:lorebase/l10n/strings.g.dart';
 
-void main() {
+Future<void> main() async {
+  await LocaleSettings.setLocale(AppLocale.ptBr);
+
   SocialProfileModel profile({bool followed = false}) => SocialProfileModel(
     userId: 'user-1',
     displayName: 'Fulano',
@@ -24,14 +27,16 @@ void main() {
     VoidCallback? onEdit,
   }) {
     return tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: SocialProfileHeader(
-            profile: profile(followed: followed),
-            isMe: isMe,
-            onFollow: onFollow,
-            onUnfollow: onUnfollow,
-            onEdit: onEdit,
+      TranslationProvider(
+        child: MaterialApp(
+          home: Scaffold(
+            body: SocialProfileHeader(
+              profile: profile(followed: followed),
+              isMe: isMe,
+              onFollow: onFollow,
+              onUnfollow: onUnfollow,
+              onEdit: onEdit,
+            ),
           ),
         ),
       ),
@@ -45,23 +50,29 @@ void main() {
 
     expect(find.text('Fulano'), findsOneWidget);
     expect(find.byType(Wrap), findsOneWidget);
-    expect(find.text('7 seguidores'), findsOneWidget);
-    expect(find.text('3 seguindo'), findsOneWidget);
-    expect(find.text('Editar perfil'), findsOneWidget);
+    expect(
+      find.text(t.social_followers_count(count: profile().followerCount)),
+      findsOneWidget,
+    );
+    expect(
+      find.text(t.social_following_count(count: profile().followingCount)),
+      findsOneWidget,
+    );
+    expect(find.text(t.social_edit_profile), findsOneWidget);
   });
 
   testWidgets('calls edit callback', (tester) async {
     var calls = 0;
     await pumpHeader(tester, isMe: true, onEdit: () => calls++);
 
-    await tester.tap(find.text('Editar perfil'));
+    await tester.tap(find.text(t.social_edit_profile));
 
     expect(calls, 1);
   });
 
   testWidgets('renders follow and unfollow button variants', (tester) async {
     await pumpHeader(tester, onFollow: () {}, onUnfollow: () {});
-    expect(find.text('Seguir'), findsOneWidget);
+    expect(find.text(t.social_follow), findsOneWidget);
 
     await pumpHeader(
       tester,
@@ -69,7 +80,7 @@ void main() {
       onFollow: () {},
       onUnfollow: () {},
     );
-    expect(find.text('Deixar de seguir'), findsOneWidget);
+    expect(find.text(t.social_unfollow), findsOneWidget);
   });
 
   testWidgets('calls follow and unfollow callbacks', (tester) async {
@@ -81,7 +92,7 @@ void main() {
       onFollow: () => followCalls++,
       onUnfollow: () => unfollowCalls++,
     );
-    await tester.tap(find.text('Seguir'));
+    await tester.tap(find.text(t.social_follow));
 
     await pumpHeader(
       tester,
@@ -89,7 +100,7 @@ void main() {
       onFollow: () => followCalls++,
       onUnfollow: () => unfollowCalls++,
     );
-    await tester.tap(find.text('Deixar de seguir'));
+    await tester.tap(find.text(t.social_unfollow));
 
     expect(followCalls, 1);
     expect(unfollowCalls, 1);

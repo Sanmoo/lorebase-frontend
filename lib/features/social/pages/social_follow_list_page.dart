@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../l10n/strings.g.dart';
 import '../viewmodels/social_follow_list_viewmodel.dart';
 
 class SocialFollowListPage extends ConsumerWidget {
@@ -20,15 +21,15 @@ class SocialFollowListPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final list = ref.watch(socialFollowListViewModelProvider(userId, kind));
     final title = kind == SocialFollowListKind.followers
-        ? 'Followers'
-        : 'Following';
+        ? context.t.social_followers
+        : context.t.social_following;
 
     return Scaffold(
       appBar: AppBar(title: Text(title)),
       body: list.when(
         data: (data) {
           if (data.items.isEmpty) {
-            return const Center(child: Text('Nenhuma pessoa para mostrar.'));
+            return Center(child: Text(context.t.social_empty_people));
           }
           return ListView(
             children: [
@@ -64,7 +65,7 @@ class SocialFollowListPage extends ConsumerWidget {
             ],
           );
         },
-        error: (_, _) => const Center(child: Text('Erro ao carregar lista.')),
+        error: (_, _) => Center(child: Text(context.t.social_list_load_error)),
         loading: () => const Center(child: CircularProgressIndicator()),
       ),
     );

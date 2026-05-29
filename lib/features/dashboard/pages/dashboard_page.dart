@@ -286,7 +286,9 @@ class _SocialPreviewSection extends StatelessWidget {
               if (profileState.hasValue) ...[
                 const SizedBox(height: 8),
                 Text(
-                  'Perfil social: ${profileState.requireValue.displayName}',
+                  t.dashboard_social_profile_label(
+                    name: profileState.requireValue.displayName,
+                  ),
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],
@@ -329,7 +331,9 @@ class _SocialActivityRow extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              '${activity.user.displayName} ${socialActivityVerbFor(activity.activityType)} ${activity.media.title}',
+              '${activity.user.displayName} '
+              '${localizedSocialActivityVerb(activity.activityType)} '
+              '${activity.media.title}',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),

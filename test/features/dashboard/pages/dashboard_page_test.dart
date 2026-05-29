@@ -584,7 +584,7 @@ Future<void> main() async {
       await tester.pumpWidget(_wrap(container));
       await tester.pump();
 
-      expect(find.text('Perfil social: Fulano'), findsOneWidget);
+      expect(find.text('Social profile: Fulano'), findsOneWidget);
     });
 
     testWidgets('social preview CTA navigates to social', (tester) async {
@@ -710,7 +710,9 @@ Future<void> main() async {
       await tester.pump();
 
       expect(
-        find.textContaining('Fulano adicionou à lista Devoradores'),
+        find.textContaining(
+          'Fulano ${t.social_activity_added_to_list} Devoradores',
+        ),
         findsOneWidget,
       );
       expect(find.textContaining('added_to_list'), findsNothing);
@@ -745,9 +747,18 @@ Future<void> main() async {
       await tester.pumpWidget(_wrap(container));
       await tester.pump();
 
-      expect(find.textContaining('One Piece'), findsOneWidget);
-      expect(find.textContaining('Frieren'), findsOneWidget);
-      expect(find.textContaining('Dungeon Meshi'), findsOneWidget);
+      expect(
+        find.text('Fulano ${t.social_activity_completed} One Piece'),
+        findsOneWidget,
+      );
+      expect(
+        find.text('Fulano ${t.social_activity_completed} Frieren'),
+        findsOneWidget,
+      );
+      expect(
+        find.text('Fulano ${t.social_activity_completed} Dungeon Meshi'),
+        findsOneWidget,
+      );
       expect(find.textContaining('Hidden'), findsNothing);
     });
   });
