@@ -335,6 +335,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// pt-BR: 'Nenhum filme registrado ainda. Busque e adicione seu primeiro filme!'
 	String get dashboard_empty_movies => 'Nenhum filme registrado ainda.\nBusque e adicione seu primeiro filme!';
 
+	/// pt-BR: 'Erro: {message}'
+	String get movie_detail_error => 'Erro: {message}';
+
 	/// pt-BR: 'Carregando detalhes do filme...'
 	String get movie_detail_loading => 'Carregando detalhes do filme...';
 
@@ -350,6 +353,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// pt-BR: 'Funcionalidade de recomendação em breve!'
 	String get recommend_coming_soon => 'Funcionalidade de recomendação em breve!';
 
+	/// pt-BR: 'Tentar novamente'
+	String get error_retry => 'Tentar novamente';
+
 	/// pt-BR: 'Erro de rede. Verifique sua conexão.'
 	String get error_network => 'Erro de rede. Verifique sua conexão.';
 
@@ -361,6 +367,108 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// pt-BR: 'Recurso não encontrado.'
 	String get error_resource_not_found => 'Recurso não encontrado.';
+
+	/// pt-BR: 'Não foi possível carregar o Social.'
+	String get social_load_error => 'Não foi possível carregar o Social.';
+
+	/// pt-BR: 'Meu perfil →'
+	String get social_my_profile => 'Meu perfil →';
+
+	/// pt-BR: 'Erro ao carregar feed.'
+	String get social_feed_load_error => 'Erro ao carregar feed.';
+
+	/// pt-BR: 'Nenhuma sugestão por enquanto.'
+	String get social_discover_empty => 'Nenhuma sugestão por enquanto.';
+
+	/// pt-BR: 'Não foi possível seguir este usuário.'
+	String get social_follow_error => 'Não foi possível seguir este usuário.';
+
+	/// pt-BR: 'Tentar novamente'
+	String get social_try_again => 'Tentar novamente';
+
+	/// pt-BR: 'Nome de exibição'
+	String get social_display_name => 'Nome de exibição';
+
+	/// pt-BR: 'URL do avatar'
+	String get social_avatar_url => 'URL do avatar';
+
+	/// pt-BR: 'Privacidade'
+	String get social_privacy => 'Privacidade';
+
+	/// pt-BR: 'Público'
+	String get social_public => 'Público';
+
+	/// pt-BR: 'Privado'
+	String get social_private => 'Privado';
+
+	/// pt-BR: 'Salvar perfil'
+	String get social_save_profile => 'Salvar perfil';
+
+	/// pt-BR: 'Finalizar'
+	String get social_finish => 'Finalizar';
+
+	/// pt-BR: 'Descobrir pessoas'
+	String get social_discover_people_cta => 'Descobrir pessoas';
+
+	/// pt-BR: 'Editar perfil'
+	String get social_edit_profile => 'Editar perfil';
+
+	/// pt-BR: 'Perfil público'
+	String get social_public_profile => 'Perfil público';
+
+	/// pt-BR: 'Salvar alterações'
+	String get social_save_changes => 'Salvar alterações';
+
+	/// pt-BR: 'Não foi possível carregar seu perfil social.'
+	String get social_profile_load_error => 'Não foi possível carregar seu perfil social.';
+
+	/// pt-BR: 'Não foi possível salvar o perfil. Tente novamente.'
+	String get social_profile_save_error => 'Não foi possível salvar o perfil. Tente novamente.';
+
+	/// pt-BR: 'Nenhuma pessoa para mostrar.'
+	String get social_empty_people => 'Nenhuma pessoa para mostrar.';
+
+	/// pt-BR: 'Erro ao carregar lista.'
+	String get social_list_load_error => 'Erro ao carregar lista.';
+
+	/// pt-BR: 'Atividade'
+	String get social_activity => 'Atividade';
+
+	/// pt-BR: 'Listas'
+	String get social_lists => 'Listas';
+
+	/// pt-BR: 'Seguidores'
+	String get social_followers => 'Seguidores';
+
+	/// pt-BR: 'Seguindo'
+	String get social_following => 'Seguindo';
+
+	/// pt-BR: 'Este perfil não está disponível no momento.'
+	String get social_profile_unavailable => 'Este perfil não está disponível no momento.';
+
+	/// pt-BR: 'Nenhuma atividade pública ainda.'
+	String get social_empty_public_activity => 'Nenhuma atividade pública ainda.';
+
+	/// pt-BR: 'Não foi possível carregar {section}.'
+	String get social_section_load_error => 'Não foi possível carregar {section}.';
+
+	/// pt-BR: 'Carregando {section}...'
+	String get social_section_loading => 'Carregando {section}...';
+
+	/// pt-BR: '{count} {count, plural, one{seguidor} other{seguidores}}'
+	String get social_followers_count => '{count} {count, plural, one{seguidor} other{seguidores}}';
+
+	/// pt-BR: '{count} seguindo'
+	String get social_following_count => '{count} seguindo';
+
+	/// pt-BR: '{percent}% de afinidade'
+	String get social_affinity => '{percent}% de afinidade';
+
+	/// pt-BR: 'Seguir'
+	String get social_follow => 'Seguir';
+
+	/// pt-BR: 'Seguindo'
+	String get social_following_action => 'Seguindo';
 
 	/// pt-BR: 'Feed'
 	String get social_feed => 'Feed';
@@ -502,15 +610,51 @@ extension on Translations {
 			'search_no_results_movies' => 'Nenhum filme encontrado',
 			'tracking_empty_movies' => 'Nenhum filme {status} ainda',
 			'dashboard_empty_movies' => 'Nenhum filme registrado ainda.\nBusque e adicione seu primeiro filme!',
+			'movie_detail_error' => 'Erro: {message}',
 			'movie_detail_loading' => 'Carregando detalhes do filme...',
 			'movie_detail_release_date' => 'Data de Lançamento',
 			'movie_detail_runtime' => 'Duração',
 			'movie_detail_runtime_minutes' => '{minutes} min',
 			'recommend_coming_soon' => 'Funcionalidade de recomendação em breve!',
+			'error_retry' => 'Tentar novamente',
 			'error_network' => 'Erro de rede. Verifique sua conexão.',
 			'error_server' => 'Erro no servidor. Tente novamente mais tarde.',
 			'error_session_expired' => 'Sessão expirada. Faça login novamente.',
 			'error_resource_not_found' => 'Recurso não encontrado.',
+			'social_load_error' => 'Não foi possível carregar o Social.',
+			'social_my_profile' => 'Meu perfil →',
+			'social_feed_load_error' => 'Erro ao carregar feed.',
+			'social_discover_empty' => 'Nenhuma sugestão por enquanto.',
+			'social_follow_error' => 'Não foi possível seguir este usuário.',
+			'social_try_again' => 'Tentar novamente',
+			'social_display_name' => 'Nome de exibição',
+			'social_avatar_url' => 'URL do avatar',
+			'social_privacy' => 'Privacidade',
+			'social_public' => 'Público',
+			'social_private' => 'Privado',
+			'social_save_profile' => 'Salvar perfil',
+			'social_finish' => 'Finalizar',
+			'social_discover_people_cta' => 'Descobrir pessoas',
+			'social_edit_profile' => 'Editar perfil',
+			'social_public_profile' => 'Perfil público',
+			'social_save_changes' => 'Salvar alterações',
+			'social_profile_load_error' => 'Não foi possível carregar seu perfil social.',
+			'social_profile_save_error' => 'Não foi possível salvar o perfil. Tente novamente.',
+			'social_empty_people' => 'Nenhuma pessoa para mostrar.',
+			'social_list_load_error' => 'Erro ao carregar lista.',
+			'social_activity' => 'Atividade',
+			'social_lists' => 'Listas',
+			'social_followers' => 'Seguidores',
+			'social_following' => 'Seguindo',
+			'social_profile_unavailable' => 'Este perfil não está disponível no momento.',
+			'social_empty_public_activity' => 'Nenhuma atividade pública ainda.',
+			'social_section_load_error' => 'Não foi possível carregar {section}.',
+			'social_section_loading' => 'Carregando {section}...',
+			'social_followers_count' => '{count} {count, plural, one{seguidor} other{seguidores}}',
+			'social_following_count' => '{count} seguindo',
+			'social_affinity' => '{percent}% de afinidade',
+			'social_follow' => 'Seguir',
+			'social_following_action' => 'Seguindo',
 			'social_feed' => 'Feed',
 			'social_discover' => 'Descobrir',
 			'social_empty_feed_title' => 'Seu feed ainda está quieto',
