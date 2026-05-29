@@ -286,7 +286,9 @@ class _SocialPreviewSection extends StatelessWidget {
               if (profileState.hasValue) ...[
                 const SizedBox(height: 8),
                 Text(
-                  'Perfil social: ${profileState.requireValue.displayName}',
+                  t.dashboard_social_profile_label(
+                    name: profileState.requireValue.displayName,
+                  ),
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],

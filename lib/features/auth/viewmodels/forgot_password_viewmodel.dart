@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../../../l10n/strings.g.dart';
 import '../data/repositories/auth_repository.dart';
 import 'auth_viewmodel.dart';
 
@@ -85,7 +86,7 @@ class ForgotPasswordViewModel extends _$ForgotPasswordViewModel {
 
   Future<bool> requestCode() async {
     if (!state.canRequestCode) {
-      state = state.copyWith(errorMessage: 'Digite seu e-mail');
+      state = state.copyWith(errorMessage: t.auth_error_email_required);
       return false;
     }
 
@@ -94,7 +95,10 @@ class ForgotPasswordViewModel extends _$ForgotPasswordViewModel {
     try {
       final repository = ref.read(authRepositoryProvider);
       await repository.resetPassword(state.email);
-      state = state.copyWith(isLoading: false, phase: ForgotPasswordPhase.resetPassword);
+      state = state.copyWith(
+        isLoading: false,
+        phase: ForgotPasswordPhase.resetPassword,
+      );
       return true;
     } on AuthException catch (e) {
       state = state.copyWith(isLoading: false, errorMessage: e.message);
@@ -102,7 +106,7 @@ class ForgotPasswordViewModel extends _$ForgotPasswordViewModel {
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        errorMessage: 'Erro ao enviar código. Tente novamente.',
+        errorMessage: t.auth_error_send_code,
       );
       return false;
     }
@@ -111,9 +115,11 @@ class ForgotPasswordViewModel extends _$ForgotPasswordViewModel {
   Future<bool> resetPassword() async {
     if (!state.canResetPassword) {
       if (state.newPassword != state.confirmPassword) {
-        state = state.copyWith(errorMessage: 'As senhas não coincidem');
+        state = state.copyWith(
+          errorMessage: t.auth_error_passwords_do_not_match,
+        );
       } else {
-        state = state.copyWith(errorMessage: 'Preencha todos os campos');
+        state = state.copyWith(errorMessage: t.auth_error_fill_all_fields);
       }
       return false;
     }
@@ -135,7 +141,7 @@ class ForgotPasswordViewModel extends _$ForgotPasswordViewModel {
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        errorMessage: 'Erro ao redefinir senha. Tente novamente.',
+        errorMessage: t.auth_error_reset_password,
       );
       return false;
     }

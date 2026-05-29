@@ -584,7 +584,7 @@ Future<void> main() async {
       await tester.pumpWidget(_wrap(container));
       await tester.pump();
 
-      expect(find.text('Perfil social: Fulano'), findsOneWidget);
+      expect(find.text('Social profile: Fulano'), findsOneWidget);
     });
 
     testWidgets('social preview CTA navigates to social', (tester) async {

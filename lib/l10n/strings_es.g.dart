@@ -220,6 +220,28 @@ class TranslationsEs extends Translations with BaseTranslations<AppLocale, Trans
 	@override String social_open_media_semantics({required Object title}) => 'Abrir ${title}';
 	@override String get social_media_type_movie => 'Película';
 	@override String get social_media_type_series => 'Serie';
+	@override String dashboard_social_profile_label({required Object name}) => 'Perfil social: ${name}';
+	@override String get social_activity_rated => 'calificó';
+	@override String get social_activity_reviewed => 'escribió una reseña de';
+	@override String get social_activity_completed => 'completó';
+	@override String get social_activity_started_watching => 'empezó';
+	@override String get social_activity_dropped => 'abandonó';
+	@override String get social_activity_added_to_list => 'agregó a la lista';
+	@override String get social_activity_interacted_with => 'interactuó con';
+	@override String get auth_error_email_password_required => 'Ingresa e-mail y contraseña';
+	@override String get auth_error_invalid_credentials => 'E-mail o contraseña incorrectos';
+	@override String get auth_error_email_required => 'Ingresa tu e-mail';
+	@override String get auth_error_send_code => 'Error al enviar el código. Inténtalo de nuevo.';
+	@override String get auth_error_passwords_do_not_match => 'Las contraseñas no coinciden';
+	@override String get auth_error_fill_all_fields => 'Completa todos los campos';
+	@override String get auth_error_reset_password => 'Error al restablecer la contraseña. Inténtalo de nuevo.';
+	@override String get auth_error_password_too_weak => 'La contraseña es muy débil';
+	@override String get auth_error_accept_terms => 'Acepta los términos de uso';
+	@override String get auth_error_email_already_registered => 'Este email ya está registrado. Inicia sesión o usa otro email.';
+	@override String get auth_error_create_account => 'Error al crear la cuenta. Inténtalo de nuevo.';
+	@override String get auth_error_confirmation_code_required => 'Ingresa el código de confirmación';
+	@override String get auth_error_invalid_code => 'Código inválido. Inténtalo de nuevo.';
+	@override String get auth_error_resend_code => 'No se pudo reenviar el código. Inténtalo de nuevo.';
 }
 
 /// The flat map containing all translations for locale <es>.
@@ -408,6 +430,28 @@ extension on TranslationsEs {
 			'social_open_media_semantics' => ({required Object title}) => 'Abrir ${title}',
 			'social_media_type_movie' => 'Película',
 			'social_media_type_series' => 'Serie',
+			'dashboard_social_profile_label' => ({required Object name}) => 'Perfil social: ${name}',
+			'social_activity_rated' => 'calificó',
+			'social_activity_reviewed' => 'escribió una reseña de',
+			'social_activity_completed' => 'completó',
+			'social_activity_started_watching' => 'empezó',
+			'social_activity_dropped' => 'abandonó',
+			'social_activity_added_to_list' => 'agregó a la lista',
+			'social_activity_interacted_with' => 'interactuó con',
+			'auth_error_email_password_required' => 'Ingresa e-mail y contraseña',
+			'auth_error_invalid_credentials' => 'E-mail o contraseña incorrectos',
+			'auth_error_email_required' => 'Ingresa tu e-mail',
+			'auth_error_send_code' => 'Error al enviar el código. Inténtalo de nuevo.',
+			'auth_error_passwords_do_not_match' => 'Las contraseñas no coinciden',
+			'auth_error_fill_all_fields' => 'Completa todos los campos',
+			'auth_error_reset_password' => 'Error al restablecer la contraseña. Inténtalo de nuevo.',
+			'auth_error_password_too_weak' => 'La contraseña es muy débil',
+			'auth_error_accept_terms' => 'Acepta los términos de uso',
+			'auth_error_email_already_registered' => 'Este email ya está registrado. Inicia sesión o usa otro email.',
+			'auth_error_create_account' => 'Error al crear la cuenta. Inténtalo de nuevo.',
+			'auth_error_confirmation_code_required' => 'Ingresa el código de confirmación',
+			'auth_error_invalid_code' => 'Código inválido. Inténtalo de nuevo.',
+			'auth_error_resend_code' => 'No se pudo reenviar el código. Inténtalo de nuevo.',
 			_ => null,
 		};
 	}

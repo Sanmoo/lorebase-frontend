@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../../../l10n/strings.g.dart';
 import '../data/repositories/auth_repository.dart';
 import 'auth_viewmodel.dart';
 
@@ -57,7 +58,9 @@ class LoginViewModel extends _$LoginViewModel {
 
   Future<bool> submit() async {
     if (!state.isValid) {
-      state = state.copyWith(errorMessage: 'Preencha e-mail e senha');
+      state = state.copyWith(
+        errorMessage: t.auth_error_email_password_required,
+      );
       return false;
     }
 
@@ -75,7 +78,7 @@ class LoginViewModel extends _$LoginViewModel {
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        errorMessage: 'E-mail ou senha incorretos',
+        errorMessage: t.auth_error_invalid_credentials,
       );
       return false;
     }

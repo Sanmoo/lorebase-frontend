@@ -220,6 +220,28 @@ class TranslationsEnUs extends Translations with BaseTranslations<AppLocale, Tra
 	@override String social_open_media_semantics({required Object title}) => 'Open ${title}';
 	@override String get social_media_type_movie => 'Movie';
 	@override String get social_media_type_series => 'Series';
+	@override String dashboard_social_profile_label({required Object name}) => 'Social profile: ${name}';
+	@override String get social_activity_rated => 'rated';
+	@override String get social_activity_reviewed => 'wrote a review of';
+	@override String get social_activity_completed => 'completed';
+	@override String get social_activity_started_watching => 'started';
+	@override String get social_activity_dropped => 'dropped';
+	@override String get social_activity_added_to_list => 'added to list';
+	@override String get social_activity_interacted_with => 'interacted with';
+	@override String get auth_error_email_password_required => 'Enter email and password';
+	@override String get auth_error_invalid_credentials => 'Incorrect email or password';
+	@override String get auth_error_email_required => 'Enter your email';
+	@override String get auth_error_send_code => 'Error sending code. Try again.';
+	@override String get auth_error_passwords_do_not_match => 'Passwords do not match';
+	@override String get auth_error_fill_all_fields => 'Fill in all fields';
+	@override String get auth_error_reset_password => 'Error resetting password. Try again.';
+	@override String get auth_error_password_too_weak => 'Password is too weak';
+	@override String get auth_error_accept_terms => 'Accept the terms of use';
+	@override String get auth_error_email_already_registered => 'This email is already registered. Sign in or use another email.';
+	@override String get auth_error_create_account => 'Error creating account. Try again.';
+	@override String get auth_error_confirmation_code_required => 'Enter the confirmation code';
+	@override String get auth_error_invalid_code => 'Invalid code. Try again.';
+	@override String get auth_error_resend_code => 'Could not resend the code. Try again.';
 }
 
 /// The flat map containing all translations for locale <en-US>.
@@ -408,6 +430,28 @@ extension on TranslationsEnUs {
 			'social_open_media_semantics' => ({required Object title}) => 'Open ${title}',
 			'social_media_type_movie' => 'Movie',
 			'social_media_type_series' => 'Series',
+			'dashboard_social_profile_label' => ({required Object name}) => 'Social profile: ${name}',
+			'social_activity_rated' => 'rated',
+			'social_activity_reviewed' => 'wrote a review of',
+			'social_activity_completed' => 'completed',
+			'social_activity_started_watching' => 'started',
+			'social_activity_dropped' => 'dropped',
+			'social_activity_added_to_list' => 'added to list',
+			'social_activity_interacted_with' => 'interacted with',
+			'auth_error_email_password_required' => 'Enter email and password',
+			'auth_error_invalid_credentials' => 'Incorrect email or password',
+			'auth_error_email_required' => 'Enter your email',
+			'auth_error_send_code' => 'Error sending code. Try again.',
+			'auth_error_passwords_do_not_match' => 'Passwords do not match',
+			'auth_error_fill_all_fields' => 'Fill in all fields',
+			'auth_error_reset_password' => 'Error resetting password. Try again.',
+			'auth_error_password_too_weak' => 'Password is too weak',
+			'auth_error_accept_terms' => 'Accept the terms of use',
+			'auth_error_email_already_registered' => 'This email is already registered. Sign in or use another email.',
+			'auth_error_create_account' => 'Error creating account. Try again.',
+			'auth_error_confirmation_code_required' => 'Enter the confirmation code',
+			'auth_error_invalid_code' => 'Invalid code. Try again.',
+			'auth_error_resend_code' => 'Could not resend the code. Try again.',
 			_ => null,
 		};
 	}

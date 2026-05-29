@@ -577,6 +577,72 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// pt-BR: 'Série'
 	String get social_media_type_series => 'Série';
+
+	/// pt-BR: 'Perfil social: $name'
+	String dashboard_social_profile_label({required Object name}) => 'Perfil social: ${name}';
+
+	/// pt-BR: 'avaliou'
+	String get social_activity_rated => 'avaliou';
+
+	/// pt-BR: 'escreveu uma review de'
+	String get social_activity_reviewed => 'escreveu uma review de';
+
+	/// pt-BR: 'completou'
+	String get social_activity_completed => 'completou';
+
+	/// pt-BR: 'começou'
+	String get social_activity_started_watching => 'começou';
+
+	/// pt-BR: 'abandonou'
+	String get social_activity_dropped => 'abandonou';
+
+	/// pt-BR: 'adicionou à lista'
+	String get social_activity_added_to_list => 'adicionou à lista';
+
+	/// pt-BR: 'interagiu com'
+	String get social_activity_interacted_with => 'interagiu com';
+
+	/// pt-BR: 'Preencha e-mail e senha'
+	String get auth_error_email_password_required => 'Preencha e-mail e senha';
+
+	/// pt-BR: 'E-mail ou senha incorretos'
+	String get auth_error_invalid_credentials => 'E-mail ou senha incorretos';
+
+	/// pt-BR: 'Digite seu e-mail'
+	String get auth_error_email_required => 'Digite seu e-mail';
+
+	/// pt-BR: 'Erro ao enviar código. Tente novamente.'
+	String get auth_error_send_code => 'Erro ao enviar código. Tente novamente.';
+
+	/// pt-BR: 'As senhas não coincidem'
+	String get auth_error_passwords_do_not_match => 'As senhas não coincidem';
+
+	/// pt-BR: 'Preencha todos os campos'
+	String get auth_error_fill_all_fields => 'Preencha todos os campos';
+
+	/// pt-BR: 'Erro ao redefinir senha. Tente novamente.'
+	String get auth_error_reset_password => 'Erro ao redefinir senha. Tente novamente.';
+
+	/// pt-BR: 'A senha é muito fraca'
+	String get auth_error_password_too_weak => 'A senha é muito fraca';
+
+	/// pt-BR: 'Aceite os termos de uso'
+	String get auth_error_accept_terms => 'Aceite os termos de uso';
+
+	/// pt-BR: 'Este email já está cadastrado. Faça login ou use outro email.'
+	String get auth_error_email_already_registered => 'Este email já está cadastrado. Faça login ou use outro email.';
+
+	/// pt-BR: 'Erro ao criar conta. Tente novamente.'
+	String get auth_error_create_account => 'Erro ao criar conta. Tente novamente.';
+
+	/// pt-BR: 'Digite o código de confirmação'
+	String get auth_error_confirmation_code_required => 'Digite o código de confirmação';
+
+	/// pt-BR: 'Código inválido. Tente novamente.'
+	String get auth_error_invalid_code => 'Código inválido. Tente novamente.';
+
+	/// pt-BR: 'Não foi possível reenviar o código. Tente novamente.'
+	String get auth_error_resend_code => 'Não foi possível reenviar o código. Tente novamente.';
 }
 
 /// The flat map containing all translations for locale <pt-BR>.
@@ -765,6 +831,28 @@ extension on Translations {
 			'social_open_media_semantics' => ({required Object title}) => 'Abrir ${title}',
 			'social_media_type_movie' => 'Filme',
 			'social_media_type_series' => 'Série',
+			'dashboard_social_profile_label' => ({required Object name}) => 'Perfil social: ${name}',
+			'social_activity_rated' => 'avaliou',
+			'social_activity_reviewed' => 'escreveu uma review de',
+			'social_activity_completed' => 'completou',
+			'social_activity_started_watching' => 'começou',
+			'social_activity_dropped' => 'abandonou',
+			'social_activity_added_to_list' => 'adicionou à lista',
+			'social_activity_interacted_with' => 'interagiu com',
+			'auth_error_email_password_required' => 'Preencha e-mail e senha',
+			'auth_error_invalid_credentials' => 'E-mail ou senha incorretos',
+			'auth_error_email_required' => 'Digite seu e-mail',
+			'auth_error_send_code' => 'Erro ao enviar código. Tente novamente.',
+			'auth_error_passwords_do_not_match' => 'As senhas não coincidem',
+			'auth_error_fill_all_fields' => 'Preencha todos os campos',
+			'auth_error_reset_password' => 'Erro ao redefinir senha. Tente novamente.',
+			'auth_error_password_too_weak' => 'A senha é muito fraca',
+			'auth_error_accept_terms' => 'Aceite os termos de uso',
+			'auth_error_email_already_registered' => 'Este email já está cadastrado. Faça login ou use outro email.',
+			'auth_error_create_account' => 'Erro ao criar conta. Tente novamente.',
+			'auth_error_confirmation_code_required' => 'Digite o código de confirmação',
+			'auth_error_invalid_code' => 'Código inválido. Tente novamente.',
+			'auth_error_resend_code' => 'Não foi possível reenviar o código. Tente novamente.',
 			_ => null,
 		};
 	}

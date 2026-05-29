@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../../../l10n/strings.g.dart';
 import '../data/repositories/auth_repository.dart';
 import 'auth_viewmodel.dart';
 
@@ -118,13 +119,15 @@ class RegisterViewModel extends _$RegisterViewModel {
   Future<bool> submit() async {
     if (!state.isValid) {
       if (state.password != state.confirmPassword) {
-        state = state.copyWith(errorMessage: 'As senhas não coincidem');
+        state = state.copyWith(
+          errorMessage: t.auth_error_passwords_do_not_match,
+        );
       } else if (state.passwordStrength == PasswordStrength.weak) {
-        state = state.copyWith(errorMessage: 'A senha é muito fraca');
+        state = state.copyWith(errorMessage: t.auth_error_password_too_weak);
       } else if (!state.termsAccepted) {
-        state = state.copyWith(errorMessage: 'Aceite os termos de uso');
+        state = state.copyWith(errorMessage: t.auth_error_accept_terms);
       } else {
-        state = state.copyWith(errorMessage: 'Preencha todos os campos');
+        state = state.copyWith(errorMessage: t.auth_error_fill_all_fields);
       }
       return false;
     }
@@ -152,14 +155,16 @@ class RegisterViewModel extends _$RegisterViewModel {
     final text = error.toString();
     if (text.contains('UsernameExistsException') ||
         text.contains('User already exists')) {
-      return 'Este email já está cadastrado. Faça login ou use outro email.';
+      return t.auth_error_email_already_registered;
     }
-    return 'Erro ao criar conta. Tente novamente.';
+    return t.auth_error_create_account;
   }
 
   Future<bool> confirmSignUp() async {
     if (state.confirmationCode == null || state.confirmationCode!.isEmpty) {
-      state = state.copyWith(errorMessage: 'Digite o código de confirmação');
+      state = state.copyWith(
+        errorMessage: t.auth_error_confirmation_code_required,
+      );
       return false;
     }
 
@@ -178,7 +183,7 @@ class RegisterViewModel extends _$RegisterViewModel {
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        errorMessage: 'Código inválido. Tente novamente.',
+        errorMessage: t.auth_error_invalid_code,
       );
       return false;
     }
@@ -203,7 +208,7 @@ class RegisterViewModel extends _$RegisterViewModel {
     } catch (_) {
       state = state.copyWith(
         isLoading: false,
-        errorMessage: 'Não foi possível reenviar o código. Tente novamente.',
+        errorMessage: t.auth_error_resend_code,
       );
       return false;
     }
