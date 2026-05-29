@@ -4,6 +4,7 @@ import 'package:lorebase/features/auth/viewmodels/register_viewmodel.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_viewmodel.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_state.dart';
 import 'package:lorebase/features/auth/data/repositories/auth_repository.dart';
+import 'package:lorebase/l10n/strings.g.dart';
 
 class FakeAuthRepo implements AuthRepository {
   String signInResult = 'user-1';
@@ -272,7 +273,7 @@ void main() {
       expect(result, false);
 
       final state = container.read(registerViewModelProvider);
-      expect(state.errorMessage, 'Email already in use');
+      expect(state.errorMessage, t.auth_error_create_account);
       expect(state.isLoading, false);
     });
 
@@ -423,7 +424,7 @@ void main() {
       expect(result, false);
 
       final state = container.read(registerViewModelProvider);
-      expect(state.errorMessage, 'Invalid confirmation code');
+      expect(state.errorMessage, t.auth_error_invalid_code);
       expect(state.isLoading, false);
     });
 

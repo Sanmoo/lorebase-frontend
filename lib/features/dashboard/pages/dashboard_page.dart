@@ -331,7 +331,9 @@ class _SocialActivityRow extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              '${activity.user.displayName} ${socialActivityVerbFor(activity.activityType)} ${activity.media.title}',
+              '${activity.user.displayName} '
+              '${localizedSocialActivityVerb(activity.activityType)} '
+              '${activity.media.title}',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),

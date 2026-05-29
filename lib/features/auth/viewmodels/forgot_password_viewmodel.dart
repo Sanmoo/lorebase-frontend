@@ -100,8 +100,11 @@ class ForgotPasswordViewModel extends _$ForgotPasswordViewModel {
         phase: ForgotPasswordPhase.resetPassword,
       );
       return true;
-    } on AuthException catch (e) {
-      state = state.copyWith(isLoading: false, errorMessage: e.message);
+    } on AuthException {
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: t.auth_error_send_code,
+      );
       return false;
     } catch (e) {
       state = state.copyWith(
@@ -135,8 +138,11 @@ class ForgotPasswordViewModel extends _$ForgotPasswordViewModel {
       );
       state = state.copyWith(isLoading: false);
       return true;
-    } on AuthException catch (e) {
-      state = state.copyWith(isLoading: false, errorMessage: e.message);
+    } on AuthException {
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: t.auth_error_reset_password,
+      );
       return false;
     } catch (e) {
       state = state.copyWith(

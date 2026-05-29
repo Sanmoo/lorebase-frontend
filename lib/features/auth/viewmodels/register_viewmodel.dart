@@ -139,8 +139,11 @@ class RegisterViewModel extends _$RegisterViewModel {
       await repository.signUp(state.email, state.password);
       state = state.copyWith(isLoading: false, showConfirmation: true);
       return true;
-    } on AuthException catch (e) {
-      state = state.copyWith(isLoading: false, errorMessage: e.message);
+    } on AuthException {
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: t.auth_error_create_account,
+      );
       return false;
     } catch (e) {
       state = state.copyWith(
@@ -177,8 +180,11 @@ class RegisterViewModel extends _$RegisterViewModel {
       ref.read(authViewModelProvider.notifier).setAuthenticated(userId);
       state = state.copyWith(isLoading: false);
       return true;
-    } on AuthException catch (e) {
-      state = state.copyWith(isLoading: false, errorMessage: e.message);
+    } on AuthException {
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: t.auth_error_invalid_code,
+      );
       return false;
     } catch (e) {
       state = state.copyWith(

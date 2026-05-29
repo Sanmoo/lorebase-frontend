@@ -72,8 +72,11 @@ class LoginViewModel extends _$LoginViewModel {
       ref.read(authViewModelProvider.notifier).setAuthenticated(userId);
       state = state.copyWith(isLoading: false);
       return true;
-    } on AuthException catch (e) {
-      state = state.copyWith(isLoading: false, errorMessage: e.message);
+    } on AuthException {
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: t.auth_error_invalid_credentials,
+      );
       return false;
     } catch (e) {
       state = state.copyWith(

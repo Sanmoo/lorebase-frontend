@@ -4,6 +4,7 @@ import 'package:lorebase/features/auth/viewmodels/login_viewmodel.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_viewmodel.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_state.dart';
 import 'package:lorebase/features/auth/data/repositories/auth_repository.dart';
+import 'package:lorebase/l10n/strings.g.dart';
 
 class FakeAuthRepo implements AuthRepository {
   String signInResult = 'user-1';
@@ -34,7 +35,10 @@ class FakeAuthRepo implements AuthRepository {
 
   @override
   Future<void> confirmResetPassword(
-      String email, String code, String newPassword) async {}
+    String email,
+    String code,
+    String newPassword,
+  ) async {}
 
   @override
   Future<void> signOut() async {}
@@ -95,10 +99,7 @@ void main() {
       notifier.setEmail('');
       notifier.setPassword('');
       notifier.submit(); // triggers validation error
-      expect(
-        container.read(loginViewModelProvider).errorMessage,
-        isNotNull,
-      );
+      expect(container.read(loginViewModelProvider).errorMessage, isNotNull);
 
       // setEmail should clear the error
       notifier.setEmail('test@email.com');
@@ -123,10 +124,7 @@ void main() {
       notifier.setEmail('');
       notifier.setPassword('');
       notifier.submit(); // triggers validation error
-      expect(
-        container.read(loginViewModelProvider).errorMessage,
-        isNotNull,
-      );
+      expect(container.read(loginViewModelProvider).errorMessage, isNotNull);
 
       // setPassword should clear the error
       notifier.setPassword('123456');
@@ -228,7 +226,7 @@ void main() {
 
       final state = container.read(loginViewModelProvider);
       expect(state.isLoading, false);
-      expect(state.errorMessage, 'Bad credentials');
+      expect(state.errorMessage, t.auth_error_invalid_credentials);
     });
 
     test('submit() with generic exception sets fallback error', () async {

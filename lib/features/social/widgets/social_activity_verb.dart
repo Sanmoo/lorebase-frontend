@@ -1,6 +1,6 @@
 import '../../../l10n/strings.g.dart';
 
-String socialActivityVerbFor(String type) {
+String localizedSocialActivityVerb(String type) {
   return switch (type.toUpperCase()) {
     'RATED' => t.social_activity_rated,
     'REVIEWED' => t.social_activity_reviewed,

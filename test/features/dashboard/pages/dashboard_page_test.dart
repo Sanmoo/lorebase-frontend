@@ -745,9 +745,18 @@ Future<void> main() async {
       await tester.pumpWidget(_wrap(container));
       await tester.pump();
 
-      expect(find.textContaining('One Piece'), findsOneWidget);
-      expect(find.textContaining('Frieren'), findsOneWidget);
-      expect(find.textContaining('Dungeon Meshi'), findsOneWidget);
+      expect(
+        find.text('Fulano ${t.social_activity_completed} One Piece'),
+        findsOneWidget,
+      );
+      expect(
+        find.text('Fulano ${t.social_activity_completed} Frieren'),
+        findsOneWidget,
+      );
+      expect(
+        find.text('Fulano ${t.social_activity_completed} Dungeon Meshi'),
+        findsOneWidget,
+      );
       expect(find.textContaining('Hidden'), findsNothing);
     });
   });
