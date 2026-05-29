@@ -248,7 +248,7 @@ void main() {
 
       expect(find.text('Nome antigo'), findsOneWidget);
 
-      await tester.tap(find.text('Editar perfil'));
+      await tester.tap(find.text(t.social_edit_profile));
       await tester.pumpAndSettle();
 
       expect(find.text(t.social_edit_profile_title), findsOneWidget);
@@ -285,7 +285,7 @@ void main() {
     await tester.pumpRouter(router);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Editar perfil'));
+    await tester.tap(find.text(t.social_edit_profile));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextFormField).first, 'Nome novo');
     await tester.tap(find.text(t.social_save_changes));
@@ -444,7 +444,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Fulano'), findsOneWidget);
-    expect(find.text('Editar perfil'), findsOneWidget);
+    expect(find.text(t.social_edit_profile), findsOneWidget);
     expect(find.text('0 seguidores'), findsOneWidget);
     expect(find.text('0 seguindo'), findsOneWidget);
     expect(find.text(t.social_empty_public_activity), findsOneWidget);
@@ -619,18 +619,21 @@ void main() {
       await tester.tap(find.text(t.social_discover));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Seguir'));
+      await tester.tap(find.text(t.social_follow));
       await tester.pump();
 
       expect(repository.followedUserIds, ['user-2']);
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
-      expect(find.bySemanticsLabel('Seguindo usuário'), findsOneWidget);
-      expect(find.text('Seguir'), findsNothing);
+      expect(
+        find.bySemanticsLabel(t.social_following_user_semantics),
+        findsOneWidget,
+      );
+      expect(find.text(t.social_follow), findsNothing);
 
       repository.resumeFollow();
       await tester.pumpAndSettle();
 
-      expect(find.text('Seguindo'), findsOneWidget);
+      expect(find.text(t.social_following_action), findsOneWidget);
       expect(find.text(t.social_follow_error), findsNothing);
     },
   );
@@ -649,12 +652,12 @@ void main() {
     await tester.tap(find.text(t.social_discover));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Seguir'));
+    await tester.tap(find.text(t.social_follow));
     await tester.pumpAndSettle();
 
     expect(repository.followedUserIds, ['user-2']);
-    expect(find.text('Seguir'), findsOneWidget);
-    expect(find.text('Seguindo'), findsNothing);
+    expect(find.text(t.social_follow), findsOneWidget);
+    expect(find.text(t.social_following_action), findsNothing);
     expect(find.text(t.social_follow_error), findsOneWidget);
   });
 
@@ -693,7 +696,7 @@ void main() {
     await tester.pumpRouter(router);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Editar perfil'));
+    await tester.tap(find.text(t.social_edit_profile));
     await tester.pumpAndSettle();
     expect(find.text(t.social_edit_profile_title), findsOneWidget);
 

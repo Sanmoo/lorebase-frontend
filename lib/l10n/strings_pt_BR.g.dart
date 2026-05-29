@@ -473,6 +473,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// pt-BR: 'Seguindo'
 	String get social_following_action => 'Seguindo';
 
+	/// pt-BR: 'Seguindo usuário'
+	String get social_following_user_semantics => 'Seguindo usuário';
+
 	/// pt-BR: 'Feed'
 	String get social_feed => 'Feed';
 
@@ -697,6 +700,7 @@ extension on Translations {
 			'social_affinity' => ({required Object percent}) => '${percent}% de afinidade',
 			'social_follow' => 'Seguir',
 			'social_following_action' => 'Seguindo',
+			'social_following_user_semantics' => 'Seguindo usuário',
 			'social_feed' => 'Feed',
 			'social_discover' => 'Descobrir',
 			'social_empty_feed_title' => 'Seu feed ainda está quieto',

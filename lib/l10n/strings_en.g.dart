@@ -185,6 +185,7 @@ class TranslationsEn extends Translations with BaseTranslations<AppLocale, Trans
 	@override String social_affinity({required Object percent}) => '${percent}% affinity';
 	@override String get social_follow => 'Follow';
 	@override String get social_following_action => 'Following';
+	@override String get social_following_user_semantics => 'Following user';
 	@override String get social_feed => 'Feed';
 	@override String get social_discover => 'Discover';
 	@override String get social_empty_feed_title => 'Your feed is empty';
@@ -362,6 +363,7 @@ extension on TranslationsEn {
 			'social_affinity' => ({required Object percent}) => '${percent}% affinity',
 			'social_follow' => 'Follow',
 			'social_following_action' => 'Following',
+			'social_following_user_semantics' => 'Following user',
 			'social_feed' => 'Feed',
 			'social_discover' => 'Discover',
 			'social_empty_feed_title' => 'Your feed is empty',

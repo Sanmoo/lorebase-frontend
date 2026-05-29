@@ -145,6 +145,7 @@
   "social_affinity": "$percent% affinity",
   "social_follow": "Follow",
   "social_following_action": "Following",
+  "social_following_user_semantics": "Following user",
   "social_feed": "Feed",
   "social_discover": "Discover",
   "social_empty_feed_title": "Your feed is empty",

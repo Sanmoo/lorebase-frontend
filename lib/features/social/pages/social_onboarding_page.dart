@@ -182,7 +182,7 @@ class _OnboardingSuggestions extends ConsumerWidget {
                 },
               );
             },
-            error: (_, _) => Center(child: Text(t.social_feed_load_error)),
+            error: (_, _) => Center(child: Text(t.social_discover_error)),
             loading: () => const Center(child: CircularProgressIndicator()),
           ),
         ),

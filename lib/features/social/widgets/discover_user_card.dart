@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lorebase/l10n/strings.g.dart';
 
 import '../data/models/discover_user_model.dart';
 
@@ -19,6 +20,7 @@ class DiscoverUserCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final affinity = (user.affinityScore * 100).round();
+    final t = context.t;
 
     return Card(
       child: InkWell(
@@ -50,13 +52,17 @@ class DiscoverUserCard extends StatelessWidget {
                         : onFollow,
                     child: isFollowing
                         ? Semantics(
-                            label: 'Seguindo usuário',
+                            label: t.social_following_user_semantics,
                             child: const SizedBox.square(
                               dimension: 18,
                               child: CircularProgressIndicator(strokeWidth: 2),
                             ),
                           )
-                        : Text(user.isFollowedByMe ? 'Seguindo' : 'Seguir'),
+                        : Text(
+                            user.isFollowedByMe
+                                ? t.social_following_action
+                                : t.social_follow,
+                          ),
                   ),
                 ],
               ),
