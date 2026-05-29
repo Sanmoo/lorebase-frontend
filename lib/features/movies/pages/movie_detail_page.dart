@@ -87,9 +87,11 @@ class MovieDetailPage extends ConsumerWidget {
           } catch (e, st) {
             debugPrint('[MOVIE_TRACKING] onSave failed: $e\n$st');
             if (ctx.mounted) {
-              ScaffoldMessenger.of(
-                ctx,
-              ).showSnackBar(SnackBar(content: Text('Error: $e')));
+              ScaffoldMessenger.of(ctx).showSnackBar(
+                SnackBar(
+                  content: Text(t.movie_detail_error(message: e.toString())),
+                ),
+              );
             }
           }
         },
@@ -103,9 +105,13 @@ class MovieDetailPage extends ConsumerWidget {
                 } catch (e, st) {
                   debugPrint('[MOVIE_TRACKING] onRemove failed: $e\n$st');
                   if (ctx.mounted) {
-                    ScaffoldMessenger.of(
-                      ctx,
-                    ).showSnackBar(SnackBar(content: Text('Error: $e')));
+                    ScaffoldMessenger.of(ctx).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          t.movie_detail_error(message: e.toString()),
+                        ),
+                      ),
+                    );
                   }
                 }
               }
