@@ -710,7 +710,9 @@ Future<void> main() async {
       await tester.pump();
 
       expect(
-        find.textContaining('Fulano adicionou à lista Devoradores'),
+        find.textContaining(
+          'Fulano ${t.social_activity_added_to_list} Devoradores',
+        ),
         findsOneWidget,
       );
       expect(find.textContaining('added_to_list'), findsNothing);
