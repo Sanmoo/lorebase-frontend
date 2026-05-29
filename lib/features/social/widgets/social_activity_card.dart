@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../data/models/activity_event_model.dart';
+import 'social_activity_verb.dart';
 
 class SocialActivityCard extends StatelessWidget {
   const SocialActivityCard({
@@ -36,7 +37,7 @@ class SocialActivityCard extends StatelessWidget {
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
-                Text(_verbFor(event.activityType)),
+                Text(socialActivityVerbFor(event.activityType)),
                 InkWell(
                   onTap: onMediaTap,
                   child: Text(
@@ -58,17 +59,5 @@ class SocialActivityCard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  String _verbFor(String type) {
-    return switch (type) {
-      'RATED' => 'avaliou',
-      'REVIEWED' => 'escreveu uma review de',
-      'COMPLETED' => 'completou',
-      'STARTED_WATCHING' => 'começou',
-      'DROPPED' => 'abandonou',
-      'ADDED_TO_LIST' => 'adicionou à lista',
-      _ => 'interagiu com',
-    };
   }
 }
