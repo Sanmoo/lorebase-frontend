@@ -19,6 +19,9 @@ class SocialActivityCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final rating = event.metadata['rating'];
     final review = event.metadata['review'] ?? event.metadata['reviewSnippet'];
+    final listName = socialActivityListNameFor(event);
+    final showsNamedList =
+        event.activityType.toUpperCase() == 'ADDED_TO_LIST' && listName != null;
 
     return Card(
       child: Padding(
@@ -37,7 +40,11 @@ class SocialActivityCard extends StatelessWidget {
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
-                Text(localizedSocialActivityVerb(event.activityType)),
+                Text(
+                  showsNamedList
+                      ? 'adicionou'
+                      : localizedSocialActivityVerb(event.activityType),
+                ),
                 InkWell(
                   onTap: onMediaTap,
                   child: Text(
@@ -45,6 +52,7 @@ class SocialActivityCard extends StatelessWidget {
                     style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
                 ),
+                if (showsNamedList) Text('à lista $listName'),
               ],
             ),
             if (rating != null) ...[

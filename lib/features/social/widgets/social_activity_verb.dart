@@ -1,4 +1,5 @@
 import '../../../l10n/strings.g.dart';
+import '../data/models/activity_event_model.dart';
 
 String localizedSocialActivityVerb(String type) {
   return switch (type.toUpperCase()) {
@@ -10,4 +11,22 @@ String localizedSocialActivityVerb(String type) {
     'ADDED_TO_LIST' => t.social_activity_added_to_list,
     _ => t.social_activity_interacted_with,
   };
+}
+
+String? socialActivityListNameFor(ActivityEventModel event) {
+  final raw = event.metadata['listName'] ?? event.metadata['list_name'];
+  final value = raw?.toString().trim();
+  if (value == null || value.isEmpty) {
+    return null;
+  }
+  return value;
+}
+
+String socialActivityTextFor(ActivityEventModel event) {
+  final listName = socialActivityListNameFor(event);
+  if (event.activityType.toUpperCase() == 'ADDED_TO_LIST' && listName != null) {
+    return '${event.user.displayName} adicionou ${event.media.title} à lista $listName';
+  }
+
+  return '${event.user.displayName} ${localizedSocialActivityVerb(event.activityType)} ${event.media.title}';
 }

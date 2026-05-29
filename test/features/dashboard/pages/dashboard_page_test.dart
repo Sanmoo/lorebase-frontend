@@ -92,11 +92,13 @@ ActivityEventModel _activity(
   String id,
   String title, {
   String activityType = 'COMPLETED',
+  Map<String, dynamic> metadata = const <String, dynamic>{},
 }) => ActivityEventModel(
   eventId: id,
   user: const SocialUserModel(userId: 'user-1', displayName: 'Fulano'),
   activityType: activityType,
   media: SocialMediaModel(mediaId: id, mediaType: 'SERIES', title: title),
+  metadata: metadata,
   createdAt: DateTime.utc(2026, 5, 20),
 );
 
@@ -716,6 +718,47 @@ Future<void> main() async {
         findsOneWidget,
       );
       expect(find.textContaining('added_to_list'), findsNothing);
+    });
+
+    testWidgets('social preview includes list name for added to list rows', (
+      tester,
+    ) async {
+      final fakeVM = FakeDashboardVM(
+        testState: AsyncValue.data(_emptyDashboard()),
+      );
+      final container = ProviderContainer(
+        overrides: [
+          dashboardViewModelProvider.overrideWith(() => fakeVM),
+          socialFeedViewModelProvider.overrideWith(
+            () => FakeSocialFeedVM(
+              testState: AsyncValue.data(
+                _feed([
+                  _activity(
+                    '1',
+                    'Devoradores',
+                    activityType: 'added_to_list',
+                    metadata: const {'listName': 'Favoritos'},
+                  ),
+                ]),
+              ),
+            ),
+          ),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      expect(
+        find.textContaining('Fulano adicionou Devoradores à lista Favoritos'),
+        findsOneWidget,
+      );
+      expect(
+        find.textContaining('Fulano adicionou à lista Devoradores'),
+        findsNothing,
+      );
     });
 
     testWidgets('social preview shows up to three activity rows', (
