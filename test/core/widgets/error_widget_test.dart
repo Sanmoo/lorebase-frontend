@@ -30,14 +30,14 @@ Future<void> main() async {
       tester,
     ) async {
       await tester.pumpWidget(wrap(const AppErrorWidget(message: 'Error')));
-      expect(find.text('Retry'), findsNothing);
+      expect(find.text(t.error_retry), findsNothing);
     });
 
     testWidgets('shows retry button when onRetry is provided', (tester) async {
       await tester.pumpWidget(
         wrap(AppErrorWidget(message: 'Error', onRetry: () {})),
       );
-      expect(find.text('Retry'), findsOneWidget);
+      expect(find.text(t.error_retry), findsOneWidget);
     });
 
     testWidgets('retry button calls onRetry when tapped', (tester) async {
@@ -45,7 +45,7 @@ Future<void> main() async {
       await tester.pumpWidget(
         wrap(AppErrorWidget(message: 'Error', onRetry: () => retried = true)),
       );
-      await tester.tap(find.text('Retry'));
+      await tester.tap(find.text(t.error_retry));
       expect(retried, true);
     });
   });

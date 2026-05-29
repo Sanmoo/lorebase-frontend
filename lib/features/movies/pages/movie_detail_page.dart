@@ -89,7 +89,9 @@ class MovieDetailPage extends ConsumerWidget {
             if (ctx.mounted) {
               ScaffoldMessenger.of(ctx).showSnackBar(
                 SnackBar(
-                  content: Text(t.movie_detail_error(message: e.toString())),
+                  content: Text(
+                    ctx.t.movie_detail_error(message: e.toString()),
+                  ),
                 ),
               );
             }
@@ -108,7 +110,7 @@ class MovieDetailPage extends ConsumerWidget {
                     ScaffoldMessenger.of(ctx).showSnackBar(
                       SnackBar(
                         content: Text(
-                          t.movie_detail_error(message: e.toString()),
+                          ctx.t.movie_detail_error(message: e.toString()),
                         ),
                       ),
                     );
