@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lorebase/l10n/strings.g.dart';
 
 class SocialEmptyFeed extends StatelessWidget {
   const SocialEmptyFeed({super.key, required this.onDiscoverTap});
@@ -8,6 +9,7 @@ class SocialEmptyFeed extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final t = context.t;
 
     return Center(
       child: Padding(
@@ -22,20 +24,20 @@ class SocialEmptyFeed extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'Seu feed ainda está quieto',
+              t.social_empty_feed_title,
               style: theme.textTheme.titleLarge,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Text(
-              'Siga pessoas para ver avaliações, reviews e atividades recentes.',
+              t.social_empty_feed_body,
               style: theme.textTheme.bodyMedium,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
             FilledButton(
               onPressed: onDiscoverTap,
-              child: const Text('Descobrir pessoas'),
+              child: Text(t.social_discover_people_cta),
             ),
           ],
         ),
