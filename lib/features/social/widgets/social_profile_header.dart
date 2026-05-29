@@ -47,8 +47,12 @@ class SocialProfileHeader extends StatelessWidget {
             spacing: 16,
             runSpacing: 4,
             children: [
-              Text('${profile.followerCount} seguidores'),
-              Text('${profile.followingCount} seguindo'),
+              Text(
+                context.t.social_followers_count(count: profile.followerCount),
+              ),
+              Text(
+                context.t.social_following_count(count: profile.followingCount),
+              ),
             ],
           ),
           const SizedBox(height: 16),

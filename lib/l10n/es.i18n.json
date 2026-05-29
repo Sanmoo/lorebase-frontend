@@ -145,6 +145,7 @@
   "social_affinity": "$percent% de afinidad",
   "social_follow": "Seguir",
   "social_unfollow": "Dejar de seguir",
+  "social_follow_updating_semantics": "Actualizando seguimiento",
   "social_following_action": "Siguiendo",
   "social_following_user_semantics": "Siguiendo usuario",
   "social_feed": "Feed",

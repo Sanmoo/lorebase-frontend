@@ -473,6 +473,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// pt-BR: 'Deixar de seguir'
 	String get social_unfollow => 'Deixar de seguir';
 
+	/// pt-BR: 'Atualizando seguir'
+	String get social_follow_updating_semantics => 'Atualizando seguir';
+
 	/// pt-BR: 'Seguindo'
 	String get social_following_action => 'Seguindo';
 
@@ -703,6 +706,7 @@ extension on Translations {
 			'social_affinity' => ({required Object percent}) => '${percent}% de afinidade',
 			'social_follow' => 'Seguir',
 			'social_unfollow' => 'Deixar de seguir',
+			'social_follow_updating_semantics' => 'Atualizando seguir',
 			'social_following_action' => 'Seguindo',
 			'social_following_user_semantics' => 'Seguindo usuário',
 			'social_feed' => 'Feed',

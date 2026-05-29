@@ -28,7 +28,7 @@ class SocialFollowButton extends StatelessWidget {
       onPressed: onPressed,
       child: isLoading
           ? Semantics(
-              label: 'Atualizando seguir',
+              label: context.t.social_follow_updating_semantics,
               child: const SizedBox.square(
                 dimension: 18,
                 child: CircularProgressIndicator(strokeWidth: 2),

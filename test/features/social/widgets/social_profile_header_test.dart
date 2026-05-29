@@ -50,8 +50,14 @@ Future<void> main() async {
 
     expect(find.text('Fulano'), findsOneWidget);
     expect(find.byType(Wrap), findsOneWidget);
-    expect(find.text('7 seguidores'), findsOneWidget);
-    expect(find.text('3 seguindo'), findsOneWidget);
+    expect(
+      find.text(t.social_followers_count(count: profile().followerCount)),
+      findsOneWidget,
+    );
+    expect(
+      find.text(t.social_following_count(count: profile().followingCount)),
+      findsOneWidget,
+    );
     expect(find.text(t.social_edit_profile), findsOneWidget);
   });
 
