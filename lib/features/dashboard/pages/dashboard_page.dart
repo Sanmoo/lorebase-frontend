@@ -15,6 +15,7 @@ import '../../social/data/models/paginated_social_response.dart';
 import '../../social/data/models/social_profile_model.dart';
 import '../../social/pages/social_page.dart';
 import '../../social/viewmodels/social_feed_viewmodel.dart';
+import '../../social/widgets/social_activity_verb.dart';
 import '../../../core/cache/cache_providers.dart';
 import '../viewmodels/dashboard_viewmodel.dart';
 import '../widgets/stats_card.dart';
@@ -328,7 +329,7 @@ class _SocialActivityRow extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              '${activity.user.displayName} ${activity.activityType.toLowerCase()} ${activity.media.title}',
+              '${activity.user.displayName} ${socialActivityVerbFor(activity.activityType)} ${activity.media.title}',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
