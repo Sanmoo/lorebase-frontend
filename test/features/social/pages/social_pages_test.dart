@@ -85,7 +85,7 @@ void main() {
     await tester.pumpSocial(const SocialPage(), _FakeSocialRepository());
     await tester.pumpAndSettle();
 
-    expect(find.text('Descobrir pessoas'), findsOneWidget);
+    expect(find.text(t.social_discover_people_cta), findsOneWidget);
   });
 
   testWidgets('Onboarding page privacy choice is required', (tester) async {
