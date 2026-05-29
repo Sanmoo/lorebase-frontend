@@ -415,7 +415,10 @@ void main() {
 
     expect(find.text('Interestelar'), findsOneWidget);
     expect(find.text('Batman Begins'), findsOneWidget);
-    expect(find.text('Não foi possível carregar Assistindo.'), findsOneWidget);
+    expect(
+      find.text(t.social_section_load_error(section: t.social_status_watching)),
+      findsOneWidget,
+    );
     expect(find.text(t.social_profile_unavailable), findsNothing);
   });
 
