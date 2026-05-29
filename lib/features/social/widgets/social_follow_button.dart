@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lorebase/l10n/strings.g.dart';
 
 class SocialFollowButton extends StatelessWidget {
   const SocialFollowButton({
@@ -16,7 +17,9 @@ class SocialFollowButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final label = isFollowedByMe ? 'Deixar de seguir' : 'Seguir';
+    final label = isFollowedByMe
+        ? context.t.social_unfollow
+        : context.t.social_follow;
     final onPressed = isLoading
         ? null
         : (isFollowedByMe ? onUnfollow : onFollow);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lorebase/l10n/strings.g.dart';
 
 import '../data/models/social_profile_model.dart';
 import 'social_follow_button.dart';
@@ -54,7 +55,7 @@ class SocialProfileHeader extends StatelessWidget {
           if (isMe)
             FilledButton.tonal(
               onPressed: onEdit,
-              child: const Text('Editar perfil'),
+              child: Text(context.t.social_edit_profile),
             )
           else
             SocialFollowButton(

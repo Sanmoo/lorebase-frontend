@@ -144,6 +144,7 @@
   "social_following_count": "$count siguiendo",
   "social_affinity": "$percent% de afinidad",
   "social_follow": "Seguir",
+  "social_unfollow": "Dejar de seguir",
   "social_following_action": "Siguiendo",
   "social_following_user_semantics": "Siguiendo usuario",
   "social_feed": "Feed",

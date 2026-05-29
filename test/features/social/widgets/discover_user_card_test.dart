@@ -3,8 +3,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lorebase/features/social/data/models/discover_user_model.dart';
 import 'package:lorebase/features/social/data/models/social_media_model.dart';
 import 'package:lorebase/features/social/widgets/discover_user_card.dart';
+import 'package:lorebase/l10n/strings.g.dart';
 
-void main() {
+Future<void> main() async {
+  await LocaleSettings.setLocale(AppLocale.ptBr);
+
   DiscoverUserModel user({bool followed = false}) => DiscoverUserModel(
     userId: 'user-1',
     displayName: 'Maria',
@@ -23,12 +26,14 @@ void main() {
     bool isFollowing = false,
   }) {
     return tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: DiscoverUserCard(
-            user: user,
-            onFollow: onFollow ?? () {},
-            isFollowing: isFollowing,
+      TranslationProvider(
+        child: MaterialApp(
+          home: Scaffold(
+            body: DiscoverUserCard(
+              user: user,
+              onFollow: onFollow ?? () {},
+              isFollowing: isFollowing,
+            ),
           ),
         ),
       ),
@@ -52,15 +57,15 @@ void main() {
     var followed = false;
     await pumpCard(tester, user(), onFollow: () => followed = true);
 
-    await tester.tap(find.text('Seguir'));
+    await tester.tap(find.text(t.social_follow));
 
     expect(followed, isTrue);
   });
 
-  testWidgets('followed state shows "Seguindo"', (tester) async {
+  testWidgets('followed state shows following label', (tester) async {
     await pumpCard(tester, user(followed: true));
 
-    expect(find.text('Seguindo'), findsOneWidget);
+    expect(find.text(t.social_following_action), findsOneWidget);
   });
 
   testWidgets('follow button shows spinner and disables while following', (
@@ -71,9 +76,12 @@ void main() {
 
     final button = tester.widget<FilledButton>(find.byType(FilledButton));
     expect(button.onPressed, isNull);
-    expect(find.text('Seguir'), findsNothing);
+    expect(find.text(t.social_follow), findsNothing);
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
-    expect(find.bySemanticsLabel('Seguindo usuário'), findsOneWidget);
+    expect(
+      find.bySemanticsLabel(t.social_following_user_semantics),
+      findsOneWidget,
+    );
 
     await tester.tap(find.byType(FilledButton));
     expect(calls, 0);

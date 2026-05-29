@@ -184,6 +184,7 @@ class TranslationsEnUs extends Translations with BaseTranslations<AppLocale, Tra
 	@override String social_following_count({required Object count}) => '${count} following';
 	@override String social_affinity({required Object percent}) => '${percent}% affinity';
 	@override String get social_follow => 'Follow';
+	@override String get social_unfollow => 'Unfollow';
 	@override String get social_following_action => 'Following';
 	@override String get social_following_user_semantics => 'Following user';
 	@override String get social_feed => 'Feed';
@@ -362,6 +363,7 @@ extension on TranslationsEnUs {
 			'social_following_count' => ({required Object count}) => '${count} following',
 			'social_affinity' => ({required Object percent}) => '${percent}% affinity',
 			'social_follow' => 'Follow',
+			'social_unfollow' => 'Unfollow',
 			'social_following_action' => 'Following',
 			'social_following_user_semantics' => 'Following user',
 			'social_feed' => 'Feed',
