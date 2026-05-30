@@ -17,23 +17,23 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
     final seriesRepo = ref.read(seriesRepositoryProvider);
     final trackingRepo = ref.read(trackingRepositoryProvider);
 
-    final series = await seriesRepo.getSeriesById(tmdbId.toString());
+    final mediaId = tmdbId.toString();
+    final seriesFuture = seriesRepo.getSeriesById(mediaId);
+    final trackingFuture = trackingRepo
+        .getTrackingByMedia(mediaId, MediaType.series)
+        .catchError((Object e) {
+          debugPrint('[SERIES_VM] build() tracking lookup failed: $e');
+          return null;
+        });
+
+    final series = await seriesFuture;
 
     TrackedMediaModel? tracking;
     try {
-      final allTracking = await trackingRepo.getTracking(
-        pageSize: 1000,
-        mediaType: MediaType.series,
-      );
+      tracking = await trackingFuture;
       debugPrint(
-          '[SERIES_VM] build() got ${allTracking.length} tracking entries');
-      tracking = allTracking.firstWhere(
-        (t) =>
-            (t.media != null && t.media!.mediaId == tmdbId.toString()) ||
-            t.mediaId == tmdbId.toString(),
+        '[SERIES_VM] build() found tracking: rating=${tracking?.rating} status=${tracking?.status}',
       );
-      debugPrint(
-          '[SERIES_VM] build() found tracking: rating=${tracking.rating} status=${tracking.status}');
     } catch (e) {
       debugPrint('[SERIES_VM] build() tracking lookup failed: $e');
       tracking = null;
@@ -42,11 +42,7 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
     return SeriesDetailState(series: series, tracking: tracking);
   }
 
-  Future<void> addTracking(
-    String status, {
-    int? rating,
-    String? review,
-  }) async {
+  Future<void> addTracking(String status, {int? rating, String? review}) async {
     final currentState = state.value;
     if (currentState == null) return;
     final trackingRepo = ref.read(trackingRepositoryProvider);
@@ -76,8 +72,7 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
   }) async {
     final currentState = state.value;
     if (currentState == null) {
-      debugPrint(
-          '[SERIES_VM] updateTracking aborted: state.value is null');
+      debugPrint('[SERIES_VM] updateTracking aborted: state.value is null');
       return;
     }
     final current = currentState.tracking;
@@ -89,7 +84,8 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
     final trackingRepo = ref.read(trackingRepositoryProvider);
     try {
       debugPrint(
-          '[SERIES_VM] updateTracking calling API: mediaId=${current.mediaId} status=$status rating=$rating review=$review');
+        '[SERIES_VM] updateTracking calling API: mediaId=${current.mediaId} status=$status rating=$rating review=$review',
+      );
       await trackingRepo.updateTracking(
         current.mediaId,
         mediaType: MediaType.series,

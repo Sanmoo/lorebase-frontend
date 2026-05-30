@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -14,9 +16,13 @@ import 'package:lorebase/features/tracking/data/repositories/tracking_repository
 class FakeSeriesRepo implements SeriesRepository {
   SeriesModel? seriesResult;
   bool shouldThrow = false;
+  Completer<SeriesModel>? seriesCompleter;
+  void Function()? onGetSeriesById;
 
   @override
   Future<SeriesModel> getSeriesById(String id) async {
+    onGetSeriesById?.call();
+    if (seriesCompleter != null) return seriesCompleter!.future;
     if (shouldThrow) throw Exception('not found');
     if (seriesResult != null) return seriesResult!;
     throw UnimplementedError();
@@ -34,13 +40,19 @@ class FakeSeriesRepo implements SeriesRepository {
 
 class FakeTrackingRepo implements TrackingRepository {
   List<TrackedMediaModel> trackingResults = [];
+  TrackedMediaModel? trackingByMediaResult;
   bool shouldThrowTracking = false;
   bool shouldThrowUpdate = false;
+  int getTrackingCallCount = 0;
+  int getTrackingByMediaCallCount = 0;
+  String? lastGetTrackingByMediaId;
   TrackedMediaModel? lastStartedTracking;
   TrackedMediaModel? lastUpdatedTracking;
   String? lastDeletedMediaId;
   MediaType? lastMediaType;
   Map<String, dynamic>? lastUpdatedFields;
+  Completer<TrackedMediaModel?>? trackingByMediaCompleter;
+  void Function()? onGetTrackingByMedia;
 
   @override
   Future<List<TrackedMediaModel>> getTracking({
@@ -49,6 +61,7 @@ class FakeTrackingRepo implements TrackingRepository {
     int pageSize = 20,
     int page = 1,
   }) async {
+    getTrackingCallCount++;
     lastMediaType = mediaType;
     if (shouldThrowTracking) throw Exception('failed');
     return trackingResults;
@@ -59,7 +72,15 @@ class FakeTrackingRepo implements TrackingRepository {
     String mediaId,
     MediaType mediaType,
   ) async {
-    return null;
+    getTrackingByMediaCallCount++;
+    lastGetTrackingByMediaId = mediaId;
+    lastMediaType = mediaType;
+    onGetTrackingByMedia?.call();
+    if (trackingByMediaCompleter != null) {
+      return trackingByMediaCompleter!.future;
+    }
+    if (shouldThrowTracking) throw Exception('failed');
+    return trackingByMediaResult;
   }
 
   @override
@@ -136,27 +157,89 @@ void main() {
     }
 
     test(
+      'build() uses direct tracking lookup with media id and type',
+      () async {
+        final seriesRepo = FakeSeriesRepo()
+          ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
+        final trackingRepo = FakeTrackingRepo()
+          ..trackingByMediaResult = TrackedMediaModel(
+            trackingId: 'track-42',
+            userId: 'user-1',
+            mediaType: MediaType.series,
+            mediaId: '42',
+            status: 'WATCHING',
+            addedAt: DateTime.now(),
+            lastUpdated: DateTime.now(),
+          );
+        final container = createContainer(
+          seriesRepo: seriesRepo,
+          trackingRepo: trackingRepo,
+        );
+        addTearDown(container.dispose);
+
+        final state = await container.read(
+          seriesDetailViewModelProvider(42).future,
+        );
+
+        expect(state.tracking, trackingRepo.trackingByMediaResult);
+        expect(trackingRepo.lastGetTrackingByMediaId, '42');
+        expect(trackingRepo.lastMediaType, MediaType.series);
+        expect(trackingRepo.getTrackingByMediaCallCount, 1);
+        expect(trackingRepo.getTrackingCallCount, 0);
+      },
+    );
+
+    test(
+      'build() starts series detail and direct tracking requests concurrently',
+      () async {
+        final events = <String>[];
+        final seriesCompleter = Completer<SeriesModel>();
+        final trackingCompleter = Completer<TrackedMediaModel?>();
+        final seriesRepo = FakeSeriesRepo()
+          ..seriesCompleter = seriesCompleter
+          ..onGetSeriesById = () => events.add('series-start');
+        final trackingRepo = FakeTrackingRepo()
+          ..trackingByMediaCompleter = trackingCompleter
+          ..onGetTrackingByMedia = () => events.add('tracking-start');
+        final container = createContainer(
+          seriesRepo: seriesRepo,
+          trackingRepo: trackingRepo,
+        );
+        addTearDown(container.dispose);
+
+        final future = container.read(seriesDetailViewModelProvider(42).future);
+        await Future<void>.delayed(Duration.zero);
+
+        expect(events, ['series-start', 'tracking-start']);
+
+        seriesCompleter.complete(
+          const SeriesModel(tmdbId: 42, title: 'Test Show'),
+        );
+        trackingCompleter.complete(null);
+        await future;
+      },
+    );
+
+    test(
       'build() returns SeriesDetailState with series and tracking',
       () async {
         final seriesRepo = FakeSeriesRepo()
           ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
         final trackingRepo = FakeTrackingRepo()
-          ..trackingResults = [
-            TrackedMediaModel(
-              trackingId: 'track-42',
-              userId: 'user-1',
-              mediaType: MediaType.series,
+          ..trackingByMediaResult = TrackedMediaModel(
+            trackingId: 'track-42',
+            userId: 'user-1',
+            mediaType: MediaType.series,
+            mediaId: '42',
+            status: 'WATCHING',
+            media: const TrackedMediaSummaryModel(
               mediaId: '42',
-              status: 'WATCHING',
-              media: const TrackedMediaSummaryModel(
-                mediaId: '42',
-                title: 'Test Show',
-                mediaType: MediaType.series,
-              ),
-              addedAt: DateTime.now(),
-              lastUpdated: DateTime.now(),
+              title: 'Test Show',
+              mediaType: MediaType.series,
             ),
-          ];
+            addedAt: DateTime.now(),
+            lastUpdated: DateTime.now(),
+          );
         final container = createContainer(
           seriesRepo: seriesRepo,
           trackingRepo: trackingRepo,
@@ -177,18 +260,7 @@ void main() {
     test('build() with no matching tracking returns null tracking', () async {
       final seriesRepo = FakeSeriesRepo()
         ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
-      final trackingRepo = FakeTrackingRepo()
-        ..trackingResults = [
-          TrackedMediaModel(
-            trackingId: 'track-99',
-            userId: 'user-1',
-            mediaType: MediaType.series,
-            mediaId: '99',
-            status: 'WATCHING',
-            addedAt: DateTime.now(),
-            lastUpdated: DateTime.now(),
-          ),
-        ];
+      final trackingRepo = FakeTrackingRepo();
       final container = createContainer(
         seriesRepo: seriesRepo,
         trackingRepo: trackingRepo,
@@ -223,22 +295,20 @@ void main() {
       final seriesRepo = FakeSeriesRepo()
         ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
       final trackingRepo = FakeTrackingRepo()
-        ..trackingResults = [
-          TrackedMediaModel(
-            trackingId: 'track-not42',
-            userId: 'user-1',
+        ..trackingByMediaResult = TrackedMediaModel(
+          trackingId: 'track-not42',
+          userId: 'user-1',
+          mediaType: MediaType.series,
+          mediaId: 'not42',
+          status: 'WATCHING',
+          media: const TrackedMediaSummaryModel(
+            mediaId: '42',
+            title: 'Test Show',
             mediaType: MediaType.series,
-            mediaId: 'not42',
-            status: 'WATCHING',
-            media: const TrackedMediaSummaryModel(
-              mediaId: '42',
-              title: 'Test Show',
-              mediaType: MediaType.series,
-            ),
-            addedAt: DateTime.now(),
-            lastUpdated: DateTime.now(),
           ),
-        ];
+          addedAt: DateTime.now(),
+          lastUpdated: DateTime.now(),
+        );
       final container = createContainer(
         seriesRepo: seriesRepo,
         trackingRepo: trackingRepo,
@@ -296,22 +366,20 @@ void main() {
       final seriesRepo = FakeSeriesRepo()
         ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
       final trackingRepo = FakeTrackingRepo()
-        ..trackingResults = [
-          TrackedMediaModel(
-            trackingId: 'track-42',
-            userId: 'user-1',
-            mediaType: MediaType.series,
+        ..trackingByMediaResult = TrackedMediaModel(
+          trackingId: 'track-42',
+          userId: 'user-1',
+          mediaType: MediaType.series,
+          mediaId: '42',
+          status: 'WATCHING',
+          media: const TrackedMediaSummaryModel(
             mediaId: '42',
-            status: 'WATCHING',
-            media: const TrackedMediaSummaryModel(
-              mediaId: '42',
-              title: 'Test Show',
-              mediaType: MediaType.series,
-            ),
-            addedAt: DateTime.now(),
-            lastUpdated: DateTime.now(),
+            title: 'Test Show',
+            mediaType: MediaType.series,
           ),
-        ];
+          addedAt: DateTime.now(),
+          lastUpdated: DateTime.now(),
+        );
       final container = createContainer(
         seriesRepo: seriesRepo,
         trackingRepo: trackingRepo,
@@ -333,22 +401,20 @@ void main() {
         ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
       final trackingRepo = FakeTrackingRepo()
         ..shouldThrowUpdate = true
-        ..trackingResults = [
-          TrackedMediaModel(
-            trackingId: 'track-42',
-            userId: 'user-1',
-            mediaType: MediaType.series,
+        ..trackingByMediaResult = TrackedMediaModel(
+          trackingId: 'track-42',
+          userId: 'user-1',
+          mediaType: MediaType.series,
+          mediaId: '42',
+          status: 'WATCHING',
+          media: const TrackedMediaSummaryModel(
             mediaId: '42',
-            status: 'WATCHING',
-            media: const TrackedMediaSummaryModel(
-              mediaId: '42',
-              title: 'Test Show',
-              mediaType: MediaType.series,
-            ),
-            addedAt: DateTime.now(),
-            lastUpdated: DateTime.now(),
+            title: 'Test Show',
+            mediaType: MediaType.series,
           ),
-        ];
+          addedAt: DateTime.now(),
+          lastUpdated: DateTime.now(),
+        );
       final container = createContainer(
         seriesRepo: seriesRepo,
         trackingRepo: trackingRepo,
@@ -371,22 +437,20 @@ void main() {
         final seriesRepo = FakeSeriesRepo()
           ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
         final trackingRepo = FakeTrackingRepo()
-          ..trackingResults = [
-            TrackedMediaModel(
-              trackingId: 'track-42',
-              userId: 'user-1',
-              mediaType: MediaType.series,
+          ..trackingByMediaResult = TrackedMediaModel(
+            trackingId: 'track-42',
+            userId: 'user-1',
+            mediaType: MediaType.series,
+            mediaId: '42',
+            status: 'WATCHING',
+            media: const TrackedMediaSummaryModel(
               mediaId: '42',
-              status: 'WATCHING',
-              media: const TrackedMediaSummaryModel(
-                mediaId: '42',
-                title: 'Test Show',
-                mediaType: MediaType.series,
-              ),
-              addedAt: DateTime.now(),
-              lastUpdated: DateTime.now(),
+              title: 'Test Show',
+              mediaType: MediaType.series,
             ),
-          ];
+            addedAt: DateTime.now(),
+            lastUpdated: DateTime.now(),
+          );
         final container = createContainer(
           seriesRepo: seriesRepo,
           trackingRepo: trackingRepo,
