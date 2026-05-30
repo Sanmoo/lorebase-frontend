@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../core/errors/exceptions.dart';
 import '../data/models/activity_event_model.dart';
 import '../data/models/paginated_social_response.dart';
 import '../data/models/public_list_item_model.dart';
@@ -48,15 +49,28 @@ class SocialProfileViewModel extends _$SocialProfileViewModel {
         ? await repository.getMyProfile()
         : await repository.getProfile(userId);
     final resolvedUserId = profile.userId;
-    final activity = await repository
-        .getUserActivity(resolvedUserId)
-        .catchError((_) => _emptyActivityResponse());
+    final activity = await _loadUserActivity(repository, resolvedUserId);
 
     return SocialProfileDetailState(
       profile: profile,
       activity: activity,
       publicLists: _emptyPublicListsResponse(),
     );
+  }
+
+  Future<PaginatedSocialResponse<ActivityEventModel>> _loadUserActivity(
+    SocialRepository repository,
+    String resolvedUserId,
+  ) async {
+    try {
+      return await repository.getUserActivity(resolvedUserId);
+    } on ServerException {
+      return _emptyActivityResponse();
+    } on NetworkException {
+      return _emptyActivityResponse();
+    } on AuthException {
+      return _emptyActivityResponse();
+    }
   }
 
   Future<void> follow() async {
