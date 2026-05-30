@@ -9,7 +9,9 @@ import '../models/discover_user_model.dart';
 import '../models/follow_relationship_model.dart';
 import '../models/paginated_social_response.dart';
 import '../models/public_list_item_model.dart';
+import '../models/social_media_model.dart';
 import '../models/social_profile_model.dart';
+import '../models/social_user_model.dart';
 
 abstract class SocialRepository {
   Future<SocialProfileModel> getMyProfile();
@@ -143,7 +145,7 @@ class SocialRepositoryImpl implements SocialRepository {
     return _getPaginated(
       '/feed',
       queryParameters: _paginationParams(limit: limit, cursor: cursor),
-      fromJson: ActivityEventModel.fromJson,
+      fromJson: _activityEventFromJson,
       fallbackMessage: 'Failed to load feed',
     );
   }
@@ -170,7 +172,7 @@ class SocialRepositoryImpl implements SocialRepository {
     return _getPaginated(
       '/profiles/$userId/activity',
       queryParameters: _paginationParams(limit: limit, cursor: cursor),
-      fromJson: ActivityEventModel.fromJson,
+      fromJson: _activityEventFromJson,
       fallbackMessage: 'Failed to load user activity',
     );
   }
@@ -257,6 +259,43 @@ class SocialRepositoryImpl implements SocialRepository {
 
   Map<String, dynamic> _paginationParams({required int limit, String? cursor}) {
     return {'limit': limit, 'cursor': ?cursor};
+  }
+
+  ActivityEventModel _activityEventFromJson(Map<String, dynamic> json) {
+    final metadata = Map<String, dynamic>.from(
+      (json['metadata'] as Map?) ?? const <String, dynamic>{},
+    );
+    return ActivityEventModel(
+      eventId: json['eventId'] as String,
+      user: SocialUserModel(
+        userId: json['userId'] as String,
+        displayName: _activityUserDisplayName(metadata),
+        avatarUrl: _profileAvatarUrl(metadata['avatarUrl']),
+      ),
+      activityType: json['activityType'] as String,
+      media: SocialMediaModel(
+        mediaId: json['mediaId'] as String,
+        mediaType: json['mediaType'] as String,
+        title: (json['mediaTitle'] as String?)?.trim().isNotEmpty == true
+            ? (json['mediaTitle'] as String).trim()
+            : 'Mídia',
+        posterUrl: _profileAvatarUrl(json['posterUrl']),
+      ),
+      metadata: metadata,
+      createdAt: DateTime.parse(json['createdAt'] as String),
+    );
+  }
+
+  String _activityUserDisplayName(Map<String, dynamic> metadata) {
+    final displayName = (metadata['displayName'] as String?)?.trim();
+    if (displayName != null && displayName.isNotEmpty) {
+      return displayName;
+    }
+    final username = (metadata['username'] as String?)?.trim();
+    if (username != null && username.isNotEmpty) {
+      return username;
+    }
+    return 'Usuário';
   }
 
   PublicListItemModel _publicListItemFromJson(Map<String, dynamic> json) {

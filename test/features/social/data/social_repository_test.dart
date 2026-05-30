@@ -53,10 +53,12 @@ Map<String, dynamic> _profileJson() => {
 
 Map<String, dynamic> _activityJson() => {
   'eventId': 'evt-1',
-  'user': {'userId': 'user-1', 'displayName': 'Fulano'},
+  'userId': 'user-1',
   'activityType': 'COMPLETED',
-  'media': {'mediaId': '1', 'mediaType': 'MOVIE', 'title': 'Movie'},
-  'metadata': <String, dynamic>{},
+  'mediaId': '1',
+  'mediaType': 'MOVIE',
+  'mediaTitle': 'Movie',
+  'metadata': <String, dynamic>{'displayName': 'Fulano'},
   'createdAt': '2026-05-20T10:00:00Z',
 };
 
@@ -243,6 +245,11 @@ void main() {
       expect(capturedParams, {'limit': 10, 'cursor': 'cursor-1'});
       expect(result, isA<PaginatedSocialResponse<ActivityEventModel>>());
       expect(result.items.single.eventId, 'evt-1');
+      expect(result.items.single.user.userId, 'user-1');
+      expect(result.items.single.user.displayName, 'Fulano');
+      expect(result.items.single.media.mediaId, '1');
+      expect(result.items.single.media.mediaType, 'MOVIE');
+      expect(result.items.single.media.title, 'Movie');
       expect(result.nextCursor, 'next');
     });
 
@@ -492,6 +499,11 @@ void main() {
         expect(capturedParams, {'limit': 12, 'cursor': 'cursor-3'});
         expect(result, isA<PaginatedSocialResponse<ActivityEventModel>>());
         expect(result.items.single.eventId, 'evt-1');
+        expect(result.items.single.user.userId, 'user-1');
+        expect(result.items.single.user.displayName, 'Fulano');
+        expect(result.items.single.media.mediaId, '1');
+        expect(result.items.single.media.mediaType, 'MOVIE');
+        expect(result.items.single.media.title, 'Movie');
       },
     );
 
