@@ -81,10 +81,12 @@ void main() {
     },
   );
 
-  testWidgets('Social page empty feed renders CTA', (tester) async {
+  testWidgets('Social page empty feed renders empty state CTA', (tester) async {
     await tester.pumpSocial(const SocialPage(), _FakeSocialRepository());
     await tester.pumpAndSettle();
 
+    expect(find.text(t.social_empty_feed_title), findsOneWidget);
+    expect(find.text(t.social_empty_feed_body), findsOneWidget);
     expect(find.text(t.social_discover_people_cta), findsOneWidget);
   });
 
