@@ -48,6 +48,14 @@ class FakeTrackingRepo implements TrackingRepository {
   }
 
   @override
+  Future<TrackedMediaModel?> getTrackingByMedia(
+    String mediaId,
+    MediaType mediaType,
+  ) async {
+    return null;
+  }
+
+  @override
   Future<TrackedMediaModel> startTracking(
     String mediaId,
     MediaType mediaType,
