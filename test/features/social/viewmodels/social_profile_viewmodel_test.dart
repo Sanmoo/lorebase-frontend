@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lorebase/core/errors/exceptions.dart';
 import 'package:lorebase/features/social/data/models/activity_event_model.dart';
 import 'package:lorebase/features/social/data/models/discover_user_model.dart';
 import 'package:lorebase/features/social/data/models/follow_relationship_model.dart';
@@ -53,10 +52,33 @@ void main() {
     },
   );
 
-  test('build keeps profile when user activity fails', () async {
-    final repo = _FakeSocialRepository(
-      activityError: const ServerException(message: 'boom', statusCode: 500),
-    );
+  test(
+    'build keeps profile and exposes activity error when user activity fails',
+    () async {
+      final error = Exception('boom');
+      final repo = _FakeSocialRepository(activityError: error);
+      final container = ProviderContainer(
+        overrides: [socialRepositoryProvider.overrideWithValue(repo)],
+      );
+      addTearDown(container.dispose);
+
+      final state = await container.read(
+        socialProfileViewModelProvider('user-1').future,
+      );
+
+      expect(state.profile.userId, 'user-1');
+      expect(state.activity.items, isEmpty);
+      expect(state.activity.nextCursor, isNull);
+      expect(state.activity.hasMore, isFalse);
+      expect(state.activityError, same(error));
+      expect(state.activityError, isA<Exception>());
+      expect(state.hasActivityError, isTrue);
+      expect(state.publicLists.items, isEmpty);
+    },
+  );
+
+  test('build has no activity error when user activity loads', () async {
+    final repo = _FakeSocialRepository();
     final container = ProviderContainer(
       overrides: [socialRepositoryProvider.overrideWithValue(repo)],
     );
@@ -66,28 +88,9 @@ void main() {
       socialProfileViewModelProvider('user-1').future,
     );
 
-    expect(state.profile.userId, 'user-1');
-    expect(state.activity.items, isEmpty);
-    expect(state.activity.nextCursor, isNull);
-    expect(state.activity.hasMore, isFalse);
-    expect(state.publicLists.items, isEmpty);
+    expect(state.activityError, isNull);
+    expect(state.hasActivityError, isFalse);
   });
-
-  test(
-    'build exposes unexpected user activity errors instead of empty state',
-    () async {
-      final repo = _FakeSocialRepository(activityError: TypeError());
-      final container = ProviderContainer(
-        overrides: [socialRepositoryProvider.overrideWithValue(repo)],
-      );
-      addTearDown(container.dispose);
-
-      await expectLater(
-        container.read(socialProfileViewModelProvider('user-1').future),
-        throwsA(isA<TypeError>()),
-      );
-    },
-  );
 
   test(
     'follow and unfollow while loading leave loading state intact',

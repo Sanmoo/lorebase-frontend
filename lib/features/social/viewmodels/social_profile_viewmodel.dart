@@ -2,7 +2,6 @@ import 'dart:math' as math;
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../core/errors/exceptions.dart';
 import '../data/models/activity_event_model.dart';
 import '../data/models/paginated_social_response.dart';
 import '../data/models/public_list_item_model.dart';
@@ -16,19 +15,24 @@ class SocialProfileDetailState {
   final PaginatedSocialResponse<ActivityEventModel> activity;
   final PaginatedSocialResponse<PublicListItemModel> publicLists;
   final bool isFollowActionInProgress;
+  final Object? activityError;
 
   const SocialProfileDetailState({
     required this.profile,
     required this.activity,
     required this.publicLists,
     this.isFollowActionInProgress = false,
+    this.activityError,
   });
+
+  bool get hasActivityError => activityError != null;
 
   SocialProfileDetailState copyWith({
     SocialProfileModel? profile,
     PaginatedSocialResponse<ActivityEventModel>? activity,
     PaginatedSocialResponse<PublicListItemModel>? publicLists,
     bool? isFollowActionInProgress,
+    Object? activityError = _unchangedActivityError,
   }) {
     return SocialProfileDetailState(
       profile: profile ?? this.profile,
@@ -36,9 +40,14 @@ class SocialProfileDetailState {
       publicLists: publicLists ?? this.publicLists,
       isFollowActionInProgress:
           isFollowActionInProgress ?? this.isFollowActionInProgress,
+      activityError: identical(activityError, _unchangedActivityError)
+          ? this.activityError
+          : activityError,
     );
   }
 }
+
+const Object _unchangedActivityError = Object();
 
 @riverpod
 class SocialProfileViewModel extends _$SocialProfileViewModel {
@@ -49,27 +58,33 @@ class SocialProfileViewModel extends _$SocialProfileViewModel {
         ? await repository.getMyProfile()
         : await repository.getProfile(userId);
     final resolvedUserId = profile.userId;
-    final activity = await _loadUserActivity(repository, resolvedUserId);
+    final (:activity, :activityError) = await _loadUserActivity(
+      repository,
+      resolvedUserId,
+    );
 
     return SocialProfileDetailState(
       profile: profile,
       activity: activity,
       publicLists: _emptyPublicListsResponse(),
+      activityError: activityError,
     );
   }
 
-  Future<PaginatedSocialResponse<ActivityEventModel>> _loadUserActivity(
-    SocialRepository repository,
-    String resolvedUserId,
-  ) async {
+  Future<
+    ({
+      PaginatedSocialResponse<ActivityEventModel> activity,
+      Object? activityError,
+    })
+  >
+  _loadUserActivity(SocialRepository repository, String resolvedUserId) async {
     try {
-      return await repository.getUserActivity(resolvedUserId);
-    } on ServerException {
-      return _emptyActivityResponse();
-    } on NetworkException {
-      return _emptyActivityResponse();
-    } on AuthException {
-      return _emptyActivityResponse();
+      return (
+        activity: await repository.getUserActivity(resolvedUserId),
+        activityError: null,
+      );
+    } catch (error) {
+      return (activity: _emptyActivityResponse(), activityError: error);
     }
   }
 
