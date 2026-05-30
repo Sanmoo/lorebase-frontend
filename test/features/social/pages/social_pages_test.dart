@@ -436,6 +436,41 @@ void main() {
     expect(find.text(t.social_profile_unavailable), findsOneWidget);
   });
 
+  testWidgets('Profile Activity tab renders visible activity cards', (
+    tester,
+  ) async {
+    await tester.pumpSocial(
+      const SocialProfilePage(userId: 'me', isMe: true),
+      _FakeSocialRepository(activityItems: [_event()]),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Fulano'), findsWidgets);
+    expect(find.text('Série Teste'), findsOneWidget);
+    expect(find.text(t.social_empty_public_activity), findsNothing);
+    expect(find.text(t.social_profile_unavailable), findsNothing);
+  });
+
+  testWidgets(
+    'Profile Activity tab shows error instead of empty state on activity failure',
+    (tester) async {
+      await tester.pumpSocial(
+        const SocialProfilePage(userId: 'me', isMe: true),
+        _FakeSocialRepository(
+          activityError: const ServerException(
+            message: 'Activity failed',
+            statusCode: 500,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.social_profile_activity_load_error), findsOneWidget);
+      expect(find.text(t.social_empty_public_activity), findsNothing);
+      expect(find.text(t.social_profile_unavailable), findsNothing);
+    },
+  );
+
   testWidgets('My profile renders header when activity and lists are empty', (
     tester,
   ) async {
@@ -857,6 +892,7 @@ class _FakeSocialRepository implements SocialRepository {
     this.feedItems = const [],
     this.discoverItems = const [],
     this.activityItems = const [],
+    this.activityError,
     this.followersItems = const [],
     this.followingItems = const [],
     List<Object> discoverErrors = const [],
@@ -871,6 +907,7 @@ class _FakeSocialRepository implements SocialRepository {
   final List<ActivityEventModel> feedItems;
   final List<DiscoverUserModel> discoverItems;
   final List<ActivityEventModel> activityItems;
+  final Object? activityError;
   final List<FollowRelationshipModel> followersItems;
   final List<FollowRelationshipModel> followingItems;
   final Map<String, List<PublicListItemModel>> publicListItemsByStatus;
@@ -976,7 +1013,13 @@ class _FakeSocialRepository implements SocialRepository {
     String userId, {
     int limit = 20,
     String? cursor,
-  }) async => _page(activityItems);
+  }) async {
+    final error = activityError;
+    if (error != null) {
+      throw error;
+    }
+    return _page(activityItems);
+  }
 
   @override
   Future<PaginatedSocialResponse<FollowRelationshipModel>> getFollowers(

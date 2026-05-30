@@ -81,6 +81,9 @@ class _ActivityTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (state.hasActivityError) {
+      return Center(child: Text(context.t.social_profile_activity_load_error));
+    }
     if (state.activity.items.isEmpty) {
       return Center(child: Text(context.t.social_empty_public_activity));
     }

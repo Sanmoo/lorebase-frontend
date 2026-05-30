@@ -175,6 +175,7 @@ class TranslationsEn extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get social_following => 'Following';
 	@override String get social_profile_unavailable => 'This profile is not available right now.';
 	@override String get social_empty_public_activity => 'No public activity yet.';
+	@override String get social_profile_activity_load_error => 'Could not load this profile\'s activity.';
 	@override String social_section_load_error({required Object section}) => 'Could not load ${section}.';
 	@override String social_section_loading({required Object section}) => 'Loading ${section}...';
 	@override String social_followers_count({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(count,
@@ -388,6 +389,7 @@ extension on TranslationsEn {
 			'social_following' => 'Following',
 			'social_profile_unavailable' => 'This profile is not available right now.',
 			'social_empty_public_activity' => 'No public activity yet.',
+			'social_profile_activity_load_error' => 'Could not load this profile\'s activity.',
 			'social_section_load_error' => ({required Object section}) => 'Could not load ${section}.',
 			'social_section_loading' => ({required Object section}) => 'Loading ${section}...',
 			'social_followers_count' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(count, one: '${count} follower', other: '${count} followers', ), 
