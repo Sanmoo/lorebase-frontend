@@ -13,6 +13,11 @@ abstract class TrackingRepository {
     int pageSize = 20,
   });
 
+  Future<TrackedMediaModel?> getTrackingByMedia(
+    String mediaId,
+    MediaType mediaType,
+  );
+
   Future<TrackedMediaModel> startTracking(
     String mediaId,
     MediaType mediaType,
@@ -57,6 +62,28 @@ class TrackingRepositoryImpl implements TrackingRepository {
       final items = response.data['items'] as List;
       return items.map((json) => TrackedMediaModel.fromJson(json)).toList();
     } on DioException catch (e) {
+      throw ServerException(
+        message: e.message ?? 'Failed to load tracking',
+        statusCode: e.response?.statusCode,
+      );
+    }
+  }
+
+  @override
+  Future<TrackedMediaModel?> getTrackingByMedia(
+    String mediaId,
+    MediaType mediaType,
+  ) async {
+    try {
+      final response = await _dio.get(
+        '/tracking/$mediaId',
+        queryParameters: {'mediaType': mediaType.apiValue},
+      );
+      return TrackedMediaModel.fromJson(response.data);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) {
+        return null;
+      }
       throw ServerException(
         message: e.message ?? 'Failed to load tracking',
         statusCode: e.response?.statusCode,
