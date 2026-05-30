@@ -90,6 +90,33 @@ void main() {
     expect(find.text(t.social_discover_people_cta), findsOneWidget);
   });
 
+  testWidgets('Social feed renders activity cards when feed has items', (
+    tester,
+  ) async {
+    await tester.pumpSocial(
+      const SocialPage(),
+      _FakeSocialRepository(feedItems: [_event(title: 'Feed visível')]),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Feed visível'), findsOneWidget);
+    expect(find.text(t.social_discover_people_cta), findsNothing);
+    expect(find.text(t.social_feed_load_error), findsNothing);
+  });
+
+  testWidgets('Social feed shows error when feed request fails', (
+    tester,
+  ) async {
+    await tester.pumpSocial(
+      const SocialPage(),
+      _FakeSocialRepository(feedError: Exception('boom')),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(t.social_feed_load_error), findsOneWidget);
+    expect(find.text(t.social_discover_people_cta), findsNothing);
+  });
+
   testWidgets('Onboarding page privacy choice is required', (tester) async {
     await tester.pumpSocial(
       const SocialOnboardingPage(),
@@ -890,6 +917,7 @@ class _FakeSocialRepository implements SocialRepository {
     this.unavailableProfile = false,
     this.profile,
     this.feedItems = const [],
+    this.feedError,
     this.discoverItems = const [],
     this.activityItems = const [],
     this.activityError,
@@ -905,6 +933,7 @@ class _FakeSocialRepository implements SocialRepository {
   final SocialProfileModel? profile;
   SocialProfileModel? updatedProfile;
   final List<ActivityEventModel> feedItems;
+  final Object? feedError;
   final List<DiscoverUserModel> discoverItems;
   final List<ActivityEventModel> activityItems;
   final Object? activityError;
@@ -993,7 +1022,13 @@ class _FakeSocialRepository implements SocialRepository {
   Future<PaginatedSocialResponse<ActivityEventModel>> getFeed({
     int limit = 20,
     String? cursor,
-  }) async => _page(feedItems);
+  }) async {
+    final error = feedError;
+    if (error != null) {
+      throw error;
+    }
+    return _page(feedItems);
+  }
 
   @override
   Future<PaginatedSocialResponse<DiscoverUserModel>> discoverUsers({
@@ -1097,16 +1132,15 @@ SocialProfileModel _profile({
   );
 }
 
-ActivityEventModel _event({String mediaType = 'SERIES'}) {
+ActivityEventModel _event({
+  String mediaType = 'SERIES',
+  String title = 'Série Teste',
+}) {
   return ActivityEventModel(
     eventId: 'event-1',
     user: const SocialUserModel(userId: 'user-1', displayName: 'Fulano'),
     activityType: 'RATED',
-    media: SocialMediaModel(
-      mediaId: '123',
-      mediaType: mediaType,
-      title: 'Série Teste',
-    ),
+    media: SocialMediaModel(mediaId: '123', mediaType: mediaType, title: title),
     createdAt: DateTime.utc(2026, 5, 20),
   );
 }
