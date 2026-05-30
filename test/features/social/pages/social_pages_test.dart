@@ -790,14 +790,23 @@ void main() {
       const SocialProfilePage(userId: 'other-user'),
       _FakeSocialRepository(
         profile: _profile(userId: 'other-user', displayName: 'Maria Social'),
-        activityItems: [_event(mediaType: 'MOVIE')],
+        activityItems: [
+          _event(mediaType: 'MOVIE', actorDisplayName: 'Raw Event Actor'),
+        ],
       ),
     );
 
     await tester.pumpRouter(router);
     await tester.pumpAndSettle();
 
-    expect(find.text('Maria Social'), findsWidgets);
+    expect(
+      find.descendant(
+        of: find.byType(Card),
+        matching: find.text('Maria Social'),
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('Raw Event Actor'), findsNothing);
     expect(find.text('Você'), findsNothing);
   });
 
@@ -1156,10 +1165,11 @@ SocialProfileModel _profile({
 ActivityEventModel _event({
   String mediaType = 'SERIES',
   String title = 'Série Teste',
+  String actorDisplayName = 'Fulano',
 }) {
   return ActivityEventModel(
     eventId: 'event-1',
-    user: const SocialUserModel(userId: 'user-1', displayName: 'Fulano'),
+    user: SocialUserModel(userId: 'user-1', displayName: actorDisplayName),
     activityType: 'RATED',
     media: SocialMediaModel(mediaId: '123', mediaType: mediaType, title: title),
     createdAt: DateTime.utc(2026, 5, 20),
