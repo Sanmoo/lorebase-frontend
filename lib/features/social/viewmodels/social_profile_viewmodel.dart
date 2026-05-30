@@ -83,7 +83,7 @@ class SocialProfileViewModel extends _$SocialProfileViewModel {
         activity: await repository.getUserActivity(resolvedUserId),
         activityError: null,
       );
-    } catch (error) {
+    } on Exception catch (error) {
       return (activity: _emptyActivityResponse(), activityError: error);
     }
   }
