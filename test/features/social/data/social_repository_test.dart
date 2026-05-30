@@ -253,6 +253,48 @@ void main() {
       expect(result.nextCursor, 'next');
     });
 
+    test('getFeed keeps nested activity payloads working', () async {
+      final dio = Dio()
+        ..httpClientAdapter = MockAdapter(
+          onFetch: (_) => _jsonBody({
+            'items': [
+              {
+                'eventId': 'evt-nested',
+                'activityType': 'WATCHING',
+                'user': {
+                  'userId': 'user-nested',
+                  'displayName': 'Maria',
+                  'avatarUrl': 'https://example.com/maria.jpg',
+                },
+                'media': {
+                  'mediaId': 'media-nested',
+                  'mediaType': 'SERIES',
+                  'title': 'Series',
+                  'posterUrl': 'https://example.com/poster.jpg',
+                },
+                'metadata': <String, dynamic>{},
+                'createdAt': '2026-05-20T10:00:00Z',
+              },
+            ],
+            'nextCursor': null,
+            'hasMore': false,
+          }),
+        );
+      final repo = SocialRepositoryImpl(dio);
+
+      final result = await repo.getFeed();
+
+      final event = result.items.single;
+      expect(event.eventId, 'evt-nested');
+      expect(event.user.userId, 'user-nested');
+      expect(event.user.displayName, 'Maria');
+      expect(event.user.avatarUrl, 'https://example.com/maria.jpg');
+      expect(event.media.mediaId, 'media-nested');
+      expect(event.media.mediaType, 'SERIES');
+      expect(event.media.title, 'Series');
+      expect(event.media.posterUrl, 'https://example.com/poster.jpg');
+    });
+
     test('discoverUsers calls GET /discover and parses users', () async {
       String? capturedPath;
       Map<String, dynamic>? capturedParams;
@@ -504,6 +546,82 @@ void main() {
         expect(result.items.single.media.mediaId, '1');
         expect(result.items.single.media.mediaType, 'MOVIE');
         expect(result.items.single.media.title, 'Movie');
+      },
+    );
+
+    test(
+      'getUserActivity normalizes flattened BFF activity media fields before parsing',
+      () async {
+        final dio = Dio()
+          ..httpClientAdapter = MockAdapter(
+            onFetch: (_) => _jsonBody({
+              'items': [
+                {
+                  'eventId': 'evt-flat',
+                  'userId': 'user-flat',
+                  'displayName': 'Ana',
+                  'username': 'ana-user',
+                  'avatarUrl': 'https://example.com/ana.jpg',
+                  'activityType': 'COMPLETED',
+                  'mediaId': 'media-flat',
+                  'mediaType': 'MOVIE',
+                  'mediaTitle': 'Flat Movie',
+                  'mediaPosterUrl': 'https://example.com/flat.jpg',
+                  'metadata': <String, dynamic>{},
+                  'createdAt': '2026-05-20T10:00:00Z',
+                },
+              ],
+              'nextCursor': null,
+              'hasMore': false,
+            }),
+          );
+        final repo = SocialRepositoryImpl(dio);
+
+        final result = await repo.getUserActivity('user-flat');
+
+        final event = result.items.single;
+        expect(event.eventId, 'evt-flat');
+        expect(event.user.userId, 'user-flat');
+        expect(event.user.displayName, 'Ana');
+        expect(event.user.avatarUrl, 'https://example.com/ana.jpg');
+        expect(event.media.mediaId, 'media-flat');
+        expect(event.media.mediaType, 'MOVIE');
+        expect(event.media.title, 'Flat Movie');
+        expect(event.media.posterUrl, 'https://example.com/flat.jpg');
+      },
+    );
+
+    test(
+      'getUserActivity supports simple flattened activity aliases',
+      () async {
+        final dio = Dio()
+          ..httpClientAdapter = MockAdapter(
+            onFetch: (_) => _jsonBody({
+              'items': [
+                {
+                  'id': 'evt-alias',
+                  'userId': 'user-alias',
+                  'type': 'RATED',
+                  'mediaId': 'media-alias',
+                  'mediaType': 'MOVIE',
+                  'mediaTitle': 'Alias Movie',
+                  'timestamp': '2026-05-20T10:00:00Z',
+                },
+              ],
+              'nextCursor': null,
+              'hasMore': false,
+            }),
+          );
+        final repo = SocialRepositoryImpl(dio);
+
+        final result = await repo.getUserActivity('user-alias');
+
+        final event = result.items.single;
+        expect(event.eventId, 'evt-alias');
+        expect(event.activityType, 'RATED');
+        expect(event.createdAt, DateTime.parse('2026-05-20T10:00:00Z'));
+        expect(event.user.userId, 'user-alias');
+        expect(event.user.displayName, 'Usuário');
       },
     );
 
