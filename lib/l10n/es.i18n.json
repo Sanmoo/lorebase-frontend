@@ -135,6 +135,7 @@
   "social_following": "Siguiendo",
   "social_profile_unavailable": "Este perfil no está disponible en este momento.",
   "social_empty_public_activity": "Aún no hay actividad pública.",
+  "social_profile_activity_load_error": "No se pudo cargar la actividad de este perfil.",
   "social_section_load_error": "No se pudo cargar $section.",
   "social_section_loading": "Cargando $section...",
   "social_followers_count(param=count)": {

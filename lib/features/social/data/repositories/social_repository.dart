@@ -143,7 +143,7 @@ class SocialRepositoryImpl implements SocialRepository {
     return _getPaginated(
       '/feed',
       queryParameters: _paginationParams(limit: limit, cursor: cursor),
-      fromJson: ActivityEventModel.fromJson,
+      fromJson: _activityEventFromJson,
       fallbackMessage: 'Failed to load feed',
     );
   }
@@ -170,7 +170,7 @@ class SocialRepositoryImpl implements SocialRepository {
     return _getPaginated(
       '/profiles/$userId/activity',
       queryParameters: _paginationParams(limit: limit, cursor: cursor),
-      fromJson: ActivityEventModel.fromJson,
+      fromJson: _activityEventFromJson,
       fallbackMessage: 'Failed to load user activity',
     );
   }
@@ -257,6 +257,71 @@ class SocialRepositoryImpl implements SocialRepository {
 
   Map<String, dynamic> _paginationParams({required int limit, String? cursor}) {
     return {'limit': limit, 'cursor': ?cursor};
+  }
+
+  ActivityEventModel _activityEventFromJson(Map<String, dynamic> json) {
+    final normalizedJson = Map<String, dynamic>.from(json);
+    // id/type/timestamp are flattened BFF activity aliases.
+    normalizedJson['eventId'] ??= normalizedJson['id'];
+    normalizedJson['activityType'] ??= normalizedJson['type'];
+    normalizedJson['createdAt'] ??= normalizedJson['timestamp'];
+    normalizedJson['user'] ??= _activityUserFromJson(normalizedJson);
+    normalizedJson['media'] ??= _activityMediaFromJson(normalizedJson);
+    return ActivityEventModel.fromJson(normalizedJson);
+  }
+
+  Map<String, dynamic> _activityUserFromJson(Map<String, dynamic> json) {
+    final metadata = json['metadata'];
+    final avatarUrl =
+        _profileAvatarUrl(json['avatarUrl']) ??
+        _profileAvatarUrl(metadata is Map ? metadata['avatarUrl'] : null);
+    return {
+      'userId': json['userId'],
+      'displayName': _activityUserDisplayName(json),
+      'avatarUrl': avatarUrl,
+    };
+  }
+
+  Map<String, dynamic> _activityMediaFromJson(Map<String, dynamic> json) {
+    return {
+      'mediaId': json['mediaId'],
+      'mediaType': json['mediaType'],
+      'title': _activityMediaTitle(json),
+      'posterUrl': _profileAvatarUrl(
+        json['mediaPosterUrl'] ?? json['posterUrl'],
+      ),
+    };
+  }
+
+  String _activityUserDisplayName(Map<String, dynamic> json) {
+    final displayName = (json['displayName'] as String?)?.trim();
+    if (displayName != null && displayName.isNotEmpty) {
+      return displayName;
+    }
+    final username = (json['username'] as String?)?.trim();
+    if (username != null && username.isNotEmpty) {
+      return username;
+    }
+    final metadata = json['metadata'];
+    if (metadata is Map) {
+      final metadataDisplayName = (metadata['displayName'] as String?)?.trim();
+      if (metadataDisplayName != null && metadataDisplayName.isNotEmpty) {
+        return metadataDisplayName;
+      }
+      final metadataUsername = (metadata['username'] as String?)?.trim();
+      if (metadataUsername != null && metadataUsername.isNotEmpty) {
+        return metadataUsername;
+      }
+    }
+    return 'Usuário';
+  }
+
+  String _activityMediaTitle(Map<String, dynamic> json) {
+    final title = (json['mediaTitle'] as String?)?.trim();
+    if (title != null && title.isNotEmpty) {
+      return title;
+    }
+    return 'Mídia';
   }
 
   PublicListItemModel _publicListItemFromJson(Map<String, dynamic> json) {

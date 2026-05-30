@@ -51,7 +51,7 @@ class SocialProfilePage extends ConsumerWidget {
             Expanded(
               child: TabBarView(
                 children: [
-                  _ActivityTab(state: state),
+                  _ActivityTab(state: state, isMe: isMe),
                   _PublicListsTab(userId: state.profile.userId),
                   _FollowListTab(
                     userId: userId,
@@ -75,21 +75,27 @@ class SocialProfilePage extends ConsumerWidget {
 }
 
 class _ActivityTab extends StatelessWidget {
-  const _ActivityTab({required this.state});
+  const _ActivityTab({required this.state, required this.isMe});
 
   final SocialProfileDetailState state;
+  final bool isMe;
 
   @override
   Widget build(BuildContext context) {
+    if (state.hasActivityError) {
+      return Center(child: Text(context.t.social_profile_activity_load_error));
+    }
     if (state.activity.items.isEmpty) {
       return Center(child: Text(context.t.social_empty_public_activity));
     }
+    final actorLabel = isMe ? 'Você' : state.profile.displayName;
     return ListView.builder(
       itemCount: state.activity.items.length,
       itemBuilder: (context, index) {
         final event = state.activity.items[index];
         return SocialActivityCard(
           event: event,
+          actorLabel: actorLabel,
           onUserTap: () => context.go('/social/profile/${event.user.userId}'),
           onMediaTap: () => context.go(
             event.media.mediaType == 'SERIES'

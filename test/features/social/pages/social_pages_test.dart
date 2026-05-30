@@ -81,11 +81,40 @@ void main() {
     },
   );
 
-  testWidgets('Social page empty feed renders CTA', (tester) async {
+  testWidgets('Social page empty feed renders empty state CTA', (tester) async {
     await tester.pumpSocial(const SocialPage(), _FakeSocialRepository());
     await tester.pumpAndSettle();
 
+    expect(find.text(t.social_empty_feed_title), findsOneWidget);
+    expect(find.text(t.social_empty_feed_body), findsOneWidget);
     expect(find.text(t.social_discover_people_cta), findsOneWidget);
+  });
+
+  testWidgets('Social feed renders activity cards when feed has items', (
+    tester,
+  ) async {
+    await tester.pumpSocial(
+      const SocialPage(),
+      _FakeSocialRepository(feedItems: [_event(title: 'Feed visível')]),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Feed visível'), findsOneWidget);
+    expect(find.text(t.social_discover_people_cta), findsNothing);
+    expect(find.text(t.social_feed_load_error), findsNothing);
+  });
+
+  testWidgets('Social feed shows error when feed request fails', (
+    tester,
+  ) async {
+    await tester.pumpSocial(
+      const SocialPage(),
+      _FakeSocialRepository(feedError: Exception('boom')),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(t.social_feed_load_error), findsOneWidget);
+    expect(find.text(t.social_discover_people_cta), findsNothing);
   });
 
   testWidgets('Onboarding page privacy choice is required', (tester) async {
@@ -434,6 +463,41 @@ void main() {
     expect(find.text(t.social_profile_unavailable), findsOneWidget);
   });
 
+  testWidgets('Profile Activity tab renders visible activity cards', (
+    tester,
+  ) async {
+    await tester.pumpSocial(
+      const SocialProfilePage(userId: 'me', isMe: true),
+      _FakeSocialRepository(activityItems: [_event()]),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Fulano'), findsWidgets);
+    expect(find.text('Série Teste'), findsOneWidget);
+    expect(find.text(t.social_empty_public_activity), findsNothing);
+    expect(find.text(t.social_profile_unavailable), findsNothing);
+  });
+
+  testWidgets(
+    'Profile Activity tab shows error instead of empty state on activity failure',
+    (tester) async {
+      await tester.pumpSocial(
+        const SocialProfilePage(userId: 'me', isMe: true),
+        _FakeSocialRepository(
+          activityError: const ServerException(
+            message: 'Activity failed',
+            statusCode: 500,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.social_profile_activity_load_error), findsOneWidget);
+      expect(find.text(t.social_empty_public_activity), findsNothing);
+      expect(find.text(t.social_profile_unavailable), findsNothing);
+    },
+  );
+
   testWidgets('My profile renders header when activity and lists are empty', (
     tester,
   ) async {
@@ -696,13 +760,16 @@ void main() {
     await tester.pumpRouter(router);
     await tester.pumpAndSettle();
 
+    expect(find.text('Você'), findsOneWidget);
+    expect(find.text('Fulano'), findsOneWidget);
+
     await tester.tap(find.text(t.social_edit_profile));
     await tester.pumpAndSettle();
     expect(find.text(t.social_edit_profile_title), findsOneWidget);
 
     router.go('/');
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Fulano').last);
+    await tester.tap(find.text('Você'));
     await tester.pumpAndSettle();
     expect(
       router.routeInformationProvider.value.uri.path,
@@ -714,6 +781,33 @@ void main() {
     await tester.tap(find.text('Série Teste'));
     await tester.pumpAndSettle();
     expect(router.routeInformationProvider.value.uri.path, '/movies/123');
+  });
+
+  testWidgets('Other profile activity cards use profile display name', (
+    tester,
+  ) async {
+    final router = _router(
+      const SocialProfilePage(userId: 'other-user'),
+      _FakeSocialRepository(
+        profile: _profile(userId: 'other-user', displayName: 'Maria Social'),
+        activityItems: [
+          _event(mediaType: 'MOVIE', actorDisplayName: 'Raw Event Actor'),
+        ],
+      ),
+    );
+
+    await tester.pumpRouter(router);
+    await tester.pumpAndSettle();
+
+    expect(
+      find.descendant(
+        of: find.byType(Card),
+        matching: find.text('Maria Social'),
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('Raw Event Actor'), findsNothing);
+    expect(find.text('Você'), findsNothing);
   });
 
   testWidgets('Onboarding save shows suggestions until finished', (
@@ -853,8 +947,10 @@ class _FakeSocialRepository implements SocialRepository {
     this.unavailableProfile = false,
     this.profile,
     this.feedItems = const [],
+    this.feedError,
     this.discoverItems = const [],
     this.activityItems = const [],
+    this.activityError,
     this.followersItems = const [],
     this.followingItems = const [],
     List<Object> discoverErrors = const [],
@@ -867,8 +963,10 @@ class _FakeSocialRepository implements SocialRepository {
   final SocialProfileModel? profile;
   SocialProfileModel? updatedProfile;
   final List<ActivityEventModel> feedItems;
+  final Object? feedError;
   final List<DiscoverUserModel> discoverItems;
   final List<ActivityEventModel> activityItems;
+  final Object? activityError;
   final List<FollowRelationshipModel> followersItems;
   final List<FollowRelationshipModel> followingItems;
   final Map<String, List<PublicListItemModel>> publicListItemsByStatus;
@@ -947,14 +1045,20 @@ class _FakeSocialRepository implements SocialRepository {
     if (unavailableProfile) {
       throw const ServerException(message: 'Unavailable', statusCode: 404);
     }
-    return _profile(userId: userId);
+    return profile ?? _profile(userId: userId);
   }
 
   @override
   Future<PaginatedSocialResponse<ActivityEventModel>> getFeed({
     int limit = 20,
     String? cursor,
-  }) async => _page(feedItems);
+  }) async {
+    final error = feedError;
+    if (error != null) {
+      throw error;
+    }
+    return _page(feedItems);
+  }
 
   @override
   Future<PaginatedSocialResponse<DiscoverUserModel>> discoverUsers({
@@ -974,7 +1078,13 @@ class _FakeSocialRepository implements SocialRepository {
     String userId, {
     int limit = 20,
     String? cursor,
-  }) async => _page(activityItems);
+  }) async {
+    final error = activityError;
+    if (error != null) {
+      throw error;
+    }
+    return _page(activityItems);
+  }
 
   @override
   Future<PaginatedSocialResponse<FollowRelationshipModel>> getFollowers(
@@ -1052,16 +1162,16 @@ SocialProfileModel _profile({
   );
 }
 
-ActivityEventModel _event({String mediaType = 'SERIES'}) {
+ActivityEventModel _event({
+  String mediaType = 'SERIES',
+  String title = 'Série Teste',
+  String actorDisplayName = 'Fulano',
+}) {
   return ActivityEventModel(
     eventId: 'event-1',
-    user: const SocialUserModel(userId: 'user-1', displayName: 'Fulano'),
+    user: SocialUserModel(userId: 'user-1', displayName: actorDisplayName),
     activityType: 'RATED',
-    media: SocialMediaModel(
-      mediaId: '123',
-      mediaType: mediaType,
-      title: 'Série Teste',
-    ),
+    media: SocialMediaModel(mediaId: '123', mediaType: mediaType, title: title),
     createdAt: DateTime.utc(2026, 5, 20),
   );
 }

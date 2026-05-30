@@ -15,19 +15,24 @@ class SocialProfileDetailState {
   final PaginatedSocialResponse<ActivityEventModel> activity;
   final PaginatedSocialResponse<PublicListItemModel> publicLists;
   final bool isFollowActionInProgress;
+  final Object? activityError;
 
   const SocialProfileDetailState({
     required this.profile,
     required this.activity,
     required this.publicLists,
     this.isFollowActionInProgress = false,
+    this.activityError,
   });
+
+  bool get hasActivityError => activityError != null;
 
   SocialProfileDetailState copyWith({
     SocialProfileModel? profile,
     PaginatedSocialResponse<ActivityEventModel>? activity,
     PaginatedSocialResponse<PublicListItemModel>? publicLists,
     bool? isFollowActionInProgress,
+    Object? activityError = _unchangedActivityError,
   }) {
     return SocialProfileDetailState(
       profile: profile ?? this.profile,
@@ -35,9 +40,14 @@ class SocialProfileDetailState {
       publicLists: publicLists ?? this.publicLists,
       isFollowActionInProgress:
           isFollowActionInProgress ?? this.isFollowActionInProgress,
+      activityError: identical(activityError, _unchangedActivityError)
+          ? this.activityError
+          : activityError,
     );
   }
 }
+
+const Object _unchangedActivityError = Object();
 
 @riverpod
 class SocialProfileViewModel extends _$SocialProfileViewModel {
@@ -48,15 +58,34 @@ class SocialProfileViewModel extends _$SocialProfileViewModel {
         ? await repository.getMyProfile()
         : await repository.getProfile(userId);
     final resolvedUserId = profile.userId;
-    final activity = await repository
-        .getUserActivity(resolvedUserId)
-        .catchError((_) => _emptyActivityResponse());
+    final (:activity, :activityError) = await _loadUserActivity(
+      repository,
+      resolvedUserId,
+    );
 
     return SocialProfileDetailState(
       profile: profile,
       activity: activity,
       publicLists: _emptyPublicListsResponse(),
+      activityError: activityError,
     );
+  }
+
+  Future<
+    ({
+      PaginatedSocialResponse<ActivityEventModel> activity,
+      Object? activityError,
+    })
+  >
+  _loadUserActivity(SocialRepository repository, String resolvedUserId) async {
+    try {
+      return (
+        activity: await repository.getUserActivity(resolvedUserId),
+        activityError: null,
+      );
+    } on Exception catch (error) {
+      return (activity: _emptyActivityResponse(), activityError: error);
+    }
   }
 
   Future<void> follow() async {

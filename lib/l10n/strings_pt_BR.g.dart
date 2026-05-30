@@ -449,6 +449,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// pt-BR: 'Nenhuma atividade pública ainda.'
 	String get social_empty_public_activity => 'Nenhuma atividade pública ainda.';
 
+	/// pt-BR: 'Não foi possível carregar a atividade deste perfil.'
+	String get social_profile_activity_load_error => 'Não foi possível carregar a atividade deste perfil.';
+
 	/// pt-BR: 'Não foi possível carregar $section.'
 	String social_section_load_error({required Object section}) => 'Não foi possível carregar ${section}.';
 
@@ -789,6 +792,7 @@ extension on Translations {
 			'social_following' => 'Seguindo',
 			'social_profile_unavailable' => 'Este perfil não está disponível no momento.',
 			'social_empty_public_activity' => 'Nenhuma atividade pública ainda.',
+			'social_profile_activity_load_error' => 'Não foi possível carregar a atividade deste perfil.',
 			'social_section_load_error' => ({required Object section}) => 'Não foi possível carregar ${section}.',
 			'social_section_loading' => ({required Object section}) => 'Carregando ${section}...',
 			'social_followers_count' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('pt'))(count, one: '${count} seguidor', other: '${count} seguidores', ), 

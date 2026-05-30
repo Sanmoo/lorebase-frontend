@@ -12,6 +12,37 @@ import 'package:lorebase/features/social/data/repositories/social_repository.dar
 import 'package:lorebase/features/social/viewmodels/social_profile_viewmodel.dart';
 
 void main() {
+  group('SocialProfileDetailState.copyWith', () {
+    test('preserves existing activityError when omitted', () {
+      final error = Exception('existing');
+      final state = _detailState(activityError: error);
+
+      final updated = state.copyWith(isFollowActionInProgress: true);
+
+      expect(updated.activityError, same(error));
+      expect(updated.hasActivityError, isTrue);
+    });
+
+    test('clears existing activityError when set to null', () {
+      final state = _detailState(activityError: Exception('existing'));
+
+      final updated = state.copyWith(activityError: null);
+
+      expect(updated.activityError, isNull);
+      expect(updated.hasActivityError, isFalse);
+    });
+
+    test('replaces existing activityError with new error', () {
+      final newError = Exception('new');
+      final state = _detailState(activityError: Exception('existing'));
+
+      final updated = state.copyWith(activityError: newError);
+
+      expect(updated.activityError, same(newError));
+      expect(updated.hasActivityError, isTrue);
+    });
+  });
+
   test('build loads profile and activity for userId', () async {
     final repo = _FakeSocialRepository();
     final container = ProviderContainer(
@@ -52,8 +83,46 @@ void main() {
     },
   );
 
-  test('build keeps profile when user activity fails', () async {
-    final repo = _FakeSocialRepository(activityError: Exception('boom'));
+  test(
+    'build keeps profile and exposes activity error when user activity fails',
+    () async {
+      final error = Exception('boom');
+      final repo = _FakeSocialRepository(activityError: error);
+      final container = ProviderContainer(
+        overrides: [socialRepositoryProvider.overrideWithValue(repo)],
+      );
+      addTearDown(container.dispose);
+
+      final state = await container.read(
+        socialProfileViewModelProvider('user-1').future,
+      );
+
+      expect(state.profile.userId, 'user-1');
+      expect(state.activity.items, isEmpty);
+      expect(state.activity.nextCursor, isNull);
+      expect(state.activity.hasMore, isFalse);
+      expect(state.activityError, same(error));
+      expect(state.activityError, isA<Exception>());
+      expect(state.hasActivityError, isTrue);
+      expect(state.publicLists.items, isEmpty);
+    },
+  );
+
+  test('build propagates unexpected activity Error', () async {
+    final repo = _FakeSocialRepository(activityError: TypeError());
+    final container = ProviderContainer(
+      overrides: [socialRepositoryProvider.overrideWithValue(repo)],
+    );
+    addTearDown(container.dispose);
+
+    await expectLater(
+      container.read(socialProfileViewModelProvider('user-1').future),
+      throwsA(isA<TypeError>()),
+    );
+  });
+
+  test('build has no activity error when user activity loads', () async {
+    final repo = _FakeSocialRepository();
     final container = ProviderContainer(
       overrides: [socialRepositoryProvider.overrideWithValue(repo)],
     );
@@ -63,11 +132,8 @@ void main() {
       socialProfileViewModelProvider('user-1').future,
     );
 
-    expect(state.profile.userId, 'user-1');
-    expect(state.activity.items, isEmpty);
-    expect(state.activity.nextCursor, isNull);
-    expect(state.activity.hasMore, isFalse);
-    expect(state.publicLists.items, isEmpty);
+    expect(state.activityError, isNull);
+    expect(state.hasActivityError, isFalse);
   });
 
   test(
@@ -370,6 +436,32 @@ class _FakeSocialRepository implements SocialRepository {
     String? avatarUrl,
     required bool isPublic,
   }) => throw UnimplementedError();
+}
+
+SocialProfileDetailState _detailState({Object? activityError}) {
+  return SocialProfileDetailState(
+    profile: SocialProfileModel(
+      userId: 'user-1',
+      displayName: 'Fulano',
+      isPublic: true,
+      followingCount: 1,
+      followerCount: 2,
+      isFollowedByMe: false,
+      createdAt: DateTime.utc(2026),
+      updatedAt: DateTime.utc(2026),
+    ),
+    activity: const PaginatedSocialResponse(
+      items: [],
+      nextCursor: null,
+      hasMore: false,
+    ),
+    publicLists: const PaginatedSocialResponse(
+      items: [],
+      nextCursor: null,
+      hasMore: false,
+    ),
+    activityError: activityError,
+  );
 }
 
 ActivityEventModel _activity() => ActivityEventModel.fromJson(<String, dynamic>{
