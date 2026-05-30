@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -13,9 +15,13 @@ import 'package:lorebase/features/tracking/data/repositories/tracking_repository
 
 class FakeMovieRepo implements MovieRepository {
   MovieModel? movieResult;
+  Completer<MovieModel>? movieCompleter;
 
   @override
-  Future<MovieModel> getMovieById(String id) async => movieResult!;
+  Future<MovieModel> getMovieById(String id) async {
+    if (movieCompleter != null) return movieCompleter!.future;
+    return movieResult!;
+  }
 
   @override
   Future<List<MovieModel>> searchMovies(
@@ -29,7 +35,9 @@ class FakeMovieRepo implements MovieRepository {
 
 class FakeTrackingRepo implements TrackingRepository {
   List<TrackedMediaModel> trackingResults = [];
+  TrackedMediaModel? directTrackingResult;
   bool shouldThrow = false;
+  bool shouldThrowDirect = false;
   bool shouldThrowStart = false;
   bool shouldThrowUpdate = false;
   String? lastStatus;
@@ -40,6 +48,10 @@ class FakeTrackingRepo implements TrackingRepository {
   bool deleteCalled = false;
   bool updateCalled = false;
   bool startCalled = false;
+  int getTrackingCallCount = 0;
+  int getTrackingByMediaCallCount = 0;
+  String? lastGetTrackingByMediaId;
+  MediaType? lastGetTrackingByMediaType;
 
   @override
   Future<List<TrackedMediaModel>> getTracking({
@@ -48,8 +60,31 @@ class FakeTrackingRepo implements TrackingRepository {
     int page = 1,
     int pageSize = 20,
   }) async {
+    getTrackingCallCount++;
     if (shouldThrow) throw Exception('Failed');
     return trackingResults;
+  }
+
+  @override
+  Future<TrackedMediaModel?> getTrackingByMedia(
+    String mediaId,
+    MediaType mediaType,
+  ) async {
+    getTrackingByMediaCallCount++;
+    lastGetTrackingByMediaId = mediaId;
+    lastGetTrackingByMediaType = mediaType;
+    if (shouldThrow || shouldThrowDirect) {
+      await Future<void>.delayed(Duration.zero);
+      throw Exception('Failed');
+    }
+    return directTrackingResult ??
+        trackingResults.cast<TrackedMediaModel?>().firstWhere(
+          (tracking) =>
+              tracking?.mediaType == mediaType &&
+              ((tracking?.media?.mediaId == mediaId) ||
+                  tracking?.mediaId == mediaId),
+          orElse: () => null,
+        );
   }
 
   @override
@@ -113,6 +148,53 @@ class FakeTrackingRepo implements TrackingRepository {
 }
 
 void main() {
+  test('build() uses direct movie tracking lookup', () async {
+    final movieRepo = FakeMovieRepo()
+      ..movieResult = const MovieModel(tmdbId: 550, title: 'Fight Club');
+    final directTracking = TrackedMediaModel(
+      trackingId: 'track-550',
+      userId: 'user-1',
+      mediaType: MediaType.movie,
+      mediaId: '550',
+      status: 'COMPLETED',
+      addedAt: DateTime.now(),
+      lastUpdated: DateTime.now(),
+    );
+    final trackingRepo = FakeTrackingRepo()
+      ..directTrackingResult = directTracking
+      ..trackingResults = [
+        TrackedMediaModel(
+          trackingId: 'track-other',
+          userId: 'user-1',
+          mediaType: MediaType.movie,
+          mediaId: '999',
+          status: 'WATCHING',
+          addedAt: DateTime.now(),
+          lastUpdated: DateTime.now(),
+        ),
+      ];
+
+    final container = ProviderContainer(
+      overrides: [
+        movieRepositoryProvider.overrideWith((ref) => movieRepo),
+        trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
+        cacheServiceProvider.overrideWith((ref) => CacheService()),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    final state = await container.read(
+      movieDetailViewModelProvider(550).future,
+    );
+
+    expect(state.movie.title, 'Fight Club');
+    expect(state.tracking, same(directTracking));
+    expect(trackingRepo.getTrackingByMediaCallCount, 1);
+    expect(trackingRepo.lastGetTrackingByMediaId, '550');
+    expect(trackingRepo.lastGetTrackingByMediaType, MediaType.movie);
+    expect(trackingRepo.getTrackingCallCount, 0);
+  });
+
   test('build() loads movie and matching movie tracking', () async {
     final movieRepo = FakeMovieRepo()
       ..movieResult = const MovieModel(tmdbId: 7, title: 'Se7en');
@@ -169,6 +251,33 @@ void main() {
     expect(state.movie.title, 'Se7en');
     expect(state.tracking, isNull);
   });
+
+  test(
+    'build() handles fast tracking error while movie detail is pending',
+    () async {
+      final movieCompleter = Completer<MovieModel>();
+      final movieRepo = FakeMovieRepo()..movieCompleter = movieCompleter;
+      final trackingRepo = FakeTrackingRepo()..shouldThrowDirect = true;
+
+      final container = ProviderContainer(
+        overrides: [
+          movieRepositoryProvider.overrideWith((ref) => movieRepo),
+          trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
+          cacheServiceProvider.overrideWith((ref) => CacheService()),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      final future = container.read(movieDetailViewModelProvider(7).future);
+      await Future<void>.delayed(Duration.zero);
+      movieCompleter.complete(const MovieModel(tmdbId: 7, title: 'Se7en'));
+
+      final state = await future;
+
+      expect(state.movie.title, 'Se7en');
+      expect(state.tracking, isNull);
+    },
+  );
 
   test('addTracking() calls startTracking and invalidates', () async {
     final movieRepo = FakeMovieRepo()

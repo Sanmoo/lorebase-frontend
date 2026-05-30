@@ -14,8 +14,11 @@ class MockAdapter implements HttpClientAdapter {
   MockAdapter({this.onFetch});
 
   @override
-  Future<ResponseBody> fetch(RequestOptions options,
-      Stream<Uint8List>? requestStream, Future<void>? cancelFuture) async {
+  Future<ResponseBody> fetch(
+    RequestOptions options,
+    Stream<Uint8List>? requestStream,
+    Future<void>? cancelFuture,
+  ) async {
     if (onFetch != null) return onFetch!(options)!;
     return ResponseBody.fromString('', 200);
   }
@@ -25,31 +28,31 @@ class MockAdapter implements HttpClientAdapter {
 }
 
 ResponseBody _json(dynamic data) => ResponseBody.fromString(
-      jsonEncode(data),
-      200,
-      headers: {
-        Headers.contentTypeHeader: [Headers.jsonContentType]
-      },
-    );
+  jsonEncode(data),
+  200,
+  headers: {
+    Headers.contentTypeHeader: [Headers.jsonContentType],
+  },
+);
 
 final now = DateTime.now().toIso8601String();
 
 Map<String, dynamic> _trackingJson(String id, String mediaType) => {
-      'trackingId': id,
-      'userId': 'user-1',
-      'mediaType': mediaType,
-      'mediaId': '123',
-      'status': 'WATCHING',
-      'rating': 8,
-      'review': 'Great!',
-      'addedAt': now,
-      'lastUpdated': now,
-      'media': {
-        'mediaId': 123,
-        'title': mediaType == 'movie' ? 'Movie 123' : 'Series 123',
-        'mediaType': mediaType,
-      },
-    };
+  'trackingId': id,
+  'userId': 'user-1',
+  'mediaType': mediaType,
+  'mediaId': '123',
+  'status': 'WATCHING',
+  'rating': 8,
+  'review': 'Great!',
+  'addedAt': now,
+  'lastUpdated': now,
+  'media': {
+    'mediaId': 123,
+    'title': mediaType == 'movie' ? 'Movie 123' : 'Series 123',
+    'mediaType': mediaType,
+  },
+};
 
 void main() {
   group('TrackingRepositoryImpl', () {
@@ -59,7 +62,7 @@ void main() {
           onFetch: (options) => _json({
             'items': [
               _trackingJson('t-1', 'series'),
-              _trackingJson('t-2', 'series')
+              _trackingJson('t-2', 'series'),
             ],
           }),
         );
@@ -71,31 +74,33 @@ void main() {
       expect(results[1].trackingId, 't-2');
     });
 
-    test('getTracking() passes status, mediaType, page, pageSize, includeMedia',
-        () async {
-      Map<String, dynamic>? capturedParams;
-      final dio = Dio()
-        ..httpClientAdapter = MockAdapter(
-          onFetch: (options) {
-            capturedParams = options.queryParameters;
-            return _json({'items': <Map<String, dynamic>>[]});
-          },
+    test(
+      'getTracking() passes status, mediaType, page, pageSize, includeMedia',
+      () async {
+        Map<String, dynamic>? capturedParams;
+        final dio = Dio()
+          ..httpClientAdapter = MockAdapter(
+            onFetch: (options) {
+              capturedParams = options.queryParameters;
+              return _json({'items': <Map<String, dynamic>>[]});
+            },
+          );
+        final repo = TrackingRepositoryImpl(dio);
+
+        await repo.getTracking(
+          status: 'WATCHING',
+          mediaType: MediaType.movie,
+          page: 2,
+          pageSize: 10,
         );
-      final repo = TrackingRepositoryImpl(dio);
 
-      await repo.getTracking(
-        status: 'WATCHING',
-        mediaType: MediaType.movie,
-        page: 2,
-        pageSize: 10,
-      );
-
-      expect(capturedParams!['status'], 'WATCHING');
-      expect(capturedParams!['mediaType'], 'MOVIE');
-      expect(capturedParams!['page'], 2);
-      expect(capturedParams!['pageSize'], 10);
-      expect(capturedParams!['includeMedia'], true);
-    });
+        expect(capturedParams!['status'], 'WATCHING');
+        expect(capturedParams!['mediaType'], 'MOVIE');
+        expect(capturedParams!['page'], 2);
+        expect(capturedParams!['pageSize'], 10);
+        expect(capturedParams!['includeMedia'], true);
+      },
+    );
 
     test('getTracking() throws ServerException on DioException', () async {
       final dio = Dio()
@@ -107,10 +112,69 @@ void main() {
         );
       final repo = TrackingRepositoryImpl(dio);
 
-      expect(
-        () => repo.getTracking(),
-        throwsA(isA<ServerException>()),
+      expect(() => repo.getTracking(), throwsA(isA<ServerException>()));
+    });
+
+    test('getTrackingByMedia returns tracked media on 200', () async {
+      final dio = Dio(BaseOptions(baseUrl: 'https://api.example.com'));
+      final adapter = MockAdapter(
+        onFetch: (options) {
+          expect(options.method, 'GET');
+          expect(options.path, '/tracking/42');
+          expect(
+            options.queryParameters['mediaType'],
+            MediaType.series.apiValue,
+          );
+          return _json({
+            'trackingId': 'track-42',
+            'userId': 'user-1',
+            'mediaType': 'SERIES',
+            'mediaId': '42',
+            'status': 'WATCHING',
+            'addedAt': '2024-01-01T00:00:00Z',
+            'lastUpdated': '2024-01-02T00:00:00Z',
+          });
+        },
       );
+      dio.httpClientAdapter = adapter;
+      final repo = TrackingRepositoryImpl(dio);
+
+      final tracking = await repo.getTrackingByMedia('42', MediaType.series);
+
+      expect(tracking, isNotNull);
+      expect(tracking!.trackingId, 'track-42');
+      expect(tracking.mediaId, '42');
+      expect(tracking.mediaType, MediaType.series);
+      expect(tracking.status, 'WATCHING');
+    });
+
+    test('getTrackingByMedia returns null on 404', () async {
+      final dio = Dio(BaseOptions(baseUrl: 'https://api.example.com'));
+      final adapter = MockAdapter(
+        onFetch: (options) {
+          expect(options.method, 'GET');
+          expect(options.path, '/tracking/42');
+          expect(
+            options.queryParameters['mediaType'],
+            MediaType.series.apiValue,
+          );
+          throw DioException(
+            type: DioExceptionType.badResponse,
+            requestOptions: options,
+            response: Response(
+              requestOptions: options,
+              statusCode: 404,
+              data: {'code': 'NOT_FOUND', 'message': 'TrackedMedia not found'},
+            ),
+          );
+        },
+      );
+      dio.httpClientAdapter = adapter;
+      final repo = TrackingRepositoryImpl(dio);
+
+      final tracking = await repo.getTrackingByMedia('42', MediaType.series);
+
+      expect(tracking, isNull);
     });
 
     test('startTracking() POSTs and returns TrackedMediaModel', () async {
@@ -120,8 +184,11 @@ void main() {
         );
       final repo = TrackingRepositoryImpl(dio);
 
-      final result =
-          await repo.startTracking('series-1', MediaType.series, 'WATCHING');
+      final result = await repo.startTracking(
+        'series-1',
+        MediaType.series,
+        'WATCHING',
+      );
       expect(result.trackingId, 't-new');
       expect(result.status, 'WATCHING');
     });
@@ -160,34 +227,36 @@ void main() {
       expect(result.status, 'WATCHING'); // from _trackingJson default
     });
 
-    test('updateTracking() sends backend-compatible rating and review keys',
-        () async {
-      Map<String, dynamic>? capturedData;
-      final dio = Dio()
-        ..httpClientAdapter = MockAdapter(
-          onFetch: (options) {
-            capturedData = options.data as Map<String, dynamic>?;
-            return _json(_trackingJson('t-updated', 'SERIES'));
-          },
+    test(
+      'updateTracking() sends backend-compatible rating and review keys',
+      () async {
+        Map<String, dynamic>? capturedData;
+        final dio = Dio()
+          ..httpClientAdapter = MockAdapter(
+            onFetch: (options) {
+              capturedData = options.data as Map<String, dynamic>?;
+              return _json(_trackingJson('t-updated', 'SERIES'));
+            },
+          );
+        final repo = TrackingRepositoryImpl(dio);
+
+        await repo.updateTracking(
+          'series-1',
+          mediaType: MediaType.series,
+          status: 'WATCHING',
+          rating: 8,
+          review: 'Great',
         );
-      final repo = TrackingRepositoryImpl(dio);
 
-      await repo.updateTracking(
-        'series-1',
-        mediaType: MediaType.series,
-        status: 'WATCHING',
-        rating: 8,
-        review: 'Great',
-      );
-
-      expect(capturedData, isNotNull);
-      expect(capturedData!['mediaType'], 'SERIES');
-      expect(capturedData!['status'], 'WATCHING');
-      expect(capturedData!['seriesRating'], 8);
-      expect(capturedData!['seriesReview'], 'Great');
-      expect(capturedData!.containsKey('rating'), false);
-      expect(capturedData!.containsKey('review'), false);
-    });
+        expect(capturedData, isNotNull);
+        expect(capturedData!['mediaType'], 'SERIES');
+        expect(capturedData!['status'], 'WATCHING');
+        expect(capturedData!['seriesRating'], 8);
+        expect(capturedData!['seriesReview'], 'Great');
+        expect(capturedData!.containsKey('rating'), false);
+        expect(capturedData!.containsKey('review'), false);
+      },
+    );
 
     test('updateTracking() throws ServerException on DioException', () async {
       final dio = Dio()
@@ -263,9 +332,9 @@ void main() {
 
     test('trackingRepositoryProvider creates TrackingRepositoryImpl', () {
       final dio = Dio();
-      final container = ProviderContainer(overrides: [
-        dioProvider.overrideWith((ref) => dio),
-      ]);
+      final container = ProviderContainer(
+        overrides: [dioProvider.overrideWith((ref) => dio)],
+      );
       addTearDown(container.dispose);
 
       final repo = container.read(trackingRepositoryProvider);
