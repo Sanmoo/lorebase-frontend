@@ -3,7 +3,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../core/cache/cache_providers.dart';
 import '../data/repositories/series_repository.dart';
 import '../../tracking/data/repositories/tracking_repository.dart';
-import '../../tracking/data/models/tracked_media_model.dart';
 import '../../tracking/data/models/media_type.dart';
 import 'series_detail_state.dart';
 
@@ -27,17 +26,10 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
         });
 
     final series = await seriesFuture;
-
-    TrackedMediaModel? tracking;
-    try {
-      tracking = await trackingFuture;
-      debugPrint(
-        '[SERIES_VM] build() found tracking: rating=${tracking?.rating} status=${tracking?.status}',
-      );
-    } catch (e) {
-      debugPrint('[SERIES_VM] build() tracking lookup failed: $e');
-      tracking = null;
-    }
+    final tracking = await trackingFuture;
+    debugPrint(
+      '[SERIES_VM] build() found tracking: rating=${tracking?.rating} status=${tracking?.status}',
+    );
 
     return SeriesDetailState(series: series, tracking: tracking);
   }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -13,9 +15,13 @@ import 'package:lorebase/features/tracking/data/repositories/tracking_repository
 
 class FakeMovieRepo implements MovieRepository {
   MovieModel? movieResult;
+  Completer<MovieModel>? movieCompleter;
 
   @override
-  Future<MovieModel> getMovieById(String id) async => movieResult!;
+  Future<MovieModel> getMovieById(String id) async {
+    if (movieCompleter != null) return movieCompleter!.future;
+    return movieResult!;
+  }
 
   @override
   Future<List<MovieModel>> searchMovies(
@@ -245,6 +251,33 @@ void main() {
     expect(state.movie.title, 'Se7en');
     expect(state.tracking, isNull);
   });
+
+  test(
+    'build() handles fast tracking error while movie detail is pending',
+    () async {
+      final movieCompleter = Completer<MovieModel>();
+      final movieRepo = FakeMovieRepo()..movieCompleter = movieCompleter;
+      final trackingRepo = FakeTrackingRepo()..shouldThrowDirect = true;
+
+      final container = ProviderContainer(
+        overrides: [
+          movieRepositoryProvider.overrideWith((ref) => movieRepo),
+          trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
+          cacheServiceProvider.overrideWith((ref) => CacheService()),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      final future = container.read(movieDetailViewModelProvider(7).future);
+      await Future<void>.delayed(Duration.zero);
+      movieCompleter.complete(const MovieModel(tmdbId: 7, title: 'Se7en'));
+
+      final state = await future;
+
+      expect(state.movie.title, 'Se7en');
+      expect(state.tracking, isNull);
+    },
+  );
 
   test('addTracking() calls startTracking and invalidates', () async {
     final movieRepo = FakeMovieRepo()

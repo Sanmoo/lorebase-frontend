@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../core/cache/cache_providers.dart';
 import '../../tracking/data/models/media_type.dart';
-import '../../tracking/data/models/tracked_media_model.dart';
 import '../../tracking/data/repositories/tracking_repository.dart';
 import '../data/repositories/movie_repository.dart';
 import 'movie_detail_state.dart';
@@ -18,19 +17,17 @@ class MovieDetailViewModel extends _$MovieDetailViewModel {
     final movieFuture = ref.read(movieRepositoryProvider).getMovieById(mediaId);
     final trackingFuture = ref
         .read(trackingRepositoryProvider)
-        .getTrackingByMedia(mediaId, MediaType.movie);
+        .getTrackingByMedia(mediaId, MediaType.movie)
+        .catchError((Object e) {
+          debugPrint('[MOVIE_VM] build() tracking lookup failed: $e');
+          return null;
+        });
 
     final movie = await movieFuture;
-    TrackedMediaModel? tracking;
-    try {
-      tracking = await trackingFuture;
-      debugPrint(
-        '[MOVIE_VM] build() found tracking: rating=${tracking?.rating} status=${tracking?.status}',
-      );
-    } catch (e) {
-      debugPrint('[MOVIE_VM] build() tracking lookup failed: $e');
-      tracking = null;
-    }
+    final tracking = await trackingFuture;
+    debugPrint(
+      '[MOVIE_VM] build() found tracking: rating=${tracking?.rating} status=${tracking?.status}',
+    );
     return MovieDetailState(movie: movie, tracking: tracking);
   }
 

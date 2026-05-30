@@ -291,6 +291,31 @@ void main() {
       expect(state.tracking, isNull);
     });
 
+    test(
+      'build() handles fast tracking error while series detail is pending',
+      () async {
+        final seriesCompleter = Completer<SeriesModel>();
+        final seriesRepo = FakeSeriesRepo()..seriesCompleter = seriesCompleter;
+        final trackingRepo = FakeTrackingRepo()..shouldThrowTracking = true;
+        final container = createContainer(
+          seriesRepo: seriesRepo,
+          trackingRepo: trackingRepo,
+        );
+        addTearDown(container.dispose);
+
+        final future = container.read(seriesDetailViewModelProvider(42).future);
+        await Future<void>.delayed(Duration.zero);
+        seriesCompleter.complete(
+          const SeriesModel(tmdbId: 42, title: 'Test Show'),
+        );
+
+        final state = await future;
+
+        expect(state.series.tmdbId, 42);
+        expect(state.tracking, isNull);
+      },
+    );
+
     test('build() matches tracking by nested media.tmdbId', () async {
       final seriesRepo = FakeSeriesRepo()
         ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
