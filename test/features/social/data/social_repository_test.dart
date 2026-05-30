@@ -592,6 +592,41 @@ void main() {
     );
 
     test(
+      'getUserActivity falls back to metadata avatarUrl for flattened activity',
+      () async {
+        final dio = Dio()
+          ..httpClientAdapter = MockAdapter(
+            onFetch: (_) => _jsonBody({
+              'items': [
+                {
+                  'eventId': 'evt-metadata-avatar',
+                  'userId': 'user-metadata-avatar',
+                  'activityType': 'COMPLETED',
+                  'mediaId': 'media-metadata-avatar',
+                  'mediaType': 'MOVIE',
+                  'mediaTitle': 'Metadata Movie',
+                  'metadata': <String, dynamic>{
+                    'displayName': 'Metadata Ana',
+                    'avatarUrl': 'https://example.com/metadata-ana.jpg',
+                  },
+                  'createdAt': '2026-05-20T10:00:00Z',
+                },
+              ],
+              'nextCursor': null,
+              'hasMore': false,
+            }),
+          );
+        final repo = SocialRepositoryImpl(dio);
+
+        final result = await repo.getUserActivity('user-metadata-avatar');
+
+        final event = result.items.single;
+        expect(event.user.displayName, 'Metadata Ana');
+        expect(event.user.avatarUrl, 'https://example.com/metadata-ana.jpg');
+      },
+    );
+
+    test(
       'getUserActivity supports simple flattened activity aliases',
       () async {
         final dio = Dio()

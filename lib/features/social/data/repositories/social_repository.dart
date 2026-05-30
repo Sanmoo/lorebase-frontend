@@ -261,6 +261,7 @@ class SocialRepositoryImpl implements SocialRepository {
 
   ActivityEventModel _activityEventFromJson(Map<String, dynamic> json) {
     final normalizedJson = Map<String, dynamic>.from(json);
+    // id/type/timestamp are flattened BFF activity aliases.
     normalizedJson['eventId'] ??= normalizedJson['id'];
     normalizedJson['activityType'] ??= normalizedJson['type'];
     normalizedJson['createdAt'] ??= normalizedJson['timestamp'];
@@ -270,10 +271,14 @@ class SocialRepositoryImpl implements SocialRepository {
   }
 
   Map<String, dynamic> _activityUserFromJson(Map<String, dynamic> json) {
+    final metadata = json['metadata'];
+    final avatarUrl =
+        _profileAvatarUrl(json['avatarUrl']) ??
+        _profileAvatarUrl(metadata is Map ? metadata['avatarUrl'] : null);
     return {
       'userId': json['userId'],
       'displayName': _activityUserDisplayName(json),
-      'avatarUrl': _profileAvatarUrl(json['avatarUrl']),
+      'avatarUrl': avatarUrl,
     };
   }
 
