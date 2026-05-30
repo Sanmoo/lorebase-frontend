@@ -760,13 +760,16 @@ void main() {
     await tester.pumpRouter(router);
     await tester.pumpAndSettle();
 
+    expect(find.text('Você'), findsOneWidget);
+    expect(find.text('Fulano'), findsOneWidget);
+
     await tester.tap(find.text(t.social_edit_profile));
     await tester.pumpAndSettle();
     expect(find.text(t.social_edit_profile_title), findsOneWidget);
 
     router.go('/');
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Fulano').last);
+    await tester.tap(find.text('Você'));
     await tester.pumpAndSettle();
     expect(
       router.routeInformationProvider.value.uri.path,
@@ -778,6 +781,24 @@ void main() {
     await tester.tap(find.text('Série Teste'));
     await tester.pumpAndSettle();
     expect(router.routeInformationProvider.value.uri.path, '/movies/123');
+  });
+
+  testWidgets('Other profile activity cards use profile display name', (
+    tester,
+  ) async {
+    final router = _router(
+      const SocialProfilePage(userId: 'other-user'),
+      _FakeSocialRepository(
+        profile: _profile(userId: 'other-user', displayName: 'Maria Social'),
+        activityItems: [_event(mediaType: 'MOVIE')],
+      ),
+    );
+
+    await tester.pumpRouter(router);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Maria Social'), findsWidgets);
+    expect(find.text('Você'), findsNothing);
   });
 
   testWidgets('Onboarding save shows suggestions until finished', (
@@ -1015,7 +1036,7 @@ class _FakeSocialRepository implements SocialRepository {
     if (unavailableProfile) {
       throw const ServerException(message: 'Unavailable', statusCode: 404);
     }
-    return _profile(userId: userId);
+    return profile ?? _profile(userId: userId);
   }
 
   @override

@@ -25,6 +25,7 @@ void main() {
   Future<void> pumpCard(
     WidgetTester tester,
     ActivityEventModel event, {
+    String? actorLabel,
     VoidCallback? onUserTap,
     VoidCallback? onMediaTap,
   }) {
@@ -33,6 +34,7 @@ void main() {
         home: Scaffold(
           body: SocialActivityCard(
             event: event,
+            actorLabel: actorLabel,
             onUserTap: onUserTap ?? () {},
             onMediaTap: onMediaTap ?? () {},
           ),
@@ -46,6 +48,15 @@ void main() {
 
     expect(find.textContaining('avaliou'), findsOneWidget);
     expect(find.text('⭐ 8/10'), findsOneWidget);
+  });
+
+  testWidgets('actorLabel overrides displayed actor name', (tester) async {
+    await pumpCard(tester, event(), actorLabel: 'Você');
+
+    expect(find.text('Você'), findsOneWidget);
+    expect(find.text('Fulano'), findsNothing);
+    expect(find.textContaining('avaliou'), findsOneWidget);
+    expect(find.text('One Piece'), findsOneWidget);
   });
 
   testWidgets('renders all activity verbs and review metadata fallbacks', (

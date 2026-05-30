@@ -7,11 +7,13 @@ class SocialActivityCard extends StatelessWidget {
   const SocialActivityCard({
     super.key,
     required this.event,
+    this.actorLabel,
     required this.onUserTap,
     required this.onMediaTap,
   });
 
   final ActivityEventModel event;
+  final String? actorLabel;
   final VoidCallback onUserTap;
   final VoidCallback onMediaTap;
 
@@ -22,6 +24,7 @@ class SocialActivityCard extends StatelessWidget {
     final listName = socialActivityListNameFor(event);
     final showsNamedList =
         event.activityType.toUpperCase() == 'ADDED_TO_LIST' && listName != null;
+    final displayedActor = actorLabel ?? event.user.displayName;
 
     return Card(
       child: Padding(
@@ -36,7 +39,7 @@ class SocialActivityCard extends StatelessWidget {
                 InkWell(
                   onTap: onUserTap,
                   child: Text(
-                    event.user.displayName,
+                    displayedActor,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
