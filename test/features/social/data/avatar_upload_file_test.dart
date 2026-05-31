@@ -26,4 +26,34 @@ void main() {
 
     expect(file.isSupportedMimeType, isFalse);
   });
+
+  test('normalizes mime type before checking support', () {
+    final file = AvatarUploadFile(
+      bytes: Uint8List.fromList([1]),
+      filename: 'avatar.png',
+      mimeType: ' IMAGE/PNG ',
+    );
+
+    expect(file.isSupportedMimeType, isTrue);
+  });
+
+  test('size limit allows exactly the maximum size', () {
+    final file = AvatarUploadFile(
+      bytes: Uint8List(AvatarUploadFile.maxSizeBytes),
+      filename: 'avatar.png',
+      mimeType: 'image/png',
+    );
+
+    expect(file.isWithinSizeLimit, isTrue);
+  });
+
+  test('size limit rejects one byte over the maximum size', () {
+    final file = AvatarUploadFile(
+      bytes: Uint8List(AvatarUploadFile.maxSizeBytes + 1),
+      filename: 'avatar.png',
+      mimeType: 'image/png',
+    );
+
+    expect(file.isWithinSizeLimit, isFalse);
+  });
 }

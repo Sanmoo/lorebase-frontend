@@ -16,7 +16,8 @@ class AvatarUploadFile {
 
   int get sizeBytes => bytes.lengthInBytes;
 
-  bool get isSupportedMimeType => supportedMimeTypes.contains(mimeType);
+  bool get isSupportedMimeType =>
+      supportedMimeTypes.contains(mimeType.trim().toLowerCase());
 
   bool get isWithinSizeLimit => sizeBytes <= maxSizeBytes;
 }
