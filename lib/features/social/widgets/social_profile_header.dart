@@ -142,7 +142,9 @@ class _ProfileAvatar extends StatelessWidget {
           Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface.withOpacity(0.72),
+                color: Theme.of(
+                  context,
+                ).colorScheme.surface.withValues(alpha: 0.72),
                 shape: BoxShape.circle,
               ),
               child: const Padding(

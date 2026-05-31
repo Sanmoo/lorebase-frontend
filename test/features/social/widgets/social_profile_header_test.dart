@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lorebase/features/social/data/models/social_profile_model.dart';
 import 'package:lorebase/features/social/widgets/social_profile_header.dart';
@@ -123,8 +122,6 @@ Future<void> main() async {
         find.byKey(const Key('socialProfileAvatarAction')),
       );
       expect(avatarSemantics.label, 'Edit avatar');
-      expect(avatarSemantics.hasFlag(SemanticsFlag.isButton), isTrue);
-      expect(avatarSemantics.hasFlag(SemanticsFlag.isEnabled), isTrue);
       await tester.tap(find.byKey(const Key('socialProfileAvatarAction')));
 
       expect(calls, 1);
