@@ -60,7 +60,7 @@ class SocialAvatarViewModel extends _$SocialAvatarViewModel {
       if (!file.isSupportedMimeType) {
         state = state.copyWith(
           isUploading: false,
-          errorMessage: 'Unsupported avatar file type',
+          errorMessage: 'Avatar must be JPEG, PNG, or WebP',
         );
         return;
       }
@@ -86,10 +86,10 @@ class SocialAvatarViewModel extends _$SocialAvatarViewModel {
         clearErrorMessage: true,
         profile: profile,
       );
-    } catch (error) {
+    } catch (_) {
       state = state.copyWith(
         isUploading: false,
-        errorMessage: error.toString(),
+        errorMessage: 'Failed to update avatar',
       );
     }
   }
