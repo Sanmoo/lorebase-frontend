@@ -12,7 +12,9 @@ class SocialProfileHeader extends StatelessWidget {
     this.onFollow,
     this.onUnfollow,
     this.onEdit,
+    this.onAvatarEdit,
     this.isLoading = false,
+    this.isAvatarUploading = false,
   });
 
   final SocialProfileModel profile;
@@ -20,7 +22,9 @@ class SocialProfileHeader extends StatelessWidget {
   final VoidCallback? onFollow;
   final VoidCallback? onUnfollow;
   final VoidCallback? onEdit;
+  final VoidCallback? onAvatarEdit;
   final bool isLoading;
+  final bool isAvatarUploading;
 
   @override
   Widget build(BuildContext context) {
@@ -28,12 +32,12 @@ class SocialProfileHeader extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          CircleAvatar(
-            radius: 36,
-            child: Text(
-              _initial(profile.displayName),
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
+          _ProfileAvatar(
+            profile: profile,
+            isMe: isMe,
+            onAvatarEdit: onAvatarEdit,
+            isAvatarUploading: isAvatarUploading,
+            initial: _initial(profile.displayName),
           ),
           const SizedBox(height: 12),
           Text(
@@ -77,5 +81,86 @@ class SocialProfileHeader extends StatelessWidget {
     return value.trim().isEmpty
         ? '?'
         : value.trim().characters.first.toUpperCase();
+  }
+}
+
+class _ProfileAvatar extends StatelessWidget {
+  const _ProfileAvatar({
+    required this.profile,
+    required this.isMe,
+    required this.initial,
+    this.onAvatarEdit,
+    this.isAvatarUploading = false,
+  });
+
+  final SocialProfileModel profile;
+  final bool isMe;
+  final String initial;
+  final VoidCallback? onAvatarEdit;
+  final bool isAvatarUploading;
+
+  @override
+  Widget build(BuildContext context) {
+    final avatarUrl = profile.avatarUrl?.trim();
+    final hasAvatar = avatarUrl != null && avatarUrl.isNotEmpty;
+    final canEdit = isMe && onAvatarEdit != null && !isAvatarUploading;
+    final avatar = Stack(
+      clipBehavior: Clip.none,
+      children: [
+        CircleAvatar(
+          radius: 36,
+          backgroundImage: hasAvatar ? NetworkImage(avatarUrl) : null,
+          child: hasAvatar
+              ? null
+              : Text(
+                  initial,
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+        ),
+        if (isMe && onAvatarEdit != null)
+          Positioned(
+            right: -2,
+            bottom: -2,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+                shape: BoxShape.circle,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(6),
+                child: Icon(
+                  Icons.edit,
+                  size: 16,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+              ),
+            ),
+          ),
+        if (isAvatarUploading)
+          Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface.withOpacity(0.72),
+                shape: BoxShape.circle,
+              ),
+              child: const Padding(
+                padding: EdgeInsets.all(20),
+                child: CircularProgressIndicator(strokeWidth: 3),
+              ),
+            ),
+          ),
+      ],
+    );
+
+    if (!isMe || onAvatarEdit == null) {
+      return avatar;
+    }
+
+    return InkWell(
+      key: const Key('socialProfileAvatarAction'),
+      customBorder: const CircleBorder(),
+      onTap: canEdit ? onAvatarEdit : null,
+      child: avatar,
+    );
   }
 }

@@ -7,16 +7,18 @@ import 'package:lorebase/l10n/strings.g.dart';
 Future<void> main() async {
   await LocaleSettings.setLocale(AppLocale.ptBr);
 
-  SocialProfileModel profile({bool followed = false}) => SocialProfileModel(
-    userId: 'user-1',
-    displayName: 'Fulano',
-    isPublic: true,
-    followingCount: 3,
-    followerCount: 7,
-    isFollowedByMe: followed,
-    createdAt: DateTime(2026, 5, 20),
-    updatedAt: DateTime(2026, 5, 20),
-  );
+  SocialProfileModel profile({bool followed = false, String? avatarUrl}) =>
+      SocialProfileModel(
+        userId: 'user-1',
+        displayName: 'Fulano',
+        avatarUrl: avatarUrl,
+        isPublic: true,
+        followingCount: 3,
+        followerCount: 7,
+        isFollowedByMe: followed,
+        createdAt: DateTime(2026, 5, 20),
+        updatedAt: DateTime(2026, 5, 20),
+      );
 
   Future<void> pumpHeader(
     WidgetTester tester, {
@@ -25,17 +27,22 @@ Future<void> main() async {
     VoidCallback? onFollow,
     VoidCallback? onUnfollow,
     VoidCallback? onEdit,
+    VoidCallback? onAvatarEdit,
+    bool isAvatarUploading = false,
+    String? avatarUrl,
   }) {
     return tester.pumpWidget(
       TranslationProvider(
         child: MaterialApp(
           home: Scaffold(
             body: SocialProfileHeader(
-              profile: profile(followed: followed),
+              profile: profile(followed: followed, avatarUrl: avatarUrl),
               isMe: isMe,
               onFollow: onFollow,
               onUnfollow: onUnfollow,
               onEdit: onEdit,
+              onAvatarEdit: onAvatarEdit,
+              isAvatarUploading: isAvatarUploading,
             ),
           ),
         ),
@@ -68,6 +75,51 @@ Future<void> main() async {
     await tester.tap(find.text(t.social_edit_profile));
 
     expect(calls, 1);
+  });
+
+  testWidgets('keeps fallback initial when avatarUrl is missing', (
+    tester,
+  ) async {
+    await pumpHeader(tester, avatarUrl: '');
+
+    final avatar = tester.widget<CircleAvatar>(find.byType(CircleAvatar));
+    expect(avatar.backgroundImage, isNull);
+    expect(find.text('F'), findsOneWidget);
+  });
+
+  testWidgets('uses network avatar when avatarUrl is present', (tester) async {
+    await pumpHeader(tester, avatarUrl: 'https://example.com/avatar.png');
+
+    final avatar = tester.widget<CircleAvatar>(find.byType(CircleAvatar));
+    expect(avatar.backgroundImage, isA<NetworkImage>());
+    expect(find.text('F'), findsNothing);
+    expect(tester.takeException(), isA<NetworkImageLoadException>());
+  });
+
+  testWidgets('tapping own avatar calls avatar edit callback', (tester) async {
+    var calls = 0;
+    await pumpHeader(tester, isMe: true, onAvatarEdit: () => calls++);
+
+    await tester.tap(find.byKey(const Key('socialProfileAvatarAction')));
+
+    expect(calls, 1);
+  });
+
+  testWidgets('uploading overlay disables avatar edit callback', (
+    tester,
+  ) async {
+    var calls = 0;
+    await pumpHeader(
+      tester,
+      isMe: true,
+      onAvatarEdit: () => calls++,
+      isAvatarUploading: true,
+    );
+
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    await tester.tap(find.byKey(const Key('socialProfileAvatarAction')));
+
+    expect(calls, 0);
   });
 
   testWidgets('renders follow and unfollow button variants', (tester) async {
