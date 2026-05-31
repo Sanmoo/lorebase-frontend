@@ -51,7 +51,7 @@ final class SeriesDetailViewModelProvider
 }
 
 String _$seriesDetailViewModelHash() =>
-    r'9de261bd690931889463ebafc31bcb2812b909ed';
+    r'7a46b8545b83684f483fd1cf01b8a9849397749a';
 
 final class SeriesDetailViewModelFamily extends $Family
     with

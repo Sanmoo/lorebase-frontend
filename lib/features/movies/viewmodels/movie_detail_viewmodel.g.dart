@@ -51,7 +51,7 @@ final class MovieDetailViewModelProvider
 }
 
 String _$movieDetailViewModelHash() =>
-    r'81e171334142569f0c267eb11b49b4301d6c9480';
+    r'181074f129492a35eee4df81233292b2cc6a48c7';
 
 final class MovieDetailViewModelFamily extends $Family
     with
