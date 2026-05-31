@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lorebase/core/errors/exceptions.dart';
 import 'package:lorebase/features/social/data/models/activity_event_model.dart';
+import 'package:lorebase/features/social/data/models/avatar_upload_file.dart';
 import 'package:lorebase/features/social/data/models/discover_user_model.dart';
 import 'package:lorebase/features/social/data/models/follow_relationship_model.dart';
 import 'package:lorebase/features/social/data/models/paginated_social_response.dart';
@@ -11,6 +12,11 @@ import 'package:lorebase/features/social/data/repositories/social_repository.dar
 import 'package:lorebase/features/social/viewmodels/social_discover_viewmodel.dart';
 
 class _FakeSocialRepository implements SocialRepository {
+  @override
+  Future<SocialProfileModel> updateMyAvatar({required AvatarUploadFile file}) {
+    throw UnimplementedError();
+  }
+
   PaginatedSocialResponse<DiscoverUserModel>? discover;
   Object? followError;
   int discoverCalls = 0;

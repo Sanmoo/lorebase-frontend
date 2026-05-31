@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lorebase/core/errors/exceptions.dart';
 import 'package:lorebase/features/social/data/models/activity_event_model.dart';
+import 'package:lorebase/features/social/data/models/avatar_upload_file.dart';
 import 'package:lorebase/features/social/data/models/discover_user_model.dart';
 import 'package:lorebase/features/social/data/models/follow_relationship_model.dart';
 import 'package:lorebase/features/social/data/models/paginated_social_response.dart';
@@ -222,6 +223,54 @@ void main() {
           'isPublic': true,
         });
         expect(result.displayName, 'Fulano');
+      },
+    );
+
+    test(
+      'updateMyAvatar sends multipart avatar and parses updated profile',
+      () async {
+        late RequestOptions captured;
+        final dio = Dio(BaseOptions(baseUrl: 'https://api.example.test'))
+          ..interceptors.add(
+            InterceptorsWrapper(
+              onRequest: (options, handler) {
+                captured = options;
+                handler.resolve(
+                  Response(
+                    requestOptions: options,
+                    statusCode: 200,
+                    data: {
+                      'userId': 'user-1',
+                      'displayName': 'Alice',
+                      'avatarUrl': 'https://cdn.example/avatar.png',
+                      'isPublic': true,
+                      'followingCount': 0,
+                      'followerCount': 0,
+                      'createdAt': '2026-05-30T12:00:00Z',
+                      'updatedAt': '2026-05-30T12:00:00Z',
+                    },
+                  ),
+                );
+              },
+            ),
+          );
+        final repo = SocialRepositoryImpl(dio);
+
+        final profile = await repo.updateMyAvatar(
+          file: AvatarUploadFile(
+            bytes: Uint8List.fromList([1, 2, 3]),
+            filename: 'avatar.png',
+            mimeType: 'image/png',
+          ),
+        );
+
+        expect(captured.method, 'PUT');
+        expect(captured.path, '/users/me/avatar');
+        expect(captured.data, isA<FormData>());
+        final formData = captured.data as FormData;
+        expect(formData.files.single.key, 'avatar');
+        expect(formData.files.single.value.filename, 'avatar.png');
+        expect(profile.avatarUrl, 'https://cdn.example/avatar.png');
       },
     );
 

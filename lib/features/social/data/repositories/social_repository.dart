@@ -1,10 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http_parser/http_parser.dart';
 
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/logging/debug_log.dart';
 import '../../../../core/providers/core_providers.dart';
 import '../models/activity_event_model.dart';
+import '../models/avatar_upload_file.dart';
 import '../models/discover_user_model.dart';
 import '../models/follow_relationship_model.dart';
 import '../models/paginated_social_response.dart';
@@ -19,6 +21,8 @@ abstract class SocialRepository {
     String? avatarUrl,
     required bool isPublic,
   });
+
+  Future<SocialProfileModel> updateMyAvatar({required AvatarUploadFile file});
 
   Future<SocialProfileModel> getProfile(String userId);
 
@@ -109,6 +113,27 @@ class SocialRepositoryImpl implements SocialRepository {
       return _profileFromResponse(response.data);
     } on DioException catch (e) {
       throw _repositoryException(e, 'Failed to update profile');
+    }
+  }
+
+  @override
+  Future<SocialProfileModel> updateMyAvatar({
+    required AvatarUploadFile file,
+  }) async {
+    try {
+      final response = await _dio.put(
+        '/users/me/avatar',
+        data: FormData.fromMap({
+          'avatar': MultipartFile.fromBytes(
+            file.bytes,
+            filename: file.filename,
+            contentType: MediaType.parse(file.mimeType),
+          ),
+        }),
+      );
+      return _profileFromResponse(response.data);
+    } on DioException catch (e) {
+      throw _repositoryException(e, 'Failed to update avatar');
     }
   }
 
