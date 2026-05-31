@@ -1,4 +1,9 @@
+import 'dart:async';
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lorebase/features/social/data/models/social_profile_model.dart';
 import 'package:lorebase/features/social/widgets/social_profile_header.dart';
@@ -6,6 +11,14 @@ import 'package:lorebase/l10n/strings.g.dart';
 
 Future<void> main() async {
   await LocaleSettings.setLocale(AppLocale.ptBr);
+
+  setUpAll(() {
+    HttpOverrides.global = _AvatarHttpOverrides();
+  });
+
+  tearDownAll(() {
+    HttpOverrides.global = null;
+  });
 
   SocialProfileModel profile({bool followed = false, String? avatarUrl}) =>
       SocialProfileModel(
@@ -91,18 +104,33 @@ Future<void> main() async {
     await pumpHeader(tester, avatarUrl: 'https://example.com/avatar.png');
 
     final avatar = tester.widget<CircleAvatar>(find.byType(CircleAvatar));
-    expect(avatar.backgroundImage, isA<NetworkImage>());
+    final backgroundImage = avatar.backgroundImage;
+    expect(backgroundImage, isA<NetworkImage>());
+    expect(
+      (backgroundImage! as NetworkImage).url,
+      'https://example.com/avatar.png',
+    );
     expect(find.text('F'), findsNothing);
-    expect(tester.takeException(), isA<NetworkImageLoadException>());
   });
 
   testWidgets('tapping own avatar calls avatar edit callback', (tester) async {
-    var calls = 0;
-    await pumpHeader(tester, isMe: true, onAvatarEdit: () => calls++);
+    final semantics = tester.ensureSemantics();
+    try {
+      var calls = 0;
+      await pumpHeader(tester, isMe: true, onAvatarEdit: () => calls++);
 
-    await tester.tap(find.byKey(const Key('socialProfileAvatarAction')));
+      final avatarSemantics = tester.getSemantics(
+        find.byKey(const Key('socialProfileAvatarAction')),
+      );
+      expect(avatarSemantics.label, 'Edit avatar');
+      expect(avatarSemantics.hasFlag(SemanticsFlag.isButton), isTrue);
+      expect(avatarSemantics.hasFlag(SemanticsFlag.isEnabled), isTrue);
+      await tester.tap(find.byKey(const Key('socialProfileAvatarAction')));
 
-    expect(calls, 1);
+      expect(calls, 1);
+    } finally {
+      semantics.dispose();
+    }
   });
 
   testWidgets('uploading overlay disables avatar edit callback', (
@@ -121,6 +149,15 @@ Future<void> main() async {
 
     expect(calls, 0);
   });
+
+  testWidgets(
+    'uploading overlay only renders for editable current-user avatar',
+    (tester) async {
+      await pumpHeader(tester, isAvatarUploading: true);
+
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+    },
+  );
 
   testWidgets('renders follow and unfollow button variants', (tester) async {
     await pumpHeader(tester, onFollow: () {}, onUnfollow: () {});
@@ -175,4 +212,121 @@ Future<void> main() async {
     final button = tester.widget<FilledButton>(find.byType(FilledButton));
     expect(button.onPressed, isNull);
   });
+}
+
+class _AvatarHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) => _AvatarHttpClient();
+}
+
+class _AvatarHttpClient extends Fake implements HttpClient {
+  @override
+  set autoUncompress(bool value) {}
+
+  @override
+  Future<HttpClientRequest> getUrl(Uri url) async => _AvatarHttpClientRequest();
+}
+
+class _AvatarHttpClientRequest extends Fake implements HttpClientRequest {
+  @override
+  Future<HttpClientResponse> close() async => _AvatarHttpClientResponse();
+}
+
+class _AvatarHttpClientResponse extends Stream<List<int>>
+    with Fake
+    implements HttpClientResponse {
+  static final _bytes = Uint8List.fromList([
+    0x89,
+    0x50,
+    0x4E,
+    0x47,
+    0x0D,
+    0x0A,
+    0x1A,
+    0x0A,
+    0x00,
+    0x00,
+    0x00,
+    0x0D,
+    0x49,
+    0x48,
+    0x44,
+    0x52,
+    0x00,
+    0x00,
+    0x00,
+    0x01,
+    0x00,
+    0x00,
+    0x00,
+    0x01,
+    0x08,
+    0x06,
+    0x00,
+    0x00,
+    0x00,
+    0x1F,
+    0x15,
+    0xC4,
+    0x89,
+    0x00,
+    0x00,
+    0x00,
+    0x0A,
+    0x49,
+    0x44,
+    0x41,
+    0x54,
+    0x78,
+    0x9C,
+    0x63,
+    0x00,
+    0x01,
+    0x00,
+    0x00,
+    0x05,
+    0x00,
+    0x01,
+    0x0D,
+    0x0A,
+    0x2D,
+    0xB4,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x49,
+    0x45,
+    0x4E,
+    0x44,
+    0xAE,
+    0x42,
+    0x60,
+    0x82,
+  ]);
+
+  @override
+  int get contentLength => _bytes.length;
+
+  @override
+  HttpClientResponseCompressionState get compressionState =>
+      HttpClientResponseCompressionState.notCompressed;
+
+  @override
+  int get statusCode => HttpStatus.ok;
+
+  @override
+  StreamSubscription<List<int>> listen(
+    void Function(List<int> event)? onData, {
+    Function? onError,
+    void Function()? onDone,
+    bool? cancelOnError,
+  }) {
+    return Stream<List<int>>.value(_bytes).listen(
+      onData,
+      onError: onError,
+      onDone: onDone,
+      cancelOnError: cancelOnError,
+    );
+  }
 }

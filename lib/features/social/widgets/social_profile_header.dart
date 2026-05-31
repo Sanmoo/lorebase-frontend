@@ -103,7 +103,9 @@ class _ProfileAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     final avatarUrl = profile.avatarUrl?.trim();
     final hasAvatar = avatarUrl != null && avatarUrl.isNotEmpty;
-    final canEdit = isMe && onAvatarEdit != null && !isAvatarUploading;
+    final isEditable = isMe && onAvatarEdit != null;
+    final isUploadingEditableAvatar = isEditable && isAvatarUploading;
+    final canEdit = isEditable && !isUploadingEditableAvatar;
     final avatar = Stack(
       clipBehavior: Clip.none,
       children: [
@@ -117,7 +119,7 @@ class _ProfileAvatar extends StatelessWidget {
                   style: Theme.of(context).textTheme.headlineMedium,
                 ),
         ),
-        if (isMe && onAvatarEdit != null)
+        if (isEditable)
           Positioned(
             right: -2,
             bottom: -2,
@@ -136,7 +138,7 @@ class _ProfileAvatar extends StatelessWidget {
               ),
             ),
           ),
-        if (isAvatarUploading)
+        if (isUploadingEditableAvatar)
           Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(
@@ -152,15 +154,22 @@ class _ProfileAvatar extends StatelessWidget {
       ],
     );
 
-    if (!isMe || onAvatarEdit == null) {
+    if (!isEditable) {
       return avatar;
     }
 
-    return InkWell(
-      key: const Key('socialProfileAvatarAction'),
-      customBorder: const CircleBorder(),
-      onTap: canEdit ? onAvatarEdit : null,
-      child: avatar,
+    return Semantics(
+      container: true,
+      excludeSemantics: true,
+      label: 'Edit avatar',
+      button: true,
+      enabled: canEdit,
+      child: InkWell(
+        key: const Key('socialProfileAvatarAction'),
+        customBorder: const CircleBorder(),
+        onTap: canEdit ? onAvatarEdit : null,
+        child: avatar,
+      ),
     );
   }
 }
