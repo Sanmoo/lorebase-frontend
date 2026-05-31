@@ -29,7 +29,8 @@ void main() {
 
     final state = container.read(socialAvatarViewModelProvider);
     expect(picker.sources, [AvatarImageSource.gallery]);
-    expect(repo.avatarFiles, [same(file)]);
+    expect(repo.avatarFiles, hasLength(1));
+    expect(repo.avatarFiles.single, same(file));
     expect(state.isUploading, isFalse);
     expect(state.errorMessage, isNull);
     expect(state.profile?.avatarUrl, 'https://cdn.example/avatar.png');

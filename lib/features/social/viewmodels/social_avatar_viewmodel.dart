@@ -87,6 +87,9 @@ class SocialAvatarViewModel extends _$SocialAvatarViewModel {
         profile: profile,
       );
     } catch (_) {
+      if (!ref.mounted) {
+        return;
+      }
       state = state.copyWith(
         isUploading: false,
         errorMessage: 'Failed to update avatar',
