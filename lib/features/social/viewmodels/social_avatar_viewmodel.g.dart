@@ -42,7 +42,7 @@ final class SocialAvatarViewModelProvider
 }
 
 String _$socialAvatarViewModelHash() =>
-    r'2e6ee5a3b72ba9826090d48fd2fd6bf5fa377dc2';
+    r'0f9e6208a5e6c5f9209bc556b64e505223abc117';
 
 abstract class _$SocialAvatarViewModel extends $Notifier<SocialAvatarState> {
   SocialAvatarState build();
