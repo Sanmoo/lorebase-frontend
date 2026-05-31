@@ -257,7 +257,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(repository.savedDisplayName, 'Beltrano');
-    expect(repository.savedAvatarUrl, 'https://example.com/avatar.png');
+    expect(repository.savedAvatarUrl, isNull);
     expect(repository.savedIsPublic, isFalse);
     expect(repository.getMyProfileCallCount, 2);
   });
@@ -375,6 +375,45 @@ void main() {
     expect(repository.lastAvatarFilename, 'avatar.png');
     expect(find.text(t.social_avatar_updated_success), findsOneWidget);
   });
+
+  testWidgets(
+    'Own profile cancellation after success does not show stale success',
+    (tester) async {
+      final repository = _FakeSocialRepository();
+      final picker = _SequentialAvatarPickerClient([
+        XFile.fromData(
+          Uint8List.fromList([1, 2, 3]),
+          name: 'avatar.png',
+          mimeType: 'image/png',
+        ),
+        null,
+      ]);
+      await tester.pumpSocial(
+        const SocialProfilePage(userId: 'me', isMe: true),
+        repository,
+        avatarPickerClient: picker,
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const Key('socialProfileAvatarAction')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.social_choose_from_gallery));
+      await tester.pumpAndSettle();
+      expect(find.text(t.social_avatar_updated_success), findsOneWidget);
+
+      ScaffoldMessenger.of(
+        tester.element(find.byType(SocialProfilePage)),
+      ).clearSnackBars();
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('socialProfileAvatarAction')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.social_choose_from_gallery));
+      await tester.pumpAndSettle();
+
+      expect(repository.avatarUploadCallCount, 1);
+      expect(find.text(t.social_avatar_updated_success), findsNothing);
+    },
+  );
 
   testWidgets(
     'Profile page renders Activity, Lists, Followers, Following tabs',
@@ -897,7 +936,11 @@ void main() {
 }
 
 extension on WidgetTester {
-  Future<void> pumpSocial(Widget child, SocialRepository repository) {
+  Future<void> pumpSocial(
+    Widget child,
+    SocialRepository repository, {
+    AvatarPickerClient? avatarPickerClient,
+  }) {
     return pumpWidget(
       TranslationProvider(
         child: ProviderScope(
@@ -905,7 +948,9 @@ extension on WidgetTester {
           overrides: [
             socialRepositoryProvider.overrideWithValue(repository),
             avatarImagePickerProvider.overrideWithValue(
-              AvatarImagePicker(_FakeAvatarPickerClient()),
+              AvatarImagePicker(
+                avatarPickerClient ?? _FakeAvatarPickerClient(),
+              ),
             ),
           ],
           child: MaterialApp(home: Scaffold(body: child)),
@@ -993,6 +1038,17 @@ GoRouter _router(
       ),
     ],
   );
+}
+
+class _SequentialAvatarPickerClient implements AvatarPickerClient {
+  _SequentialAvatarPickerClient(this._files);
+
+  final List<XFile?> _files;
+
+  @override
+  Future<XFile?> pickImage({required ImageSource source}) async {
+    return _files.removeAt(0);
+  }
 }
 
 class _FakeAvatarPickerClient implements AvatarPickerClient {

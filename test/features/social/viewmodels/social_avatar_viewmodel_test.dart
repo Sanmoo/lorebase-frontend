@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lorebase/core/errors/exceptions.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lorebase/features/social/data/avatar_image_picker.dart';
@@ -34,7 +35,39 @@ void main() {
     expect(state.isUploading, isFalse);
     expect(state.error, isNull);
     expect(state.profile?.avatarUrl, 'https://cdn.example/avatar.png');
+    expect(state.lastUploadSucceeded, isTrue);
   });
+
+  test(
+    'success followed by cancellation does not report a new success',
+    () async {
+      final file = _file('avatar.png', 'image/png');
+      final repo = _FakeSocialRepository();
+      final picker = _FakeAvatarImagePicker(file: file);
+      final container = _container(repo: repo, picker: picker);
+      addTearDown(container.dispose);
+
+      await container
+          .read(socialAvatarViewModelProvider.notifier)
+          .uploadFrom(AvatarImageSource.gallery);
+      expect(
+        container.read(socialAvatarViewModelProvider).lastUploadSucceeded,
+        isTrue,
+      );
+
+      picker.file = null;
+      await container
+          .read(socialAvatarViewModelProvider.notifier)
+          .uploadFrom(AvatarImageSource.gallery);
+
+      final state = container.read(socialAvatarViewModelProvider);
+      expect(repo.avatarFiles, hasLength(1));
+      expect(state.isUploading, isFalse);
+      expect(state.error, isNull);
+      expect(state.profile?.avatarUrl, 'https://cdn.example/avatar.png');
+      expect(state.lastUploadSucceeded, isFalse);
+    },
+  );
 
   test('uploads camera avatar', () async {
     final repo = _FakeSocialRepository();
@@ -143,6 +176,50 @@ void main() {
     expect(state.error, SocialAvatarError.updateFailure);
   });
 
+  test('repository payload too large error maps to size limit', () async {
+    final repo = _FakeSocialRepository(
+      error: const ServerException(
+        message: 'avatar image must be 10MB or smaller',
+        statusCode: 413,
+      ),
+    );
+    final picker = _FakeAvatarImagePicker(
+      file: _file('avatar.png', 'image/png'),
+    );
+    final container = _container(repo: repo, picker: picker);
+    addTearDown(container.dispose);
+
+    await container
+        .read(socialAvatarViewModelProvider.notifier)
+        .uploadFrom(AvatarImageSource.gallery);
+
+    final state = container.read(socialAvatarViewModelProvider);
+    expect(state.error, SocialAvatarError.sizeLimit);
+    expect(state.lastUploadSucceeded, isFalse);
+  });
+
+  test('repository unsupported media error maps to invalid type', () async {
+    final repo = _FakeSocialRepository(
+      error: const ServerException(
+        message: 'avatar image must be JPEG, PNG, or WebP',
+        statusCode: 415,
+      ),
+    );
+    final picker = _FakeAvatarImagePicker(
+      file: _file('avatar.png', 'image/png'),
+    );
+    final container = _container(repo: repo, picker: picker);
+    addTearDown(container.dispose);
+
+    await container
+        .read(socialAvatarViewModelProvider.notifier)
+        .uploadFrom(AvatarImageSource.gallery);
+
+    final state = container.read(socialAvatarViewModelProvider);
+    expect(state.error, SocialAvatarError.invalidType);
+    expect(state.lastUploadSucceeded, isFalse);
+  });
+
   test('guards concurrent upload attempts', () async {
     final completer = Completer<AvatarUploadFile?>();
     final repo = _FakeSocialRepository();
@@ -196,7 +273,7 @@ class _FakeAvatarImagePicker extends AvatarImagePicker {
   _FakeAvatarImagePicker({this.file, this.error, this.completer})
     : super(_UnusedAvatarPickerClient());
 
-  final AvatarUploadFile? file;
+  AvatarUploadFile? file;
   final Object? error;
   final Completer<AvatarUploadFile?>? completer;
   final sources = <AvatarImageSource>[];

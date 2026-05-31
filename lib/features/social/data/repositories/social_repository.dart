@@ -106,7 +106,7 @@ class SocialRepositoryImpl implements SocialRepository {
         '/users/me/profile',
         data: {
           'displayName': displayName,
-          'avatarUrl': avatarUrl,
+          'avatarUrl': ?avatarUrl,
           'isPublic': isPublic,
         },
       );

@@ -226,6 +226,22 @@ void main() {
       },
     );
 
+    test('updateMyProfile omits avatarUrl when not provided', () async {
+      Map<String, dynamic>? capturedData;
+      final dio = Dio()
+        ..httpClientAdapter = MockAdapter(
+          onFetch: (options) {
+            capturedData = Map<String, dynamic>.from(options.data as Map);
+            return _jsonBody(_profileJson());
+          },
+        );
+      final repo = SocialRepositoryImpl(dio);
+
+      await repo.updateMyProfile(displayName: 'Fulano', isPublic: true);
+
+      expect(capturedData, {'displayName': 'Fulano', 'isPublic': true});
+    });
+
     test(
       'updateMyAvatar sends multipart avatar and parses updated profile',
       () async {

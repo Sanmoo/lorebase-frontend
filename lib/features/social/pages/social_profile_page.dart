@@ -116,7 +116,9 @@ Future<void> _pickAvatarSource(BuildContext context, WidgetRef ref) async {
   final state = ref.read(socialAvatarViewModelProvider);
   final message =
       state.error?.localizedMessage(context) ??
-      (state.profile != null ? context.t.social_avatar_updated_success : null);
+      (state.lastUploadSucceeded
+          ? context.t.social_avatar_updated_success
+          : null);
   if (message != null) {
     ScaffoldMessenger.of(
       context,

@@ -140,12 +140,12 @@ class _EditSocialProfilePageState extends ConsumerState<EditSocialProfilePage> {
       return;
     }
     final avatarState = ref.read(socialAvatarViewModelProvider);
-    if (avatarState.profile != null) {
+    if (avatarState.lastUploadSucceeded && avatarState.profile != null) {
       setState(() => _avatarUrl = avatarState.profile!.avatarUrl);
     }
     final message =
         avatarState.error?.localizedMessage(context) ??
-        (avatarState.profile != null
+        (avatarState.lastUploadSucceeded
             ? context.t.social_avatar_updated_success
             : null);
     if (message != null) {
@@ -163,7 +163,7 @@ class _EditSocialProfilePageState extends ConsumerState<EditSocialProfilePage> {
         .read(socialOnboardingViewModelProvider.notifier)
         .saveProfile(
           displayName: _displayNameController.text,
-          avatarUrl: _avatarUrl,
+          avatarUrl: null,
           privacy: _privacy,
         );
     if (!mounted) {
