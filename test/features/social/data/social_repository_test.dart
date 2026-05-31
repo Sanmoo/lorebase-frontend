@@ -270,7 +270,116 @@ void main() {
         final formData = captured.data as FormData;
         expect(formData.files.single.key, 'avatar');
         expect(formData.files.single.value.filename, 'avatar.png');
+        expect(formData.files.single.value.contentType.toString(), 'image/png');
         expect(profile.avatarUrl, 'https://cdn.example/avatar.png');
+      },
+    );
+
+    test(
+      'updateMyAvatar normalizes MIME type before building multipart request',
+      () async {
+        late RequestOptions captured;
+        final dio = Dio(BaseOptions(baseUrl: 'https://api.example.test'))
+          ..interceptors.add(
+            InterceptorsWrapper(
+              onRequest: (options, handler) {
+                captured = options;
+                handler.resolve(
+                  Response(
+                    requestOptions: options,
+                    statusCode: 200,
+                    data: _profileJson(),
+                  ),
+                );
+              },
+            ),
+          );
+        final repo = SocialRepositoryImpl(dio);
+
+        await repo.updateMyAvatar(
+          file: AvatarUploadFile(
+            bytes: Uint8List.fromList([1, 2, 3]),
+            filename: 'avatar.png',
+            mimeType: ' IMAGE/PNG ',
+          ),
+        );
+
+        final formData = captured.data as FormData;
+        expect(formData.files.single.value.contentType.toString(), 'image/png');
+      },
+    );
+
+    test(
+      'updateMyAvatar rejects unsupported MIME type before sending request',
+      () async {
+        var didSendRequest = false;
+        final dio = Dio(BaseOptions(baseUrl: 'https://api.example.test'))
+          ..interceptors.add(
+            InterceptorsWrapper(
+              onRequest: (options, handler) {
+                didSendRequest = true;
+                handler.next(options);
+              },
+            ),
+          );
+        final repo = SocialRepositoryImpl(dio);
+
+        final future = repo.updateMyAvatar(
+          file: AvatarUploadFile(
+            bytes: Uint8List.fromList([1, 2, 3]),
+            filename: 'avatar.gif',
+            mimeType: 'image/gif',
+          ),
+        );
+
+        await expectLater(
+          future,
+          throwsA(
+            isA<ServerException>().having(
+              (error) => error.message,
+              'message',
+              'Invalid avatar file',
+            ),
+          ),
+        );
+        expect(didSendRequest, isFalse);
+      },
+    );
+
+    test(
+      'updateMyAvatar rejects oversized file before sending request',
+      () async {
+        var didSendRequest = false;
+        final dio = Dio(BaseOptions(baseUrl: 'https://api.example.test'))
+          ..interceptors.add(
+            InterceptorsWrapper(
+              onRequest: (options, handler) {
+                didSendRequest = true;
+                handler.next(options);
+              },
+            ),
+          );
+        final repo = SocialRepositoryImpl(dio);
+
+        final future = repo.updateMyAvatar(
+          file: AvatarUploadFile(
+            bytes: Uint8List(AvatarUploadFile.maxSizeBytes + 1),
+            filename: 'avatar.png',
+            mimeType: 'image/png',
+          ),
+        );
+
+        await expectLater(
+          future,
+          throwsA(
+            isA<ServerException>().having(
+              (error) => error.message,
+              'message',
+              'Invalid avatar file',
+            ),
+          ),
+        );
+        expect(didSendRequest, isFalse);
       },
     );
 

@@ -120,6 +120,11 @@ class SocialRepositoryImpl implements SocialRepository {
   Future<SocialProfileModel> updateMyAvatar({
     required AvatarUploadFile file,
   }) async {
+    final normalizedMimeType = file.mimeType.trim().toLowerCase();
+    if (!file.isSupportedMimeType || !file.isWithinSizeLimit) {
+      throw const ServerException(message: 'Invalid avatar file');
+    }
+
     try {
       final response = await _dio.put(
         '/users/me/avatar',
@@ -127,13 +132,15 @@ class SocialRepositoryImpl implements SocialRepository {
           'avatar': MultipartFile.fromBytes(
             file.bytes,
             filename: file.filename,
-            contentType: MediaType.parse(file.mimeType),
+            contentType: MediaType.parse(normalizedMimeType),
           ),
         }),
       );
       return _profileFromResponse(response.data);
     } on DioException catch (e) {
       throw _repositoryException(e, 'Failed to update avatar');
+    } on FormatException {
+      throw const ServerException(message: 'Invalid avatar file');
     }
   }
 
