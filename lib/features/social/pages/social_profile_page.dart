@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../l10n/strings.g.dart';
+import '../data/avatar_image_picker.dart';
+import '../viewmodels/social_avatar_viewmodel.dart';
 import '../viewmodels/social_follow_list_viewmodel.dart';
 import '../viewmodels/social_profile_viewmodel.dart';
 import '../viewmodels/social_public_lists_viewmodel.dart';
@@ -21,6 +23,7 @@ class SocialProfilePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final detail = ref.watch(socialProfileViewModelProvider(userId));
+    final avatarState = ref.watch(socialAvatarViewModelProvider);
 
     return detail.when(
       data: (state) => DefaultTabController(
@@ -38,6 +41,8 @@ class SocialProfilePage extends ConsumerWidget {
                   .read(socialProfileViewModelProvider(userId).notifier)
                   .unfollow(),
               onEdit: () => context.push('/social/profile/edit'),
+              isAvatarUploading: isMe && avatarState.isUploading,
+              onAvatarEdit: isMe ? () => _pickAvatarSource(context, ref) : null,
             ),
             TabBar(
               isScrollable: true,
@@ -71,6 +76,51 @@ class SocialProfilePage extends ConsumerWidget {
           Center(child: Text(context.t.social_profile_unavailable)),
       loading: () => const Center(child: CircularProgressIndicator()),
     );
+  }
+}
+
+Future<void> _pickAvatarSource(BuildContext context, WidgetRef ref) async {
+  final source = await showModalBottomSheet<AvatarImageSource>(
+    context: context,
+    builder: (context) => SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            leading: const Icon(Icons.photo_library_outlined),
+            title: const Text('Choose from gallery'),
+            onTap: () => Navigator.of(context).pop(AvatarImageSource.gallery),
+          ),
+          ListTile(
+            leading: const Icon(Icons.photo_camera_outlined),
+            title: const Text('Take a photo'),
+            onTap: () => Navigator.of(context).pop(AvatarImageSource.camera),
+          ),
+          ListTile(
+            leading: const Icon(Icons.close),
+            title: const Text('Cancel'),
+            onTap: () => Navigator.of(context).pop(),
+          ),
+        ],
+      ),
+    ),
+  );
+  if (source == null || !context.mounted) {
+    return;
+  }
+
+  await ref.read(socialAvatarViewModelProvider.notifier).uploadFrom(source);
+  if (!context.mounted) {
+    return;
+  }
+  final state = ref.read(socialAvatarViewModelProvider);
+  final message =
+      state.errorMessage ??
+      (state.profile != null ? 'Profile photo updated' : null);
+  if (message != null) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 }
 

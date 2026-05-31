@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:lorebase/core/errors/exceptions.dart';
+import 'package:lorebase/features/social/data/avatar_image_picker.dart';
 import 'package:lorebase/features/social/data/models/activity_event_model.dart';
 import 'package:lorebase/features/social/data/models/avatar_upload_file.dart';
 import 'package:lorebase/features/social/data/models/discover_user_model.dart';
@@ -243,10 +246,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.widgetWithText(TextFormField, 'Beltrano'), findsOneWidget);
-    expect(
-      find.widgetWithText(TextFormField, 'https://example.com/avatar.png'),
-      findsOneWidget,
-    );
+    expect(find.text('https://example.com/avatar.png'), findsNothing);
+    expect(find.text('Change photo'), findsOneWidget);
     expect(
       tester.widget<SwitchListTile>(find.byType(SwitchListTile)).value,
       isFalse,
@@ -324,6 +325,55 @@ void main() {
     expect(observer.popCount, 0);
     expect(find.text(t.social_edit_profile_title), findsOneWidget);
     expect(find.text(t.social_profile_save_error), findsOneWidget);
+  });
+
+  testWidgets('Edit social profile has no avatar URL field and changes photo', (
+    tester,
+  ) async {
+    final repository = _FakeSocialRepository(
+      profile: _profile(avatarUrl: 'https://example.com/avatar.png'),
+    );
+    await tester.pumpSocial(const EditSocialProfilePage(), repository);
+    await tester.pumpAndSettle();
+
+    expect(find.text(t.social_avatar_url), findsNothing);
+    expect(find.text('Change photo'), findsOneWidget);
+
+    await tester.tap(find.text('Change photo'));
+    await tester.pumpAndSettle();
+    expect(find.text('Choose from gallery'), findsOneWidget);
+    expect(find.text('Take a photo'), findsOneWidget);
+
+    await tester.tap(find.text('Choose from gallery'));
+    await tester.pumpAndSettle();
+
+    expect(repository.avatarUploadCallCount, 1);
+    expect(repository.lastAvatarFilename, 'avatar.png');
+    expect(find.text('Profile photo updated'), findsOneWidget);
+  });
+
+  testWidgets('Own profile avatar opens source choices and gallery uploads', (
+    tester,
+  ) async {
+    final repository = _FakeSocialRepository();
+    await tester.pumpSocial(
+      const SocialProfilePage(userId: 'me', isMe: true),
+      repository,
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('socialProfileAvatarAction')));
+    await tester.pumpAndSettle();
+    expect(find.text('Choose from gallery'), findsOneWidget);
+    expect(find.text('Take a photo'), findsOneWidget);
+    expect(find.text('Cancel'), findsOneWidget);
+
+    await tester.tap(find.text('Choose from gallery'));
+    await tester.pumpAndSettle();
+
+    expect(repository.avatarUploadCallCount, 1);
+    expect(repository.lastAvatarFilename, 'avatar.png');
+    expect(find.text('Profile photo updated'), findsOneWidget);
   });
 
   testWidgets(
@@ -597,7 +647,12 @@ void main() {
           path: '/',
           builder: (context, state) => ProviderScope(
             retry: (_, _) => null,
-            overrides: [socialRepositoryProvider.overrideWithValue(repository)],
+            overrides: [
+              socialRepositoryProvider.overrideWithValue(repository),
+              avatarImagePickerProvider.overrideWithValue(
+                AvatarImagePicker(_FakeAvatarPickerClient()),
+              ),
+            ],
             child: const SocialFollowListPage(
               userId: 'me',
               kind: SocialFollowListKind.following,
@@ -847,7 +902,12 @@ extension on WidgetTester {
       TranslationProvider(
         child: ProviderScope(
           retry: (_, _) => null,
-          overrides: [socialRepositoryProvider.overrideWithValue(repository)],
+          overrides: [
+            socialRepositoryProvider.overrideWithValue(repository),
+            avatarImagePickerProvider.overrideWithValue(
+              AvatarImagePicker(_FakeAvatarPickerClient()),
+            ),
+          ],
           child: MaterialApp(home: Scaffold(body: child)),
         ),
       ),
@@ -862,7 +922,12 @@ extension on WidgetTester {
       TranslationProvider(
         child: ProviderScope(
           retry: (_, _) => null,
-          overrides: [socialRepositoryProvider.overrideWithValue(repository)],
+          overrides: [
+            socialRepositoryProvider.overrideWithValue(repository),
+            avatarImagePickerProvider.overrideWithValue(
+              AvatarImagePicker(_FakeAvatarPickerClient()),
+            ),
+          ],
           child: MaterialApp(
             home: Scaffold(
               body: ValueListenableBuilder<Widget>(
@@ -895,7 +960,12 @@ GoRouter _router(
       ShellRoute(
         builder: (context, state, child) => ProviderScope(
           retry: (_, _) => null,
-          overrides: [socialRepositoryProvider.overrideWithValue(repository)],
+          overrides: [
+            socialRepositoryProvider.overrideWithValue(repository),
+            avatarImagePickerProvider.overrideWithValue(
+              AvatarImagePicker(_FakeAvatarPickerClient()),
+            ),
+          ],
           child: Scaffold(body: child),
         ),
         routes: [
@@ -925,6 +995,17 @@ GoRouter _router(
   );
 }
 
+class _FakeAvatarPickerClient implements AvatarPickerClient {
+  @override
+  Future<XFile?> pickImage({required ImageSource source}) async {
+    return XFile.fromData(
+      Uint8List.fromList([1, 2, 3]),
+      name: 'avatar.png',
+      mimeType: 'image/png',
+    );
+  }
+}
+
 class _RecordingNavigatorObserver extends NavigatorObserver {
   int pushCount = 0;
   int popCount = 0;
@@ -943,11 +1024,6 @@ class _RecordingNavigatorObserver extends NavigatorObserver {
 }
 
 class _FakeSocialRepository implements SocialRepository {
-  @override
-  Future<SocialProfileModel> updateMyAvatar({required AvatarUploadFile file}) {
-    throw UnimplementedError();
-  }
-
   _FakeSocialRepository({
     this.missingProfile = false,
     this.unavailableProfile = false,
@@ -991,6 +1067,8 @@ class _FakeSocialRepository implements SocialRepository {
   String? savedDisplayName;
   String? savedAvatarUrl;
   bool? savedIsPublic;
+  int avatarUploadCallCount = 0;
+  String? lastAvatarFilename;
 
   void pauseNextProfileLoad() {
     _profileLoadCompleter = Completer<void>();
@@ -1008,6 +1086,16 @@ class _FakeSocialRepository implements SocialRepository {
   void resumeFollow() {
     _followCompleter?.complete();
     _followCompleter = null;
+  }
+
+  @override
+  Future<SocialProfileModel> updateMyAvatar({
+    required AvatarUploadFile file,
+  }) async {
+    avatarUploadCallCount += 1;
+    lastAvatarFilename = file.filename.isEmpty ? 'avatar.png' : file.filename;
+    updatedProfile = (profile ?? _profile()).copyWith(avatarUrl: null);
+    return updatedProfile!;
   }
 
   @override
