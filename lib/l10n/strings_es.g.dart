@@ -243,6 +243,17 @@ class TranslationsEs extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get auth_error_confirmation_code_required => 'Ingresa el código de confirmación';
 	@override String get auth_error_invalid_code => 'Código inválido. Inténtalo de nuevo.';
 	@override String get auth_error_resend_code => 'No se pudo reenviar el código. Inténtalo de nuevo.';
+	@override String get social_change_photo => 'Cambiar foto';
+	@override String get social_choose_from_gallery => 'Elegir de la galería';
+	@override String get social_take_photo => 'Tomar una foto';
+	@override String get social_cancel => 'Cancelar';
+	@override String get social_avatar_updated_success => 'Foto de perfil actualizada';
+	@override String get social_avatar_update_failure => 'No se pudo actualizar el avatar';
+	@override String get social_avatar_access_failure => 'No se pudo acceder a la cámara o galería. Revisa los permisos e inténtalo de nuevo.';
+	@override String get social_avatar_invalid_type => 'El avatar debe ser JPEG, PNG o WebP';
+	@override String get social_avatar_size_limit => 'El archivo del avatar debe pesar 10 MB o menos';
+	@override String get social_edit_avatar_semantics => 'Editar avatar';
+	@override String get social_avatar_uploading_semantics => 'Subiendo avatar';
 }
 
 /// The flat map containing all translations for locale <es>.
@@ -454,6 +465,17 @@ extension on TranslationsEs {
 			'auth_error_confirmation_code_required' => 'Ingresa el código de confirmación',
 			'auth_error_invalid_code' => 'Código inválido. Inténtalo de nuevo.',
 			'auth_error_resend_code' => 'No se pudo reenviar el código. Inténtalo de nuevo.',
+			'social_change_photo' => 'Cambiar foto',
+			'social_choose_from_gallery' => 'Elegir de la galería',
+			'social_take_photo' => 'Tomar una foto',
+			'social_cancel' => 'Cancelar',
+			'social_avatar_updated_success' => 'Foto de perfil actualizada',
+			'social_avatar_update_failure' => 'No se pudo actualizar el avatar',
+			'social_avatar_access_failure' => 'No se pudo acceder a la cámara o galería. Revisa los permisos e inténtalo de nuevo.',
+			'social_avatar_invalid_type' => 'El avatar debe ser JPEG, PNG o WebP',
+			'social_avatar_size_limit' => 'El archivo del avatar debe pesar 10 MB o menos',
+			'social_edit_avatar_semantics' => 'Editar avatar',
+			'social_avatar_uploading_semantics' => 'Subiendo avatar',
 			_ => null,
 		};
 	}

@@ -243,6 +243,17 @@ class TranslationsEn extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get auth_error_confirmation_code_required => 'Enter the confirmation code';
 	@override String get auth_error_invalid_code => 'Invalid code. Try again.';
 	@override String get auth_error_resend_code => 'Could not resend the code. Try again.';
+	@override String get social_change_photo => 'Change photo';
+	@override String get social_choose_from_gallery => 'Choose from gallery';
+	@override String get social_take_photo => 'Take a photo';
+	@override String get social_cancel => 'Cancel';
+	@override String get social_avatar_updated_success => 'Profile photo updated';
+	@override String get social_avatar_update_failure => 'Failed to update avatar';
+	@override String get social_avatar_access_failure => 'Could not access your camera or gallery. Check permissions and try again.';
+	@override String get social_avatar_invalid_type => 'Avatar must be JPEG, PNG, or WebP';
+	@override String get social_avatar_size_limit => 'Avatar file must be 10 MB or smaller';
+	@override String get social_edit_avatar_semantics => 'Edit avatar';
+	@override String get social_avatar_uploading_semantics => 'Uploading avatar';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -454,6 +465,17 @@ extension on TranslationsEn {
 			'auth_error_confirmation_code_required' => 'Enter the confirmation code',
 			'auth_error_invalid_code' => 'Invalid code. Try again.',
 			'auth_error_resend_code' => 'Could not resend the code. Try again.',
+			'social_change_photo' => 'Change photo',
+			'social_choose_from_gallery' => 'Choose from gallery',
+			'social_take_photo' => 'Take a photo',
+			'social_cancel' => 'Cancel',
+			'social_avatar_updated_success' => 'Profile photo updated',
+			'social_avatar_update_failure' => 'Failed to update avatar',
+			'social_avatar_access_failure' => 'Could not access your camera or gallery. Check permissions and try again.',
+			'social_avatar_invalid_type' => 'Avatar must be JPEG, PNG, or WebP',
+			'social_avatar_size_limit' => 'Avatar file must be 10 MB or smaller',
+			'social_edit_avatar_semantics' => 'Edit avatar',
+			'social_avatar_uploading_semantics' => 'Uploading avatar',
 			_ => null,
 		};
 	}

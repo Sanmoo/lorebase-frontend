@@ -32,7 +32,7 @@ void main() {
     expect(repo.avatarFiles, hasLength(1));
     expect(repo.avatarFiles.single, same(file));
     expect(state.isUploading, isFalse);
-    expect(state.errorMessage, isNull);
+    expect(state.error, isNull);
     expect(state.profile?.avatarUrl, 'https://cdn.example/avatar.png');
   });
 
@@ -50,7 +50,7 @@ void main() {
 
     expect(picker.sources, [AvatarImageSource.camera]);
     expect(repo.avatarFiles, hasLength(1));
-    expect(container.read(socialAvatarViewModelProvider).errorMessage, isNull);
+    expect(container.read(socialAvatarViewModelProvider).error, isNull);
   });
 
   test('cancellation clears uploading without error', () async {
@@ -66,7 +66,7 @@ void main() {
     final state = container.read(socialAvatarViewModelProvider);
     expect(repo.avatarFiles, isEmpty);
     expect(state.isUploading, isFalse);
-    expect(state.errorMessage, isNull);
+    expect(state.error, isNull);
   });
 
   test('rejects invalid type before repository upload', () async {
@@ -84,7 +84,7 @@ void main() {
     final state = container.read(socialAvatarViewModelProvider);
     expect(repo.avatarFiles, isEmpty);
     expect(state.isUploading, isFalse);
-    expect(state.errorMessage, 'Avatar must be JPEG, PNG, or WebP');
+    expect(state.error, SocialAvatarError.invalidType);
   });
 
   test('rejects oversized file before repository upload', () async {
@@ -106,7 +106,7 @@ void main() {
     final state = container.read(socialAvatarViewModelProvider);
     expect(repo.avatarFiles, isEmpty);
     expect(state.isUploading, isFalse);
-    expect(state.errorMessage, contains('10MB'));
+    expect(state.error, SocialAvatarError.sizeLimit);
   });
 
   test('picker error is mapped to friendly message', () async {
@@ -122,7 +122,7 @@ void main() {
     final state = container.read(socialAvatarViewModelProvider);
     expect(repo.avatarFiles, isEmpty);
     expect(state.isUploading, isFalse);
-    expect(state.errorMessage, 'Failed to update avatar');
+    expect(state.error, SocialAvatarError.accessFailure);
   });
 
   test('repository error is mapped to friendly message', () async {
@@ -140,7 +140,7 @@ void main() {
     final state = container.read(socialAvatarViewModelProvider);
     expect(repo.avatarFiles, hasLength(1));
     expect(state.isUploading, isFalse);
-    expect(state.errorMessage, 'Failed to update avatar');
+    expect(state.error, SocialAvatarError.updateFailure);
   });
 
   test('guards concurrent upload attempts', () async {

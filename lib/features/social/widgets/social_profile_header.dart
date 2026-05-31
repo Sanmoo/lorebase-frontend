@@ -147,9 +147,12 @@ class _ProfileAvatar extends StatelessWidget {
                 ).colorScheme.surface.withValues(alpha: 0.72),
                 shape: BoxShape.circle,
               ),
-              child: const Padding(
-                padding: EdgeInsets.all(20),
-                child: CircularProgressIndicator(strokeWidth: 3),
+              child: Semantics(
+                label: context.t.social_avatar_uploading_semantics,
+                child: const Padding(
+                  padding: EdgeInsets.all(20),
+                  child: CircularProgressIndicator(strokeWidth: 3),
+                ),
               ),
             ),
           ),
@@ -163,7 +166,7 @@ class _ProfileAvatar extends StatelessWidget {
     return Semantics(
       container: true,
       excludeSemantics: true,
-      label: 'Edit avatar',
+      label: context.t.social_edit_avatar_semantics,
       button: true,
       enabled: canEdit,
       child: InkWell(

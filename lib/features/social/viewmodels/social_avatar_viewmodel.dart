@@ -1,6 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../data/avatar_image_picker.dart';
+import '../data/models/avatar_upload_file.dart';
 import '../data/models/social_profile_model.dart';
 import '../data/repositories/social_repository.dart';
 import '../pages/social_page.dart';
@@ -8,28 +9,24 @@ import 'social_profile_viewmodel.dart';
 
 part 'social_avatar_viewmodel.g.dart';
 
+enum SocialAvatarError { invalidType, sizeLimit, accessFailure, updateFailure }
+
 class SocialAvatarState {
-  const SocialAvatarState({
-    this.isUploading = false,
-    this.errorMessage,
-    this.profile,
-  });
+  const SocialAvatarState({this.isUploading = false, this.error, this.profile});
 
   final bool isUploading;
-  final String? errorMessage;
+  final SocialAvatarError? error;
   final SocialProfileModel? profile;
 
   SocialAvatarState copyWith({
     bool? isUploading,
-    String? errorMessage,
-    bool clearErrorMessage = false,
+    SocialAvatarError? error,
+    bool clearError = false,
     SocialProfileModel? profile,
   }) {
     return SocialAvatarState(
       isUploading: isUploading ?? this.isUploading,
-      errorMessage: clearErrorMessage
-          ? null
-          : errorMessage ?? this.errorMessage,
+      error: clearError ? null : error ?? this.error,
       profile: profile ?? this.profile,
     );
   }
@@ -45,22 +42,35 @@ class SocialAvatarViewModel extends _$SocialAvatarViewModel {
       return;
     }
 
-    state = state.copyWith(isUploading: true, clearErrorMessage: true);
+    state = state.copyWith(isUploading: true, clearError: true);
+
+    AvatarUploadFile? file;
+    try {
+      file = await ref.read(avatarImagePickerProvider).pick(source);
+    } catch (_) {
+      if (!ref.mounted) {
+        return;
+      }
+      state = state.copyWith(
+        isUploading: false,
+        error: SocialAvatarError.accessFailure,
+      );
+      return;
+    }
 
     try {
-      final file = await ref.read(avatarImagePickerProvider).pick(source);
       if (!ref.mounted) {
         return;
       }
       if (file == null) {
-        state = state.copyWith(isUploading: false, clearErrorMessage: true);
+        state = state.copyWith(isUploading: false, clearError: true);
         return;
       }
 
       if (!file.isSupportedMimeType) {
         state = state.copyWith(
           isUploading: false,
-          errorMessage: 'Avatar must be JPEG, PNG, or WebP',
+          error: SocialAvatarError.invalidType,
         );
         return;
       }
@@ -68,7 +78,7 @@ class SocialAvatarViewModel extends _$SocialAvatarViewModel {
       if (!file.isWithinSizeLimit) {
         state = state.copyWith(
           isUploading: false,
-          errorMessage: 'Avatar file must be 10MB or smaller',
+          error: SocialAvatarError.sizeLimit,
         );
         return;
       }
@@ -83,7 +93,7 @@ class SocialAvatarViewModel extends _$SocialAvatarViewModel {
       ref.invalidate(socialProfileViewModelProvider('me'));
       state = state.copyWith(
         isUploading: false,
-        clearErrorMessage: true,
+        clearError: true,
         profile: profile,
       );
     } catch (_) {
@@ -92,7 +102,7 @@ class SocialAvatarViewModel extends _$SocialAvatarViewModel {
       }
       state = state.copyWith(
         isUploading: false,
-        errorMessage: 'Failed to update avatar',
+        error: SocialAvatarError.updateFailure,
       );
     }
   }

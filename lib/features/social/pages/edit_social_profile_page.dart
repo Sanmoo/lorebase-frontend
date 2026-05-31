@@ -114,17 +114,17 @@ class _EditSocialProfilePageState extends ConsumerState<EditSocialProfilePage> {
           children: [
             ListTile(
               leading: const Icon(Icons.photo_library_outlined),
-              title: const Text('Choose from gallery'),
+              title: Text(context.t.social_choose_from_gallery),
               onTap: () => Navigator.of(context).pop(AvatarImageSource.gallery),
             ),
             ListTile(
               leading: const Icon(Icons.photo_camera_outlined),
-              title: const Text('Take a photo'),
+              title: Text(context.t.social_take_photo),
               onTap: () => Navigator.of(context).pop(AvatarImageSource.camera),
             ),
             ListTile(
               leading: const Icon(Icons.close),
-              title: const Text('Cancel'),
+              title: Text(context.t.social_cancel),
               onTap: () => Navigator.of(context).pop(),
             ),
           ],
@@ -144,8 +144,10 @@ class _EditSocialProfilePageState extends ConsumerState<EditSocialProfilePage> {
       setState(() => _avatarUrl = avatarState.profile!.avatarUrl);
     }
     final message =
-        avatarState.errorMessage ??
-        (avatarState.profile != null ? 'Profile photo updated' : null);
+        avatarState.error?.localizedMessage(context) ??
+        (avatarState.profile != null
+            ? context.t.social_avatar_updated_success
+            : null);
     if (message != null) {
       ScaffoldMessenger.of(
         context,
@@ -180,6 +182,18 @@ class _EditSocialProfilePageState extends ConsumerState<EditSocialProfilePage> {
         router.pop();
       }
     }
+  }
+}
+
+extension _SocialAvatarErrorMessage on SocialAvatarError {
+  String localizedMessage(BuildContext context) {
+    final t = context.t;
+    return switch (this) {
+      SocialAvatarError.invalidType => t.social_avatar_invalid_type,
+      SocialAvatarError.sizeLimit => t.social_avatar_size_limit,
+      SocialAvatarError.accessFailure => t.social_avatar_access_failure,
+      SocialAvatarError.updateFailure => t.social_avatar_update_failure,
+    };
   }
 }
 
@@ -237,7 +251,7 @@ class _AvatarEditor extends StatelessWidget {
           key: const Key('editSocialProfileChangePhotoAction'),
           onPressed: onChangePhoto,
           icon: const Icon(Icons.photo_camera_outlined),
-          label: const Text('Change photo'),
+          label: Text(context.t.social_change_photo),
         ),
       ],
     );

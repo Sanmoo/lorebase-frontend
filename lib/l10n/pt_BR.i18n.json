@@ -202,5 +202,16 @@
   "auth_error_create_account": "Erro ao criar conta. Tente novamente.",
   "auth_error_confirmation_code_required": "Digite o código de confirmação",
   "auth_error_invalid_code": "Código inválido. Tente novamente.",
-  "auth_error_resend_code": "Não foi possível reenviar o código. Tente novamente."
+  "auth_error_resend_code": "Não foi possível reenviar o código. Tente novamente.",
+  "social_change_photo": "Alterar foto",
+  "social_choose_from_gallery": "Escolher da galeria",
+  "social_take_photo": "Tirar foto",
+  "social_cancel": "Cancelar",
+  "social_avatar_updated_success": "Foto do perfil atualizada",
+  "social_avatar_update_failure": "Não foi possível atualizar o avatar",
+  "social_avatar_access_failure": "Não foi possível acessar a câmera ou galeria. Verifique as permissões e tente novamente.",
+  "social_avatar_invalid_type": "O avatar deve ser JPEG, PNG ou WebP",
+  "social_avatar_size_limit": "O arquivo do avatar deve ter 10 MB ou menos",
+  "social_edit_avatar_semantics": "Editar avatar",
+  "social_avatar_uploading_semantics": "Enviando avatar"
 }

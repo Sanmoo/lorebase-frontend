@@ -247,7 +247,7 @@ void main() {
 
     expect(find.widgetWithText(TextFormField, 'Beltrano'), findsOneWidget);
     expect(find.text('https://example.com/avatar.png'), findsNothing);
-    expect(find.text('Change photo'), findsOneWidget);
+    expect(find.text(t.social_change_photo), findsOneWidget);
     expect(
       tester.widget<SwitchListTile>(find.byType(SwitchListTile)).value,
       isFalse,
@@ -337,19 +337,19 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text(t.social_avatar_url), findsNothing);
-    expect(find.text('Change photo'), findsOneWidget);
+    expect(find.text(t.social_change_photo), findsOneWidget);
 
-    await tester.tap(find.text('Change photo'));
+    await tester.tap(find.text(t.social_change_photo));
     await tester.pumpAndSettle();
-    expect(find.text('Choose from gallery'), findsOneWidget);
-    expect(find.text('Take a photo'), findsOneWidget);
+    expect(find.text(t.social_choose_from_gallery), findsOneWidget);
+    expect(find.text(t.social_take_photo), findsOneWidget);
 
-    await tester.tap(find.text('Choose from gallery'));
+    await tester.tap(find.text(t.social_choose_from_gallery));
     await tester.pumpAndSettle();
 
     expect(repository.avatarUploadCallCount, 1);
     expect(repository.lastAvatarFilename, 'avatar.png');
-    expect(find.text('Profile photo updated'), findsOneWidget);
+    expect(find.text(t.social_avatar_updated_success), findsOneWidget);
   });
 
   testWidgets('Own profile avatar opens source choices and gallery uploads', (
@@ -364,16 +364,16 @@ void main() {
 
     await tester.tap(find.byKey(const Key('socialProfileAvatarAction')));
     await tester.pumpAndSettle();
-    expect(find.text('Choose from gallery'), findsOneWidget);
-    expect(find.text('Take a photo'), findsOneWidget);
-    expect(find.text('Cancel'), findsOneWidget);
+    expect(find.text(t.social_choose_from_gallery), findsOneWidget);
+    expect(find.text(t.social_take_photo), findsOneWidget);
+    expect(find.text(t.social_cancel), findsOneWidget);
 
-    await tester.tap(find.text('Choose from gallery'));
+    await tester.tap(find.text(t.social_choose_from_gallery));
     await tester.pumpAndSettle();
 
     expect(repository.avatarUploadCallCount, 1);
     expect(repository.lastAvatarFilename, 'avatar.png');
-    expect(find.text('Profile photo updated'), findsOneWidget);
+    expect(find.text(t.social_avatar_updated_success), findsOneWidget);
   });
 
   testWidgets(

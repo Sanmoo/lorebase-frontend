@@ -121,7 +121,7 @@ Future<void> main() async {
       final avatarSemantics = tester.getSemantics(
         find.byKey(const Key('socialProfileAvatarAction')),
       );
-      expect(avatarSemantics.label, 'Edit avatar');
+      expect(avatarSemantics.label, t.social_edit_avatar_semantics);
       await tester.tap(find.byKey(const Key('socialProfileAvatarAction')));
 
       expect(calls, 1);

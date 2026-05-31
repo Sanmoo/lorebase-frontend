@@ -646,6 +646,39 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// pt-BR: 'Não foi possível reenviar o código. Tente novamente.'
 	String get auth_error_resend_code => 'Não foi possível reenviar o código. Tente novamente.';
+
+	/// pt-BR: 'Alterar foto'
+	String get social_change_photo => 'Alterar foto';
+
+	/// pt-BR: 'Escolher da galeria'
+	String get social_choose_from_gallery => 'Escolher da galeria';
+
+	/// pt-BR: 'Tirar foto'
+	String get social_take_photo => 'Tirar foto';
+
+	/// pt-BR: 'Cancelar'
+	String get social_cancel => 'Cancelar';
+
+	/// pt-BR: 'Foto do perfil atualizada'
+	String get social_avatar_updated_success => 'Foto do perfil atualizada';
+
+	/// pt-BR: 'Não foi possível atualizar o avatar'
+	String get social_avatar_update_failure => 'Não foi possível atualizar o avatar';
+
+	/// pt-BR: 'Não foi possível acessar a câmera ou galeria. Verifique as permissões e tente novamente.'
+	String get social_avatar_access_failure => 'Não foi possível acessar a câmera ou galeria. Verifique as permissões e tente novamente.';
+
+	/// pt-BR: 'O avatar deve ser JPEG, PNG ou WebP'
+	String get social_avatar_invalid_type => 'O avatar deve ser JPEG, PNG ou WebP';
+
+	/// pt-BR: 'O arquivo do avatar deve ter 10 MB ou menos'
+	String get social_avatar_size_limit => 'O arquivo do avatar deve ter 10 MB ou menos';
+
+	/// pt-BR: 'Editar avatar'
+	String get social_edit_avatar_semantics => 'Editar avatar';
+
+	/// pt-BR: 'Enviando avatar'
+	String get social_avatar_uploading_semantics => 'Enviando avatar';
 }
 
 /// The flat map containing all translations for locale <pt-BR>.
@@ -857,6 +890,17 @@ extension on Translations {
 			'auth_error_confirmation_code_required' => 'Digite o código de confirmação',
 			'auth_error_invalid_code' => 'Código inválido. Tente novamente.',
 			'auth_error_resend_code' => 'Não foi possível reenviar o código. Tente novamente.',
+			'social_change_photo' => 'Alterar foto',
+			'social_choose_from_gallery' => 'Escolher da galeria',
+			'social_take_photo' => 'Tirar foto',
+			'social_cancel' => 'Cancelar',
+			'social_avatar_updated_success' => 'Foto do perfil atualizada',
+			'social_avatar_update_failure' => 'Não foi possível atualizar o avatar',
+			'social_avatar_access_failure' => 'Não foi possível acessar a câmera ou galeria. Verifique as permissões e tente novamente.',
+			'social_avatar_invalid_type' => 'O avatar deve ser JPEG, PNG ou WebP',
+			'social_avatar_size_limit' => 'O arquivo do avatar deve ter 10 MB ou menos',
+			'social_edit_avatar_semantics' => 'Editar avatar',
+			'social_avatar_uploading_semantics' => 'Enviando avatar',
 			_ => null,
 		};
 	}
