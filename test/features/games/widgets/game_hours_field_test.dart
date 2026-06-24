@@ -57,6 +57,51 @@ Future<void> main() async {
     expect(changed, isNull);
   });
 
+  testWidgets('updates text when hours prop changes', (tester) async {
+    await tester.pumpWidget(
+      TranslationProvider(
+        child: MaterialApp(
+          home: Scaffold(body: GameHoursField(hours: 12.5, onChanged: (_) {})),
+        ),
+      ),
+    );
+
+    expect(find.text('12.5'), findsOneWidget);
+
+    await tester.pumpWidget(
+      TranslationProvider(
+        child: MaterialApp(
+          home: Scaffold(body: GameHoursField(hours: 15.0, onChanged: (_) {})),
+        ),
+      ),
+    );
+
+    expect(find.text('15.0'), findsOneWidget);
+  });
+
+  testWidgets('clears text when hours prop becomes null', (tester) async {
+    await tester.pumpWidget(
+      TranslationProvider(
+        child: MaterialApp(
+          home: Scaffold(body: GameHoursField(hours: 12.5, onChanged: (_) {})),
+        ),
+      ),
+    );
+
+    expect(find.text('12.5'), findsOneWidget);
+
+    await tester.pumpWidget(
+      TranslationProvider(
+        child: MaterialApp(
+          home: Scaffold(body: GameHoursField(onChanged: (_) {})),
+        ),
+      ),
+    );
+
+    expect(find.text('12.5'), findsNothing);
+    expect(find.byType(TextField), findsOneWidget);
+  });
+
   testWidgets('uses decimal keyboard', (tester) async {
     await tester.pumpWidget(
       TranslationProvider(
