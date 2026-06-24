@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lorebase/features/tracking/data/models/media_type.dart';
 import 'package:lorebase/features/tracking/widgets/tracking_status_chip.dart';
 import 'package:lorebase/l10n/strings.g.dart';
 
@@ -60,6 +61,22 @@ Future<void> main() async {
         ),
       );
       expect(find.text('Want to Watch'), findsOneWidget);
+    });
+
+    testWidgets('renders game status label', (tester) async {
+      await tester.pumpWidget(
+        TranslationProvider(
+          child: const MaterialApp(
+            home: Scaffold(
+              body: TrackingStatusChip(
+                status: 'PLAYING',
+                mediaType: MediaType.game,
+              ),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Playing'), findsOneWidget);
     });
   });
 }

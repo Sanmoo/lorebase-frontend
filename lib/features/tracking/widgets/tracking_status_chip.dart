@@ -2,14 +2,33 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../l10n/strings.g.dart';
+import '../data/models/game_tracking_status.dart';
+import '../data/models/media_type.dart';
 import '../data/tracking_status.dart';
 
 class TrackingStatusChip extends StatelessWidget {
   final String status;
+  final MediaType? mediaType;
 
-  const TrackingStatusChip({super.key, required this.status});
+  const TrackingStatusChip({super.key, required this.status, this.mediaType});
+
+  bool get _isGame => mediaType == MediaType.game;
 
   Color get _color {
+    if (_isGame) {
+      final gameStatus = GameTrackingStatus.fromString(status);
+      switch (gameStatus) {
+        case GameTrackingStatus.playing:
+          return AppColors.watching;
+        case GameTrackingStatus.wantToPlay:
+          return AppColors.wantToWatch;
+        case GameTrackingStatus.completed:
+          return AppColors.completed;
+        case GameTrackingStatus.dropped:
+          return AppColors.dropped;
+      }
+    }
+
     final trackingStatus = TrackingStatus.fromString(status);
     switch (trackingStatus) {
       case TrackingStatus.watching:
@@ -25,10 +44,12 @@ class TrackingStatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final trackingStatus = TrackingStatus.fromString(status);
+    final label = _isGame
+        ? GameTrackingStatus.fromString(status).label(context.t)
+        : TrackingStatus.fromString(status).label(context.t);
     return Chip(
       label: Text(
-        trackingStatus.label(context.t),
+        label,
         style: const TextStyle(
           color: Colors.white,
           fontSize: 12,
