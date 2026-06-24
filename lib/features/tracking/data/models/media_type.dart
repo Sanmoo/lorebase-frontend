@@ -2,7 +2,8 @@ import '../../../../l10n/strings.g.dart';
 
 enum MediaType {
   series('SERIES'),
-  movie('MOVIE');
+  movie('MOVIE'),
+  game('GAME');
 
   const MediaType(this.apiValue);
 
@@ -14,6 +15,8 @@ enum MediaType {
         return t.media_type_series;
       case MediaType.movie:
         return t.media_type_movies;
+      case MediaType.game:
+        return t.media_type_games;
     }
   }
 }
@@ -22,11 +25,8 @@ extension MediaTypeX on MediaType {
   static MediaType fromApiValue(String value) {
     return MediaType.values.firstWhere(
       (type) => type.apiValue.toLowerCase() == value.toLowerCase(),
-      orElse: () => throw ArgumentError.value(
-        value,
-        'value',
-        'Unsupported media type',
-      ),
+      orElse: () =>
+          throw ArgumentError.value(value, 'value', 'Unsupported media type'),
     );
   }
 }

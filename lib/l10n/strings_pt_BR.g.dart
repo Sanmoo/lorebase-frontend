@@ -107,6 +107,18 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// pt-BR: 'Abandonado'
 	String get tracking_dropped => 'Abandonado';
 
+	/// pt-BR: 'Quero Jogar'
+	String get tracking_want_to_play_game => 'Quero Jogar';
+
+	/// pt-BR: 'Jogando'
+	String get tracking_playing_game => 'Jogando';
+
+	/// pt-BR: 'Concluído'
+	String get tracking_completed_game => 'Concluído';
+
+	/// pt-BR: 'Abandonado'
+	String get tracking_dropped_game => 'Abandonado';
+
 	/// pt-BR: 'Nenhuma série {status} ainda'
 	String get tracking_empty => 'Nenhuma série {status} ainda';
 
@@ -322,6 +334,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// pt-BR: 'Filmes'
 	String get media_type_movies => 'Filmes';
+
+	/// pt-BR: 'Jogos'
+	String get media_type_games => 'Jogos';
 
 	/// pt-BR: 'Buscar filmes...'
 	String get search_hint_movies => 'Buscar filmes...';
@@ -679,6 +694,63 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// pt-BR: 'Enviando avatar'
 	String get social_avatar_uploading_semantics => 'Enviando avatar';
+
+	/// pt-BR: 'PC'
+	String get game_platform_pc => 'PC';
+
+	/// pt-BR: 'Switch'
+	String get game_platform_switch => 'Switch';
+
+	/// pt-BR: 'Switch 2'
+	String get game_platform_switch2 => 'Switch 2';
+
+	/// pt-BR: 'PS1'
+	String get game_platform_ps1 => 'PS1';
+
+	/// pt-BR: 'PS2'
+	String get game_platform_ps2 => 'PS2';
+
+	/// pt-BR: 'PS3'
+	String get game_platform_ps3 => 'PS3';
+
+	/// pt-BR: 'PS4'
+	String get game_platform_ps4 => 'PS4';
+
+	/// pt-BR: 'PS5'
+	String get game_platform_ps5 => 'PS5';
+
+	/// pt-BR: 'Xbox'
+	String get game_platform_xbox => 'Xbox';
+
+	/// pt-BR: 'Xbox 360'
+	String get game_platform_xbox_360 => 'Xbox 360';
+
+	/// pt-BR: 'Xbox One'
+	String get game_platform_xbox_one => 'Xbox One';
+
+	/// pt-BR: 'SNES'
+	String get game_platform_snes => 'SNES';
+
+	/// pt-BR: 'NES'
+	String get game_platform_nes => 'NES';
+
+	/// pt-BR: 'Mega Drive'
+	String get game_platform_mega_drive => 'Mega Drive';
+
+	/// pt-BR: 'GBA'
+	String get game_platform_gba => 'GBA';
+
+	/// pt-BR: 'Xbox Series X/S'
+	String get game_platform_xbox_series_xs => 'Xbox Series X/S';
+
+	/// pt-BR: 'Mobile'
+	String get game_platform_mobile => 'Mobile';
+
+	/// pt-BR: 'VR'
+	String get game_platform_vr => 'VR';
+
+	/// pt-BR: 'Outro'
+	String get game_platform_other => 'Outro';
 }
 
 /// The flat map containing all translations for locale <pt-BR>.
@@ -711,6 +783,10 @@ extension on Translations {
 			'tracking_watching' => 'Assistindo',
 			'tracking_completed' => 'Concluído',
 			'tracking_dropped' => 'Abandonado',
+			'tracking_want_to_play_game' => 'Quero Jogar',
+			'tracking_playing_game' => 'Jogando',
+			'tracking_completed_game' => 'Concluído',
+			'tracking_dropped_game' => 'Abandonado',
 			'tracking_empty' => 'Nenhuma série {status} ainda',
 			'series_detail_add_to_list' => 'Adicionar à Lista',
 			'series_detail_manage_tracking' => 'Gerenciar',
@@ -783,6 +859,7 @@ extension on Translations {
 			'locale_es' => 'Español',
 			'media_type_series' => 'Séries',
 			'media_type_movies' => 'Filmes',
+			'media_type_games' => 'Jogos',
 			'search_hint_movies' => 'Buscar filmes...',
 			'search_no_results_movies' => 'Nenhum filme encontrado',
 			'tracking_empty_movies' => 'Nenhum filme {status} ainda',
@@ -901,6 +978,25 @@ extension on Translations {
 			'social_avatar_size_limit' => 'O arquivo do avatar deve ter 10 MB ou menos',
 			'social_edit_avatar_semantics' => 'Editar avatar',
 			'social_avatar_uploading_semantics' => 'Enviando avatar',
+			'game_platform_pc' => 'PC',
+			'game_platform_switch' => 'Switch',
+			'game_platform_switch2' => 'Switch 2',
+			'game_platform_ps1' => 'PS1',
+			'game_platform_ps2' => 'PS2',
+			'game_platform_ps3' => 'PS3',
+			'game_platform_ps4' => 'PS4',
+			'game_platform_ps5' => 'PS5',
+			'game_platform_xbox' => 'Xbox',
+			'game_platform_xbox_360' => 'Xbox 360',
+			'game_platform_xbox_one' => 'Xbox One',
+			'game_platform_snes' => 'SNES',
+			'game_platform_nes' => 'NES',
+			'game_platform_mega_drive' => 'Mega Drive',
+			'game_platform_gba' => 'GBA',
+			'game_platform_xbox_series_xs' => 'Xbox Series X/S',
+			'game_platform_mobile' => 'Mobile',
+			'game_platform_vr' => 'VR',
+			'game_platform_other' => 'Outro',
 			_ => null,
 		};
 	}

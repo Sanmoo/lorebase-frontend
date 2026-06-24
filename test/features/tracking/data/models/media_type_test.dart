@@ -12,25 +12,28 @@ void main() {
     test('fromApiValue parses known values and rejects unknown ones', () {
       expect(MediaTypeX.fromApiValue('series'), MediaType.series);
       expect(MediaTypeX.fromApiValue('movie'), MediaType.movie);
-      expect(
-        () => MediaTypeX.fromApiValue('board_game'),
-        throwsArgumentError,
-      );
+      expect(() => MediaTypeX.fromApiValue('board_game'), throwsArgumentError);
     });
 
     test('label() returns correct translated labels', () async {
       final ptBr = await AppLocale.ptBr.build();
       expect(MediaType.series.label(ptBr), 'Séries');
       expect(MediaType.movie.label(ptBr), 'Filmes');
+      expect(MediaType.game.label(ptBr), 'Jogos');
     });
 
     test('mediaTypeFromJson and mediaTypeToJson roundtrip', () {
       expect(mediaTypeFromJson('series'), MediaType.series);
       expect(mediaTypeToJson(MediaType.movie), 'MOVIE');
-      expect(
-        () => mediaTypeFromJson('invalid'),
-        throwsArgumentError,
-      );
+      expect(() => mediaTypeFromJson('invalid'), throwsArgumentError);
+    });
+
+    test('MediaType includes game', () {
+      expect(MediaType.game.apiValue, 'GAME');
+    });
+
+    test('mediaTypeFromJson parses GAME', () {
+      expect(mediaTypeFromJson('GAME'), MediaType.game);
     });
   });
 }

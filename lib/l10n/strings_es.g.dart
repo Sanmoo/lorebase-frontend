@@ -61,6 +61,10 @@ class TranslationsEs extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get tracking_watching => 'Viendo';
 	@override String get tracking_completed => 'Completado';
 	@override String get tracking_dropped => 'Abandonado';
+	@override String get tracking_want_to_play_game => 'Quiero Jugar';
+	@override String get tracking_playing_game => 'Jugando';
+	@override String get tracking_completed_game => 'Completado';
+	@override String get tracking_dropped_game => 'Abandonado';
 	@override String get tracking_empty => 'No hay series {status} todavía';
 	@override String get series_detail_add_to_list => 'Añadir a Lista';
 	@override String get series_detail_manage_tracking => 'Gestionar';
@@ -133,6 +137,7 @@ class TranslationsEs extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get locale_es => 'Español';
 	@override String get media_type_series => 'Series';
 	@override String get media_type_movies => 'Películas';
+	@override String get media_type_games => 'Juegos';
 	@override String get search_hint_movies => 'Buscar películas...';
 	@override String get search_no_results_movies => 'No se encontraron películas';
 	@override String get tracking_empty_movies => 'Aún no hay películas en {status}';
@@ -254,6 +259,25 @@ class TranslationsEs extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get social_avatar_size_limit => 'El archivo del avatar debe pesar 10 MB o menos';
 	@override String get social_edit_avatar_semantics => 'Editar avatar';
 	@override String get social_avatar_uploading_semantics => 'Subiendo avatar';
+	@override String get game_platform_pc => 'PC';
+	@override String get game_platform_switch => 'Switch';
+	@override String get game_platform_switch2 => 'Switch 2';
+	@override String get game_platform_ps1 => 'PS1';
+	@override String get game_platform_ps2 => 'PS2';
+	@override String get game_platform_ps3 => 'PS3';
+	@override String get game_platform_ps4 => 'PS4';
+	@override String get game_platform_ps5 => 'PS5';
+	@override String get game_platform_xbox => 'Xbox';
+	@override String get game_platform_xbox_360 => 'Xbox 360';
+	@override String get game_platform_xbox_one => 'Xbox One';
+	@override String get game_platform_snes => 'SNES';
+	@override String get game_platform_nes => 'NES';
+	@override String get game_platform_mega_drive => 'Mega Drive';
+	@override String get game_platform_gba => 'GBA';
+	@override String get game_platform_xbox_series_xs => 'Xbox Series X/S';
+	@override String get game_platform_mobile => 'Móvil';
+	@override String get game_platform_vr => 'VR';
+	@override String get game_platform_other => 'Otro';
 }
 
 /// The flat map containing all translations for locale <es>.
@@ -286,6 +310,10 @@ extension on TranslationsEs {
 			'tracking_watching' => 'Viendo',
 			'tracking_completed' => 'Completado',
 			'tracking_dropped' => 'Abandonado',
+			'tracking_want_to_play_game' => 'Quiero Jugar',
+			'tracking_playing_game' => 'Jugando',
+			'tracking_completed_game' => 'Completado',
+			'tracking_dropped_game' => 'Abandonado',
 			'tracking_empty' => 'No hay series {status} todavía',
 			'series_detail_add_to_list' => 'Añadir a Lista',
 			'series_detail_manage_tracking' => 'Gestionar',
@@ -358,6 +386,7 @@ extension on TranslationsEs {
 			'locale_es' => 'Español',
 			'media_type_series' => 'Series',
 			'media_type_movies' => 'Películas',
+			'media_type_games' => 'Juegos',
 			'search_hint_movies' => 'Buscar películas...',
 			'search_no_results_movies' => 'No se encontraron películas',
 			'tracking_empty_movies' => 'Aún no hay películas en {status}',
@@ -476,6 +505,25 @@ extension on TranslationsEs {
 			'social_avatar_size_limit' => 'El archivo del avatar debe pesar 10 MB o menos',
 			'social_edit_avatar_semantics' => 'Editar avatar',
 			'social_avatar_uploading_semantics' => 'Subiendo avatar',
+			'game_platform_pc' => 'PC',
+			'game_platform_switch' => 'Switch',
+			'game_platform_switch2' => 'Switch 2',
+			'game_platform_ps1' => 'PS1',
+			'game_platform_ps2' => 'PS2',
+			'game_platform_ps3' => 'PS3',
+			'game_platform_ps4' => 'PS4',
+			'game_platform_ps5' => 'PS5',
+			'game_platform_xbox' => 'Xbox',
+			'game_platform_xbox_360' => 'Xbox 360',
+			'game_platform_xbox_one' => 'Xbox One',
+			'game_platform_snes' => 'SNES',
+			'game_platform_nes' => 'NES',
+			'game_platform_mega_drive' => 'Mega Drive',
+			'game_platform_gba' => 'GBA',
+			'game_platform_xbox_series_xs' => 'Xbox Series X/S',
+			'game_platform_mobile' => 'Móvil',
+			'game_platform_vr' => 'VR',
+			'game_platform_other' => 'Otro',
 			_ => null,
 		};
 	}
