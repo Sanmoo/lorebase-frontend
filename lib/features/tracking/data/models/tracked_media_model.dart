@@ -17,6 +17,8 @@ abstract class TrackedMediaModel with _$TrackedMediaModel {
     required String status,
     int? rating,
     String? review,
+    String? selectedPlatform,
+    double? hoursPlayed,
     @Default([]) List<SeasonRatingModel> seasonRatings,
     TrackedMediaSummaryModel? media,
     required DateTime addedAt,

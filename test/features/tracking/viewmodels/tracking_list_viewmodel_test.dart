@@ -56,11 +56,14 @@ class FakeTrackingRepo implements TrackingRepository {
   }
 
   @override
+  @override
   Future<TrackedMediaModel> startTracking(
     String mediaId,
     MediaType mediaType,
-    String status,
-  ) async => _makeTracking('t-1', status);
+    String status, {
+    String? selectedPlatform,
+    double? hoursPlayed,
+  }) async => _makeTracking('t-1', status);
 
   @override
   Future<TrackedMediaModel> updateTracking(
@@ -69,6 +72,8 @@ class FakeTrackingRepo implements TrackingRepository {
     String? status,
     int? rating,
     String? review,
+    String? selectedPlatform,
+    double? hoursPlayed,
     List<Map<String, dynamic>>? seasonRatings,
   }) async => _makeTracking('t-1', status ?? 'WATCHING');
 

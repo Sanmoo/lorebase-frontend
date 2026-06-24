@@ -87,8 +87,10 @@ class FakeTrackingRepo implements TrackingRepository {
   Future<TrackedMediaModel> startTracking(
     String mediaId,
     MediaType mediaType,
-    String status,
-  ) async {
+    String status, {
+    String? selectedPlatform,
+    double? hoursPlayed,
+  }) async {
     final now = DateTime.now();
     final result = TrackedMediaModel(
       trackingId: 'track-$mediaId',
@@ -110,6 +112,8 @@ class FakeTrackingRepo implements TrackingRepository {
     String? status,
     int? rating,
     String? review,
+    String? selectedPlatform,
+    double? hoursPlayed,
     List<Map<String, dynamic>>? seasonRatings,
   }) async {
     if (shouldThrowUpdate) throw Exception('update failed');

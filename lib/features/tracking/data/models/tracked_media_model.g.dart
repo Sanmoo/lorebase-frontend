@@ -15,6 +15,8 @@ _TrackedMediaModel _$TrackedMediaModelFromJson(Map<String, dynamic> json) =>
       status: json['status'] as String,
       rating: (json['rating'] as num?)?.toInt(),
       review: json['review'] as String?,
+      selectedPlatform: json['selectedPlatform'] as String?,
+      hoursPlayed: (json['hoursPlayed'] as num?)?.toDouble(),
       seasonRatings:
           (json['seasonRatings'] as List<dynamic>?)
               ?.map(
@@ -40,6 +42,8 @@ Map<String, dynamic> _$TrackedMediaModelToJson(_TrackedMediaModel instance) =>
       'status': instance.status,
       'rating': instance.rating,
       'review': instance.review,
+      'selectedPlatform': instance.selectedPlatform,
+      'hoursPlayed': instance.hoursPlayed,
       'seasonRatings': instance.seasonRatings,
       'media': instance.media,
       'addedAt': instance.addedAt.toIso8601String(),

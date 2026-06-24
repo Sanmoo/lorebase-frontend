@@ -21,8 +21,10 @@ abstract class TrackingRepository {
   Future<TrackedMediaModel> startTracking(
     String mediaId,
     MediaType mediaType,
-    String status,
-  );
+    String status, {
+    String? selectedPlatform,
+    double? hoursPlayed,
+  });
 
   Future<TrackedMediaModel> updateTracking(
     String mediaId, {
@@ -30,6 +32,8 @@ abstract class TrackingRepository {
     String? status,
     int? rating,
     String? review,
+    String? selectedPlatform,
+    double? hoursPlayed,
     List<Map<String, dynamic>>? seasonRatings,
   });
 
@@ -95,17 +99,20 @@ class TrackingRepositoryImpl implements TrackingRepository {
   Future<TrackedMediaModel> startTracking(
     String mediaId,
     MediaType mediaType,
-    String status,
-  ) async {
+    String status, {
+    String? selectedPlatform,
+    double? hoursPlayed,
+  }) async {
     try {
-      final response = await _dio.post(
-        '/tracking',
-        data: {
-          'mediaId': mediaId,
-          'mediaType': mediaType.apiValue,
-          'status': status,
-        },
-      );
+      final data = <String, dynamic>{
+        'mediaId': mediaId,
+        'mediaType': mediaType.apiValue,
+        'status': status,
+        'selectedPlatform': selectedPlatform,
+        'hoursPlayed': hoursPlayed,
+      };
+
+      final response = await _dio.post('/tracking', data: data);
       return TrackedMediaModel.fromJson(response.data);
     } on DioException catch (e) {
       throw ServerException(
@@ -122,6 +129,8 @@ class TrackingRepositoryImpl implements TrackingRepository {
     String? status,
     int? rating,
     String? review,
+    String? selectedPlatform,
+    double? hoursPlayed,
     List<Map<String, dynamic>>? seasonRatings,
   }) async {
     try {
@@ -130,6 +139,8 @@ class TrackingRepositoryImpl implements TrackingRepository {
         'status': ?status,
         'seriesRating': ?rating,
         'seriesReview': ?review,
+        'selectedPlatform': selectedPlatform,
+        'hoursPlayed': hoursPlayed,
         'seasonRatings': ?seasonRatings,
       };
 

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TrackedMediaModel {
 
- String get trackingId; String get userId;@JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson) MediaType get mediaType; String get mediaId; String get status; int? get rating; String? get review; List<SeasonRatingModel> get seasonRatings; TrackedMediaSummaryModel? get media; DateTime get addedAt; DateTime get lastUpdated;
+ String get trackingId; String get userId;@JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson) MediaType get mediaType; String get mediaId; String get status; int? get rating; String? get review; String? get selectedPlatform; double? get hoursPlayed; List<SeasonRatingModel> get seasonRatings; TrackedMediaSummaryModel? get media; DateTime get addedAt; DateTime get lastUpdated;
 /// Create a copy of TrackedMediaModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $TrackedMediaModelCopyWith<TrackedMediaModel> get copyWith => _$TrackedMediaMode
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TrackedMediaModel&&(identical(other.trackingId, trackingId) || other.trackingId == trackingId)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.mediaType, mediaType) || other.mediaType == mediaType)&&(identical(other.mediaId, mediaId) || other.mediaId == mediaId)&&(identical(other.status, status) || other.status == status)&&(identical(other.rating, rating) || other.rating == rating)&&(identical(other.review, review) || other.review == review)&&const DeepCollectionEquality().equals(other.seasonRatings, seasonRatings)&&(identical(other.media, media) || other.media == media)&&(identical(other.addedAt, addedAt) || other.addedAt == addedAt)&&(identical(other.lastUpdated, lastUpdated) || other.lastUpdated == lastUpdated));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TrackedMediaModel&&(identical(other.trackingId, trackingId) || other.trackingId == trackingId)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.mediaType, mediaType) || other.mediaType == mediaType)&&(identical(other.mediaId, mediaId) || other.mediaId == mediaId)&&(identical(other.status, status) || other.status == status)&&(identical(other.rating, rating) || other.rating == rating)&&(identical(other.review, review) || other.review == review)&&(identical(other.selectedPlatform, selectedPlatform) || other.selectedPlatform == selectedPlatform)&&(identical(other.hoursPlayed, hoursPlayed) || other.hoursPlayed == hoursPlayed)&&const DeepCollectionEquality().equals(other.seasonRatings, seasonRatings)&&(identical(other.media, media) || other.media == media)&&(identical(other.addedAt, addedAt) || other.addedAt == addedAt)&&(identical(other.lastUpdated, lastUpdated) || other.lastUpdated == lastUpdated));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,trackingId,userId,mediaType,mediaId,status,rating,review,const DeepCollectionEquality().hash(seasonRatings),media,addedAt,lastUpdated);
+int get hashCode => Object.hash(runtimeType,trackingId,userId,mediaType,mediaId,status,rating,review,selectedPlatform,hoursPlayed,const DeepCollectionEquality().hash(seasonRatings),media,addedAt,lastUpdated);
 
 @override
 String toString() {
-  return 'TrackedMediaModel(trackingId: $trackingId, userId: $userId, mediaType: $mediaType, mediaId: $mediaId, status: $status, rating: $rating, review: $review, seasonRatings: $seasonRatings, media: $media, addedAt: $addedAt, lastUpdated: $lastUpdated)';
+  return 'TrackedMediaModel(trackingId: $trackingId, userId: $userId, mediaType: $mediaType, mediaId: $mediaId, status: $status, rating: $rating, review: $review, selectedPlatform: $selectedPlatform, hoursPlayed: $hoursPlayed, seasonRatings: $seasonRatings, media: $media, addedAt: $addedAt, lastUpdated: $lastUpdated)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $TrackedMediaModelCopyWith<$Res>  {
   factory $TrackedMediaModelCopyWith(TrackedMediaModel value, $Res Function(TrackedMediaModel) _then) = _$TrackedMediaModelCopyWithImpl;
 @useResult
 $Res call({
- String trackingId, String userId,@JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson) MediaType mediaType, String mediaId, String status, int? rating, String? review, List<SeasonRatingModel> seasonRatings, TrackedMediaSummaryModel? media, DateTime addedAt, DateTime lastUpdated
+ String trackingId, String userId,@JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson) MediaType mediaType, String mediaId, String status, int? rating, String? review, String? selectedPlatform, double? hoursPlayed, List<SeasonRatingModel> seasonRatings, TrackedMediaSummaryModel? media, DateTime addedAt, DateTime lastUpdated
 });
 
 
@@ -65,7 +65,7 @@ class _$TrackedMediaModelCopyWithImpl<$Res>
 
 /// Create a copy of TrackedMediaModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? trackingId = null,Object? userId = null,Object? mediaType = null,Object? mediaId = null,Object? status = null,Object? rating = freezed,Object? review = freezed,Object? seasonRatings = null,Object? media = freezed,Object? addedAt = null,Object? lastUpdated = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? trackingId = null,Object? userId = null,Object? mediaType = null,Object? mediaId = null,Object? status = null,Object? rating = freezed,Object? review = freezed,Object? selectedPlatform = freezed,Object? hoursPlayed = freezed,Object? seasonRatings = null,Object? media = freezed,Object? addedAt = null,Object? lastUpdated = null,}) {
   return _then(_self.copyWith(
 trackingId: null == trackingId ? _self.trackingId : trackingId // ignore: cast_nullable_to_non_nullable
 as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
@@ -74,7 +74,9 @@ as MediaType,mediaId: null == mediaId ? _self.mediaId : mediaId // ignore: cast_
 as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as String,rating: freezed == rating ? _self.rating : rating // ignore: cast_nullable_to_non_nullable
 as int?,review: freezed == review ? _self.review : review // ignore: cast_nullable_to_non_nullable
-as String?,seasonRatings: null == seasonRatings ? _self.seasonRatings : seasonRatings // ignore: cast_nullable_to_non_nullable
+as String?,selectedPlatform: freezed == selectedPlatform ? _self.selectedPlatform : selectedPlatform // ignore: cast_nullable_to_non_nullable
+as String?,hoursPlayed: freezed == hoursPlayed ? _self.hoursPlayed : hoursPlayed // ignore: cast_nullable_to_non_nullable
+as double?,seasonRatings: null == seasonRatings ? _self.seasonRatings : seasonRatings // ignore: cast_nullable_to_non_nullable
 as List<SeasonRatingModel>,media: freezed == media ? _self.media : media // ignore: cast_nullable_to_non_nullable
 as TrackedMediaSummaryModel?,addedAt: null == addedAt ? _self.addedAt : addedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,lastUpdated: null == lastUpdated ? _self.lastUpdated : lastUpdated // ignore: cast_nullable_to_non_nullable
@@ -175,10 +177,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String trackingId,  String userId, @JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson)  MediaType mediaType,  String mediaId,  String status,  int? rating,  String? review,  List<SeasonRatingModel> seasonRatings,  TrackedMediaSummaryModel? media,  DateTime addedAt,  DateTime lastUpdated)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String trackingId,  String userId, @JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson)  MediaType mediaType,  String mediaId,  String status,  int? rating,  String? review,  String? selectedPlatform,  double? hoursPlayed,  List<SeasonRatingModel> seasonRatings,  TrackedMediaSummaryModel? media,  DateTime addedAt,  DateTime lastUpdated)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TrackedMediaModel() when $default != null:
-return $default(_that.trackingId,_that.userId,_that.mediaType,_that.mediaId,_that.status,_that.rating,_that.review,_that.seasonRatings,_that.media,_that.addedAt,_that.lastUpdated);case _:
+return $default(_that.trackingId,_that.userId,_that.mediaType,_that.mediaId,_that.status,_that.rating,_that.review,_that.selectedPlatform,_that.hoursPlayed,_that.seasonRatings,_that.media,_that.addedAt,_that.lastUpdated);case _:
   return orElse();
 
 }
@@ -196,10 +198,10 @@ return $default(_that.trackingId,_that.userId,_that.mediaType,_that.mediaId,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String trackingId,  String userId, @JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson)  MediaType mediaType,  String mediaId,  String status,  int? rating,  String? review,  List<SeasonRatingModel> seasonRatings,  TrackedMediaSummaryModel? media,  DateTime addedAt,  DateTime lastUpdated)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String trackingId,  String userId, @JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson)  MediaType mediaType,  String mediaId,  String status,  int? rating,  String? review,  String? selectedPlatform,  double? hoursPlayed,  List<SeasonRatingModel> seasonRatings,  TrackedMediaSummaryModel? media,  DateTime addedAt,  DateTime lastUpdated)  $default,) {final _that = this;
 switch (_that) {
 case _TrackedMediaModel():
-return $default(_that.trackingId,_that.userId,_that.mediaType,_that.mediaId,_that.status,_that.rating,_that.review,_that.seasonRatings,_that.media,_that.addedAt,_that.lastUpdated);case _:
+return $default(_that.trackingId,_that.userId,_that.mediaType,_that.mediaId,_that.status,_that.rating,_that.review,_that.selectedPlatform,_that.hoursPlayed,_that.seasonRatings,_that.media,_that.addedAt,_that.lastUpdated);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -216,10 +218,10 @@ return $default(_that.trackingId,_that.userId,_that.mediaType,_that.mediaId,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String trackingId,  String userId, @JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson)  MediaType mediaType,  String mediaId,  String status,  int? rating,  String? review,  List<SeasonRatingModel> seasonRatings,  TrackedMediaSummaryModel? media,  DateTime addedAt,  DateTime lastUpdated)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String trackingId,  String userId, @JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson)  MediaType mediaType,  String mediaId,  String status,  int? rating,  String? review,  String? selectedPlatform,  double? hoursPlayed,  List<SeasonRatingModel> seasonRatings,  TrackedMediaSummaryModel? media,  DateTime addedAt,  DateTime lastUpdated)?  $default,) {final _that = this;
 switch (_that) {
 case _TrackedMediaModel() when $default != null:
-return $default(_that.trackingId,_that.userId,_that.mediaType,_that.mediaId,_that.status,_that.rating,_that.review,_that.seasonRatings,_that.media,_that.addedAt,_that.lastUpdated);case _:
+return $default(_that.trackingId,_that.userId,_that.mediaType,_that.mediaId,_that.status,_that.rating,_that.review,_that.selectedPlatform,_that.hoursPlayed,_that.seasonRatings,_that.media,_that.addedAt,_that.lastUpdated);case _:
   return null;
 
 }
@@ -231,7 +233,7 @@ return $default(_that.trackingId,_that.userId,_that.mediaType,_that.mediaId,_tha
 @JsonSerializable()
 
 class _TrackedMediaModel implements TrackedMediaModel {
-  const _TrackedMediaModel({required this.trackingId, required this.userId, @JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson) required this.mediaType, required this.mediaId, required this.status, this.rating, this.review, final  List<SeasonRatingModel> seasonRatings = const [], this.media, required this.addedAt, required this.lastUpdated}): _seasonRatings = seasonRatings;
+  const _TrackedMediaModel({required this.trackingId, required this.userId, @JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson) required this.mediaType, required this.mediaId, required this.status, this.rating, this.review, this.selectedPlatform, this.hoursPlayed, final  List<SeasonRatingModel> seasonRatings = const [], this.media, required this.addedAt, required this.lastUpdated}): _seasonRatings = seasonRatings;
   factory _TrackedMediaModel.fromJson(Map<String, dynamic> json) => _$TrackedMediaModelFromJson(json);
 
 @override final  String trackingId;
@@ -241,6 +243,8 @@ class _TrackedMediaModel implements TrackedMediaModel {
 @override final  String status;
 @override final  int? rating;
 @override final  String? review;
+@override final  String? selectedPlatform;
+@override final  double? hoursPlayed;
  final  List<SeasonRatingModel> _seasonRatings;
 @override@JsonKey() List<SeasonRatingModel> get seasonRatings {
   if (_seasonRatings is EqualUnmodifiableListView) return _seasonRatings;
@@ -265,16 +269,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TrackedMediaModel&&(identical(other.trackingId, trackingId) || other.trackingId == trackingId)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.mediaType, mediaType) || other.mediaType == mediaType)&&(identical(other.mediaId, mediaId) || other.mediaId == mediaId)&&(identical(other.status, status) || other.status == status)&&(identical(other.rating, rating) || other.rating == rating)&&(identical(other.review, review) || other.review == review)&&const DeepCollectionEquality().equals(other._seasonRatings, _seasonRatings)&&(identical(other.media, media) || other.media == media)&&(identical(other.addedAt, addedAt) || other.addedAt == addedAt)&&(identical(other.lastUpdated, lastUpdated) || other.lastUpdated == lastUpdated));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TrackedMediaModel&&(identical(other.trackingId, trackingId) || other.trackingId == trackingId)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.mediaType, mediaType) || other.mediaType == mediaType)&&(identical(other.mediaId, mediaId) || other.mediaId == mediaId)&&(identical(other.status, status) || other.status == status)&&(identical(other.rating, rating) || other.rating == rating)&&(identical(other.review, review) || other.review == review)&&(identical(other.selectedPlatform, selectedPlatform) || other.selectedPlatform == selectedPlatform)&&(identical(other.hoursPlayed, hoursPlayed) || other.hoursPlayed == hoursPlayed)&&const DeepCollectionEquality().equals(other._seasonRatings, _seasonRatings)&&(identical(other.media, media) || other.media == media)&&(identical(other.addedAt, addedAt) || other.addedAt == addedAt)&&(identical(other.lastUpdated, lastUpdated) || other.lastUpdated == lastUpdated));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,trackingId,userId,mediaType,mediaId,status,rating,review,const DeepCollectionEquality().hash(_seasonRatings),media,addedAt,lastUpdated);
+int get hashCode => Object.hash(runtimeType,trackingId,userId,mediaType,mediaId,status,rating,review,selectedPlatform,hoursPlayed,const DeepCollectionEquality().hash(_seasonRatings),media,addedAt,lastUpdated);
 
 @override
 String toString() {
-  return 'TrackedMediaModel(trackingId: $trackingId, userId: $userId, mediaType: $mediaType, mediaId: $mediaId, status: $status, rating: $rating, review: $review, seasonRatings: $seasonRatings, media: $media, addedAt: $addedAt, lastUpdated: $lastUpdated)';
+  return 'TrackedMediaModel(trackingId: $trackingId, userId: $userId, mediaType: $mediaType, mediaId: $mediaId, status: $status, rating: $rating, review: $review, selectedPlatform: $selectedPlatform, hoursPlayed: $hoursPlayed, seasonRatings: $seasonRatings, media: $media, addedAt: $addedAt, lastUpdated: $lastUpdated)';
 }
 
 
@@ -285,7 +289,7 @@ abstract mixin class _$TrackedMediaModelCopyWith<$Res> implements $TrackedMediaM
   factory _$TrackedMediaModelCopyWith(_TrackedMediaModel value, $Res Function(_TrackedMediaModel) _then) = __$TrackedMediaModelCopyWithImpl;
 @override @useResult
 $Res call({
- String trackingId, String userId,@JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson) MediaType mediaType, String mediaId, String status, int? rating, String? review, List<SeasonRatingModel> seasonRatings, TrackedMediaSummaryModel? media, DateTime addedAt, DateTime lastUpdated
+ String trackingId, String userId,@JsonKey(fromJson: mediaTypeFromJson, toJson: mediaTypeToJson) MediaType mediaType, String mediaId, String status, int? rating, String? review, String? selectedPlatform, double? hoursPlayed, List<SeasonRatingModel> seasonRatings, TrackedMediaSummaryModel? media, DateTime addedAt, DateTime lastUpdated
 });
 
 
@@ -302,7 +306,7 @@ class __$TrackedMediaModelCopyWithImpl<$Res>
 
 /// Create a copy of TrackedMediaModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? trackingId = null,Object? userId = null,Object? mediaType = null,Object? mediaId = null,Object? status = null,Object? rating = freezed,Object? review = freezed,Object? seasonRatings = null,Object? media = freezed,Object? addedAt = null,Object? lastUpdated = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? trackingId = null,Object? userId = null,Object? mediaType = null,Object? mediaId = null,Object? status = null,Object? rating = freezed,Object? review = freezed,Object? selectedPlatform = freezed,Object? hoursPlayed = freezed,Object? seasonRatings = null,Object? media = freezed,Object? addedAt = null,Object? lastUpdated = null,}) {
   return _then(_TrackedMediaModel(
 trackingId: null == trackingId ? _self.trackingId : trackingId // ignore: cast_nullable_to_non_nullable
 as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
@@ -311,7 +315,9 @@ as MediaType,mediaId: null == mediaId ? _self.mediaId : mediaId // ignore: cast_
 as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as String,rating: freezed == rating ? _self.rating : rating // ignore: cast_nullable_to_non_nullable
 as int?,review: freezed == review ? _self.review : review // ignore: cast_nullable_to_non_nullable
-as String?,seasonRatings: null == seasonRatings ? _self._seasonRatings : seasonRatings // ignore: cast_nullable_to_non_nullable
+as String?,selectedPlatform: freezed == selectedPlatform ? _self.selectedPlatform : selectedPlatform // ignore: cast_nullable_to_non_nullable
+as String?,hoursPlayed: freezed == hoursPlayed ? _self.hoursPlayed : hoursPlayed // ignore: cast_nullable_to_non_nullable
+as double?,seasonRatings: null == seasonRatings ? _self._seasonRatings : seasonRatings // ignore: cast_nullable_to_non_nullable
 as List<SeasonRatingModel>,media: freezed == media ? _self.media : media // ignore: cast_nullable_to_non_nullable
 as TrackedMediaSummaryModel?,addedAt: null == addedAt ? _self.addedAt : addedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,lastUpdated: null == lastUpdated ? _self.lastUpdated : lastUpdated // ignore: cast_nullable_to_non_nullable

@@ -193,6 +193,33 @@ void main() {
       expect(result.status, 'WATCHING');
     });
 
+    test('startTracking() sends selectedPlatform and hoursPlayed', () async {
+      Map<String, dynamic>? capturedData;
+      final dio = Dio()
+        ..httpClientAdapter = MockAdapter(
+          onFetch: (options) {
+            capturedData = options.data as Map<String, dynamic>?;
+            return _json(_trackingJson('t-new', 'game'));
+          },
+        );
+      final repo = TrackingRepositoryImpl(dio);
+
+      await repo.startTracking(
+        'game-1',
+        MediaType.game,
+        'PLAYING',
+        selectedPlatform: 'PC',
+        hoursPlayed: 12.5,
+      );
+
+      expect(capturedData, isNotNull);
+      expect(capturedData!['mediaId'], 'game-1');
+      expect(capturedData!['mediaType'], 'GAME');
+      expect(capturedData!['status'], 'PLAYING');
+      expect(capturedData!['selectedPlatform'], 'PC');
+      expect(capturedData!['hoursPlayed'], 12.5);
+    });
+
     test('startTracking() throws ServerException on DioException', () async {
       final dio = Dio()
         ..httpClientAdapter = MockAdapter(
@@ -257,6 +284,32 @@ void main() {
         expect(capturedData!.containsKey('review'), false);
       },
     );
+
+    test('updateTracking() sends selectedPlatform and hoursPlayed', () async {
+      Map<String, dynamic>? capturedData;
+      final dio = Dio()
+        ..httpClientAdapter = MockAdapter(
+          onFetch: (options) {
+            capturedData = options.data as Map<String, dynamic>?;
+            return _json(_trackingJson('t-updated', 'game'));
+          },
+        );
+      final repo = TrackingRepositoryImpl(dio);
+
+      await repo.updateTracking(
+        'game-1',
+        mediaType: MediaType.game,
+        status: 'PLAYING',
+        selectedPlatform: 'PlayStation 5',
+        hoursPlayed: 42.0,
+      );
+
+      expect(capturedData, isNotNull);
+      expect(capturedData!['mediaType'], 'GAME');
+      expect(capturedData!['status'], 'PLAYING');
+      expect(capturedData!['selectedPlatform'], 'PlayStation 5');
+      expect(capturedData!['hoursPlayed'], 42.0);
+    });
 
     test('updateTracking() throws ServerException on DioException', () async {
       final dio = Dio()
