@@ -1,6 +1,7 @@
 // coverage:ignore-file
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
+import 'package:lorebase/core/providers/media_filter_provider.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_state.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_viewmodel.dart';
 import 'package:lorebase/features/auth/viewmodels/login_viewmodel.dart';
@@ -8,6 +9,7 @@ import 'package:lorebase/features/auth/viewmodels/register_viewmodel.dart';
 import 'package:lorebase/features/games/data/models/game_model.dart';
 import 'package:lorebase/features/games/viewmodels/game_detail_state.dart';
 import 'package:lorebase/features/games/viewmodels/game_detail_viewmodel.dart';
+import 'package:lorebase/features/games/viewmodels/game_search_viewmodel.dart';
 import 'package:lorebase/features/dashboard/data/models/dashboard_model.dart';
 import 'package:lorebase/features/dashboard/data/models/dashboard_section_model.dart';
 import 'package:lorebase/features/dashboard/data/models/dashboard_stats_model.dart';
@@ -169,6 +171,17 @@ class FakeMovieSearchVM extends MovieSearchViewModel {
   void clear() {}
 }
 
+class FakeGameSearchVM extends GameSearchViewModel {
+  @override
+  AsyncValue<List<GameModel>> build() => AsyncValue.data(_gameSearchResults());
+
+  @override
+  Future<void> search(String query) async {}
+
+  @override
+  void clear() {}
+}
+
 class FakeGameDetailVM extends GameDetailViewModel {
   @override
   Future<GameDetailState> build(String gameId) async => const GameDetailState(
@@ -260,6 +273,33 @@ List<SeriesModel> _searchResults() => const [
   SeriesModel(tmdbId: 3, title: 'Stranger Things'),
 ];
 
+List<GameModel> _gameSearchResults() => const [
+  GameModel(
+    gameId: 'zelda-botw',
+    title: 'The Legend of Zelda: Breath of the Wild',
+    genre: 'Action-Adventure',
+    releaseDate: '2017-03-03',
+    platforms: ['Nintendo Switch', 'Wii U'],
+    developer: 'Nintendo EPD',
+  ),
+  GameModel(
+    gameId: 'hades',
+    title: 'Hades',
+    genre: 'Roguelike',
+    releaseDate: '2020-09-17',
+    platforms: ['PC', 'Nintendo Switch', 'PlayStation', 'Xbox'],
+    developer: 'Supergiant Games',
+  ),
+  GameModel(
+    gameId: 'elden-ring',
+    title: 'Elden Ring',
+    genre: 'Action RPG',
+    releaseDate: '2022-02-25',
+    platforms: ['PC', 'PlayStation', 'Xbox'],
+    developer: 'FromSoftware',
+  ),
+];
+
 final _now = DateTime(2025, 1, 1);
 
 List<TrackedMediaModel> _trackingItems() => [
@@ -343,6 +383,14 @@ List<Override> seriesDetailGoldenOverrides() => [
 List<Override> seriesSearchGoldenOverrides() => [
   seriesSearchViewModelProvider.overrideWith(() => FakeSeriesSearchVM()),
   movieSearchViewModelProvider.overrideWith(() => FakeMovieSearchVM()),
+  ...authOverride(),
+];
+
+List<Override> gameSearchGoldenOverrides() => [
+  selectedMediaTypeProvider.overrideWith((ref) => MediaType.game),
+  seriesSearchViewModelProvider.overrideWith(() => FakeSeriesSearchVM()),
+  movieSearchViewModelProvider.overrideWith(() => FakeMovieSearchVM()),
+  gameSearchViewModelProvider.overrideWith(() => FakeGameSearchVM()),
   ...authOverride(),
 ];
 
