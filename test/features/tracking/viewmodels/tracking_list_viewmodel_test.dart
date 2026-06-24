@@ -56,7 +56,6 @@ class FakeTrackingRepo implements TrackingRepository {
   }
 
   @override
-  @override
   Future<TrackedMediaModel> startTracking(
     String mediaId,
     MediaType mediaType,

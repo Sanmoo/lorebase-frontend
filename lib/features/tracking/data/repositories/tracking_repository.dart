@@ -136,7 +136,7 @@ class TrackingRepositoryImpl implements TrackingRepository {
     try {
       final data = <String, dynamic>{
         'mediaType': mediaType.apiValue,
-        'status': ?status,
+        'status': status,
         'seriesRating': ?rating,
         'seriesReview': ?review,
         'selectedPlatform': selectedPlatform,
