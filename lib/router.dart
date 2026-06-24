@@ -15,6 +15,7 @@ import 'features/series/pages/series_search_page.dart';
 import 'features/tracking/pages/tracking_list_page.dart';
 import 'features/series/pages/series_detail_page.dart';
 import 'features/movies/pages/movie_detail_page.dart';
+import 'features/games/pages/game_detail_page.dart';
 import 'features/social/pages/edit_social_profile_page.dart';
 import 'features/social/pages/social_follow_list_page.dart';
 import 'features/social/pages/social_page.dart';
@@ -82,6 +83,13 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) {
               final tmdbId = int.parse(state.pathParameters['tmdbId']!);
               return MovieDetailPage(tmdbId: tmdbId);
+            },
+          ),
+          GoRoute(
+            path: '/games/:gameId',
+            builder: (context, state) {
+              final gameId = state.pathParameters['gameId']!;
+              return GameDetailPage(gameId: gameId);
             },
           ),
           GoRoute(

@@ -36,6 +36,7 @@ void main() {
         );
         expect(authRedirect(unauthenticated, '/series/123'), '/login');
         expect(authRedirect(unauthenticated, '/movies/123'), '/login');
+        expect(authRedirect(unauthenticated, '/games/123'), '/login');
       });
     });
 
@@ -59,6 +60,7 @@ void main() {
         );
         expect(authRedirect(authenticated, '/series/123'), isNull);
         expect(authRedirect(authenticated, '/movies/123'), isNull);
+        expect(authRedirect(authenticated, '/games/123'), isNull);
       });
 
       test('redirects to /dashboard on auth routes', () {
@@ -141,6 +143,28 @@ void main() {
       );
 
       expect(routeMatch.route.path, '/social/profile/:userId/following');
+    });
+
+    test('game detail route is registered', () {
+      final router = _routerForTest();
+      final routeMatch = _lastRouteMatch(router, '/games/1234');
+
+      expect(routeMatch.route.path, '/games/:gameId');
+    });
+
+    test('routes to GameDetailPage for /games/:gameId', () async {
+      final container = ProviderContainer(
+        overrides: [
+          authViewModelProvider.overrideWith(
+            () => _FakeAuthVM(const AuthState.authenticated('user1')),
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
+      final router = container.read(routerProvider);
+      router.go('/games/1234');
+      await Future<void>.delayed(Duration.zero);
+      expect(router.routeInformationProvider.value.uri.path, '/games/1234');
     });
   });
 
