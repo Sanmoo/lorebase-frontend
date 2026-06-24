@@ -12,14 +12,21 @@ class CacheEntry {
   bool get isFresh => DateTime.now().isBefore(cachedAt.add(ttl));
 
   Map<String, dynamic> toJson() => {
-        'json': json,
-        'cachedAt': cachedAt.toIso8601String(),
-        'ttl': ttl.inSeconds,
-      };
+    'json': json,
+    'cachedAt': cachedAt.toIso8601String(),
+    'ttl': ttl.inSeconds,
+  };
 
   factory CacheEntry.fromJson(Map<String, dynamic> map) => CacheEntry(
-        json: map['json'] as String,
-        cachedAt: DateTime.parse(map['cachedAt'] as String),
-        ttl: Duration(seconds: map['ttl'] as int),
-      );
+    json: map['json'] as String,
+    cachedAt: DateTime.parse(map['cachedAt'] as String),
+    ttl: Duration(seconds: map['ttl'] as int),
+  );
+
+  /// Creates a non-expiring entry for testing.
+  factory CacheEntry.test() => CacheEntry(
+    json: '{}',
+    cachedAt: DateTime.now(),
+    ttl: const Duration(days: 365),
+  );
 }
