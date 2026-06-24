@@ -757,6 +757,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// pt-BR: 'Outro'
 	String get game_platform_other => 'Outro';
+
+	/// pt-BR: 'Horas jogadas'
+	String get game_hours_played_label => 'Horas jogadas';
 }
 
 /// The flat map containing all translations for locale <pt-BR>.
@@ -1005,6 +1008,7 @@ extension on Translations {
 			'game_platform_mobile' => 'Mobile',
 			'game_platform_vr' => 'VR',
 			'game_platform_other' => 'Outro',
+			'game_hours_played_label' => 'Horas jogadas',
 			_ => null,
 		};
 	}

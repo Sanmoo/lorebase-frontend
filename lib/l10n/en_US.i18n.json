@@ -239,5 +239,6 @@
   "game_platform_xbox_series_xs": "Xbox Series X/S",
   "game_platform_mobile": "Mobile",
   "game_platform_vr": "VR",
-  "game_platform_other": "Other"
+  "game_platform_other": "Other",
+  "game_hours_played_label": "Hours Played"
 }

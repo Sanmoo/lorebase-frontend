@@ -280,6 +280,7 @@ class TranslationsEs extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get game_platform_mobile => 'Móvil';
 	@override String get game_platform_vr => 'VR';
 	@override String get game_platform_other => 'Otro';
+	@override String get game_hours_played_label => 'Horas jugadas';
 }
 
 /// The flat map containing all translations for locale <es>.
@@ -528,6 +529,7 @@ extension on TranslationsEs {
 			'game_platform_mobile' => 'Móvil',
 			'game_platform_vr' => 'VR',
 			'game_platform_other' => 'Otro',
+			'game_hours_played_label' => 'Horas jugadas',
 			_ => null,
 		};
 	}
