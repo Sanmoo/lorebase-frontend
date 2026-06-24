@@ -66,33 +66,40 @@ class SeriesDetailPage extends ConsumerWidget {
         initialStatus: tracking?.status ?? TrackingStatus.wantToWatch.value,
         initialRating: tracking?.rating,
         initialReview: tracking?.review ?? '',
-        onSave: ({required status, rating, review}) async {
-          final notifier = ref.read(
-            seriesDetailViewModelProvider(tmdbId).notifier,
-          );
-          try {
-            if (isEditing) {
-              await notifier.updateTracking(
-                status: status,
-                rating: rating,
-                review: review,
+        onSave:
+            ({
+              required status,
+              rating,
+              review,
+              selectedPlatform,
+              hoursPlayed,
+            }) async {
+              final notifier = ref.read(
+                seriesDetailViewModelProvider(tmdbId).notifier,
               );
-            } else {
-              await notifier.addTracking(
-                status,
-                rating: rating,
-                review: review,
-              );
-            }
-            if (ctx.mounted) Navigator.pop(ctx);
-          } catch (e) {
-            if (ctx.mounted) {
-              ScaffoldMessenger.of(
-                ctx,
-              ).showSnackBar(SnackBar(content: Text(ctx.t.error_server)));
-            }
-          }
-        },
+              try {
+                if (isEditing) {
+                  await notifier.updateTracking(
+                    status: status,
+                    rating: rating,
+                    review: review,
+                  );
+                } else {
+                  await notifier.addTracking(
+                    status,
+                    rating: rating,
+                    review: review,
+                  );
+                }
+                if (ctx.mounted) Navigator.pop(ctx);
+              } catch (e) {
+                if (ctx.mounted) {
+                  ScaffoldMessenger.of(
+                    ctx,
+                  ).showSnackBar(SnackBar(content: Text(ctx.t.error_server)));
+                }
+              }
+            },
         onRemove: isEditing
             ? () async {
                 try {

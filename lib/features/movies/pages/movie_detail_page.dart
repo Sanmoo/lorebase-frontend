@@ -65,38 +65,45 @@ class MovieDetailPage extends ConsumerWidget {
         initialStatus: tracking?.status ?? TrackingStatus.wantToWatch.value,
         initialRating: tracking?.rating,
         initialReview: tracking?.review ?? '',
-        onSave: ({required status, rating, review}) async {
-          final notifier = ref.read(
-            movieDetailViewModelProvider(tmdbId).notifier,
-          );
-          try {
-            if (isEditing) {
-              await notifier.updateTracking(
-                status: status,
-                rating: rating,
-                review: review,
+        onSave:
+            ({
+              required status,
+              rating,
+              review,
+              selectedPlatform,
+              hoursPlayed,
+            }) async {
+              final notifier = ref.read(
+                movieDetailViewModelProvider(tmdbId).notifier,
               );
-            } else {
-              await notifier.addTracking(
-                status,
-                rating: rating,
-                review: review,
-              );
-            }
-            if (ctx.mounted) Navigator.pop(ctx);
-          } catch (e, st) {
-            debugPrint('[MOVIE_TRACKING] onSave failed: $e\n$st');
-            if (ctx.mounted) {
-              ScaffoldMessenger.of(ctx).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    ctx.t.movie_detail_error(message: e.toString()),
-                  ),
-                ),
-              );
-            }
-          }
-        },
+              try {
+                if (isEditing) {
+                  await notifier.updateTracking(
+                    status: status,
+                    rating: rating,
+                    review: review,
+                  );
+                } else {
+                  await notifier.addTracking(
+                    status,
+                    rating: rating,
+                    review: review,
+                  );
+                }
+                if (ctx.mounted) Navigator.pop(ctx);
+              } catch (e, st) {
+                debugPrint('[MOVIE_TRACKING] onSave failed: $e\n$st');
+                if (ctx.mounted) {
+                  ScaffoldMessenger.of(ctx).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        ctx.t.movie_detail_error(message: e.toString()),
+                      ),
+                    ),
+                  );
+                }
+              }
+            },
         onRemove: isEditing
             ? () async {
                 try {
