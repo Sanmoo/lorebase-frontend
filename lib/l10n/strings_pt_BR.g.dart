@@ -128,6 +128,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// pt-BR: 'Nenhuma série {status} ainda'
 	String get tracking_empty => 'Nenhuma série {status} ainda';
 
+	/// pt-BR: 'Nenhum jogo {status} ainda'
+	String get tracking_empty_games => 'Nenhum jogo {status} ainda';
+
 	/// pt-BR: 'Adicionar à Lista'
 	String get series_detail_add_to_list => 'Adicionar à Lista';
 
@@ -229,6 +232,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// pt-BR: 'Nenhuma série registrada ainda. Busque e adicione sua primeira série!'
 	String get dashboard_empty => 'Nenhuma série registrada ainda.\nBusque e adicione sua primeira série!';
+
+	/// pt-BR: 'Nenhum jogo registrado ainda. Busque e adicione seu primeiro jogo!'
+	String get dashboard_empty_games => 'Nenhum jogo registrado ainda.\nBusque e adicione seu primeiro jogo!';
 
 	/// pt-BR: 'Assistindo'
 	String get dashboard_watching => 'Assistindo';
@@ -617,6 +623,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// pt-BR: 'começou'
 	String get social_activity_started_watching => 'começou';
 
+	/// pt-BR: 'começou a jogar'
+	String get social_activity_started_playing => 'começou a jogar';
+
 	/// pt-BR: 'abandonou'
 	String get social_activity_dropped => 'abandonou';
 
@@ -820,6 +829,7 @@ extension on Translations {
 			'tracking_completed_game' => 'Concluído',
 			'tracking_dropped_game' => 'Abandonado',
 			'tracking_empty' => 'Nenhuma série {status} ainda',
+			'tracking_empty_games' => 'Nenhum jogo {status} ainda',
 			'series_detail_add_to_list' => 'Adicionar à Lista',
 			'series_detail_manage_tracking' => 'Gerenciar',
 			'series_detail_overview' => 'Visão Geral',
@@ -854,6 +864,7 @@ extension on Translations {
 			'series_detail_season_count' => '{count} {count, plural, one{temporada} other{temporadas}}',
 			'dashboard_loading' => 'Carregando seu dashboard...',
 			'dashboard_empty' => 'Nenhuma série registrada ainda.\nBusque e adicione sua primeira série!',
+			'dashboard_empty_games' => 'Nenhum jogo registrado ainda.\nBusque e adicione seu primeiro jogo!',
 			'dashboard_watching' => 'Assistindo',
 			'dashboard_want_to_watch' => 'Quero Ver',
 			'dashboard_completed' => 'Concluído',
@@ -982,6 +993,7 @@ extension on Translations {
 			'social_activity_reviewed' => 'escreveu uma review de',
 			'social_activity_completed' => 'completou',
 			'social_activity_started_watching' => 'começou',
+			'social_activity_started_playing' => 'começou a jogar',
 			'social_activity_dropped' => 'abandonou',
 			'social_activity_added_to_list' => 'adicionou à lista',
 			'social_activity_interacted_with' => 'interagiu com',

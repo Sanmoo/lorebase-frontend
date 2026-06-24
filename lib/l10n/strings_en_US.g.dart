@@ -68,6 +68,7 @@ class TranslationsEnUs extends Translations with BaseTranslations<AppLocale, Tra
 	@override String get tracking_completed_game => 'Completed';
 	@override String get tracking_dropped_game => 'Dropped';
 	@override String get tracking_empty => 'No {status} series yet';
+	@override String get tracking_empty_games => 'No {status} games yet';
 	@override String get series_detail_add_to_list => 'Add to List';
 	@override String get series_detail_manage_tracking => 'Manage Tracking';
 	@override String get series_detail_overview => 'Overview';
@@ -102,6 +103,7 @@ class TranslationsEnUs extends Translations with BaseTranslations<AppLocale, Tra
 	@override String get series_detail_season_count => '{count} {count, plural, one{season} other{seasons}}';
 	@override String get dashboard_loading => 'Loading your dashboard...';
 	@override String get dashboard_empty => 'No series tracked yet.\nSearch and add your first series!';
+	@override String get dashboard_empty_games => 'No games tracked yet.\nSearch and add your first game!';
 	@override String get dashboard_watching => 'Watching';
 	@override String get dashboard_want_to_watch => 'Want to Watch';
 	@override String get dashboard_completed => 'Completed';
@@ -233,6 +235,7 @@ class TranslationsEnUs extends Translations with BaseTranslations<AppLocale, Tra
 	@override String get social_activity_reviewed => 'wrote a review of';
 	@override String get social_activity_completed => 'completed';
 	@override String get social_activity_started_watching => 'started';
+	@override String get social_activity_started_playing => 'started playing';
 	@override String get social_activity_dropped => 'dropped';
 	@override String get social_activity_added_to_list => 'added to list';
 	@override String get social_activity_interacted_with => 'interacted with';
@@ -327,6 +330,7 @@ extension on TranslationsEnUs {
 			'tracking_completed_game' => 'Completed',
 			'tracking_dropped_game' => 'Dropped',
 			'tracking_empty' => 'No {status} series yet',
+			'tracking_empty_games' => 'No {status} games yet',
 			'series_detail_add_to_list' => 'Add to List',
 			'series_detail_manage_tracking' => 'Manage Tracking',
 			'series_detail_overview' => 'Overview',
@@ -361,6 +365,7 @@ extension on TranslationsEnUs {
 			'series_detail_season_count' => '{count} {count, plural, one{season} other{seasons}}',
 			'dashboard_loading' => 'Loading your dashboard...',
 			'dashboard_empty' => 'No series tracked yet.\nSearch and add your first series!',
+			'dashboard_empty_games' => 'No games tracked yet.\nSearch and add your first game!',
 			'dashboard_watching' => 'Watching',
 			'dashboard_want_to_watch' => 'Want to Watch',
 			'dashboard_completed' => 'Completed',
@@ -489,6 +494,7 @@ extension on TranslationsEnUs {
 			'social_activity_reviewed' => 'wrote a review of',
 			'social_activity_completed' => 'completed',
 			'social_activity_started_watching' => 'started',
+			'social_activity_started_playing' => 'started playing',
 			'social_activity_dropped' => 'dropped',
 			'social_activity_added_to_list' => 'added to list',
 			'social_activity_interacted_with' => 'interacted with',

@@ -71,6 +71,7 @@ class TranslationsEn extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get dashboard_completed => 'Completed';
 	@override String get dashboard_dropped => 'Dropped';
 	@override String get dashboard_empty => 'No series tracked yet.\nSearch and add your first series!';
+	@override String get dashboard_empty_games => 'No games tracked yet.\nSearch and add your first game!';
 	@override String get dashboard_empty_movies => 'No movies tracked yet.\nSearch and add your first movie!';
 	@override String get dashboard_loading => 'Loading your dashboard...';
 	@override String get dashboard_want_to_watch => 'Want to Watch';
@@ -152,6 +153,7 @@ class TranslationsEn extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get tracking_completed_game => 'Completed';
 	@override String get tracking_dropped_game => 'Dropped';
 	@override String get tracking_empty => 'No {status} series yet';
+	@override String get tracking_empty_games => 'No {status} games yet';
 	@override String get tracking_empty_movies => 'No {status} movies yet';
 	@override String get tracking_want_to_watch => 'Want to Watch';
 	@override String get tracking_watching => 'Watching';
@@ -233,6 +235,7 @@ class TranslationsEn extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get social_activity_reviewed => 'wrote a review of';
 	@override String get social_activity_completed => 'completed';
 	@override String get social_activity_started_watching => 'started';
+	@override String get social_activity_started_playing => 'started playing';
 	@override String get social_activity_dropped => 'dropped';
 	@override String get social_activity_added_to_list => 'added to list';
 	@override String get social_activity_interacted_with => 'interacted with';
@@ -330,6 +333,7 @@ extension on TranslationsEn {
 			'dashboard_completed' => 'Completed',
 			'dashboard_dropped' => 'Dropped',
 			'dashboard_empty' => 'No series tracked yet.\nSearch and add your first series!',
+			'dashboard_empty_games' => 'No games tracked yet.\nSearch and add your first game!',
 			'dashboard_empty_movies' => 'No movies tracked yet.\nSearch and add your first movie!',
 			'dashboard_loading' => 'Loading your dashboard...',
 			'dashboard_want_to_watch' => 'Want to Watch',
@@ -411,6 +415,7 @@ extension on TranslationsEn {
 			'tracking_completed_game' => 'Completed',
 			'tracking_dropped_game' => 'Dropped',
 			'tracking_empty' => 'No {status} series yet',
+			'tracking_empty_games' => 'No {status} games yet',
 			'tracking_empty_movies' => 'No {status} movies yet',
 			'tracking_want_to_watch' => 'Want to Watch',
 			'tracking_watching' => 'Watching',
@@ -489,6 +494,7 @@ extension on TranslationsEn {
 			'social_activity_reviewed' => 'wrote a review of',
 			'social_activity_completed' => 'completed',
 			'social_activity_started_watching' => 'started',
+			'social_activity_started_playing' => 'started playing',
 			'social_activity_dropped' => 'dropped',
 			'social_activity_added_to_list' => 'added to list',
 			'social_activity_interacted_with' => 'interacted with',

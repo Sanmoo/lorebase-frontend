@@ -7,6 +7,7 @@ String localizedSocialActivityVerb(String type) {
     'REVIEWED' => t.social_activity_reviewed,
     'COMPLETED' => t.social_activity_completed,
     'STARTED_WATCHING' => t.social_activity_started_watching,
+    'STARTED_PLAYING' => t.social_activity_started_playing,
     'DROPPED' => t.social_activity_dropped,
     'ADDED_TO_LIST' => t.social_activity_added_to_list,
     _ => t.social_activity_interacted_with,

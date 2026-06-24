@@ -38,6 +38,27 @@ TrackedMediaSummaryModel _media(int id) => TrackedMediaSummaryModel(
   mediaType: MediaType.series,
 );
 
+TrackedMediaModel _gameTracking(
+  String id,
+  String status, {
+  TrackedMediaSummaryModel? media,
+}) => TrackedMediaModel(
+  trackingId: id,
+  userId: 'user-1',
+  mediaType: MediaType.game,
+  mediaId: '456',
+  status: status,
+  media: media,
+  addedAt: now,
+  lastUpdated: now,
+);
+
+TrackedMediaSummaryModel _gameMedia(int id) => TrackedMediaSummaryModel(
+  mediaId: id.toString(),
+  title: 'Game $id',
+  mediaType: MediaType.game,
+);
+
 class FakeTrackingListVM extends TrackingListViewModel {
   final AsyncValue<List<TrackedMediaModel>> testState;
   int loadTrackingCallCount = 0;
@@ -91,6 +112,15 @@ Widget _wrap(ProviderContainer container) {
                 body: TextButton(
                   onPressed: () => context.pop(),
                   child: const Text('Back from detail'),
+                ),
+              ),
+            ),
+            GoRoute(
+              path: '/games/:gameId',
+              builder: (context, _) => Scaffold(
+                body: TextButton(
+                  onPressed: () => context.pop(),
+                  child: const Text('Back from game'),
                 ),
               ),
             ),
@@ -340,6 +370,39 @@ Future<void> main() async {
       await tester.pumpAndSettle();
 
       expect(find.text('No Want to Watch movies yet'), findsOneWidget);
+    });
+
+    testWidgets('switching to Games shows game empty state copy', (
+      tester,
+    ) async {
+      final container = createContainer(FakeTrackingListVM());
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.tap(find.text('Games'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('No Want to Play games yet'), findsOneWidget);
+    });
+
+    testWidgets('game tracking item navigates to /games/:id', (tester) async {
+      final trackings = [_gameTracking('t1', 'PLAYING', media: _gameMedia(1))];
+      final fakeVM = FakeTrackingListVM(state: AsyncValue.data(trackings));
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.text('Game 1'), findsOneWidget);
+
+      await tester.tap(find.text('Game 1'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Back from game'), findsOneWidget);
     });
   });
 }

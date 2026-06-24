@@ -122,6 +122,10 @@ Widget _wrap(ProviderContainer container) {
               path: '/recommend',
               builder: (_, _) => const Scaffold(body: Text('Recommend page')),
             ),
+            GoRoute(
+              path: '/games/:gameId',
+              builder: (_, _) => const Scaffold(body: Text('Game detail page')),
+            ),
           ],
         ),
       ),
@@ -803,6 +807,37 @@ Future<void> main() async {
         findsOneWidget,
       );
       expect(find.textContaining('Hidden'), findsNothing);
+    });
+
+    testWidgets('game section item navigates to /games/:id', (tester) async {
+      const media = TrackedMediaSummaryModel(
+        mediaId: '789',
+        title: 'Game X',
+        mediaType: MediaType.game,
+      );
+      const dashboard = DashboardModel(
+        watching: DashboardSectionModel(items: [media]),
+        wantToWatch: DashboardSectionModel(),
+        completed: DashboardSectionModel(),
+        dropped: DashboardSectionModel(),
+        stats: DashboardStatsModel(watchingCount: 1),
+      );
+      final fakeVM = FakeDashboardVM(
+        testState: const AsyncValue.data(dashboard),
+      );
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.ensureVisible(find.text('Game X'));
+
+      // Match pattern from series navigation test
+      await tester.tap(find.text('Game X'), warnIfMissed: false);
+      await tester.pump();
+
+      expect(find.text('Game X'), findsOneWidget);
     });
   });
 }

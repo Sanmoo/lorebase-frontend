@@ -148,6 +148,8 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                     context.push(
                       item.mediaType == MediaType.series
                           ? '/series/${item.mediaId}'
+                          : item.mediaType == MediaType.game
+                          ? '/games/${item.mediaId}'
                           : '/movies/${item.mediaId}',
                     );
                   },
@@ -165,6 +167,8 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                       context.push(
                         item.mediaType == MediaType.series
                             ? '/series/${item.mediaId}'
+                            : item.mediaType == MediaType.game
+                            ? '/games/${item.mediaId}'
                             : '/movies/${item.mediaId}',
                       );
                     },
@@ -183,6 +187,8 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                       context.push(
                         item.mediaType == MediaType.series
                             ? '/series/${item.mediaId}'
+                            : item.mediaType == MediaType.game
+                            ? '/games/${item.mediaId}'
                             : '/movies/${item.mediaId}',
                       );
                     },
@@ -201,6 +207,8 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                       context.push(
                         item.mediaType == MediaType.series
                             ? '/series/${item.mediaId}'
+                            : item.mediaType == MediaType.game
+                            ? '/games/${item.mediaId}'
                             : '/movies/${item.mediaId}',
                       );
                     },
@@ -219,8 +227,12 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                       child: EmptyStateWidget(
                         message: selectedType == MediaType.series
                             ? t.dashboard_empty
+                            : selectedType == MediaType.game
+                            ? t.dashboard_empty_games
                             : t.dashboard_empty_movies,
-                        icon: Icons.tv_off,
+                        icon: selectedType == MediaType.game
+                            ? Icons.sports_esports
+                            : Icons.tv_off,
                       ),
                     ),
                     _SocialPreviewSection(

@@ -14,6 +14,7 @@ import '../viewmodels/tracking_list_viewmodel.dart';
 import '../widgets/rating_stars.dart';
 import '../widgets/tracked_media_poster.dart';
 import '../../../../core/cache/cache_providers.dart';
+import '../data/models/game_tracking_status.dart';
 
 class TrackingListPage extends ConsumerStatefulWidget {
   const TrackingListPage({super.key});
@@ -120,11 +121,18 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
                                 '{status}',
                                 TrackingStatus.values[index].label(t),
                               )
+                            : selectedType == MediaType.game
+                            ? t.tracking_empty_games.replaceFirst(
+                                '{status}',
+                                GameTrackingStatus.values[index].label(t),
+                              )
                             : t.tracking_empty_movies.replaceFirst(
                                 '{status}',
                                 TrackingStatus.values[index].label(t),
                               ),
-                        icon: Icons.tv_off,
+                        icon: selectedType == MediaType.game
+                            ? Icons.sports_esports
+                            : Icons.tv_off,
                       );
                     }
                     return GridView.builder(
@@ -159,6 +167,8 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
                                   final path =
                                       tracking.mediaType == MediaType.series
                                       ? '/series/$id'
+                                      : tracking.mediaType == MediaType.game
+                                      ? '/games/$id'
                                       : '/movies/$id';
                                   await context.push(path);
                                   if (!context.mounted) return;
