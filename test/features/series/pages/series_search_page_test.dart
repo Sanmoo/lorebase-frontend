@@ -10,6 +10,8 @@ import 'package:lorebase/features/auth/viewmodels/auth_viewmodel.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_state.dart';
 import 'package:lorebase/features/movies/data/models/movie_model.dart';
 import 'package:lorebase/features/movies/viewmodels/movie_search_viewmodel.dart';
+import 'package:lorebase/features/games/data/models/game_model.dart';
+import 'package:lorebase/features/games/viewmodels/game_search_viewmodel.dart';
 import 'package:lorebase/features/tracking/data/models/media_type.dart';
 import 'package:lorebase/features/tracking/data/models/tracked_media_model.dart';
 import 'package:lorebase/features/tracking/pages/tracking_list_page.dart';
@@ -42,6 +44,25 @@ class FakeMovieSearchVM extends MovieSearchViewModel {
 
   @override
   AsyncValue<List<MovieModel>> build() => testState;
+
+  @override
+  Future<void> search(String query) async {
+    searchCalled = true;
+  }
+
+  @override
+  void clear() {}
+}
+
+class FakeGameSearchVM extends GameSearchViewModel {
+  final AsyncValue<List<GameModel>> testState;
+  bool searchCalled = false;
+
+  FakeGameSearchVM({AsyncValue<List<GameModel>>? state})
+    : testState = state ?? const AsyncValue.data([]);
+
+  @override
+  AsyncValue<List<GameModel>> build() => testState;
 
   @override
   Future<void> search(String query) async {
@@ -121,6 +142,8 @@ Future<void> main() async {
       return ProviderContainer(
         overrides: [
           seriesSearchViewModelProvider.overrideWith(() => fakeVM),
+          movieSearchViewModelProvider.overrideWith(() => FakeMovieSearchVM()),
+          gameSearchViewModelProvider.overrideWith(() => FakeGameSearchVM()),
           authViewModelProvider.overrideWith(() => FakeAuthVM()),
         ],
       );
@@ -330,6 +353,7 @@ Future<void> main() async {
           selectedMediaTypeProvider.overrideWith((ref) => MediaType.movie),
           seriesSearchViewModelProvider.overrideWith(() => FakeSearchVM()),
           movieSearchViewModelProvider.overrideWith(() => FakeMovieSearchVM()),
+          gameSearchViewModelProvider.overrideWith(() => FakeGameSearchVM()),
           authViewModelProvider.overrideWith(() => FakeAuthVM()),
         ],
       );
@@ -353,6 +377,7 @@ Future<void> main() async {
         overrides: [
           seriesSearchViewModelProvider.overrideWith(() => FakeSearchVM()),
           movieSearchViewModelProvider.overrideWith(() => FakeMovieSearchVM()),
+          gameSearchViewModelProvider.overrideWith(() => FakeGameSearchVM()),
           authViewModelProvider.overrideWith(() => FakeAuthVM()),
         ],
       );
@@ -375,6 +400,7 @@ Future<void> main() async {
         overrides: [
           seriesSearchViewModelProvider.overrideWith(() => FakeSearchVM()),
           movieSearchViewModelProvider.overrideWith(() => FakeMovieSearchVM()),
+          gameSearchViewModelProvider.overrideWith(() => FakeGameSearchVM()),
           trackingListViewModelProvider.overrideWith(() => trackingVM),
           authViewModelProvider.overrideWith(() => FakeAuthVM()),
         ],
@@ -414,10 +440,12 @@ Future<void> main() async {
       (tester) async {
         final fakeSeriesVM = FakeSearchVM();
         final fakeMovieVM = FakeMovieSearchVM();
+        final fakeGameVM = FakeGameSearchVM();
         final container = ProviderContainer(
           overrides: [
             seriesSearchViewModelProvider.overrideWith(() => fakeSeriesVM),
             movieSearchViewModelProvider.overrideWith(() => fakeMovieVM),
+            gameSearchViewModelProvider.overrideWith(() => fakeGameVM),
             authViewModelProvider.overrideWith(() => FakeAuthVM()),
           ],
         );
@@ -435,7 +463,161 @@ Future<void> main() async {
 
         expect(fakeSeriesVM.searchCalled, isFalse);
         expect(fakeMovieVM.searchCalled, isFalse);
+        expect(fakeGameVM.searchCalled, isFalse);
       },
     );
+
+    testWidgets('switching to Games shows the games hint', (tester) async {
+      final container = ProviderContainer(
+        overrides: [
+          seriesSearchViewModelProvider.overrideWith(() => FakeSearchVM()),
+          movieSearchViewModelProvider.overrideWith(() => FakeMovieSearchVM()),
+          gameSearchViewModelProvider.overrideWith(() => FakeGameSearchVM()),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.tap(find.text('Games'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Search games...'), findsOneWidget);
+    });
+
+    testWidgets('switching to Games clears series and movie viewmodels', (
+      tester,
+    ) async {
+      bool seriesCleared = false;
+      bool movieCleared = false;
+      bool gameCleared = false;
+
+      final container = ProviderContainer(
+        overrides: [
+          seriesSearchViewModelProvider.overrideWith(
+            () => _FakeSearchVMWithClear(onClear: () => seriesCleared = true),
+          ),
+          movieSearchViewModelProvider.overrideWith(
+            () =>
+                _FakeMovieSearchVMWithClear(onClear: () => movieCleared = true),
+          ),
+          gameSearchViewModelProvider.overrideWith(
+            () => _FakeGameSearchVMWithClear(onClear: () => gameCleared = true),
+          ),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.tap(find.text('Games'));
+      await tester.pumpAndSettle();
+
+      expect(seriesCleared, isTrue);
+      expect(movieCleared, isTrue);
+      expect(gameCleared, isTrue);
+    });
+
+    testWidgets('typing while Games selected triggers GameSearchViewModel', (
+      tester,
+    ) async {
+      final fakeGameVM = FakeGameSearchVM();
+      final container = ProviderContainer(
+        overrides: [
+          seriesSearchViewModelProvider.overrideWith(() => FakeSearchVM()),
+          movieSearchViewModelProvider.overrideWith(() => FakeMovieSearchVM()),
+          gameSearchViewModelProvider.overrideWith(() => fakeGameVM),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.tap(find.text('Games'));
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextField), 'witcher');
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 1100));
+
+      expect(fakeGameVM.searchCalled, isTrue);
+    });
+
+    testWidgets('shows game results list when data available', (tester) async {
+      final results = [
+        const GameModel(gameId: '1', title: 'The Witcher 3'),
+        const GameModel(gameId: '2', title: 'Hollow Knight'),
+      ];
+      final fakeGameVM = FakeGameSearchVM(state: AsyncValue.data(results));
+      final container = ProviderContainer(
+        overrides: [
+          seriesSearchViewModelProvider.overrideWith(() => FakeSearchVM()),
+          movieSearchViewModelProvider.overrideWith(() => FakeMovieSearchVM()),
+          gameSearchViewModelProvider.overrideWith(() => fakeGameVM),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.tap(find.text('Games'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('The Witcher 3'), findsOneWidget);
+      expect(find.text('Hollow Knight'), findsOneWidget);
+    });
   });
+}
+
+class _FakeSearchVMWithClear extends SeriesSearchViewModel {
+  final VoidCallback onClear;
+
+  _FakeSearchVMWithClear({required this.onClear});
+
+  @override
+  AsyncValue<List<SeriesModel>> build() => const AsyncValue.data([]);
+
+  @override
+  Future<void> search(String query) async {}
+
+  @override
+  void clear() => onClear();
+}
+
+class _FakeMovieSearchVMWithClear extends MovieSearchViewModel {
+  final VoidCallback onClear;
+
+  _FakeMovieSearchVMWithClear({required this.onClear});
+
+  @override
+  AsyncValue<List<MovieModel>> build() => const AsyncValue.data([]);
+
+  @override
+  Future<void> search(String query) async {}
+
+  @override
+  void clear() => onClear();
+}
+
+class _FakeGameSearchVMWithClear extends GameSearchViewModel {
+  final VoidCallback onClear;
+
+  _FakeGameSearchVMWithClear({required this.onClear});
+
+  @override
+  AsyncValue<List<GameModel>> build() => const AsyncValue.data([]);
+
+  @override
+  Future<void> search(String query) async {}
+
+  @override
+  void clear() => onClear();
 }

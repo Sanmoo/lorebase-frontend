@@ -109,8 +109,10 @@ class TranslationsEn extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get search_empty => 'Type at least 2 characters to search';
 	@override String get search_hint => 'Search series...';
 	@override String get search_hint_movies => 'Search movies...';
+	@override String get search_hint_games => 'Search games...';
 	@override String get search_no_results => 'No series found';
 	@override String get search_no_results_movies => 'No movies found';
+	@override String get search_no_results_games => 'No games found';
 	@override String get series_detail_add_to_list => 'Add to List';
 	@override String get series_detail_cancel => 'Cancel';
 	@override String get series_detail_episodes => 'Episodes';
@@ -358,8 +360,10 @@ extension on TranslationsEn {
 			'search_empty' => 'Type at least 2 characters to search',
 			'search_hint' => 'Search series...',
 			'search_hint_movies' => 'Search movies...',
+			'search_hint_games' => 'Search games...',
 			'search_no_results' => 'No series found',
 			'search_no_results_movies' => 'No movies found',
+			'search_no_results_games' => 'No games found',
 			'series_detail_add_to_list' => 'Add to List',
 			'series_detail_cancel' => 'Cancel',
 			'series_detail_episodes' => 'Episodes',

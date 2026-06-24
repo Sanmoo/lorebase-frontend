@@ -55,8 +55,10 @@ class TranslationsEs extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get login_sign_up => 'Regístrate';
 	@override String get login_or => 'o';
 	@override String get search_hint => 'Buscar series...';
+	@override String get search_hint_games => 'Buscar juegos...';
 	@override String get search_empty => 'Escribe al menos 2 caracteres para buscar';
 	@override String get search_no_results => 'No se encontraron series';
+	@override String get search_no_results_games => 'No se encontraron juegos';
 	@override String get tracking_want_to_watch => 'Quiero Ver';
 	@override String get tracking_watching => 'Viendo';
 	@override String get tracking_completed => 'Completado';
@@ -304,8 +306,10 @@ extension on TranslationsEs {
 			'login_sign_up' => 'Regístrate',
 			'login_or' => 'o',
 			'search_hint' => 'Buscar series...',
+			'search_hint_games' => 'Buscar juegos...',
 			'search_empty' => 'Escribe al menos 2 caracteres para buscar',
 			'search_no_results' => 'No se encontraron series',
+			'search_no_results_games' => 'No se encontraron juegos',
 			'tracking_want_to_watch' => 'Quiero Ver',
 			'tracking_watching' => 'Viendo',
 			'tracking_completed' => 'Completado',

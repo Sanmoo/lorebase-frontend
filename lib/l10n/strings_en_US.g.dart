@@ -55,8 +55,10 @@ class TranslationsEnUs extends Translations with BaseTranslations<AppLocale, Tra
 	@override String get login_sign_up => 'Sign up';
 	@override String get login_or => 'or';
 	@override String get search_hint => 'Search series...';
+	@override String get search_hint_games => 'Search games...';
 	@override String get search_empty => 'Type at least 2 characters to search';
 	@override String get search_no_results => 'No series found';
+	@override String get search_no_results_games => 'No games found';
 	@override String get tracking_want_to_watch => 'Want to Watch';
 	@override String get tracking_watching => 'Watching';
 	@override String get tracking_completed => 'Completed';
@@ -304,8 +306,10 @@ extension on TranslationsEnUs {
 			'login_sign_up' => 'Sign up',
 			'login_or' => 'or',
 			'search_hint' => 'Search series...',
+			'search_hint_games' => 'Search games...',
 			'search_empty' => 'Type at least 2 characters to search',
 			'search_no_results' => 'No series found',
+			'search_no_results_games' => 'No games found',
 			'tracking_want_to_watch' => 'Want to Watch',
 			'tracking_watching' => 'Watching',
 			'tracking_completed' => 'Completed',

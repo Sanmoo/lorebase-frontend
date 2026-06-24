@@ -89,11 +89,17 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// pt-BR: 'Buscar séries...'
 	String get search_hint => 'Buscar séries...';
 
+	/// pt-BR: 'Buscar jogos...'
+	String get search_hint_games => 'Buscar jogos...';
+
 	/// pt-BR: 'Digite pelo menos 2 caracteres para buscar'
 	String get search_empty => 'Digite pelo menos 2 caracteres para buscar';
 
 	/// pt-BR: 'Nenhuma série encontrada'
 	String get search_no_results => 'Nenhuma série encontrada';
+
+	/// pt-BR: 'Nenhum jogo encontrado'
+	String get search_no_results_games => 'Nenhum jogo encontrado';
 
 	/// pt-BR: 'Quero Ver'
 	String get tracking_want_to_watch => 'Quero Ver';
@@ -777,8 +783,10 @@ extension on Translations {
 			'login_sign_up' => 'Cadastre-se',
 			'login_or' => 'ou',
 			'search_hint' => 'Buscar séries...',
+			'search_hint_games' => 'Buscar jogos...',
 			'search_empty' => 'Digite pelo menos 2 caracteres para buscar',
 			'search_no_results' => 'Nenhuma série encontrada',
+			'search_no_results_games' => 'Nenhum jogo encontrado',
 			'tracking_want_to_watch' => 'Quero Ver',
 			'tracking_watching' => 'Assistindo',
 			'tracking_completed' => 'Concluído',
