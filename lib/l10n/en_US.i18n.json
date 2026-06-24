@@ -240,5 +240,12 @@
   "game_platform_mobile": "Mobile",
   "game_platform_vr": "VR",
   "game_platform_other": "Other",
-  "game_hours_played_label": "Hours Played"
+  "game_hours_played_label": "Hours Played",
+  "game_detail_loading": "Loading game details...",
+  "game_detail_error": "Error: $message",
+  "game_detail_release_date": "Release Date",
+  "game_detail_developer": "Developer",
+  "game_detail_publisher": "Publisher",
+  "game_detail_game_modes": "Game Modes",
+  "game_detail_platforms": "Platforms"
 }

@@ -240,5 +240,12 @@
   "game_platform_mobile": "Mobile",
   "game_platform_vr": "VR",
   "game_platform_other": "Outro",
-  "game_hours_played_label": "Horas jogadas"
+  "game_hours_played_label": "Horas jogadas",
+  "game_detail_loading": "Carregando detalhes do jogo...",
+  "game_detail_error": "Erro: $message",
+  "game_detail_release_date": "Data de lançamento",
+  "game_detail_developer": "Desenvolvedora",
+  "game_detail_publisher": "Publicadora",
+  "game_detail_game_modes": "Modos de jogo",
+  "game_detail_platforms": "Plataformas"
 }

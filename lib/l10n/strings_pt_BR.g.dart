@@ -760,6 +760,27 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// pt-BR: 'Horas jogadas'
 	String get game_hours_played_label => 'Horas jogadas';
+
+	/// pt-BR: 'Carregando detalhes do jogo...'
+	String get game_detail_loading => 'Carregando detalhes do jogo...';
+
+	/// pt-BR: 'Erro: $message'
+	String game_detail_error({required Object message}) => 'Erro: ${message}';
+
+	/// pt-BR: 'Data de lançamento'
+	String get game_detail_release_date => 'Data de lançamento';
+
+	/// pt-BR: 'Desenvolvedora'
+	String get game_detail_developer => 'Desenvolvedora';
+
+	/// pt-BR: 'Publicadora'
+	String get game_detail_publisher => 'Publicadora';
+
+	/// pt-BR: 'Modos de jogo'
+	String get game_detail_game_modes => 'Modos de jogo';
+
+	/// pt-BR: 'Plataformas'
+	String get game_detail_platforms => 'Plataformas';
 }
 
 /// The flat map containing all translations for locale <pt-BR>.
@@ -1009,6 +1030,13 @@ extension on Translations {
 			'game_platform_vr' => 'VR',
 			'game_platform_other' => 'Outro',
 			'game_hours_played_label' => 'Horas jogadas',
+			'game_detail_loading' => 'Carregando detalhes do jogo...',
+			'game_detail_error' => ({required Object message}) => 'Erro: ${message}',
+			'game_detail_release_date' => 'Data de lançamento',
+			'game_detail_developer' => 'Desenvolvedora',
+			'game_detail_publisher' => 'Publicadora',
+			'game_detail_game_modes' => 'Modos de jogo',
+			'game_detail_platforms' => 'Plataformas',
 			_ => null,
 		};
 	}

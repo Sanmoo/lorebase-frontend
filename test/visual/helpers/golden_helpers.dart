@@ -5,6 +5,9 @@ import 'package:lorebase/features/auth/viewmodels/auth_state.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_viewmodel.dart';
 import 'package:lorebase/features/auth/viewmodels/login_viewmodel.dart';
 import 'package:lorebase/features/auth/viewmodels/register_viewmodel.dart';
+import 'package:lorebase/features/games/data/models/game_model.dart';
+import 'package:lorebase/features/games/viewmodels/game_detail_state.dart';
+import 'package:lorebase/features/games/viewmodels/game_detail_viewmodel.dart';
 import 'package:lorebase/features/dashboard/data/models/dashboard_model.dart';
 import 'package:lorebase/features/dashboard/data/models/dashboard_section_model.dart';
 import 'package:lorebase/features/dashboard/data/models/dashboard_stats_model.dart';
@@ -166,6 +169,51 @@ class FakeMovieSearchVM extends MovieSearchViewModel {
   void clear() {}
 }
 
+class FakeGameDetailVM extends GameDetailViewModel {
+  @override
+  Future<GameDetailState> build(String gameId) async => const GameDetailState(
+    game: GameModel(
+      gameId: 'zelda-botw',
+      title: 'The Legend of Zelda: Breath of the Wild',
+      summary:
+          'Forget everything you know about The Legend of Zelda games. '
+          'Step into a world of discovery, exploration, and adventure in '
+          'The Legend of Zelda: Breath of the Wild, a groundbreaking new '
+          'game in the acclaimed series.',
+      genre: 'Action-Adventure',
+      coverUrl: 'https://example.com/cover.jpg',
+      backdropUrl: 'https://example.com/backdrop.jpg',
+      releaseDate: '2017-03-03',
+      platforms: ['Nintendo Switch', 'Wii U'],
+      developer: 'Nintendo EPD',
+      publisher: 'Nintendo',
+      gameModes: ['Single-player'],
+    ),
+    tracking: null,
+  );
+
+  @override
+  Future<void> addTracking(
+    String status, {
+    required String selectedPlatform,
+    double? hoursPlayed,
+    int? rating,
+    String? review,
+  }) async {}
+
+  @override
+  Future<void> updateTracking({
+    String? status,
+    String? selectedPlatform,
+    double? hoursPlayed,
+    int? rating,
+    String? review,
+  }) async {}
+
+  @override
+  Future<void> removeTracking() async {}
+}
+
 class FakeTrackingListVM extends TrackingListViewModel {
   @override
   AsyncValue<List<TrackedMediaModel>> build() =>
@@ -300,6 +348,13 @@ List<Override> seriesSearchGoldenOverrides() => [
 
 List<Override> movieDetailGoldenOverrides() => [
   movieDetailViewModelProvider(7).overrideWith(() => FakeMovieDetailVM()),
+  ...authOverride(),
+];
+
+List<Override> gameDetailGoldenOverrides() => [
+  gameDetailViewModelProvider(
+    'zelda-botw',
+  ).overrideWith(() => FakeGameDetailVM()),
   ...authOverride(),
 ];
 

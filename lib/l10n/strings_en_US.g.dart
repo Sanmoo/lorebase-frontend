@@ -281,6 +281,13 @@ class TranslationsEnUs extends Translations with BaseTranslations<AppLocale, Tra
 	@override String get game_platform_vr => 'VR';
 	@override String get game_platform_other => 'Other';
 	@override String get game_hours_played_label => 'Hours Played';
+	@override String get game_detail_loading => 'Loading game details...';
+	@override String game_detail_error({required Object message}) => 'Error: ${message}';
+	@override String get game_detail_release_date => 'Release Date';
+	@override String get game_detail_developer => 'Developer';
+	@override String get game_detail_publisher => 'Publisher';
+	@override String get game_detail_game_modes => 'Game Modes';
+	@override String get game_detail_platforms => 'Platforms';
 }
 
 /// The flat map containing all translations for locale <en-US>.
@@ -530,6 +537,13 @@ extension on TranslationsEnUs {
 			'game_platform_vr' => 'VR',
 			'game_platform_other' => 'Other',
 			'game_hours_played_label' => 'Hours Played',
+			'game_detail_loading' => 'Loading game details...',
+			'game_detail_error' => ({required Object message}) => 'Error: ${message}',
+			'game_detail_release_date' => 'Release Date',
+			'game_detail_developer' => 'Developer',
+			'game_detail_publisher' => 'Publisher',
+			'game_detail_game_modes' => 'Game Modes',
+			'game_detail_platforms' => 'Platforms',
 			_ => null,
 		};
 	}
