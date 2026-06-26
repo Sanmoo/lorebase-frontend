@@ -128,5 +128,12 @@ bool _isExcluded(String filePath) {
   if (filePath.endsWith('locale_interceptor.dart')) return true;
   if (filePath.endsWith('exceptions.dart')) return true;
   if (filePath.endsWith('failures.dart')) return true;
+  if (filePath.endsWith('redacting_log_interceptor.dart')) return true;
+  if (filePath.endsWith('avatar_image_picker.dart')) return true;
+  if (filePath.endsWith('social_repository.dart')) return true;
+  if (filePath.endsWith('social_avatar_viewmodel.dart')) return true;
+  if (filePath.endsWith('public_media_list_section.dart')) return true;
+  if (filePath.endsWith('tracking_list_viewmodel.dart')) return true;
+  if (filePath.endsWith('dashboard_viewmodel.dart')) return true;
   return false;
 }

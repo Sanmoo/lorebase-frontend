@@ -46,7 +46,12 @@ class GameDetailViewModel extends _$GameDetailViewModel {
           hoursPlayed: hoursPlayed,
         );
 
-    final hasExtra = rating != null || (review != null && review.isNotEmpty);
+    final bool hasExtra;
+    if (rating != null) {
+      hasExtra = true;
+    } else {
+      hasExtra = review != null && review.isNotEmpty;
+    }
     if (hasExtra) {
       await ref
           .read(trackingRepositoryProvider)

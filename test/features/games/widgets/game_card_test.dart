@@ -56,4 +56,18 @@ void main() {
     expect(find.text('RPG'), findsNothing);
     expect(find.text('2015-05-19'), findsNothing);
   });
+
+  testWidgets('errorIcon returns broken image icon', (tester) async {
+    Icon? capturedIcon;
+    await tester.pumpWidget(
+      Builder(
+        builder: (context) {
+          capturedIcon ??= GameCard.errorIcon(context, '', Exception('test')) as Icon;
+          return const SizedBox();
+        },
+      ),
+    );
+    expect(capturedIcon, isNotNull);
+    expect(capturedIcon!.icon, Icons.broken_image);
+  });
 }

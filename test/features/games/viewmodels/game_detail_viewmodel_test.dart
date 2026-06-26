@@ -332,6 +332,34 @@ void main() {
     });
 
     test(
+      'addTracking() calls updateTracking with review when rating is null',
+      () async {
+        final gameRepo = FakeGameRepo()
+          ..gameResult = const GameModel(gameId: 'g1', title: 'Hollow Knight');
+        final trackingRepo = FakeTrackingRepo();
+
+        final container = createContainer(
+          gameRepo: gameRepo,
+          trackingRepo: trackingRepo,
+        );
+        addTearDown(container.dispose);
+
+        await container.read(gameDetailViewModelProvider('g1').future);
+        await container
+            .read(gameDetailViewModelProvider('g1').notifier)
+            .addTracking(
+              'COMPLETED',
+              selectedPlatform: 'Switch',
+              review: 'Great!',
+            );
+
+        expect(trackingRepo.startCalled, true);
+        expect(trackingRepo.updateCalled, true);
+        expect(trackingRepo.lastUpdateReview, 'Great!');
+      },
+    );
+
+    test(
       'updateTracking() calls updateTracking with hoursPlayed and platform',
       () async {
         final gameRepo = FakeGameRepo()

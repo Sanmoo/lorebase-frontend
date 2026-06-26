@@ -177,6 +177,32 @@ void main() {
       expect(tracking, isNull);
     });
 
+    test(
+      'getTrackingByMedia throws ServerException on non-404 DioException',
+      () async {
+        final dio = Dio(BaseOptions(baseUrl: 'https://api.example.com'));
+        dio.httpClientAdapter = MockAdapter(
+          onFetch: (options) {
+            throw DioException(
+              type: DioExceptionType.badResponse,
+              requestOptions: options,
+              response: Response(
+                requestOptions: options,
+                statusCode: 500,
+                data: {'code': 'SERVER_ERROR', 'message': 'Internal error'},
+              ),
+            );
+          },
+        );
+        final repo = TrackingRepositoryImpl(dio);
+
+        expect(
+          () => repo.getTrackingByMedia('42', MediaType.series),
+          throwsA(isA<ServerException>()),
+        );
+      },
+    );
+
     test('startTracking() POSTs and returns TrackedMediaModel', () async {
       final dio = Dio()
         ..httpClientAdapter = MockAdapter(
