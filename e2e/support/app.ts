@@ -22,19 +22,27 @@ export async function gotoApp(page: Page, path: string) {
  */
 async function isDelivered(
   page: Page,
-  label: string,
+  label: string | RegExp,
   value: string,
 ): Promise<boolean> {
   await page.waitForTimeout(900);
   return page.evaluate(
-    ({ label, value }) => {
-      const input = document.querySelector<HTMLInputElement>(
-        `input[aria-label="${label}"]`,
-      );
+    ({ label, isRegExp, value }) => {
+      const matchesLabel = (ariaLabel: string | null) => {
+        if (ariaLabel === null) return false;
+        return isRegExp ? new RegExp(label).test(ariaLabel) : ariaLabel === label;
+      };
+      const input = Array.from(
+        document.querySelectorAll<HTMLInputElement>('input'),
+      ).find((el) => matchesLabel(el.getAttribute('aria-label')));
       if (!input) return true; // hint substituído → controller tem texto
       return input.value === value; // valor persistiu pós-assentamento
     },
-    { label, value },
+    {
+      label: label instanceof RegExp ? label.source : label,
+      isRegExp: label instanceof RegExp,
+      value,
+    },
   );
 }
 
@@ -44,8 +52,9 @@ async function isDelivered(
  * digita (editable do Flutter web nem sempre resolve via
  * getByRole('textbox').fill()).
  *
- * Nota: o label (string) é usado também no seletor de verificação; labels
- * RegExp são aceitos para localizar, mas a verificação usa String(label).
+ * Nota: o label (string ou RegExp) é usado também na verificação de
+ * entrega — string casa por igualdade com o aria-label; RegExp casa o
+ * source contra o aria-label.
  */
 export async function fillField(page: Page, label: string | RegExp, value: string) {
   const box = page.getByRole('textbox', { name: label });
@@ -60,7 +69,7 @@ export async function fillField(page: Page, label: string | RegExp, value: strin
   } catch {
     // tenta a próxima técnica
   }
-  if (await isDelivered(page, labelStr, value)) return;
+  if (await isDelivered(page, label, value)) return;
 
   try {
     await handle.click();
@@ -68,7 +77,7 @@ export async function fillField(page: Page, label: string | RegExp, value: strin
   } catch {
     // entrega falhou — erro abaixo
   }
-  if (await isDelivered(page, labelStr, value)) return;
+  if (await isDelivered(page, label, value)) return;
 
   throw new Error(
     `Não foi possível preencher "${labelStr}" — entrega ao controller não confirmada`,
