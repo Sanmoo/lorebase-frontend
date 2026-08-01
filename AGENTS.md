@@ -64,7 +64,8 @@ Each feature under `lib/features/<name>/` follows: `data/`, `pages/`, `viewmodel
 Gherkin pt-BR (`# language: pt`) + Playwright (`playwright-bdd`). Roda contra backend
 quality: `make e2e` resolve API via terraform (`experience-bff`, workspace qa), builda
 web com `--dart-define=E2E=true` (semantics) e executa. Auth: login real 1x →
-`.auth/user.json` (storageState). Cenários `@tracking` auto-limpam via
+sessão exportada do IndexedDB do Amplify (`.auth/amplify-idb.json`), semeada
+por fixture no projeto `app`. Cenários `@tracking` auto-limpam via
 `DELETE /tracking/:id`. Credenciais em `e2e/.env.e2e` (gitignored).
 
 ## Known quirks

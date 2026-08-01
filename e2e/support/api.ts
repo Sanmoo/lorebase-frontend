@@ -28,8 +28,11 @@ function accessToken(): string {
 }
 
 /**
- * Remove tracking direto na API quality (best-effort: ignora 404/erros).
- * Garante usuário de teste sem resíduo mesmo quando cenário falha no meio.
+ * Remove tracking direto na API quality.
+ *
+ * "Best-effort" apenas para 404 (resíduo já inexistente é OK) — erro de rede
+ * PROPAGA de propósito (falha o hook → falha o teste): silenciar rede
+ * esconderia problemas de ambiente. Non-2xx e erros são logados.
  */
 export async function cleanupTracking(
   mediaId: string,
@@ -44,7 +47,13 @@ export async function cleanupTracking(
     extraHTTPHeaders: { Authorization: `Bearer ${accessToken()}` },
   });
   try {
-    await api.delete(`/tracking/${mediaId}`, { params: { mediaType } });
+    const res = await api.delete(`/tracking/${mediaId}`, { params: { mediaType } });
+    if (!res.ok() && res.status() !== 404) {
+      console.log(`[api] DELETE /tracking/${mediaId} → ${res.status()} (${res.statusText()})`);
+    }
+  } catch (err) {
+    console.log(`[api] DELETE /tracking/${mediaId} falhou: ${(err as Error).message}`);
+    throw err;
   } finally {
     await api.dispose();
   }

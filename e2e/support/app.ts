@@ -3,6 +3,14 @@ import { Page, expect } from '@playwright/test';
 export const AUTH_FILE = '.auth/user.json';
 export const AUTH_IDB_FILE = '.auth/amplify-idb.json';
 
+// Nome do DB/object store do schema do Amplify (worker_bee,
+// amplify_auth_cognito). Acoplamento proposital: o storageState do
+// Playwright não cobre IndexedDB, então seed/export replicam o schema do
+// Amplify — se o Amplify mudar o schema, ajustar aqui.
+export const AMPLIFY_IDB_DB = 'com.amplify.awsCognitoAuthPlugin';
+export const AMPLIFY_IDB_STORE = 'default.store';
+export const AMPLIFY_IDB_VERSION = 1;
+
 /** Navega e aguarda o app Flutter montar a árvore de semantics. */
 export async function gotoApp(page: Page, path: string) {
   await page.goto(path);
@@ -89,27 +97,31 @@ export async function fillField(page: Page, label: string | RegExp, value: strin
  * o storageState do Playwright não cobre IndexedDB, só cookies/localStorage).
  */
 export async function readAmplifyIdbEntries(page: Page): Promise<Record<string, string>> {
-  return page.evaluate(async () => {
-    const out: Record<string, string> = {};
-    const db = await new Promise<IDBDatabase>((resolve, reject) => {
-      const req = indexedDB.open('com.amplify.awsCognitoAuthPlugin');
-      req.onsuccess = () => resolve(req.result);
-      req.onerror = () => reject(req.error);
-    });
-    const tx = db.transaction('default.store', 'readonly');
-    const store = tx.objectStore('default.store');
-    const keysReq = store.getAllKeys();
-    const valsReq = store.getAll();
-    await new Promise<void>((resolve, reject) => {
-      tx.oncomplete = () => resolve();
-      tx.onerror = () => reject(tx.error);
-    });
-    db.close();
-    keysReq.result.forEach((key, i) => {
-      out[String(key)] = String(valsReq.result[i]);
-    });
-    return out;
-  });
+  // Constantes passadas como argumento: o callback roda no browser (page.evaluate).
+  return page.evaluate(
+    async ({ idbDb, idbStore }) => {
+      const out: Record<string, string> = {};
+      const db = await new Promise<IDBDatabase>((resolve, reject) => {
+        const req = indexedDB.open(idbDb);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+      const tx = db.transaction(idbStore, 'readonly');
+      const store = tx.objectStore(idbStore);
+      const keysReq = store.getAllKeys();
+      const valsReq = store.getAll();
+      await new Promise<void>((resolve, reject) => {
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+      });
+      db.close();
+      keysReq.result.forEach((key, i) => {
+        out[String(key)] = String(valsReq.result[i]);
+      });
+      return out;
+    },
+    { idbDb: AMPLIFY_IDB_DB, idbStore: AMPLIFY_IDB_STORE },
+  );
 }
 
 /**
@@ -124,18 +136,18 @@ export async function seedAmplifyIdb(
     (async () => {
       const entries = ${JSON.stringify(entries)};
       const db = await new Promise((resolve, reject) => {
-        const req = indexedDB.open('com.amplify.awsCognitoAuthPlugin', 1);
+        const req = indexedDB.open('${AMPLIFY_IDB_DB}', ${AMPLIFY_IDB_VERSION});
         req.onupgradeneeded = () => {
-          if (!req.result.objectStoreNames.contains('default.store')) {
-            req.result.createObjectStore('default.store');
+          if (!req.result.objectStoreNames.contains('${AMPLIFY_IDB_STORE}')) {
+            req.result.createObjectStore('${AMPLIFY_IDB_STORE}');
           }
         };
         req.onsuccess = () => resolve(req.result);
         req.onerror = () => reject(req.error);
       });
       await new Promise((resolve, reject) => {
-        const tx = db.transaction('default.store', 'readwrite');
-        const store = tx.objectStore('default.store');
+        const tx = db.transaction('${AMPLIFY_IDB_STORE}', 'readwrite');
+        const store = tx.objectStore('${AMPLIFY_IDB_STORE}');
         for (const [key, value] of Object.entries(entries)) store.put(value, key);
         tx.oncomplete = () => { db.close(); resolve(); };
         tx.onerror = () => reject(tx.error);

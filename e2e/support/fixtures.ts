@@ -9,6 +9,11 @@ import { AUTH_IDB_FILE, seedAmplifyIdb } from './app';
 export const test = base.extend({
   page: async ({ page }, use, testInfo) => {
     if (testInfo.project.name === 'app') {
+      if (!fs.existsSync(AUTH_IDB_FILE)) {
+        throw new Error(
+          `${AUTH_IDB_FILE} não encontrado — rode o projeto setup primeiro: npx playwright test --project=setup`,
+        );
+      }
       const entries = JSON.parse(
         fs.readFileSync(AUTH_IDB_FILE, 'utf8'),
       ) as Record<string, string>;

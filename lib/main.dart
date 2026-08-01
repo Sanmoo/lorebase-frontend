@@ -13,6 +13,7 @@ import 'app.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (kIsWeb && const bool.fromEnvironment('E2E')) {
+    // E2E-only: ativa árvore de semantics para seletores do Playwright.
     SemanticsBinding.instance.ensureSemantics();
   }
   usePathUrlStrategy();

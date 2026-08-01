@@ -100,7 +100,11 @@ setup('autenticar usuário de teste', async ({ page }) => {
       `Sessão Amplify incompleta no IndexedDB (${Object.keys(idbEntries).length} chaves) — .auth/amplify-idb.json não gerado`,
     );
   }
-  fs.writeFileSync(AUTH_IDB_FILE, JSON.stringify(idbEntries));
+  // 0600: arquivo contém tokens vivos + credenciais AWS temporárias. O mode
+  // do writeFileSync só vale na criação — chmod garante o invariante em
+  // re-runs quando o arquivo já existe.
+  fs.writeFileSync(AUTH_IDB_FILE, JSON.stringify(idbEntries), { mode: 0o600 });
+  fs.chmodSync(AUTH_IDB_FILE, 0o600);
   console.log(
     `[auth.setup] sessão exportada: ${Object.keys(idbEntries).length} chaves (${AUTH_IDB_FILE})`,
   );
