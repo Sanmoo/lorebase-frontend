@@ -3,6 +3,11 @@ import { Given, When, Then, Before, After } from '../support/fixtures';
 import { gotoApp } from '../support/app';
 import { cleanupTracking } from '../support/api';
 
+// Isolamento por mídia entre features que rodam em workers paralelos: os
+// hooks daqui limpam SÓ a mídia de tracking.feature (1396). my_lists.feature
+// tem hooks próprios (@my-lists) limpando a mídia dele (2316) — limpar as duas
+// aqui re-introduziria a race original: o DELETE de 2316 no meio da janela
+// POST→refetch do outro worker faz o cenário dele falhar (POST 201 → GET 404).
 const BREAKING_BAD_ID = '1396';
 
 // Estado limpo antes e depois de todo cenário @tracking (DELETE é

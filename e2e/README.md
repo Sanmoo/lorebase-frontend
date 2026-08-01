@@ -29,5 +29,11 @@ E2E_BASE_URL=https://<frontend-qa-deployado> npx bddgen && npx playwright test
   Flutter web → seletores `getByRole`/`getByText`
 - Login real via UI 1x (`setup` project) → sessão exportada do IndexedDB do
   Amplify (`.auth/amplify-idb.json`), semeada por fixture no projeto `app`
-- Cenários `@tracking` limpam o usuário de teste via `DELETE /tracking/:id`
-  antes e depois de cada cenário
+- Cenários `@tracking` e `@my-lists` limpam o usuário de teste via
+  `DELETE /tracking/:id` antes e depois de cada cenário — cada feature usa
+  mídia própria (isolamento entre workers paralelos)
+
+## Cobertura de features
+
+- **séries_** — busca, detalhe, acompanhamento (status) e minha lista
+- **games_** — busca, detalhe, tracking (status + plataforma + horas) e minha lista; requer catálogo de games populado no QA (ver BUG-REPORT-qa-games-catalog.md)
