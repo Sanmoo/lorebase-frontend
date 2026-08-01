@@ -17,6 +17,7 @@ make test-coverage                       # runs `flutter test --coverage --branc
 make check                               # analyze + coverage gate
 flutter run                              # mobile
 flutter run -d chrome                    # web
+make e2e-install && make e2e          # acceptance E2E (Gherkin pt + Playwright) vs backend quality
 python scripts/get_cognito_token.py <email>  # get Cognito JWT tokens for API testing
 ```
 
@@ -57,6 +58,14 @@ Each feature under `lib/features/<name>/` follows: `data/`, `pages/`, `viewmodel
 - Override providers via `ProviderScope(overrides: [...])` with inline fake view model classes extending the real VM (e.g. `_FakeAuthVM extends AuthViewModel`).
 - `authRedirect` is `@visibleForTesting` — test it directly with `AuthState` instances.
 - Mockito (`mockito: ^5.4.0`) available for Dio/etc mocking.
+
+## Acceptance tests (e2e/)
+
+Gherkin pt-BR (`# language: pt`) + Playwright (`playwright-bdd`). Roda contra backend
+quality: `make e2e` resolve API via terraform (`experience-bff`, workspace qa), builda
+web com `--dart-define=E2E=true` (semantics) e executa. Auth: login real 1x →
+`.auth/user.json` (storageState). Cenários `@tracking` auto-limpam via
+`DELETE /tracking/:id`. Credenciais em `e2e/.env.e2e` (gitignored).
 
 ## Known quirks
 
