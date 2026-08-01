@@ -17,11 +17,14 @@ When('eu abro o resultado {string}', async ({ page }, titulo: string) => {
   // viewport (~5) existem na árvore de semantics — o canônico fica fora do
   // DOM quando a resposta o posiciona além da dobra (visto em execução
   // paralela da suíte completa). Varre em polling e rola a lista (wheel,
-  // suportado pelo engine web) alternando descida/subida até materializar o
-  // card com título exato (primeira linha do textContent).
+  // suportado pelo engine web) de forma MONOTÔNICA para baixo até materializar
+  // o card com título exato (primeira linha do textContent); quando o wheel
+  // não move mais a lista (fim do scroll), reseta para o topo e repete a
+  // varredura até o bound de 15s. O vai-e-vem antigo (700↓/700↑) era
+  // net-zero — cobertura ≈ viewport inicial ± 1 passo de wheel.
   const limite = Date.now() + 15_000;
   let alvo = -1;
-  let direcao = 1; // 1 = rola p/ baixo, -1 = rola p/ cima
+  const PASSO = 700;
   while (Date.now() < limite && alvo === -1) {
     const total = await cards.count();
     for (let i = 0; i < total; i++) {
@@ -31,14 +34,21 @@ When('eu abro o resultado {string}', async ({ page }, titulo: string) => {
         break;
       }
     }
-    if (alvo === -1) {
-      const box = await cards.first().boundingBox().catch(() => null);
-      if (box) {
-        await page.mouse.move(box.x + 80, box.y + 40);
-        await page.mouse.wheel(0, 700 * direcao);
-      }
-      direcao *= -1;
-      await page.waitForTimeout(400);
+    if (alvo !== -1) break;
+    const box = await cards.first().boundingBox().catch(() => null);
+    if (!box) {
+      await page.waitForTimeout(400); // cards ainda não materializaram
+      continue;
+    }
+    const primeiro = ((await cards.first().textContent()) ?? '').trim();
+    await page.mouse.move(box.x + 80, box.y + 40);
+    await page.mouse.wheel(0, PASSO);
+    await page.waitForTimeout(300);
+    const depois = ((await cards.first().textContent()) ?? '').trim();
+    if (depois === primeiro) {
+      // wheel não moveu a lista — chegou ao fim: volta ao topo e recomeça
+      await page.mouse.wheel(0, -PASSO * 100);
+      await page.waitForTimeout(300);
     }
   }
   if (alvo === -1) {

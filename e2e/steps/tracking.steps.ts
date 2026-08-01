@@ -20,14 +20,16 @@ Given('que a série {string} está no meu acompanhamento', async ({ page }, medi
   await gotoApp(page, `/series/${mediaId}`);
   await page.getByRole('button', { name: 'Adicionar à Lista' }).click();
   await page.getByRole('button', { name: 'Quero Ver', exact: true }).click();
-  await page.getByRole('button', { name: /Salvar|Adicionar/ }).last().click();
+  // nome exato: /Salvar|Adicionar/ também casava 'Adicionar à Lista' (botão
+  // da página atrás do sheet) e .last() dependia da ordem da árvore semantics
+  await page.getByRole('button', { name: 'Salvar Alterações', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Gerenciar' })).toBeVisible({ timeout: 15_000 });
 });
 
 When('eu adiciono a série ao acompanhamento com status {string}', async ({ page }, status: string) => {
   await page.getByRole('button', { name: 'Adicionar à Lista' }).click();
   await page.getByRole('button', { name: status, exact: true }).click();
-  await page.getByRole('button', { name: /Salvar|Adicionar/ }).last().click();
+  await page.getByRole('button', { name: 'Salvar Alterações', exact: true }).click();
 });
 
 When('eu estou na rota {string}', async ({ page }, rota: string) => {
