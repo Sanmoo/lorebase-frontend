@@ -79,4 +79,5 @@ flutter:
   uses-material-design: true
   assets:
     - .env
+    - .env.qa
     - assets/

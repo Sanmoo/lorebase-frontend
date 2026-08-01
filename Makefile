@@ -125,3 +125,27 @@ check-dev-fast-deps:
 check-files:
 	@[ -f lib/amplifyconfiguration.dart ] || { echo >&2 "⚠️  lib/amplifyconfiguration.dart não encontrado. O build pode falhar."; }
 	@[ -f .env ] || echo >&2 "⚠️  .env não encontrado. O build usará defaults."
+
+# ─── E2E (aceitação, Playwright + Gherkin) ─────
+
+e2e-install:
+	cd e2e && npm ci && npx playwright install chromium
+
+BACKEND_DIR ?= ../lorebase-backend
+
+e2e-build-web:
+	@command -v terraform >/dev/null 2>&1 || { echo "❌ terraform não encontrado"; exit 1; }
+	@[ -d "$(BACKEND_DIR)/experience-bff/terraform" ] || { echo "❌ backend repo não encontrado em $(BACKEND_DIR). Use: make e2e BACKEND_DIR=/caminho/lorebase-backend"; exit 1; }
+	API_URL=$$(TF_WORKSPACE=qa terraform -chdir=$(BACKEND_DIR)/experience-bff/terraform output -raw api_gateway_endpoint) && \
+	echo "API_BASE_URL=$$API_URL" > .env.qa && \
+	echo "🌍 API quality: $$API_URL" && \
+	flutter build web --release --dart-define=E2E=true --dart-define=ENV_FILE=.env.qa
+
+e2e: e2e-build-web
+	cd e2e && export E2E_API_BASE_URL=$$(cut -d= -f2 ../.env.qa) && npx bddgen && npx playwright test
+
+e2e-headed: e2e-build-web
+	cd e2e && export E2E_API_BASE_URL=$$(cut -d= -f2 ../.env.qa) && npx bddgen && npx playwright test --headed
+
+e2e-report:
+	cd e2e && npx playwright show-report
