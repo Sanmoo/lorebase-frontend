@@ -18,7 +18,9 @@ When('eu busco por {string}', async ({ page }, termo: string) => {
 Then('devo ver {string} nos resultados', async ({ page }, titulo: string) => {
   // Cards de resultado são nós semantics mesclados (InkWell) — o título é
   // substring do nome acessível do botão. `.first()` = primeiro resultado.
+  // 30s cobre cold start do lambda de games no QA (busca de séries é rápida;
+  // games pode demorar na 1ª chamada por run).
   await expect(page.getByText(titulo).first()).toBeVisible({
-    timeout: 15_000,
+    timeout: 30_000,
   });
 });
