@@ -16,11 +16,22 @@ const password = process.env.E2E_USER_PASSWORD || process.env.E2E_COGNITO_PASSWO
 
 type LoginOutcome = 'dashboard' | 'validation' | 'credentials' | 'timeout';
 
+/** True quando a árvore de semantics mostra o dashboard autenticado. */
+async function onDashboard(page: Page): Promise<boolean> {
+  try {
+    return (await page.getByRole('button', { name: 'Sair' }).count()) > 0;
+  } catch {
+    return false;
+  }
+}
+
 /** Observa o desfecho do submit de login (rota ou mensagem de erro). */
-async function waitLoginOutcome(page: Page, timeoutMs = 20_000): Promise<LoginOutcome> {
+async function waitLoginOutcome(page: Page, timeoutMs = 60_000): Promise<LoginOutcome> {
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
-    if (page.url().endsWith('/dashboard')) return 'dashboard';
+    if (page.url().endsWith('/dashboard') || (await onDashboard(page))) {
+      return 'dashboard';
+    }
     const text = await page.evaluate(() => document.body?.innerText ?? '');
     if (text.includes('Preencha e-mail e senha')) return 'validation';
     if (text.includes('incorretos')) return 'credentials';
@@ -45,7 +56,9 @@ setup('autenticar usuário de teste', async ({ page }) => {
   // preenchidos perdem o label e não podem mais ser localizados por nome).
   // "incorretos" (credenciais/rede) falha imediatamente.
   for (let attempt = 1; attempt <= 3; attempt++) {
-    if (page.url().endsWith('/dashboard')) break;
+    // Sessão pode ter sido restaurada após reload (login lento concluiu no
+    // servidor) — o formulário some; não tente preencher o que não existe.
+    if (page.url().endsWith('/dashboard') || (await onDashboard(page))) break;
     let outcome: LoginOutcome | 'error' = 'error';
     try {
       await fillField(page, 'E-mail', email);
