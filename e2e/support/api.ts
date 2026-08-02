@@ -1,6 +1,6 @@
-import { request } from '@playwright/test';
-import fs from 'node:fs';
-import { AUTH_IDB_FILE } from './app';
+import { request } from "@playwright/test";
+import fs from "node:fs";
+import { AUTH_IDB_FILE } from "./app";
 
 /**
  * Lê o accessToken da sessão do Amplify.
@@ -13,18 +13,187 @@ import { AUTH_IDB_FILE } from './app';
  * `.accessToken`). Mesmo padrão já usado por `support/fixtures.ts` (Task 3).
  */
 function accessToken(): string {
-  const entries = JSON.parse(
-    fs.readFileSync(AUTH_IDB_FILE, 'utf-8'),
-  ) as Record<string, string>;
-  const entry = Object.entries(entries).find(([name]) =>
-    name.endsWith('.accessToken'),
-  );
-  if (!entry) {
-    throw new Error(
-      'accessToken não encontrado em amplify-idb.json — setup de auth falhou?',
-    );
-  }
-  return entry[1];
+	let entries: Record<string, string>;
+	try {
+		entries = JSON.parse(fs.readFileSync(AUTH_IDB_FILE, "utf-8")) as Record<
+			string,
+			string
+		>;
+	} catch (err) {
+		throw new Error(
+			`${AUTH_IDB_FILE} ilegível — rode o projeto setup primeiro: npx playwright test --project=setup (${(err as Error).message})`,
+		);
+	}
+	const entry = Object.entries(entries).find(([name]) =>
+		name.endsWith(".accessToken"),
+	);
+	if (!entry) {
+		throw new Error(
+			"accessToken não encontrado em amplify-idb.json — setup de auth falhou?",
+		);
+	}
+	return entry[1];
+}
+
+/**
+ * Converte rótulo pt-BR de status (usado na UI) no valor da API.
+ */
+export function statusToApi(status: string): string {
+	const map: Record<string, string> = {
+		"Quero Ver": "WANT_TO_WATCH",
+		Assistindo: "WATCHING",
+		Concluído: "COMPLETED",
+		Abandonado: "DROPPED",
+		"Quero Jogar": "WANT_TO_PLAY",
+		Jogando: "PLAYING",
+	};
+	const api = map[status];
+	if (!api) {
+		throw new Error(`Status desconhecido: "${status}"`);
+	}
+	return api;
+}
+
+/**
+ * Contexto de request autenticado (padrão de todos os helpers daqui).
+ */
+function apiContext() {
+	const baseURL = process.env.E2E_API_BASE_URL;
+	if (!baseURL) {
+		throw new Error(
+			"E2E_API_BASE_URL ausente (make e2e exporta automaticamente)",
+		);
+	}
+	return request.newContext({
+		baseURL,
+		extraHTTPHeaders: { Authorization: `Bearer ${accessToken()}` },
+	});
+}
+
+/**
+ * Aguarda o tracking existir com um status específico (GET por ID).
+ *
+ * Mesmo read-lag do backend QA de waitForTrackingById, mas validando a
+ * MUDANÇA de status (PUT): logo após salvar, o GET pode devolver o status
+ * antigo por um instante. Poll até o status propagar.
+ */
+export async function waitForTrackingStatus(
+	mediaId: string,
+	mediaType: "SERIES" | "MOVIE" | "GAME",
+	apiStatus: string,
+	timeoutMs = 15_000,
+): Promise<void> {
+	const api = await apiContext();
+	try {
+		const limite = Date.now() + timeoutMs;
+		while (Date.now() < limite) {
+			const res = await api.get(`/tracking/${mediaId}`, {
+				params: { mediaType },
+			});
+			if (res.ok()) {
+				const body = (await res.json()) as { status?: string };
+				if (body.status === apiStatus) return;
+			}
+			await new Promise((r) => setTimeout(r, 1_000));
+		}
+		throw new Error(
+			`[api] tracking ${mediaId} (${mediaType}) não chegou ao status ${apiStatus} em ${timeoutMs}ms`,
+		);
+	} finally {
+		await api.dispose();
+	}
+}
+
+/** Perfil social do usuário de teste (GET /users/me/profile). */
+export async function getMyProfile(): Promise<{
+	displayName: string;
+	avatarUrl: string | null;
+	isPublic: boolean;
+}> {
+	const api = await apiContext();
+	try {
+		const res = await api.get("/users/me/profile");
+		if (!res.ok()) {
+			throw new Error(`[api] GET /users/me/profile → ${res.status()}`);
+		}
+		const body = (await res.json()) as {
+			displayName: string;
+			avatarUrl?: string | null;
+			isPublic?: boolean;
+		};
+		return {
+			displayName: body.displayName,
+			avatarUrl: body.avatarUrl ?? null,
+			isPublic: body.isPublic ?? true,
+		};
+	} finally {
+		await api.dispose();
+	}
+}
+
+/**
+ * Atualiza o perfil social via API (PUT /users/me/profile).
+ *
+ * Usado para RESTAURAR o estado após cenários que editam o perfil pela UI.
+ * Devolve avatarUrl/isPublic originais no body para não perder esses campos
+ * na restauração (o PUT do backend substitui o perfil).
+ */
+export async function updateMyProfile(profile: {
+	displayName: string;
+	avatarUrl?: string | null;
+	isPublic?: boolean;
+}): Promise<void> {
+	const api = await apiContext();
+	try {
+		const res = await api.put("/users/me/profile", {
+			data: {
+				displayName: profile.displayName,
+				avatarUrl: profile.avatarUrl ?? "",
+				isPublic: profile.isPublic ?? true,
+			},
+		});
+		if (!res.ok()) {
+			throw new Error(`[api] PUT /users/me/profile → ${res.status()}`);
+		}
+	} finally {
+		await api.dispose();
+	}
+}
+
+/** IDs de usuários que o usuário de teste segue (GET /users/me/following). */
+export async function getMyFollowing(): Promise<string[]> {
+	const api = await apiContext();
+	try {
+		const res = await api.get("/users/me/following", {
+			params: { page: 1, pageSize: 50 },
+		});
+		if (!res.ok()) {
+			throw new Error(`[api] GET /users/me/following → ${res.status()}`);
+		}
+		const body = (await res.json()) as {
+			items?: Array<{ userId?: string }>;
+		};
+		return (body.items ?? [])
+			.map((item) => item.userId)
+			.filter((id): id is string => Boolean(id));
+	} finally {
+		await api.dispose();
+	}
+}
+
+/** Deixa de seguir um usuário via API (DELETE /users/{userId}/follow). */
+export async function unfollowUser(userId: string): Promise<void> {
+	const api = await apiContext();
+	try {
+		const res = await api.delete(`/users/${userId}/follow`);
+		if (!res.ok() && res.status() !== 404) {
+			console.log(
+				`[api] DELETE /users/${userId}/follow → ${res.status()} (${res.statusText()})`,
+			);
+		}
+	} finally {
+		await api.dispose();
+	}
 }
 
 /**
@@ -35,28 +204,36 @@ function accessToken(): string {
  * esconderia problemas de ambiente. Non-2xx e erros são logados.
  */
 export async function cleanupTracking(
-  mediaId: string,
-  mediaType: 'SERIES' | 'MOVIE' | 'GAME',
+	mediaId: string,
+	mediaType: "SERIES" | "MOVIE" | "GAME",
 ) {
-  const baseURL = process.env.E2E_API_BASE_URL;
-  if (!baseURL) {
-    throw new Error('E2E_API_BASE_URL ausente (make e2e exporta automaticamente)');
-  }
-  const api = await request.newContext({
-    baseURL,
-    extraHTTPHeaders: { Authorization: `Bearer ${accessToken()}` },
-  });
-  try {
-    const res = await api.delete(`/tracking/${mediaId}`, { params: { mediaType } });
-    if (!res.ok() && res.status() !== 404) {
-      console.log(`[api] DELETE /tracking/${mediaId} → ${res.status()} (${res.statusText()})`);
-    }
-  } catch (err) {
-    console.log(`[api] DELETE /tracking/${mediaId} falhou: ${(err as Error).message}`);
-    throw err;
-  } finally {
-    await api.dispose();
-  }
+	const baseURL = process.env.E2E_API_BASE_URL;
+	if (!baseURL) {
+		throw new Error(
+			"E2E_API_BASE_URL ausente (make e2e exporta automaticamente)",
+		);
+	}
+	const api = await request.newContext({
+		baseURL,
+		extraHTTPHeaders: { Authorization: `Bearer ${accessToken()}` },
+	});
+	try {
+		const res = await api.delete(`/tracking/${mediaId}`, {
+			params: { mediaType },
+		});
+		if (!res.ok() && res.status() !== 404) {
+			console.log(
+				`[api] DELETE /tracking/${mediaId} → ${res.status()} (${res.statusText()})`,
+			);
+		}
+	} catch (err) {
+		console.log(
+			`[api] DELETE /tracking/${mediaId} falhou: ${(err as Error).message}`,
+		);
+		throw err;
+	} finally {
+		await api.dispose();
+	}
 }
 
 /**
@@ -69,31 +246,35 @@ export async function cleanupTracking(
  * de o teste prosseguir (e recarregar a página).
  */
 export async function waitForTrackingById(
-  mediaId: string,
-  mediaType: 'SERIES' | 'MOVIE' | 'GAME',
-  timeoutMs = 15_000,
+	mediaId: string,
+	mediaType: "SERIES" | "MOVIE" | "GAME",
+	timeoutMs = 15_000,
 ): Promise<Record<string, unknown>> {
-  const baseURL = process.env.E2E_API_BASE_URL;
-  if (!baseURL) {
-    throw new Error('E2E_API_BASE_URL ausente (make e2e exporta automaticamente)');
-  }
-  const api = await request.newContext({
-    baseURL,
-    extraHTTPHeaders: { Authorization: `Bearer ${accessToken()}` },
-  });
-  try {
-    const limite = Date.now() + timeoutMs;
-    while (Date.now() < limite) {
-      const res = await api.get(`/tracking/${mediaId}`, { params: { mediaType } });
-      if (res.ok()) return (await res.json()) as Record<string, unknown>;
-      await new Promise((r) => setTimeout(r, 1_000));
-    }
-    throw new Error(
-      `[api] tracking ${mediaId} (${mediaType}) não apareceu via GET em ${timeoutMs}ms`,
-    );
-  } finally {
-    await api.dispose();
-  }
+	const baseURL = process.env.E2E_API_BASE_URL;
+	if (!baseURL) {
+		throw new Error(
+			"E2E_API_BASE_URL ausente (make e2e exporta automaticamente)",
+		);
+	}
+	const api = await request.newContext({
+		baseURL,
+		extraHTTPHeaders: { Authorization: `Bearer ${accessToken()}` },
+	});
+	try {
+		const limite = Date.now() + timeoutMs;
+		while (Date.now() < limite) {
+			const res = await api.get(`/tracking/${mediaId}`, {
+				params: { mediaType },
+			});
+			if (res.ok()) return (await res.json()) as Record<string, unknown>;
+			await new Promise((r) => setTimeout(r, 1_000));
+		}
+		throw new Error(
+			`[api] tracking ${mediaId} (${mediaType}) não apareceu via GET em ${timeoutMs}ms`,
+		);
+	} finally {
+		await api.dispose();
+	}
 }
 
 /**
@@ -105,32 +286,36 @@ export async function waitForTrackingById(
  * recarrega a página para o estado refletir a remoção.
  */
 export async function ensureTrackingGone(
-  mediaId: string,
-  mediaType: 'SERIES' | 'MOVIE' | 'GAME',
-  timeoutMs = 15_000,
+	mediaId: string,
+	mediaType: "SERIES" | "MOVIE" | "GAME",
+	timeoutMs = 15_000,
 ) {
-  const baseURL = process.env.E2E_API_BASE_URL;
-  if (!baseURL) {
-    throw new Error('E2E_API_BASE_URL ausente (make e2e exporta automaticamente)');
-  }
-  const api = await request.newContext({
-    baseURL,
-    extraHTTPHeaders: { Authorization: `Bearer ${accessToken()}` },
-  });
-  try {
-    const limite = Date.now() + timeoutMs;
-    while (Date.now() < limite) {
-      const res = await api.delete(`/tracking/${mediaId}`, { params: { mediaType } });
-      if (res.ok()) return;
-      if (res.status() === 404) return; // já removido
-      await new Promise((r) => setTimeout(r, 1_000));
-    }
-    throw new Error(
-      `[api] tracking ${mediaId} (${mediaType}) não foi removido em ${timeoutMs}ms`,
-    );
-  } finally {
-    await api.dispose();
-  }
+	const baseURL = process.env.E2E_API_BASE_URL;
+	if (!baseURL) {
+		throw new Error(
+			"E2E_API_BASE_URL ausente (make e2e exporta automaticamente)",
+		);
+	}
+	const api = await request.newContext({
+		baseURL,
+		extraHTTPHeaders: { Authorization: `Bearer ${accessToken()}` },
+	});
+	try {
+		const limite = Date.now() + timeoutMs;
+		while (Date.now() < limite) {
+			const res = await api.delete(`/tracking/${mediaId}`, {
+				params: { mediaType },
+			});
+			if (res.ok()) return;
+			if (res.status() === 404) return; // já removido
+			await new Promise((r) => setTimeout(r, 1_000));
+		}
+		throw new Error(
+			`[api] tracking ${mediaId} (${mediaType}) não foi removido em ${timeoutMs}ms`,
+		);
+	} finally {
+		await api.dispose();
+	}
 }
 
 /**
@@ -141,24 +326,26 @@ export async function ensureTrackingGone(
  * momento) — o título esperado é sempre o que o catálogo serve AGORA.
  */
 export async function fetchGameTitle(mediaId: string): Promise<string> {
-  const baseURL = process.env.E2E_API_BASE_URL;
-  if (!baseURL) {
-    throw new Error('E2E_API_BASE_URL ausente (make e2e exporta automaticamente)');
-  }
-  const api = await request.newContext({
-    baseURL,
-    extraHTTPHeaders: { Authorization: `Bearer ${accessToken()}` },
-  });
-  try {
-    const res = await api.get(`/games/${mediaId}`);
-    if (!res.ok()) {
-      throw new Error(`[api] GET /games/${mediaId} → ${res.status()}`);
-    }
-    const body = (await res.json()) as { title: string };
-    return body.title;
-  } finally {
-    await api.dispose();
-  }
+	const baseURL = process.env.E2E_API_BASE_URL;
+	if (!baseURL) {
+		throw new Error(
+			"E2E_API_BASE_URL ausente (make e2e exporta automaticamente)",
+		);
+	}
+	const api = await request.newContext({
+		baseURL,
+		extraHTTPHeaders: { Authorization: `Bearer ${accessToken()}` },
+	});
+	try {
+		const res = await api.get(`/games/${mediaId}`);
+		if (!res.ok()) {
+			throw new Error(`[api] GET /games/${mediaId} → ${res.status()}`);
+		}
+		const body = (await res.json()) as { title: string };
+		return body.title;
+	} finally {
+		await api.dispose();
+	}
 }
 
 /**
@@ -169,41 +356,49 @@ export async function fetchGameTitle(mediaId: string): Promise<string> {
  * waitForTrackingList).
  */
 export async function fetchTrackedGameTitle(
-  mediaId: string,
-  mediaType: 'SERIES' | 'MOVIE' | 'GAME',
-  status: string,
-  timeoutMs = 20_000,
+	mediaId: string,
+	mediaType: "SERIES" | "MOVIE" | "GAME",
+	status: string,
+	timeoutMs = 20_000,
 ): Promise<string> {
-  const baseURL = process.env.E2E_API_BASE_URL;
-  if (!baseURL) {
-    throw new Error('E2E_API_BASE_URL ausente (make e2e exporta automaticamente)');
-  }
-  const api = await request.newContext({
-    baseURL,
-    extraHTTPHeaders: { Authorization: `Bearer ${accessToken()}` },
-  });
-  try {
-    const limite = Date.now() + timeoutMs;
-    while (Date.now() < limite) {
-      const res = await api.get('/tracking', {
-        params: { status, mediaType, page: 1, pageSize: 50, includeMedia: true },
-      });
-      if (res.ok()) {
-        const body = (await res.json()) as {
-          items: Array<{ mediaId: string; media?: { title: string } | null }>;
-        };
-        const item = body.items?.find((i) => i.mediaId === mediaId);
-        const titulo = item?.media?.title;
-        if (titulo) return titulo;
-      }
-      await new Promise((r) => setTimeout(r, 1_000));
-    }
-    throw new Error(
-      `[api] tracking ${mediaId} na lista sem título em ${timeoutMs}ms (enriquecimento falhou?)`,
-    );
-  } finally {
-    await api.dispose();
-  }
+	const baseURL = process.env.E2E_API_BASE_URL;
+	if (!baseURL) {
+		throw new Error(
+			"E2E_API_BASE_URL ausente (make e2e exporta automaticamente)",
+		);
+	}
+	const api = await request.newContext({
+		baseURL,
+		extraHTTPHeaders: { Authorization: `Bearer ${accessToken()}` },
+	});
+	try {
+		const limite = Date.now() + timeoutMs;
+		while (Date.now() < limite) {
+			const res = await api.get("/tracking", {
+				params: {
+					status,
+					mediaType,
+					page: 1,
+					pageSize: 50,
+					includeMedia: true,
+				},
+			});
+			if (res.ok()) {
+				const body = (await res.json()) as {
+					items: Array<{ mediaId: string; media?: { title: string } | null }>;
+				};
+				const item = body.items?.find((i) => i.mediaId === mediaId);
+				const titulo = item?.media?.title;
+				if (titulo) return titulo;
+			}
+			await new Promise((r) => setTimeout(r, 1_000));
+		}
+		throw new Error(
+			`[api] tracking ${mediaId} na lista sem título em ${timeoutMs}ms (enriquecimento falhou?)`,
+		);
+	} finally {
+		await api.dispose();
+	}
 }
 
 /**
@@ -216,35 +411,39 @@ export async function fetchTrackedGameTitle(
  * poll garante propagação antes de a UI carregar a aba.
  */
 export async function waitForTrackingList(
-  mediaId: string,
-  mediaType: 'SERIES' | 'MOVIE' | 'GAME',
-  status: string,
-  timeoutMs = 15_000,
+	mediaId: string,
+	mediaType: "SERIES" | "MOVIE" | "GAME",
+	status: string,
+	timeoutMs = 15_000,
 ) {
-  const baseURL = process.env.E2E_API_BASE_URL;
-  if (!baseURL) {
-    throw new Error('E2E_API_BASE_URL ausente (make e2e exporta automaticamente)');
-  }
-  const api = await request.newContext({
-    baseURL,
-    extraHTTPHeaders: { Authorization: `Bearer ${accessToken()}` },
-  });
-  try {
-    const limite = Date.now() + timeoutMs;
-    while (Date.now() < limite) {
-      const res = await api.get('/tracking', {
-        params: { status, mediaType, page: 1, pageSize: 50 },
-      });
-      if (res.ok()) {
-        const body = (await res.json()) as { items: Array<{ mediaId: string }> };
-        if (body.items?.some((item) => item.mediaId === mediaId)) return;
-      }
-      await new Promise((r) => setTimeout(r, 1_000));
-    }
-    throw new Error(
-      `[api] tracking ${mediaId} (${mediaType}/${status}) não apareceu na lista em ${timeoutMs}ms`,
-    );
-  } finally {
-    await api.dispose();
-  }
+	const baseURL = process.env.E2E_API_BASE_URL;
+	if (!baseURL) {
+		throw new Error(
+			"E2E_API_BASE_URL ausente (make e2e exporta automaticamente)",
+		);
+	}
+	const api = await request.newContext({
+		baseURL,
+		extraHTTPHeaders: { Authorization: `Bearer ${accessToken()}` },
+	});
+	try {
+		const limite = Date.now() + timeoutMs;
+		while (Date.now() < limite) {
+			const res = await api.get("/tracking", {
+				params: { status, mediaType, page: 1, pageSize: 50 },
+			});
+			if (res.ok()) {
+				const body = (await res.json()) as {
+					items: Array<{ mediaId: string }>;
+				};
+				if (body.items?.some((item) => item.mediaId === mediaId)) return;
+			}
+			await new Promise((r) => setTimeout(r, 1_000));
+		}
+		throw new Error(
+			`[api] tracking ${mediaId} (${mediaType}/${status}) não apareceu na lista em ${timeoutMs}ms`,
+		);
+	} finally {
+		await api.dispose();
+	}
 }

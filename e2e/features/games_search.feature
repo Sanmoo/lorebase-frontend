@@ -8,3 +8,7 @@ Funcionalidade: Busca de jogos
   Cenário: Encontrar jogo pelo título
     Quando eu busco por "Hades"
     Então devo ver "Hades" nos resultados
+
+  Cenário: Busca sem resultados
+    Quando eu busco por "zzzqqqxyz"
+    Então devo ver a mensagem "Nenhum jogo encontrado"

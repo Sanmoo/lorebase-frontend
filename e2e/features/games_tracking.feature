@@ -18,3 +18,9 @@ Funcionalidade: Acompanhamento de jogos
     Quando eu estou na rota "/games/5678"
     E eu removo o jogo do acompanhamento
     Então devo ver o botão "Adicionar à Lista"
+
+  Cenário: Alterar status do jogo
+    Dado que o jogo "5678" está no meu acompanhamento
+    Quando eu estou na rota "/games/5678"
+    E eu altero o status para "Jogando"
+    Então devo ver o chip "Jogando" na página

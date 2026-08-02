@@ -17,3 +17,9 @@ Funcionalidade: Acompanhamento de séries
     Quando eu estou na rota "/series/1396"
     E eu removo a série do acompanhamento
     Então devo ver o botão "Adicionar à Lista"
+
+  Cenário: Alterar status da série
+    Dado que a série "1396" está no meu acompanhamento
+    Quando eu estou na rota "/series/1396"
+    E eu altero o status para "Assistindo"
+    Então devo ver o chip "Assistindo" na página

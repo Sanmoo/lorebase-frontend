@@ -8,3 +8,7 @@ Funcionalidade: Busca de séries
   Cenário: Encontrar série pelo título
     Quando eu busco por "Breaking Bad"
     Então devo ver "Breaking Bad" nos resultados
+
+  Cenário: Busca sem resultados
+    Quando eu busco por "zzzqqqxyz"
+    Então devo ver a mensagem "Nenhuma série encontrada"

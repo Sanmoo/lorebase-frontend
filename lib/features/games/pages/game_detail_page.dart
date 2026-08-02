@@ -7,6 +7,7 @@ import '../../../core/i18n/date_formatter.dart';
 import '../../../core/widgets/error_widget.dart';
 import '../../../core/widgets/loading_widget.dart';
 import '../../../l10n/strings.g.dart';
+import '../../tracking/data/models/media_type.dart';
 import '../../tracking/data/models/tracked_media_model.dart';
 import '../../tracking/widgets/tracking_editor_sheet.dart';
 import '../../tracking/widgets/tracking_status_chip.dart';
@@ -314,7 +315,14 @@ class _GameDetailLoaded extends StatelessWidget {
                     ),
                   const SizedBox(height: 8),
                   if (tracking != null)
-                    TrackingStatusChip(status: tracking!.status),
+                    TrackingStatusChip(
+                      status: tracking!.status,
+                      // Bug fix: sem mediaType o chip caía no enum de SÉRIES e
+                      // todo status de jogo virava "Quero Ver" (fromString
+                      // default wantToWatch). Corrigido para rotular por
+                      // GameTrackingStatus ("Quero Jogar"/"Jogando"/...).
+                      mediaType: MediaType.game,
+                    ),
                 ],
               ),
             ),
