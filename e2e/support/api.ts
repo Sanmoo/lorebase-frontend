@@ -72,7 +72,7 @@ export async function waitForTrackingById(
   mediaId: string,
   mediaType: 'SERIES' | 'MOVIE' | 'GAME',
   timeoutMs = 15_000,
-) {
+): Promise<Record<string, unknown>> {
   const baseURL = process.env.E2E_API_BASE_URL;
   if (!baseURL) {
     throw new Error('E2E_API_BASE_URL ausente (make e2e exporta automaticamente)');
@@ -85,7 +85,7 @@ export async function waitForTrackingById(
     const limite = Date.now() + timeoutMs;
     while (Date.now() < limite) {
       const res = await api.get(`/tracking/${mediaId}`, { params: { mediaType } });
-      if (res.ok()) return;
+      if (res.ok()) return (await res.json()) as Record<string, unknown>;
       await new Promise((r) => setTimeout(r, 1_000));
     }
     throw new Error(

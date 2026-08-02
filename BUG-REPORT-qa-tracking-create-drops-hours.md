@@ -4,6 +4,8 @@
 |---|---|
 | **Repositório** | `lorebase-backend` |
 | **Ambiente** | QA (workspace Terraform `qa`) |
+
+> **STATUS: RESOLVIDO** — validado no QA em 02/08: POST /tracking persiste `hoursPlayed` (201 + GET confirma) e PUT `/tracking/{mediaId}` com `mediaType` no body responde 200 e atualiza status/plataforma/horas. Contrato: `PUT` usa `mediaId` no path (não `trackingId`).
 | **Endpoints afetados** | `POST /tracking` e `PUT /tracking/{id}` (BFF `experience-bff` → lambda `user-tracking`) |
 | **Severidade** | Média — app envia horas no create, backend descarta; PUT do app (editar tracking) falha 404 no QA para QUALQUER mídia |
 | **Data do report** | 2026-08-02 |

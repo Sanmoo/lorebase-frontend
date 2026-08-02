@@ -1,10 +1,9 @@
 # language: pt
-# Nota: persistência de horas via app bloqueada no QA por gaps do backend —
-# POST /tracking descarta hoursPlayed (create só aceita status/platform) e
-# PUT /tracking/{id} → 404 (app envia mediaType no body, lambda deployado só
-# aceita na query). Ver BUG-REPORT-qa-tracking-create-drops-hours.md. O campo
-# de horas é preenchido no add (valida o fillField real), mas apenas status e
-# plataforma são assertados como persistidos.
+# Nota: persistência de horas foi corrigida no QA (02/08) — POST /tracking
+# agora persiste hoursPlayed e PUT /tracking/{mediaId} aceita mediaType no
+# body (ver BUG-REPORT-qa-tracking-create-drops-hours.md, resolvido). O
+# cenário asserta status, plataforma E horas persistidos (via API no add e
+# via UI ao reabrir o editor).
 @games-tracking
 Funcionalidade: Acompanhamento de jogos
   Cenário: Adicionar jogo com status, plataforma e horas
@@ -12,7 +11,7 @@ Funcionalidade: Acompanhamento de jogos
     Quando eu estou na rota "/games/5678"
     E eu adiciono o jogo ao acompanhamento com status "Quero Jogar", plataforma "Switch" e horas "10"
     Então devo ver o botão "Gerenciar"
-    E ao reabrir o editor vejo "Switch"
+    E ao reabrir o editor vejo "Switch" e "10" horas
 
   Cenário: Remover jogo do acompanhamento
     Dado que o jogo "5678" está no meu acompanhamento
