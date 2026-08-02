@@ -103,6 +103,30 @@ test('retry/duplicata: mesma feature+cenário vale o mais recente', () => {
   assert.equal(cenarios[0].testId, 'r2');
 });
 
+test('passo que falhou mostra screenshot em destaque, fora do archive', () => {
+  const base = dirTmp();
+  escreverCenario(base, cenario({
+    status: 'failed',
+    erro: { mensagem: 'Timed out aguardando o card', stack: null },
+    passos: [
+      { keyword: 'Dado', titulo: 'que estou autenticado', status: 'passed', png: 'passo-00.png' },
+      { keyword: 'Então', titulo: 'devo ver o estado final', status: 'failed', png: 'passo-01.png' },
+    ],
+  }), {
+    'passo-00.png': PNG_FAKE,
+    'passo-01.png': PNG_FAKE,
+  });
+  const html = gerarHtml(lerCenarios(base));
+  // Screenshot do passo que falhou em destaque: <figure> com data URI e legenda
+  assert.match(html, /<figure[\s\S]*?data:image\/png;base64,[\s\S]*?Screenshot do passo que falhou/);
+  // No bloco do passo que falhou: figura presente e NENHUM <details class="archive">
+  const passoFalha = html.match(/<li class="passo passo-falha">[\s\S]*?<\/li>/)[0];
+  assert.match(passoFalha, /<figure/);
+  assert.ok(!passoFalha.includes('<details class="archive">'));
+  // Passo que passou continua com archive colapsável
+  assert.match(html, /<details class="archive"><summary>ver screenshot<\/summary>/);
+});
+
 test('agrupa por feature com título descritivo', () => {
   const base = dirTmp();
   escreverCenario(base, cenario());

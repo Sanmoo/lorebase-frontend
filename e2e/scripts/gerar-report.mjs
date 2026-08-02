@@ -45,7 +45,16 @@ function passoHtml(passo) {
          <figcaption>${esc(passo.evidencia.legenda)}</figcaption>
        </figure>`
     : '';
-  const archive = passo.png
+  // Screenshot do passo que falhou em destaque — visível sem clique, mesmo tratamento do figure de evidência.
+  const screenshotFalha = passo.status === 'failed' && passo.png
+    ? passo.png.base64
+      ? `<figure class="evidencia">
+           <img src="data:image/png;base64,${passo.png.base64}" alt="screenshot do passo que falhou">
+           <figcaption>Screenshot do passo que falhou</figcaption>
+         </figure>`
+      : '<p class="placeholder">imagem não encontrada</p>'
+    : '';
+  const archive = passo.png && passo.status !== 'failed'
     ? passo.png.base64
       ? `<details class="archive"><summary>ver screenshot</summary>
            <img src="data:image/png;base64,${passo.png.base64}" alt="screenshot do passo">
@@ -56,6 +65,7 @@ function passoHtml(passo) {
     <span class="titulo">${esc(titulo)}</span>
     <span class="status">${esc(passo.status)}</span>
     ${evidencia}
+    ${screenshotFalha}
     ${archive}
   </li>`;
 }
