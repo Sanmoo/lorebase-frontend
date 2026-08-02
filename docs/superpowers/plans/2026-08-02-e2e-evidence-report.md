@@ -202,7 +202,7 @@ AfterStep(async ({ page, $testInfo, $step, $bddTestData }) => {
   }
 });
 
-After(async ({ $testInfo, $uri, $bddTestData }) => {
+After(async ({ $testInfo, $uri }) => {
   const testId = $testInfo.testId;
   const estado = estadoDoTeste(testId);
   const passos = estado.passos;
