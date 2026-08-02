@@ -36,4 +36,4 @@ E2E_BASE_URL=https://<frontend-qa-deployado> npx bddgen && npx playwright test
 ## Cobertura de features
 
 - **séries_** — busca, detalhe, acompanhamento (status) e minha lista
-- **games_** — busca, detalhe, tracking (status + plataforma + horas) e minha lista; requer catálogo de games populado no QA (ver BUG-REPORT-qa-games-catalog.md)
+- **games_** — busca, detalhe, tracking (status + plataforma + horas) e minha lista

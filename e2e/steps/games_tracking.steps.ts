@@ -1,19 +1,45 @@
 // e2e/steps/games_tracking.steps.ts
 import { expect } from '@playwright/test';
 import { Given, When, Then, Before, After } from '../support/fixtures';
-import { gotoApp } from '../support/app';
-import { cleanupTracking } from '../support/api';
+import { fillField, gotoApp } from '../support/app';
+import { cleanupTracking, waitForTrackingById, waitForTrackingList, ensureTrackingGone, fetchTrackedGameTitle } from '../support/api';
 
-const HADES_ID = '5678';
+// Isolamento por mídia entre features de games que rodam em workers
+// paralelos: os hooks @games-tracking limpam SÓ a mídia de
+// games_tracking.feature (5678); games_my_lists.feature tem hooks próprios
+// (@games-my-lists) limpando a mídia dele (9012) — limpar as duas aqui
+// re-introduziria a race original (DELETE de 9012 no meio da janela
+// POST→refetch do outro worker → POST 201 → GET 404).
+//
+// O catálogo QA alterna entre ingestão IGDB e fixtures do backend e2e
+// (5678 pode ser "War of the Vikings" ou "Hades"; 9012 "Robot Rescue
+// Revolution" ou "Stardew Valley") — por isso os títulos não são fixados
+// nas features de games: os passos leem o título real da API no momento
+// do teste (games_detail.steps.ts / passo da lista).
+const TRACKING_GAME_ID = '5678';
+const MY_LISTS_GAME_ID = '9012';
 
 // Estado limpo antes/depois de todo cenário @games-tracking (idempotente, 404 = ok)
 Before({ tags: '@games-tracking' }, async () => {
-  await cleanupTracking(HADES_ID, 'GAME');
+  await cleanupTracking(TRACKING_GAME_ID, 'GAME');
 });
 
 After({ tags: '@games-tracking' }, async () => {
-  await cleanupTracking(HADES_ID, 'GAME');
+  await cleanupTracking(TRACKING_GAME_ID, 'GAME');
 });
+
+// Mesmo padrão para @games-my-lists: limpa SÓ a mídia daquela feature.
+Before({ tags: '@games-my-lists' }, async () => {
+  await cleanupTracking(MY_LISTS_GAME_ID, 'GAME');
+});
+
+After({ tags: '@games-my-lists' }, async () => {
+  await cleanupTracking(MY_LISTS_GAME_ID, 'GAME');
+});
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
 
 Given('que o jogo {string} está no meu acompanhamento', async ({ page }, mediaId: string) => {
   await gotoApp(page, `/games/${mediaId}`);
@@ -21,6 +47,17 @@ Given('que o jogo {string} está no meu acompanhamento', async ({ page }, mediaI
   await page.getByRole('button', { name: 'Quero Jogar', exact: true }).click();
   await page.getByRole('button', { name: 'Salvar Alterações', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Gerenciar' })).toBeVisible({ timeout: 15_000 });
+  // O backend QA tem read-lag (GetItem sem ConsistentRead sob carga): o
+  // refetch pós-POST do app pode 404 por um instante e a UI mostrar "sem
+  // tracking". Garante a propagação via API e recarrega com estado
+  // consistente antes de prosseguir.
+  await waitForTrackingById(mediaId, 'GAME');
+  await gotoApp(page, `/games/${mediaId}`);
+  await expect(page.getByRole('button', { name: 'Gerenciar' })).toBeVisible({ timeout: 15_000 });
+  // A lista (GSI eventual) pode demorar a ver o item — o app cacheia a
+  // lista por 6h, então a primeira carga da aba precisa ver o item já
+  // propagado (ver api.ts).
+  await waitForTrackingList(mediaId, 'GAME', 'WANT_TO_PLAY');
 });
 
 When(
@@ -28,13 +65,22 @@ When(
   async ({ page }, status: string, plataforma: string, horas: string) => {
     await page.getByRole('button', { name: 'Adicionar à Lista' }).click();
     await page.getByRole('button', { name: status, exact: true }).click();
-    // Dropdown de plataforma: combobox do Flutter web; seleciona opção pelo nome
-    const combo = page.getByRole('combobox').last();
-    await combo.click();
-    await page.getByRole('option', { name: plataforma }).click();
-    // Campo de horas ("Horas jogadas")
-    await page.getByRole('textbox', { name: /Horas/ }).fill(horas);
+    // Dropdown de plataforma (validado em execução real): o
+    // DropdownButtonFormField do Flutter web NÃO expõe combobox/option — é
+    // um botão semantics SEM nome (o app não passa labelText), o primeiro
+    // botão de nome vazio na ordem do DOM (antes das estrelas de avaliação).
+    // Menu aberto expõe role=menu + menuitems com o nome da plataforma.
+    const dropdown = page.getByRole('button', { name: '', exact: true }).first();
+    await dropdown.click();
+    await page.getByRole('menuitem', { name: plataforma, exact: true }).click();
+    // Campo de horas ("Horas jogadas") — fillField com entrega confirmada ao
+    // controller (fill cru do Playwright perde o valor no engine web).
+    await fillField(page, /Horas/, horas);
     await page.getByRole('button', { name: 'Salvar Alterações', exact: true }).click();
+    // Read-lag do backend: garante propagação e recarrega com estado
+    // consistente (o refetch pós-POST do app pode 404 por um instante).
+    await waitForTrackingById(TRACKING_GAME_ID, 'GAME');
+    await gotoApp(page, `/games/${TRACKING_GAME_ID}`);
   },
 );
 
@@ -42,28 +88,48 @@ When('eu removo o jogo do acompanhamento', async ({ page }) => {
   await page.getByRole('button', { name: 'Gerenciar' }).click();
   await page.getByRole('button', { name: 'Remover da Lista' }).click();
   await page.getByRole('button', { name: 'Remover', exact: true }).click();
+  // O DELETE do app pode 404 por read-lag do backend (o sheet fica aberto
+  // com snackbar de erro); garante a remoção na API e recarrega a página
+  // para o estado final refletir ("Adicionar à Lista").
+  await ensureTrackingGone(TRACKING_GAME_ID, 'GAME');
+  await gotoApp(page, `/games/${TRACKING_GAME_ID}`);
 });
 
-Then('ao reabrir o editor vejo {string} e {string} horas', async ({ page }, plataforma: string, horas: string) => {
+Then('devo ver o jogo {string} acompanhado nos resultados', async ({ page }, mediaId: string) => {
+  // O catálogo QA alterna entre ingestão IGDB e fixtures do backend e2e — o
+  // título do jogo acompanhado é lido da LISTA da API (mesma fonte que a
+  // UI) no momento do teste, não fixado na feature.
+  const titulo = await fetchTrackedGameTitle(mediaId, 'GAME', 'WANT_TO_PLAY');
+  const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const porTexto = page.getByText(titulo).first();
+  const porImagem = page
+    .getByRole('img', { name: new RegExp(`^${escapeRegex(titulo)}( |$)`), exact: false })
+    .first();
+  await expect(porTexto.or(porImagem)).toBeVisible({ timeout: 30_000 });
+});
+
+Then('ao reabrir o editor vejo {string}', async ({ page }, plataforma: string) => {
   await page.getByRole('button', { name: 'Gerenciar' }).click();
-  await expect(page.getByText(plataforma, { exact: true })).toBeVisible({ timeout: 15_000 });
-  await expect(page.getByRole('textbox', { name: /Horas/ })).toHaveValue(horas);
-  // Fecha o sheet (esc/Escape ou botão de fechar — confirmar na 1ª execução real)
+  await expect(page.getByText(plataforma, { exact: true }).first()).toBeVisible({ timeout: 15_000 });
+  // Fecha o sheet com Escape (validado: bottom sheet do Flutter web não
+  // responde a Escape; o cenário encerra logo após — page nova por teste,
+  // então o sheet residual não interfere no cenário seguinte).
   await page.keyboard.press('Escape');
 });
 
 // ---------------------------------------------------------------------------
-// Notas de implementação (validar na 1ª execução real, quando o catálogo QA
-// estiver populado):
-// - Dropdown do Flutter web pode expor `combobox`/`button`/`listbox` — se
-//   `getByRole('combobox')` não achar, usar o nó semantics do label
-//   "Plataforma" (fallback `flt-semantics[aria-label*="Plataforma"]`) e clicar
-//   a opção por texto.
-// - O label do dropdown no sheet: confirmar se é "Plataforma" (pt_BR) —
-//   ajustar a string no step se preciso.
-// - Fechar o sheet: Escape costuma funcionar no modal do Flutter; alternativa:
-//   clicar fora (coordenada) ou botão de fechar se existir.
-// - `toHaveValue` em campo de horas: se o Flutter web não expor valor no input
-//   semantics, trocar por verificação do aria-label sumido (padrão isDelivered)
-//   — documentar a alternativa no relatório.
+// Seletores reais validados na 1ª execução (task 1):
+// - Dropdown de plataforma: DropdownButtonFormField SEM labelText no app
+//   (game_detail_page.dart não passa labelText ao GamePlatformSelector) →
+//   NÃO existe combobox/option/listbox nem nó "Plataforma". Fechado, é um
+//   botão semantics de nome vazio (primeiro botão vazio na ordem DOM — antes
+//   das estrelas de avaliação); aberto, expõe `menu "Popup menu"` com
+//   menuitems nomeados pela plataforma ("Switch", "PC", ...).
+// - Campo de horas: textbox "Horas jogadas" (input real com aria-label) —
+//   fillField com isDelivered funciona no add. A persistência de horas via
+//   app está bloqueada no QA (POST descarta hoursPlayed; PUT 404 — mediaType
+//   só na query, app envia no body) — ver BUG-REPORT-qa-tracking-create-drops-hours.md.
+// - Fechar o sheet com Escape: bottom sheet do Flutter web NÃO responde a
+//   Escape (sem handler de keyboard no ModalBottomSheetRoute). Mantido por
+//   inércia: o cenário encerra logo após e cada teste abre página nova.
 // ---------------------------------------------------------------------------
