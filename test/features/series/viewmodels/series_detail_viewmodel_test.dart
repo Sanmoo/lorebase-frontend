@@ -90,6 +90,8 @@ class FakeTrackingRepo implements TrackingRepository {
     String status, {
     String? selectedPlatform,
     double? hoursPlayed,
+    int? rating,
+    String? review,
   }) async {
     final now = DateTime.now();
     final result = TrackedMediaModel(
@@ -98,6 +100,8 @@ class FakeTrackingRepo implements TrackingRepository {
       mediaType: mediaType,
       mediaId: mediaId,
       status: status,
+      rating: rating,
+      review: review,
       addedAt: now,
       lastUpdated: now,
     );
@@ -370,7 +374,7 @@ void main() {
       expect(trackingRepo.lastStartedTracking!.status, 'WANT_TO_WATCH');
     });
 
-    test('addTracking() with rating and review calls updateTracking', () async {
+    test('addTracking() with rating and review sends them in startTracking', () async {
       final seriesRepo = FakeSeriesRepo()
         ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
       final trackingRepo = FakeTrackingRepo();
@@ -386,9 +390,9 @@ void main() {
           .addTracking('WATCHING', rating: 8, review: 'Great!');
 
       expect(trackingRepo.lastStartedTracking, isNotNull);
-      expect(trackingRepo.lastUpdatedFields, isNotNull);
-      expect(trackingRepo.lastUpdatedFields!['rating'], 8);
-      expect(trackingRepo.lastUpdatedFields!['review'], 'Great!');
+      expect(trackingRepo.lastStartedTracking!.rating, 8);
+      expect(trackingRepo.lastStartedTracking!.review, 'Great!');
+      expect(trackingRepo.lastUpdatedFields, isNull);
     });
 
     test('updateTracking() with rating calls repo', () async {
@@ -580,7 +584,7 @@ void main() {
     });
 
     test(
-      'addTracking() with empty review and no rating calls updateTracking',
+      'addTracking() with empty review and no rating never calls updateTracking',
       () async {
         final seriesRepo = FakeSeriesRepo()
           ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
@@ -602,7 +606,7 @@ void main() {
     );
 
     test(
-      'addTracking() with non-empty review and no rating calls updateTracking',
+      'addTracking() with non-empty review and no rating sends review in startTracking',
       () async {
         final seriesRepo = FakeSeriesRepo()
           ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
@@ -619,8 +623,9 @@ void main() {
             .addTracking('WATCHING', review: 'Nice show');
 
         expect(trackingRepo.lastStartedTracking, isNotNull);
-        expect(trackingRepo.lastUpdatedFields, isNotNull);
-        expect(trackingRepo.lastUpdatedFields!['review'], 'Nice show');
+        expect(trackingRepo.lastStartedTracking!.rating, isNull);
+        expect(trackingRepo.lastStartedTracking!.review, 'Nice show');
+        expect(trackingRepo.lastUpdatedFields, isNull);
       },
     );
   });

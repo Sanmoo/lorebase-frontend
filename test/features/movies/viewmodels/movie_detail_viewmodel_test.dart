@@ -48,6 +48,8 @@ class FakeTrackingRepo implements TrackingRepository {
   bool deleteCalled = false;
   bool updateCalled = false;
   bool startCalled = false;
+  int? lastStartRating;
+  String? lastStartReview;
   int getTrackingCallCount = 0;
   int getTrackingByMediaCallCount = 0;
   String? lastGetTrackingByMediaId;
@@ -94,18 +96,24 @@ class FakeTrackingRepo implements TrackingRepository {
     String status, {
     String? selectedPlatform,
     double? hoursPlayed,
+    int? rating,
+    String? review,
   }) async {
     if (shouldThrowStart) throw Exception('start failed');
     startCalled = true;
     lastMediaId = mediaId;
     lastMediaType = mediaType;
     lastStatus = status;
+    lastStartRating = rating;
+    lastStartReview = review;
     return TrackedMediaModel(
       trackingId: 'new-track',
       userId: 'user-1',
       mediaType: mediaType,
       mediaId: mediaId,
       status: status,
+      rating: rating,
+      review: review,
       addedAt: DateTime.now(),
       lastUpdated: DateTime.now(),
     );
@@ -306,7 +314,7 @@ void main() {
     expect(trackingRepo.lastStatus, 'WATCHING');
   });
 
-  test('addTracking() calls updateTracking with review only', () async {
+  test('addTracking() sends review in startTracking', () async {
     final movieRepo = FakeMovieRepo()
       ..movieResult = const MovieModel(tmdbId: 7, title: 'Se7en');
     final trackingRepo = FakeTrackingRepo();
@@ -325,11 +333,13 @@ void main() {
         .read(movieDetailViewModelProvider(7).notifier)
         .addTracking('WATCHING', review: 'Nice movie');
 
-    expect(trackingRepo.updateCalled, true);
-    expect(trackingRepo.lastReview, 'Nice movie');
+    expect(trackingRepo.startCalled, true);
+    expect(trackingRepo.lastStartRating, isNull);
+    expect(trackingRepo.lastStartReview, 'Nice movie');
+    expect(trackingRepo.updateCalled, false);
   });
 
-  test('addTracking() includes rating and review when provided', () async {
+  test('addTracking() sends rating and review in startTracking', () async {
     final movieRepo = FakeMovieRepo()
       ..movieResult = const MovieModel(tmdbId: 7, title: 'Se7en');
     final trackingRepo = FakeTrackingRepo();
@@ -348,9 +358,10 @@ void main() {
         .read(movieDetailViewModelProvider(7).notifier)
         .addTracking('WATCHING', rating: 5, review: 'Great!');
 
-    expect(trackingRepo.updateCalled, true);
-    expect(trackingRepo.lastRating, 5);
-    expect(trackingRepo.lastReview, 'Great!');
+    expect(trackingRepo.startCalled, true);
+    expect(trackingRepo.lastStartRating, 5);
+    expect(trackingRepo.lastStartReview, 'Great!');
+    expect(trackingRepo.updateCalled, false);
   });
 
   test('addTracking() does nothing when state has no value', () async {

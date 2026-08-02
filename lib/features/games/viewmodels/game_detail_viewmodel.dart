@@ -36,7 +36,7 @@ class GameDetailViewModel extends _$GameDetailViewModel {
     final currentState = state.value;
     if (currentState == null) return;
 
-    final tracking = await ref
+    await ref
         .read(trackingRepositoryProvider)
         .startTracking(
           currentState.game.gameId,
@@ -44,24 +44,9 @@ class GameDetailViewModel extends _$GameDetailViewModel {
           status,
           selectedPlatform: selectedPlatform,
           hoursPlayed: hoursPlayed,
+          rating: rating,
+          review: review,
         );
-
-    final bool hasExtra;
-    if (rating != null) {
-      hasExtra = true;
-    } else {
-      hasExtra = review != null && review.isNotEmpty;
-    }
-    if (hasExtra) {
-      await ref
-          .read(trackingRepositoryProvider)
-          .updateTracking(
-            tracking.mediaId,
-            mediaType: MediaType.game,
-            rating: rating,
-            review: review,
-          );
-    }
 
     await _invalidateCaches();
     ref.invalidateSelf();
