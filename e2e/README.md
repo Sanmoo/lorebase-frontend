@@ -41,8 +41,10 @@ E2E_BASE_URL=https://<frontend-qa-deployado> npx bddgen && npx playwright test
 ## Report de evidências
 
 Ao final de `make e2e` (e `make e2e-headed`), um HTML autocontido com
-screenshots de cada passo é gerado em `e2e/report/evidencias.html`. Para
-re-gerar da última execução e abrir no browser:
+screenshots de cada passo é gerado em `e2e/report/evidencias.html` —
+inclusive quando a suíte falha (o `make` continua saindo com erro, mas o
+report da falha é gerado). Para re-gerar da última execução e abrir no
+browser:
 
 ```bash
 make e2e-report-evidencias

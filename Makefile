@@ -142,10 +142,10 @@ e2e-build-web:
 	flutter build web --release --dart-define=E2E=true --dart-define=ENV_FILE=.env.qa
 
 e2e: e2e-build-web
-	cd e2e && rm -rf test-results/evidencias && export E2E_API_BASE_URL=$$(sed -n 's/^API_BASE_URL=//p' ../.env.qa) && npx bddgen && npx playwright test && node scripts/gerar-report.mjs
+	cd e2e && rm -rf test-results/evidencias && export E2E_API_BASE_URL=$$(sed -n 's/^API_BASE_URL=//p' ../.env.qa) && npx bddgen && (npx playwright test && node scripts/gerar-report.mjs || { node scripts/gerar-report.mjs; exit 1; })
 
 e2e-headed: e2e-build-web
-	cd e2e && rm -rf test-results/evidencias && export E2E_API_BASE_URL=$$(sed -n 's/^API_BASE_URL=//p' ../.env.qa) && npx bddgen && npx playwright test --headed && node scripts/gerar-report.mjs
+	cd e2e && rm -rf test-results/evidencias && export E2E_API_BASE_URL=$$(sed -n 's/^API_BASE_URL=//p' ../.env.qa) && npx bddgen && (npx playwright test --headed && node scripts/gerar-report.mjs || { node scripts/gerar-report.mjs; exit 1; })
 
 e2e-report:
 	cd e2e && npx playwright show-report
