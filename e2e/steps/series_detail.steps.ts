@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { When, Then } from '../support/fixtures';
+import { When, Then, evidencia } from '../support/fixtures';
 
 When('eu abro o resultado {string}', async ({ page }, titulo: string) => {
   // Cards de resultado são botões semantics mesclados: textContent =
@@ -61,6 +61,7 @@ Then('devo ver o título da página {string}', async ({ page }, titulo: string) 
   await expect(page.getByText(titulo).first()).toBeVisible({
     timeout: 15_000,
   });
+  await evidencia(page, `Detalhe da série aberto com título "${titulo}" visível`);
 });
 
 Then('devo ver a seção {string}', async ({ page }, secao: string) => {

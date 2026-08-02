@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { Given, When, Then, Before, After } from '../support/fixtures';
+import { Given, When, Then, Before, After, evidencia } from '../support/fixtures';
 import { gotoApp } from '../support/app';
 import { cleanupTracking, ensureTrackingGone } from '../support/api';
 
@@ -59,4 +59,5 @@ When('eu removo a série do acompanhamento', async ({ page }) => {
 
 Then('devo ver o botão {string}', async ({ page }, nome: string) => {
   await expect(page.getByRole('button', { name: nome })).toBeVisible({ timeout: 15_000 });
+  await evidencia(page, `Acompanhamento refletido na página: botão "${nome}" visível`);
 });

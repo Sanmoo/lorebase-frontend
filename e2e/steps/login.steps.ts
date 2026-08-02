@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { Given, When, Then } from '../support/fixtures';
+import { Given, When, Then, evidencia } from '../support/fixtures';
 import { fillField, gotoApp } from '../support/app';
 
 // Fallback para vars da sessão (backend e2e usa E2E_COGNITO_*): mesmo padrão
@@ -41,4 +41,8 @@ Then('devo permanecer na página de login', async ({ page }) => {
     timeout: 15_000,
   });
   await expect(page).toHaveURL(/\/login$/, { timeout: 15_000 });
+  await evidencia(
+    page,
+    'Login inválido: app permanece em /login — credenciais erradas não autenticam',
+  );
 });

@@ -1,6 +1,6 @@
 // e2e/steps/games_detail.steps.ts
 import { expect } from '@playwright/test';
-import { Then } from '../support/fixtures';
+import { Then, evidencia } from '../support/fixtures';
 import { fetchGameTitle } from '../support/api';
 
 Then('devo ver o título da página do jogo {string}', async ({ page }, mediaId: string) => {
@@ -9,4 +9,5 @@ Then('devo ver o título da página do jogo {string}', async ({ page }, mediaId:
   // título esperado é o que o catálogo serve AGORA, não fixado na feature.
   const titulo = await fetchGameTitle(mediaId);
   await expect(page.getByText(titulo).first()).toBeVisible({ timeout: 15_000 });
+  await evidencia(page, `Detalhe do jogo aberto com título "${titulo}" visível`);
 });
