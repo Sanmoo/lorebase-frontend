@@ -56,8 +56,13 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
   }
 
   void _loadTrackingForTab(int index) {
-    final status = TrackingStatus.values[index].value;
     final selectedType = ref.read(selectedMediaTypeProvider);
+    // Games têm status próprios (WANT_TO_PLAY/PLAYING/COMPLETED/DROPPED) —
+    // mandar status de série (WANT_TO_WATCH) para mediaType=GAME é rejeitado
+    // pelo backend (400 Invalid request) e a aba Jogos nunca carrega.
+    final status = selectedType == MediaType.game
+        ? GameTrackingStatus.values[index].value
+        : TrackingStatus.values[index].value;
     ref
         .read(trackingListViewModelProvider.notifier)
         .loadTracking(status: status, mediaType: selectedType);
@@ -98,8 +103,13 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
               controller: _tabController,
               isScrollable: true,
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              tabs: TrackingStatus.values
-                  .map((s) => Tab(text: s.label(t)))
+              tabs: (selectedType == MediaType.game
+                      ? GameTrackingStatus.values.map(
+                          (s) => Tab(text: s.label(t)),
+                        )
+                      : TrackingStatus.values.map(
+                          (s) => Tab(text: s.label(t)),
+                        ))
                   .toList(),
             ),
           ),

@@ -63,6 +63,7 @@ class FakeTrackingListVM extends TrackingListViewModel {
   final AsyncValue<List<TrackedMediaModel>> testState;
   int loadTrackingCallCount = 0;
   MediaType? lastMediaType;
+  String? lastStatus;
   FakeTrackingListVM({AsyncValue<List<TrackedMediaModel>>? state})
     : testState = state ?? const AsyncValue.data([]);
 
@@ -75,6 +76,7 @@ class FakeTrackingListVM extends TrackingListViewModel {
   }) async {
     loadTrackingCallCount++;
     lastMediaType = mediaType;
+    lastStatus = status;
   }
 
   @override
@@ -385,6 +387,31 @@ Future<void> main() async {
       await tester.pumpAndSettle();
 
       expect(find.text('No Want to Play games yet'), findsOneWidget);
+    });
+
+    testWidgets('switching to Games sends game status to view model', (
+      tester,
+    ) async {
+      final fakeVM = FakeTrackingListVM();
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      // Tab 0 em séries usa status de série (WANT_TO_WATCH).
+      expect(fakeVM.lastStatus, 'WANT_TO_WATCH');
+
+      await tester.tap(find.text('Games'));
+      await tester.pumpAndSettle();
+
+      expect(fakeVM.lastMediaType, MediaType.game);
+      // Games usam status próprios — WANT_TO_WATCH seria rejeitado (400) pelo
+      // backend e a aba Jogos nunca carregaria.
+      expect(fakeVM.lastStatus, 'WANT_TO_PLAY');
+      // Labels das tabs acompanham o tipo de mídia.
+      expect(find.text('Want to Play'), findsOneWidget);
+      expect(find.text('Want to Watch'), findsNothing);
     });
 
     testWidgets('game tracking item navigates to /games/:id', (tester) async {
