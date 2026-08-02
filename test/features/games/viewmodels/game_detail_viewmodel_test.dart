@@ -54,6 +54,8 @@ class FakeTrackingRepo implements TrackingRepository {
   String? lastStartStatus;
   String? lastStartPlatform;
   double? lastStartHoursPlayed;
+  int? lastStartRating;
+  String? lastStartReview;
 
   bool updateCalled = false;
   String? lastUpdateMediaId;
@@ -97,6 +99,8 @@ class FakeTrackingRepo implements TrackingRepository {
     String status, {
     String? selectedPlatform,
     double? hoursPlayed,
+    int? rating,
+    String? review,
   }) async {
     if (shouldThrowStart) throw Exception('start failed');
     startCalled = true;
@@ -105,6 +109,8 @@ class FakeTrackingRepo implements TrackingRepository {
     lastStartStatus = status;
     lastStartPlatform = selectedPlatform;
     lastStartHoursPlayed = hoursPlayed;
+    lastStartRating = rating;
+    lastStartReview = review;
     final now = DateTime.now();
     return TrackedMediaModel(
       trackingId: 'track-$mediaId',
@@ -114,6 +120,8 @@ class FakeTrackingRepo implements TrackingRepository {
       status: status,
       selectedPlatform: selectedPlatform,
       hoursPlayed: hoursPlayed,
+      rating: rating,
+      review: review,
       addedAt: now,
       lastUpdated: now,
     );
@@ -283,7 +291,7 @@ void main() {
       expect(trackingRepo.lastStartHoursPlayed, 12.5);
     });
 
-    test('addTracking() calls updateTracking with rating and review', () async {
+    test('addTracking() sends rating and review in startTracking', () async {
       final gameRepo = FakeGameRepo()
         ..gameResult = const GameModel(gameId: 'g1', title: 'Hollow Knight');
       final trackingRepo = FakeTrackingRepo();
@@ -306,10 +314,9 @@ void main() {
           );
 
       expect(trackingRepo.startCalled, true);
-      expect(trackingRepo.updateCalled, true);
-      expect(trackingRepo.lastUpdateMediaType, MediaType.game);
-      expect(trackingRepo.lastUpdateRating, 9);
-      expect(trackingRepo.lastUpdateReview, 'Masterpiece');
+      expect(trackingRepo.lastStartRating, 9);
+      expect(trackingRepo.lastStartReview, 'Masterpiece');
+      expect(trackingRepo.updateCalled, false);
     });
 
     test('addTracking() no-ops when state has no value', () async {
@@ -331,33 +338,31 @@ void main() {
       expect(trackingRepo.startCalled, false);
     });
 
-    test(
-      'addTracking() calls updateTracking with review when rating is null',
-      () async {
-        final gameRepo = FakeGameRepo()
-          ..gameResult = const GameModel(gameId: 'g1', title: 'Hollow Knight');
-        final trackingRepo = FakeTrackingRepo();
+    test('addTracking() sends review in startTracking when rating is null', () async {
+      final gameRepo = FakeGameRepo()
+        ..gameResult = const GameModel(gameId: 'g1', title: 'Hollow Knight');
+      final trackingRepo = FakeTrackingRepo();
 
-        final container = createContainer(
-          gameRepo: gameRepo,
-          trackingRepo: trackingRepo,
-        );
-        addTearDown(container.dispose);
+      final container = createContainer(
+        gameRepo: gameRepo,
+        trackingRepo: trackingRepo,
+      );
+      addTearDown(container.dispose);
 
-        await container.read(gameDetailViewModelProvider('g1').future);
-        await container
-            .read(gameDetailViewModelProvider('g1').notifier)
-            .addTracking(
-              'COMPLETED',
-              selectedPlatform: 'Switch',
-              review: 'Great!',
-            );
+      await container.read(gameDetailViewModelProvider('g1').future);
+      await container
+          .read(gameDetailViewModelProvider('g1').notifier)
+          .addTracking(
+            'COMPLETED',
+            selectedPlatform: 'Switch',
+            review: 'Great!',
+          );
 
-        expect(trackingRepo.startCalled, true);
-        expect(trackingRepo.updateCalled, true);
-        expect(trackingRepo.lastUpdateReview, 'Great!');
-      },
-    );
+      expect(trackingRepo.startCalled, true);
+      expect(trackingRepo.lastStartRating, isNull);
+      expect(trackingRepo.lastStartReview, 'Great!');
+      expect(trackingRepo.updateCalled, false);
+    });
 
     test(
       'updateTracking() calls updateTracking with hoursPlayed and platform',

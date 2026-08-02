@@ -62,6 +62,8 @@ class FakeTrackingRepo implements TrackingRepository {
     String status, {
     String? selectedPlatform,
     double? hoursPlayed,
+    int? rating,
+    String? review,
   }) async => _makeTracking('t-1', status);
 
   @override

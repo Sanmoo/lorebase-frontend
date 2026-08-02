@@ -24,6 +24,8 @@ abstract class TrackingRepository {
     String status, {
     String? selectedPlatform,
     double? hoursPlayed,
+    int? rating,
+    String? review,
   });
 
   Future<TrackedMediaModel> updateTracking(
@@ -102,6 +104,8 @@ class TrackingRepositoryImpl implements TrackingRepository {
     String status, {
     String? selectedPlatform,
     double? hoursPlayed,
+    int? rating,
+    String? review,
   }) async {
     try {
       final data = <String, dynamic>{
@@ -110,6 +114,8 @@ class TrackingRepositoryImpl implements TrackingRepository {
         'status': status,
         'selectedPlatform': selectedPlatform,
         'hoursPlayed': hoursPlayed,
+        'rating': rating,
+        'review': (review == null || review.isEmpty) ? null : review,
       };
 
       final response = await _dio.post('/tracking', data: data);

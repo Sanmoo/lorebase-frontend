@@ -44,23 +44,12 @@ class MovieDetailViewModel extends _$MovieDetailViewModel {
             currentState.movie.tmdbId.toString(),
             MediaType.movie,
             status,
+            rating: rating,
+            review: review,
           );
       debugPrint(
         '[MOVIE_VM] startTracking succeeded: mediaId=${tracking.mediaId}',
       );
-      final hasExtra =
-          (rating != null) || (review != null && review.isNotEmpty);
-      if (hasExtra) {
-        await ref
-            .read(trackingRepositoryProvider)
-            .updateTracking(
-              tracking.mediaId,
-              mediaType: MediaType.movie,
-              rating: rating,
-              review: review,
-            );
-        debugPrint('[MOVIE_VM] updateTracking (post-start) succeeded');
-      }
       await ref.read(cacheServiceProvider).remove('dashboard:movie');
       await ref.read(cacheServiceProvider).removeByPrefix('tracking:');
       ref.invalidateSelf();

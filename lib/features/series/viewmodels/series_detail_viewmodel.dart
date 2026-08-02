@@ -38,20 +38,13 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
     final currentState = state.value;
     if (currentState == null) return;
     final trackingRepo = ref.read(trackingRepositoryProvider);
-    final tracking = await trackingRepo.startTracking(
+    await trackingRepo.startTracking(
       currentState.series.tmdbId.toString(),
       MediaType.series,
       status,
+      rating: rating,
+      review: review,
     );
-    final hasExtra = (rating != null) || (review != null && review.isNotEmpty);
-    if (hasExtra) {
-      await trackingRepo.updateTracking(
-        tracking.mediaId,
-        mediaType: MediaType.series,
-        rating: rating,
-        review: review,
-      );
-    }
     await ref.read(cacheServiceProvider).remove('dashboard');
     await ref.read(cacheServiceProvider).removeByPrefix('tracking:');
     ref.invalidateSelf();

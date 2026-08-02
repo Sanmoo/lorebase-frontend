@@ -246,6 +246,54 @@ void main() {
       expect(capturedData!['hoursPlayed'], 12.5);
     });
 
+    test('startTracking() sends modern rating and review keys', () async {
+      Map<String, dynamic>? capturedData;
+      final dio = Dio()
+        ..httpClientAdapter = MockAdapter(
+          onFetch: (options) {
+            capturedData = options.data as Map<String, dynamic>?;
+            return _json(_trackingJson('t-new', 'series'));
+          },
+        );
+      final repo = TrackingRepositoryImpl(dio);
+
+      await repo.startTracking(
+        'series-1',
+        MediaType.series,
+        'WATCHING',
+        rating: 9,
+        review: 'muito bom',
+      );
+
+      expect(capturedData, isNotNull);
+      expect(capturedData!['rating'], 9);
+      expect(capturedData!['review'], 'muito bom');
+      expect(capturedData!.containsKey('seriesRating'), false);
+      expect(capturedData!.containsKey('seriesReview'), false);
+    });
+
+    test('startTracking() omits empty review', () async {
+      Map<String, dynamic>? capturedData;
+      final dio = Dio()
+        ..httpClientAdapter = MockAdapter(
+          onFetch: (options) {
+            capturedData = options.data as Map<String, dynamic>?;
+            return _json(_trackingJson('t-new', 'series'));
+          },
+        );
+      final repo = TrackingRepositoryImpl(dio);
+
+      await repo.startTracking(
+        'series-1',
+        MediaType.series,
+        'WATCHING',
+        review: '',
+      );
+
+      expect(capturedData, isNotNull);
+      expect(capturedData!['review'], isNull);
+    });
+
     test('startTracking() throws ServerException on DioException', () async {
       final dio = Dio()
         ..httpClientAdapter = MockAdapter(
