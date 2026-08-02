@@ -1,5 +1,12 @@
 import { expect } from "@playwright/test";
-import { Given, When, Then, Before, After, evidencia } from "../support/fixtures";
+import {
+	Given,
+	When,
+	Then,
+	Before,
+	After,
+	evidencia,
+} from "../support/fixtures";
 import { gotoApp } from "../support/app";
 import {
 	cleanupTracking,
@@ -123,6 +130,10 @@ Then("devo ver o botão {string}", async ({ page }, nome: string) => {
 	await expect(page.getByRole("button", { name: nome })).toBeVisible({
 		timeout: 15_000,
 	});
+	await evidencia(
+		page,
+		`Acompanhamento refletido na página: botão "${nome}" visível`,
+	);
 });
 
 Then("devo ver o chip {string} na página", async ({ page }, label: string) => {
@@ -131,5 +142,4 @@ Then("devo ver o chip {string} na página", async ({ page }, label: string) => {
 	await expect(
 		page.getByRole("checkbox", { name: label, exact: true }),
 	).toBeVisible({ timeout: 15_000 });
-  await evidencia(page, `Acompanhamento refletido na página: botão "${nome}" visível`);
 });
