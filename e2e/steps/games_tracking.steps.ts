@@ -19,18 +19,29 @@ import { cleanupTracking, waitForTrackingById, waitForTrackingList, ensureTracki
 const TRACKING_GAME_ID = '5678';
 const MY_LISTS_GAME_ID = '9012';
 
-// Estado limpo antes/depois de todo cenário @games-tracking (idempotente, 404 = ok)
+// Estado limpo ANTES de todo cenário @games-tracking: ensureTrackingGone
+// (poll de DELETE até 404) garante que a AUSÊNCIA do item já propagou antes
+// do cenário começar. O cleanup fire-and-forget (cleanupTracking) deixava
+// uma janela de read-lag: o app, ao carregar /games/{id} logo depois, ainda
+// recebia o item antigo via getTrackingByMedia e renderizava "Gerenciar" em
+// vez de "Adicionar à Lista" — o click nunca achava o botão (flake
+// determinístico no 1º attempt, ver snapshots de error-context do round 1).
 Before({ tags: '@games-tracking' }, async () => {
-  await cleanupTracking(TRACKING_GAME_ID, 'GAME');
+  await ensureTrackingGone(TRACKING_GAME_ID, 'GAME');
 });
 
+// After mantém cleanupTracking (fire-and-forget): pós-teste ninguém depende
+// do delete visível imediatamente — o Before do PRÓXIMO cenário faz o poll
+// até 404 antes de começar. Manter o After barato evita pagar 15s de poll
+// em todo cenário para um estado que só importa no início do seguinte.
 After({ tags: '@games-tracking' }, async () => {
   await cleanupTracking(TRACKING_GAME_ID, 'GAME');
 });
 
-// Mesmo padrão para @games-my-lists: limpa SÓ a mídia daquela feature.
+// Mesmo padrão para @games-my-lists: limpa SÓ a mídia daquela feature,
+// com propagação garantida antes do cenário (poll até 404).
 Before({ tags: '@games-my-lists' }, async () => {
-  await cleanupTracking(MY_LISTS_GAME_ID, 'GAME');
+  await ensureTrackingGone(MY_LISTS_GAME_ID, 'GAME');
 });
 
 After({ tags: '@games-my-lists' }, async () => {

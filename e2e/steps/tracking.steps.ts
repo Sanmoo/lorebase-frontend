@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 import { Given, When, Then, Before, After } from '../support/fixtures';
 import { gotoApp } from '../support/app';
-import { cleanupTracking } from '../support/api';
+import { cleanupTracking, ensureTrackingGone } from '../support/api';
 
 // Isolamento por mídia entre features que rodam em workers paralelos: os
 // hooks daqui limpam SÓ a mídia de tracking.feature (1396). my_lists.feature
@@ -10,13 +10,21 @@ import { cleanupTracking } from '../support/api';
 // POST→refetch do outro worker faz o cenário dele falhar (POST 201 → GET 404).
 const BREAKING_BAD_ID = '1396';
 
-// Estado limpo antes e depois de todo cenário @tracking (DELETE é
-// idempotente — 404 quando ausente). Garante usuário de teste sem resíduo
-// mesmo quando o cenário falha no meio.
+// Estado limpo ANTES de todo cenário @tracking: ensureTrackingGone (poll de
+// DELETE até 404) garante que a AUSÊNCIA do item já propagou antes do
+// cenário começar. Mesmo fix do round 1 de games: o cleanup fire-and-forget
+// deixava janela de read-lag (GetItem sem ConsistentRead no backend QA) e o
+// app podia renderizar "Gerenciar" (item antigo) em vez de "Adicionar à
+// Lista" — evidência: snapshot de error-context de 2026-08-02 08:27 em
+// my_lists.feature (séries) falhou com o mesmo padrão de read-lag
+// (POST 201 → GET 404).
 Before({ tags: '@tracking' }, async () => {
-  await cleanupTracking(BREAKING_BAD_ID, 'SERIES');
+  await ensureTrackingGone(BREAKING_BAD_ID, 'SERIES');
 });
 
+// After mantém cleanupTracking (fire-and-forget): pós-teste ninguém depende
+// do delete visível imediatamente — o Before do PRÓXIMO cenário faz o poll
+// até 404 antes de começar. Evita pagar 15s de poll em todo cenário.
 After({ tags: '@tracking' }, async () => {
   await cleanupTracking(BREAKING_BAD_ID, 'SERIES');
 });
