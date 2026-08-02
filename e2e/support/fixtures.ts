@@ -35,15 +35,16 @@ export const test = base.extend({
 
 export const { Given, When, Then, Before, After, AfterStep } = createBdd(test);
 
-// keywordType do Gherkin → keyword exibida no report (Dado/Quando/Então/E).
+// keywordType do Gherkin → keyword exibida no report (Dado/Quando/Então).
 // O $step.title do playwright-bdd traz o texto SEM keyword; o $bddTestData tem
 // o textWithKeyword ("Dado que estou autenticado") — casa por remoção da
-// primeira palavra.
+// primeira palavra. Passos "E"/"Mas" não têm keywordType próprio: o
+// compilador de pickle do Cucumber herda o tipo do passo ANTERIOR, então o
+// match por textWithKeyword resolve naturalmente para a keyword certa.
 const KEYWORD_POR_TIPO: Record<string, string> = {
   Context: 'Dado',
   Action: 'Quando',
   Outcome: 'Então',
-  Conjunction: 'E',
 };
 
 function keywordDoPasso(

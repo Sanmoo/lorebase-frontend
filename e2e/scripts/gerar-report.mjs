@@ -96,7 +96,13 @@ export function lerCenarios(dirEvidencias) {
   for (const dir of dirs) {
     const caminhoJson = path.join(dir, 'dados.json');
     if (!fs.existsSync(caminhoJson)) continue;
-    const dados = JSON.parse(fs.readFileSync(caminhoJson, 'utf8'));
+    let dados;
+    try {
+      dados = JSON.parse(fs.readFileSync(caminhoJson, 'utf8'));
+    } catch {
+      console.warn(`⚠️ evidências: ignorando dados corrompidos: ${caminhoJson}`);
+      continue;
+    }
     dados.passos = (dados.passos ?? []).map((passo) => ({
       ...passo,
       png: passo.png
@@ -111,12 +117,10 @@ export function lerCenarios(dirEvidencias) {
     }));
     cenarios.push(dados);
   }
-  // Retry/duplicata: mesma feature+cenário → vale a execução mais recente.
-  const vistos = new Map();
-  for (const c of [...cenarios].sort((a, b) => a.inicioMs - b.inicioMs)) {
-    vistos.set(`${c.featureUri}|${c.cenario}`, c);
-  }
-  return [...vistos.values()].sort((a, b) => a.inicioMs - b.inicioMs);
+  // Sem dedupe: retry do Playwright reusa o mesmo testId → mesma pasta →
+  // dados.json/PNGs sobrescritos no disco (o mais recente já vence). Cada
+  // pasta restante é um cenário distinto, mesmo com feature+cenário iguais.
+  return cenarios.sort((a, b) => a.inicioMs - b.inicioMs);
 }
 
 export function gerarHtml(cenarios) {
@@ -149,7 +153,7 @@ export function gerarHtml(cenarios) {
         lista.find((c) => c.featureTitulo)?.featureTitulo ?? uri;
       const ok = lista.filter((c) => c.status === 'passed').length;
       return `<section class="feature">
-        <h2>${esc(titulo)} <span class="meta">${ok}/${lista.length} cenários ok · ${uri}</span></h2>
+        <h2>${esc(titulo)} <span class="meta">${ok}/${lista.length} cenários ok · ${esc(uri)}</span></h2>
         ${lista.map(cenarioHtml).join('\n')}
       </section>`;
     })
@@ -222,13 +226,13 @@ export function gerarReport(dirEvidencias = DIR_DEFAULT, caminhoSaida = SAIDA_DE
   const html = gerarHtml(cenarios);
   fs.mkdirSync(path.dirname(caminhoSaida), { recursive: true });
   fs.writeFileSync(caminhoSaida, html, 'utf8');
-  return { total: cenarios.length, html: caminhoSaida };
+  return { total: cenarios.length, caminho: caminhoSaida };
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   try {
     const res = gerarReport();
-    console.log(`✅ Report de evidências gerado: ${res.html} (${res.total} cenários)`);
+    console.log(`✅ Report de evidências gerado: ${res.caminho} (${res.total} cenários)`);
   } catch (erro) {
     console.error(`❌ ${erro.message}`);
     process.exit(1);

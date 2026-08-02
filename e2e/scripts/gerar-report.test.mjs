@@ -94,13 +94,40 @@ test('sem nenhum dado lança erro claro', () => {
   assert.throws(() => gerarReport(base, path.join(base, 'out.html')), /Nenhuma evidência/);
 });
 
-test('retry/duplicata: mesma feature+cenário vale o mais recente', () => {
+test('mesma feature+cenário com testIds diferentes são cenários distintos (sem dedupe)', () => {
   const base = dirTmp();
+  // Retry do Playwright reusa o MESMO testId → mesma pasta → dados.json sobrescrito
+  // no disco; o dedupe por featureUri|cenario era um no-op e ainda apagava
+  // cenários legítimos com o mesmo título dentro da mesma feature.
   escreverCenario(base, cenario({ testId: 'r1', inicioMs: 1_000, status: 'failed' }));
   escreverCenario(base, cenario({ testId: 'r2', inicioMs: 2_000 }));
   const cenarios = lerCenarios(base);
+  assert.equal(cenarios.length, 2);
+  assert.deepEqual(
+    cenarios.map((c) => c.testId),
+    ['r1', 'r2'],
+  );
+});
+
+test('dados.json corrompido é ignorado com warning e não derruba o report', () => {
+  const base = dirTmp();
+  escreverCenario(base, cenario({ testId: 'valido' }));
+  const dirCorrompido = path.join(base, 'corrompido');
+  fs.mkdirSync(dirCorrompido, { recursive: true });
+  fs.writeFileSync(path.join(dirCorrompido, 'dados.json'), '{{not json', 'utf8');
+  const warnings = [];
+  const originalWarn = console.warn;
+  console.warn = (msg) => warnings.push(msg);
+  let cenarios;
+  try {
+    cenarios = lerCenarios(base);
+  } finally {
+    console.warn = originalWarn;
+  }
   assert.equal(cenarios.length, 1);
-  assert.equal(cenarios[0].testId, 'r2');
+  assert.equal(cenarios[0].testId, 'valido');
+  assert.equal(warnings.length, 1);
+  assert.match(warnings[0], /ignorando dados corrompidos/);
 });
 
 test('passo que falhou mostra screenshot em destaque, fora do archive', () => {
