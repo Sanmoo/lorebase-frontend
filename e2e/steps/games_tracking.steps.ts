@@ -1,6 +1,6 @@
 // e2e/steps/games_tracking.steps.ts
 import { expect } from "@playwright/test";
-import { Given, When, Then, Before, After } from "../support/fixtures";
+import { Given, When, Then, Before, After, evidencia } from "../support/fixtures";
 import { fillField, gotoApp } from "../support/app";
 import {
 	cleanupTracking,
@@ -149,6 +149,7 @@ Then(
 			})
 			.first();
 		await expect(porTexto.or(porImagem)).toBeVisible({ timeout: 30_000 });
+		await evidencia(page, `Jogo "${titulo}" listado no acompanhamento com status escolhido`);
 	},
 );
 
@@ -169,6 +170,10 @@ Then(
 		const item = await waitForTrackingById(TRACKING_GAME_ID, "GAME");
 		expect(item.hoursPlayed, "hoursPlayed ao reabrir o editor").toBe(
 			Number(horas),
+		);
+		await evidencia(
+			page,
+			`Editor reaberto: plataforma "${plataforma}" e ${horas}h preenchidas do backend`,
 		);
 	},
 );

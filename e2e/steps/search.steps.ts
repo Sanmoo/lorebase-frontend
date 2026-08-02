@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { Given, When, Then } from '../support/fixtures';
+import { Given, When, Then, evidencia } from '../support/fixtures';
 import { fillField, gotoApp } from '../support/app';
 
 Given('que estou na página de busca', async ({ page }) => {
@@ -29,4 +29,5 @@ Then('devo ver {string} nos resultados', async ({ page }, titulo: string) => {
     .getByRole('img', { name: new RegExp(`^${escapeRegex(titulo)}( |$)`), exact: false })
     .first();
   await expect(porTexto.or(porImagem)).toBeVisible({ timeout: 30_000 });
+  await evidencia(page, `Resultados da busca mostram "${titulo}"`);
 });

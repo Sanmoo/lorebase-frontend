@@ -142,10 +142,17 @@ e2e-build-web:
 	flutter build web --release --dart-define=E2E=true --dart-define=ENV_FILE=.env.qa
 
 e2e: e2e-build-web
-	cd e2e && export E2E_API_BASE_URL=$$(sed -n 's/^API_BASE_URL=//p' ../.env.qa) && npx bddgen && npx playwright test
+	cd e2e && rm -rf test-results/evidencias && export E2E_API_BASE_URL=$$(sed -n 's/^API_BASE_URL=//p' ../.env.qa) && npx bddgen && npx playwright test && node scripts/gerar-report.mjs
 
 e2e-headed: e2e-build-web
-	cd e2e && export E2E_API_BASE_URL=$$(sed -n 's/^API_BASE_URL=//p' ../.env.qa) && npx bddgen && npx playwright test --headed
+	cd e2e && rm -rf test-results/evidencias && export E2E_API_BASE_URL=$$(sed -n 's/^API_BASE_URL=//p' ../.env.qa) && npx bddgen && npx playwright test --headed && node scripts/gerar-report.mjs
 
 e2e-report:
 	cd e2e && npx playwright show-report
+
+# Report de evidências (HTML autocontido): re-gera da última execução e abre
+e2e-report-evidencias:
+	cd e2e && node scripts/gerar-report.mjs && (xdg-open report/evidencias.html >/dev/null 2>&1 || echo "📄 Report: e2e/report/evidencias.html")
+
+e2e-report-test:
+	cd e2e && node --test scripts/gerar-report.test.mjs

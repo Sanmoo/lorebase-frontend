@@ -37,3 +37,33 @@ E2E_BASE_URL=https://<frontend-qa-deployado> npx bddgen && npx playwright test
 
 - **séries_** — busca, detalhe, acompanhamento (status) e minha lista
 - **games_** — busca, detalhe, tracking (status + plataforma + horas) e minha lista
+
+## Report de evidências
+
+Ao final de `make e2e` (e `make e2e-headed`), um HTML autocontido com
+screenshots de cada passo é gerado em `e2e/report/evidencias.html`. Para
+re-gerar da última execução e abrir no browser:
+
+```bash
+make e2e-report-evidencias
+```
+
+O report mostra: badges ✅/❌ por cenário e passo, erro + screenshot do passo
+que falhou, e uma **evidência em destaque por cenário** — imagem grande com
+legenda humana. Para marcar um passo como evidência, chame o helper no step:
+
+```ts
+import { evidencia } from '../support/fixtures';
+
+Then('devo ver {string} nos resultados', async ({ page }, titulo: string) => {
+  await expect(...).toBeVisible();
+  await evidencia(page, `Resultados da busca mostram "${titulo}"`);
+});
+```
+
+Se nenhum passo do cenário for marcado, o último passo vira evidência
+automaticamente (legenda = texto do passo). Todo passo tem screenshot no
+archive `test-results/evidencias/` (limpo a cada `make e2e`; rodar
+`npx playwright test` direto acumula runs entre execuções).
+
+Testes do gerador: `make e2e-report-test` (node --test, zero deps).
