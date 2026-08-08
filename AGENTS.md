@@ -27,7 +27,7 @@ python scripts/get_cognito_token.py <email>  # get Cognito JWT tokens for API te
 - `lib/app.dart` — `ConsumerWidget`: `MaterialApp.router` with `ThemeMode.system`, auth-aware builder (spinner while `AuthState.unknown`)
 - `lib/router.dart` — plain `Provider<GoRouter>` (not riverpod codegen). `authRedirect()` is `@visibleForTesting`, checks `authState` against route path to redirect.
 - Auth routes (`/login`, `/register`, `/forgot-password`) are outside `ShellRoute`. Protected routes (`/dashboard`, `/search`, `/series/:tmdbId`, `/tracking`, `/recommend`) are inside `ShellRoute` → `ScaffoldWithNavBar` (BottomNavigationBar with 4 tabs: Home, Search, My Lists, Recommend).
-- `Navigation: use `context.go()` (not `push()`) — enforced by bottom nav tab switching.
+- `Navigation: use`context.go()` (not `push()`) — enforced by bottom nav tab switching.
 
 ## Feature structure
 
@@ -49,6 +49,7 @@ Each feature under `lib/features/<name>/` follows: `data/`, `pages/`, `viewmodel
 ## Coverage quality gate
 
 `scripts/check_coverage.dart` excludes from measurement:
+
 - `*.g.dart`, `*.freezed.dart` (auto-generated)
 - `/test/` files
 - `api_constants.dart`, `core_providers.dart`, `app_theme.dart`, `dio_client.dart`, `auth_repository.dart`, `auth_interceptor.dart`
@@ -74,3 +75,17 @@ por fixture no projeto `app`. Cenários `@tracking` auto-limpam via
 - `.env` is gitignored; `.env.example` only has `API_BASE_URL`.
 - Web: `setPathUrlStrategy()` in main.dart enables clean URLs without `#`.
 - No i18n/localization implementation yet (planned but not built).
+
+## Agent skills
+
+### Issue tracker
+
+Issues live as local markdown files under `.scratch/<feature>/`. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Five canonical roles, each label string equal to its name: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context — one `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
