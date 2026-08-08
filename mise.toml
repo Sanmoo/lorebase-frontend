@@ -1,2 +1,5 @@
 [tools]
+# Gradle 8.11.1 (wrapper do projeto) suporta no máximo Java 23; o config global do mise
+# define java = "25", o que quebra a resolução do flutter-plugin-loader.
+java = "21"
 flutter = { version = "3.41.8", platforms = { linux-arm64 = { url = 'https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_arm64_{{ version | replace(from="-stable", to="") }}-stable.tar.xz' }, linux-x64 = { url = 'https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_{{ version | replace(from="-stable", to="") }}-stable.tar.xz' } }, url = "https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_{{ version }}-stable.zip", version_expr = 'fromJSON(body).releases | filter({ #.channel == "stable" }) | map({ #.version }) | sortVersions()', version_list_url = "https://storage.googleapis.com/flutter_infra_release/releases/releases_linux.json" }
