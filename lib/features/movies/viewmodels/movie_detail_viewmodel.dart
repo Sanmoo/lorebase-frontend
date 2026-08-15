@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../core/cache/cache_providers.dart';
+import '../../dashboard/viewmodels/dashboard_viewmodel.dart';
 import '../../tracking/data/models/media_type.dart';
 import '../../tracking/data/repositories/tracking_repository.dart';
 import '../data/repositories/movie_repository.dart';
@@ -50,8 +51,9 @@ class MovieDetailViewModel extends _$MovieDetailViewModel {
       debugPrint(
         '[MOVIE_VM] startTracking succeeded: mediaId=${tracking.mediaId}',
       );
-      await ref.read(cacheServiceProvider).remove('dashboard:movie');
+      await ref.read(cacheServiceProvider).remove('dashboard:v2:MOVIE');
       await ref.read(cacheServiceProvider).removeByPrefix('tracking:');
+      ref.invalidate(dashboardViewModelProvider);
       ref.invalidateSelf();
     } catch (e, st) {
       debugPrint('[MOVIE_VM] addTracking failed: $e\n$st');
@@ -82,8 +84,9 @@ class MovieDetailViewModel extends _$MovieDetailViewModel {
       debugPrint(
         '[MOVIE_VM] updateTracking succeeded: mediaId=${current.mediaId} status=$status rating=$rating',
       );
-      await ref.read(cacheServiceProvider).remove('dashboard:movie');
+      await ref.read(cacheServiceProvider).remove('dashboard:v2:MOVIE');
       await ref.read(cacheServiceProvider).removeByPrefix('tracking:');
+      ref.invalidate(dashboardViewModelProvider);
       ref.invalidateSelf();
     } catch (e, st) {
       debugPrint('[MOVIE_VM] updateTracking failed: $e\n$st');
@@ -97,8 +100,9 @@ class MovieDetailViewModel extends _$MovieDetailViewModel {
     await ref
         .read(trackingRepositoryProvider)
         .deleteTracking(current.mediaId, mediaType: MediaType.movie);
-    await ref.read(cacheServiceProvider).remove('dashboard:movie');
+    await ref.read(cacheServiceProvider).remove('dashboard:v2:MOVIE');
     await ref.read(cacheServiceProvider).removeByPrefix('tracking:');
+    ref.invalidate(dashboardViewModelProvider);
     ref.invalidateSelf();
   }
 }

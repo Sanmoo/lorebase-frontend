@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cached_network_image_platform_interface/cached_network_image_platform_interface.dart';
 import 'package:flutter/material.dart';
+import '../../../core/utils/image_url.dart';
 import '../data/models/game_model.dart';
 
 class GameCard extends StatelessWidget {
@@ -27,11 +28,12 @@ class GameCard extends StatelessWidget {
               height: 150,
               color: Colors.grey[300],
               child: CachedNetworkImage(
-                imageUrl: game.coverUrl ?? '',
+                imageUrl: highResolutionIgdbImageUrl(game.coverUrl ?? ''),
                 imageRenderMethodForWeb: ImageRenderMethodForWeb.HttpGet,
                 width: 100,
                 height: 150,
-                fit: BoxFit.cover,
+                fit: BoxFit.contain,
+                filterQuality: FilterQuality.high,
                 placeholder: (context, url) =>
                     Container(width: 100, height: 150, color: Colors.grey[300]),
                 errorWidget: errorIcon,

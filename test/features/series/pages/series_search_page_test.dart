@@ -574,6 +574,53 @@ Future<void> main() async {
       expect(find.text('The Witcher 3'), findsOneWidget);
       expect(find.text('Hollow Knight'), findsOneWidget);
     });
+
+    testWidgets('tapping a game result navigates to game detail route', (
+      tester,
+    ) async {
+      final results = [const GameModel(gameId: '7', title: 'Hades')];
+      final fakeGameVM = FakeGameSearchVM(state: AsyncValue.data(results));
+      final container = ProviderContainer(
+        overrides: [
+          seriesSearchViewModelProvider.overrideWith(() => FakeSearchVM()),
+          movieSearchViewModelProvider.overrideWith(() => FakeMovieSearchVM()),
+          gameSearchViewModelProvider.overrideWith(() => fakeGameVM),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      late final GoRouter router;
+      router = GoRouter(
+        initialLocation: '/search',
+        routes: [
+          GoRoute(path: '/search', builder: (_, _) => const SeriesSearchPage()),
+          GoRoute(
+            path: '/games/:gameId',
+            builder: (_, state) => Text(
+              'Game detail ${state.pathParameters['gameId']}',
+              textDirection: TextDirection.ltr,
+            ),
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+
+      await tester.pumpWidget(
+        _wrapWithSeriesDetailRoute(container, router: router),
+      );
+      await tester.pump();
+
+      await tester.tap(find.text('Games'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Hades'));
+      await tester.pumpAndSettle();
+
+      expect(router.routeInformationProvider.value.uri.path, '/games/7');
+      expect(router.canPop(), isFalse);
+      expect(find.text('Game detail 7'), findsOneWidget);
+    });
   });
 }
 

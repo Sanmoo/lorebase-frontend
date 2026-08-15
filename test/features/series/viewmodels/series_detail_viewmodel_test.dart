@@ -8,6 +8,11 @@ import 'package:lorebase/core/cache/cache_providers.dart';
 import 'package:lorebase/features/series/data/models/series_model.dart';
 import 'package:lorebase/features/series/data/repositories/series_repository.dart';
 import 'package:lorebase/features/series/viewmodels/series_detail_viewmodel.dart';
+import 'package:lorebase/features/dashboard/data/models/dashboard_model.dart';
+import 'package:lorebase/features/dashboard/data/models/dashboard_section_model.dart';
+import 'package:lorebase/features/dashboard/data/models/dashboard_stats_model.dart';
+import 'package:lorebase/features/dashboard/data/repositories/dashboard_repository.dart';
+import 'package:lorebase/features/dashboard/viewmodels/dashboard_viewmodel.dart';
 import 'package:lorebase/features/tracking/data/models/tracked_media_model.dart';
 import 'package:lorebase/features/tracking/data/models/tracked_media_summary_model.dart';
 import 'package:lorebase/features/tracking/data/models/media_type.dart';
@@ -36,6 +41,21 @@ class FakeSeriesRepo implements SeriesRepository {
   }) async {
     throw UnimplementedError();
   }
+}
+
+class FakeDashboardRepo implements DashboardRepository {
+  DashboardModel dashboard = const DashboardModel(
+    watching: DashboardSectionModel(),
+    wantToWatch: DashboardSectionModel(),
+    completed: DashboardSectionModel(),
+    dropped: DashboardSectionModel(),
+    stats: DashboardStatsModel(),
+  );
+
+  @override
+  Future<DashboardModel> getDashboard({
+    MediaType mediaType = MediaType.series,
+  }) async => dashboard;
 }
 
 class FakeTrackingRepo implements TrackingRepository {
@@ -163,6 +183,63 @@ void main() {
         ],
       );
     }
+
+    test('updating tracking refreshes an active dashboard', () async {
+      final seriesRepo = FakeSeriesRepo()
+        ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
+      final trackingRepo = FakeTrackingRepo()
+        ..trackingByMediaResult = TrackedMediaModel(
+          trackingId: 'track-42',
+          userId: 'user-1',
+          mediaType: MediaType.series,
+          mediaId: '42',
+          status: 'WATCHING',
+          addedAt: DateTime.now(),
+          lastUpdated: DateTime.now(),
+        );
+      final dashboardRepo = FakeDashboardRepo()
+        ..dashboard = const DashboardModel(
+          watching: DashboardSectionModel(),
+          wantToWatch: DashboardSectionModel(),
+          completed: DashboardSectionModel(),
+          dropped: DashboardSectionModel(),
+          stats: DashboardStatsModel(watchingCount: 1),
+        );
+      final container = ProviderContainer(
+        overrides: [
+          seriesRepositoryProvider.overrideWith((ref) => seriesRepo),
+          trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
+          dashboardRepositoryProvider.overrideWith((ref) => dashboardRepo),
+          cacheServiceProvider.overrideWith((ref) => CacheService()),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      final dashboardSubscription = container.listen(
+        dashboardViewModelProvider,
+        (_, _) {},
+      );
+      addTearDown(dashboardSubscription.close);
+      await container.read(dashboardViewModelProvider.notifier).refresh();
+      await container.read(seriesDetailViewModelProvider(42).future);
+
+      dashboardRepo.dashboard = const DashboardModel(
+        watching: DashboardSectionModel(),
+        wantToWatch: DashboardSectionModel(),
+        completed: DashboardSectionModel(),
+        dropped: DashboardSectionModel(),
+        stats: DashboardStatsModel(watchingCount: 0, completedCount: 1),
+      );
+      await container
+          .read(seriesDetailViewModelProvider(42).notifier)
+          .updateTracking(status: 'COMPLETED');
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+
+      expect(
+        container.read(dashboardViewModelProvider).value!.stats.completedCount,
+        1,
+      );
+    });
 
     test(
       'build() uses direct tracking lookup with media id and type',
@@ -374,26 +451,29 @@ void main() {
       expect(trackingRepo.lastStartedTracking!.status, 'WANT_TO_WATCH');
     });
 
-    test('addTracking() with rating and review sends them in startTracking', () async {
-      final seriesRepo = FakeSeriesRepo()
-        ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
-      final trackingRepo = FakeTrackingRepo();
-      final container = createContainer(
-        seriesRepo: seriesRepo,
-        trackingRepo: trackingRepo,
-      );
-      addTearDown(container.dispose);
+    test(
+      'addTracking() with rating and review sends them in startTracking',
+      () async {
+        final seriesRepo = FakeSeriesRepo()
+          ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
+        final trackingRepo = FakeTrackingRepo();
+        final container = createContainer(
+          seriesRepo: seriesRepo,
+          trackingRepo: trackingRepo,
+        );
+        addTearDown(container.dispose);
 
-      await container.read(seriesDetailViewModelProvider(42).future);
-      await container
-          .read(seriesDetailViewModelProvider(42).notifier)
-          .addTracking('WATCHING', rating: 8, review: 'Great!');
+        await container.read(seriesDetailViewModelProvider(42).future);
+        await container
+            .read(seriesDetailViewModelProvider(42).notifier)
+            .addTracking('WATCHING', rating: 8, review: 'Great!');
 
-      expect(trackingRepo.lastStartedTracking, isNotNull);
-      expect(trackingRepo.lastStartedTracking!.rating, 8);
-      expect(trackingRepo.lastStartedTracking!.review, 'Great!');
-      expect(trackingRepo.lastUpdatedFields, isNull);
-    });
+        expect(trackingRepo.lastStartedTracking, isNotNull);
+        expect(trackingRepo.lastStartedTracking!.rating, 8);
+        expect(trackingRepo.lastStartedTracking!.review, 'Great!');
+        expect(trackingRepo.lastUpdatedFields, isNull);
+      },
+    );
 
     test('updateTracking() with rating calls repo', () async {
       final seriesRepo = FakeSeriesRepo()

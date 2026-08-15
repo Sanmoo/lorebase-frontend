@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cached_network_image_platform_interface/cached_network_image_platform_interface.dart';
+import '../../../core/utils/image_url.dart';
 import '../data/models/tracked_media_summary_model.dart';
 
 class TrackedMediaPoster extends StatelessWidget {
@@ -31,7 +32,7 @@ class TrackedMediaPoster extends StatelessWidget {
               color: Colors.grey[300],
               child: media.posterPath != null && media.posterPath!.isNotEmpty
                   ? CachedNetworkImage(
-                      imageUrl: media.posterPath!,
+                      imageUrl: highResolutionIgdbImageUrl(media.posterPath!),
                       imageRenderMethodForWeb: ImageRenderMethodForWeb.HttpGet,
                       width: width,
                       height: width * 1.5,

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../core/cache/cache_providers.dart';
+import '../../dashboard/viewmodels/dashboard_viewmodel.dart';
 import '../data/repositories/game_repository.dart';
 import '../../tracking/data/models/media_type.dart';
 import '../../tracking/data/repositories/tracking_repository.dart';
@@ -94,5 +95,6 @@ class GameDetailViewModel extends _$GameDetailViewModel {
     final cacheService = ref.read(cacheServiceProvider);
     await cacheService.remove('dashboard:v2:GAME');
     await cacheService.removeByPrefix('tracking:v2:');
+    ref.invalidate(dashboardViewModelProvider);
   }
 }

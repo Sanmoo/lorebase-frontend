@@ -319,6 +319,47 @@ export async function ensureTrackingGone(
 }
 
 /**
+ * Id do jogo no catálogo QA cujo título casa EXATAMENTE (GET /games?q=).
+ *
+ * Usado para asserções de rota após clicar num resultado da busca (o id não
+ * é estável no QA: 5678 alterna entre "War of the Vikings" e "Hades"). A
+ * busca devolve fuzzy results — filtra pelo título exato para não casar
+ * "Hades Puzzle" ao buscar "Hades".
+ */
+export async function fetchGameIdByTitle(titulo: string): Promise<string> {
+	const baseURL = process.env.E2E_API_BASE_URL;
+	if (!baseURL) {
+		throw new Error(
+			"E2E_API_BASE_URL ausente (make e2e exporta automaticamente)",
+		);
+	}
+	const api = await request.newContext({
+		baseURL,
+		extraHTTPHeaders: { Authorization: `Bearer ${accessToken()}` },
+	});
+	try {
+		const res = await api.get("/games", {
+			params: { q: titulo, page: 1, limit: 20 },
+		});
+		if (!res.ok()) {
+			throw new Error(`[api] GET /games?q=${titulo} → ${res.status()}`);
+		}
+		const body = (await res.json()) as {
+			items?: Array<{ gameId: string; title: string }>;
+		};
+		const jogo = body.items?.find((item) => item.title === titulo);
+		if (!jogo) {
+			throw new Error(
+				`[api] nenhum jogo com título exato "${titulo}" em GET /games?q=${titulo}`,
+			);
+		}
+		return jogo.gameId;
+	} finally {
+		await api.dispose();
+	}
+}
+
+/**
  * Título atual do jogo no catálogo QA (GET /games/{id}).
  *
  * O catálogo QA alterna entre dois estados (ingestão IGDB e fixtures do e2e

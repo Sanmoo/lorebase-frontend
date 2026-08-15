@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cached_network_image_platform_interface/cached_network_image_platform_interface.dart';
 import '../../../core/i18n/date_formatter.dart';
+import '../../../core/utils/image_url.dart';
 import '../../../core/widgets/error_widget.dart';
 import '../../../core/widgets/loading_widget.dart';
 import '../../../l10n/strings.g.dart';
@@ -251,7 +252,9 @@ class _GameDetailLoaded extends StatelessWidget {
                                 color:
                                     theme.colorScheme.surfaceContainerHighest,
                                 child: CachedNetworkImage(
-                                  imageUrl: game.coverUrl!,
+                                  imageUrl: highResolutionIgdbImageUrl(
+                                    game.coverUrl!,
+                                  ),
                                   imageRenderMethodForWeb:
                                       ImageRenderMethodForWeb.HttpGet,
                                   width: 120,

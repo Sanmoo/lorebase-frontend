@@ -4,6 +4,41 @@
 
 Flutter 3.27 (mise-managed), Dart >=3.3.0, Riverpod + codegen, GoRouter, Dio, Amplify + Cognito, Freezed, flutter_secure_storage, flutter_dotenv, Material 3, cached_network_image, shimmer.
 
+## Fluxo obrigatório de desenvolvimento
+
+Todo fluxo de desenvolvimento começa pela criação de uma worktree isolada e de uma branch própria. A worktree principal permanece na `main` e não recebe alterações durante o desenvolvimento.
+
+1. A partir da worktree principal, crie a worktree e a branch da tarefa:
+
+   ```bash
+   git worktree add .worktrees/<nome-da-tarefa> -b <nome-da-branch> main
+   cd .worktrees/<nome-da-tarefa>
+   ```
+
+2. Desenvolva, teste e finalize todas as alterações dentro dessa worktree.
+3. Ao finalizar o desenvolvimento, faça o rebase da branch sobre a `main` local:
+
+   ```bash
+   git rebase main
+   ```
+
+4. Na worktree principal, faça a integração usando obrigatoriamente fast-forward:
+
+   ```bash
+   git switch main
+   git merge --ff-only <nome-da-branch>
+   ```
+
+   O merge só pode ser concluído com `--ff-only`; não crie merge commits.
+5. Depois do merge bem-sucedido, remova a worktree e a branch:
+
+   ```bash
+   git worktree remove .worktrees/<nome-da-tarefa>
+   git branch -d <nome-da-branch>
+   ```
+
+O fluxo só está concluído quando a `main` local contém a alteração integrada e tanto a worktree isolada quanto a branch da tarefa foram removidas.
+
 ## Commands
 
 ```bash

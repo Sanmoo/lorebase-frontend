@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../core/cache/cache_providers.dart';
+import '../../dashboard/viewmodels/dashboard_viewmodel.dart';
 import '../data/repositories/series_repository.dart';
 import '../../tracking/data/repositories/tracking_repository.dart';
 import '../../tracking/data/models/media_type.dart';
@@ -45,8 +46,9 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
       rating: rating,
       review: review,
     );
-    await ref.read(cacheServiceProvider).remove('dashboard');
+    await ref.read(cacheServiceProvider).remove('dashboard:v2:SERIES');
     await ref.read(cacheServiceProvider).removeByPrefix('tracking:');
+    ref.invalidate(dashboardViewModelProvider);
     ref.invalidateSelf();
   }
 
@@ -79,9 +81,10 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
         review: review,
       );
       debugPrint('[SERIES_VM] updateTracking API call succeeded');
-      await ref.read(cacheServiceProvider).remove('dashboard');
+      await ref.read(cacheServiceProvider).remove('dashboard:v2:SERIES');
       await ref.read(cacheServiceProvider).removeByPrefix('tracking:');
-      debugPrint('[SERIES_VM] cache cleared, invalidating self');
+      debugPrint('[SERIES_VM] cache cleared, invalidating dashboard and self');
+      ref.invalidate(dashboardViewModelProvider);
       ref.invalidateSelf();
     } catch (e, st) {
       debugPrint('[SERIES_VM] updateTracking failed: $e\n$st');
@@ -100,8 +103,9 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
       current.mediaId,
       mediaType: MediaType.series,
     );
-    await ref.read(cacheServiceProvider).remove('dashboard');
+    await ref.read(cacheServiceProvider).remove('dashboard:v2:SERIES');
     await ref.read(cacheServiceProvider).removeByPrefix('tracking:');
+    ref.invalidate(dashboardViewModelProvider);
     ref.invalidateSelf();
   }
 }

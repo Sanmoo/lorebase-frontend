@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lorebase/features/games/data/models/game_model.dart';
@@ -25,6 +26,32 @@ void main() {
     expect(find.text('RPG'), findsOneWidget);
     expect(find.text('2015-05-19'), findsOneWidget);
     expect(find.text('PC, PS5'), findsOneWidget);
+  });
+
+  testWidgets('preserves the full game cover without low-quality scaling', (
+    tester,
+  ) async {
+    const game = GameModel(
+      gameId: 'cover',
+      title: 'Wide Cover',
+      coverUrl: 'https://images.igdb.com/igdb/image/upload/t_thumb/cob9kr.jpg',
+    );
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(body: GameCard(game: game)),
+      ),
+    );
+
+    final image = tester.widget<CachedNetworkImage>(
+      find.byType(CachedNetworkImage),
+    );
+    expect(
+      image.imageUrl,
+      'https://images.igdb.com/igdb/image/upload/t_cover_big/cob9kr.jpg',
+    );
+    expect(image.fit, BoxFit.contain);
+    expect(image.filterQuality, FilterQuality.high);
   });
 
   testWidgets('calls onTap when tapped', (tester) async {
@@ -62,7 +89,8 @@ void main() {
     await tester.pumpWidget(
       Builder(
         builder: (context) {
-          capturedIcon ??= GameCard.errorIcon(context, '', Exception('test')) as Icon;
+          capturedIcon ??=
+              GameCard.errorIcon(context, '', Exception('test')) as Icon;
           return const SizedBox();
         },
       ),
