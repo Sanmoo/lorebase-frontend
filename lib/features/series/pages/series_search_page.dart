@@ -56,6 +56,8 @@ class _SeriesSearchPageState extends ConsumerState<SeriesSearchPage> {
         return context.t.search_hint_movies;
       case MediaType.game:
         return context.t.search_hint_games;
+      case MediaType.book:
+        return context.t.search_hint_books;
     }
   }
 
@@ -270,6 +272,11 @@ class _SearchResultsBody extends ConsumerWidget {
               },
             );
           },
+        );
+      case MediaType.book:
+        return EmptyStateWidget(
+          message: query.isEmpty ? t.search_empty : t.search_no_results_books,
+          icon: query.isEmpty ? Icons.search : Icons.search_off,
         );
     }
   }

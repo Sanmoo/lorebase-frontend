@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../l10n/strings.g.dart';
-import '../data/models/game_tracking_status.dart';
 import '../data/models/media_type.dart';
 import '../data/tracking_status.dart';
 
@@ -12,41 +11,29 @@ class TrackingStatusChip extends StatelessWidget {
 
   const TrackingStatusChip({super.key, required this.status, this.mediaType});
 
-  bool get _isGame => mediaType == MediaType.game;
+  MediaType get _mediaType => mediaType ?? MediaType.series;
+
+  String get _statusValue =>
+      trackingStatusForMediaType(_mediaType, status).value;
 
   Color get _color {
-    if (_isGame) {
-      final gameStatus = GameTrackingStatus.fromString(status);
-      switch (gameStatus) {
-        case GameTrackingStatus.playing:
-          return AppColors.watching;
-        case GameTrackingStatus.wantToPlay:
-          return AppColors.wantToWatch;
-        case GameTrackingStatus.completed:
-          return AppColors.completed;
-        case GameTrackingStatus.dropped:
-          return AppColors.dropped;
-      }
-    }
-
-    final trackingStatus = TrackingStatus.fromString(status);
-    switch (trackingStatus) {
-      case TrackingStatus.watching:
-        return AppColors.watching;
-      case TrackingStatus.wantToWatch:
-        return AppColors.wantToWatch;
-      case TrackingStatus.completed:
-        return AppColors.completed;
-      case TrackingStatus.dropped:
-        return AppColors.dropped;
-    }
+    return switch (_statusValue) {
+      'WATCHING' || 'PLAYING' || 'READING' => AppColors.watching,
+      'WANT_TO_WATCH' ||
+      'WANT_TO_PLAY' ||
+      'WANT_TO_READ' => AppColors.wantToWatch,
+      'COMPLETED' => AppColors.completed,
+      'DROPPED' => AppColors.dropped,
+      _ => AppColors.wantToWatch,
+    };
   }
 
   @override
   Widget build(BuildContext context) {
-    final label = _isGame
-        ? GameTrackingStatus.fromString(status).label(context.t)
-        : TrackingStatus.fromString(status).label(context.t);
+    final label = trackingStatusForMediaType(
+      _mediaType,
+      status,
+    ).label(context.t);
     return Chip(
       label: Text(
         label,

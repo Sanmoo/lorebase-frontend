@@ -28,12 +28,19 @@ void main() {
       expect(() => mediaTypeFromJson('invalid'), throwsArgumentError);
     });
 
-    test('MediaType includes game', () {
+    test('MediaType includes game and book', () {
       expect(MediaType.game.apiValue, 'GAME');
+      expect(MediaType.book.apiValue, 'BOOK');
     });
 
-    test('mediaTypeFromJson parses GAME', () {
+    test('mediaTypeFromJson parses GAME and BOOK', () {
       expect(mediaTypeFromJson('GAME'), MediaType.game);
+      expect(mediaTypeFromJson('book'), MediaType.book);
+    });
+
+    test('label() returns the book label', () async {
+      final enUs = await AppLocale.enUs.build();
+      expect(MediaType.book.label(enUs), 'Books');
     });
   });
 }

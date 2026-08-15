@@ -10,6 +10,7 @@ import '../../../../core/providers/media_filter_provider.dart';
 import '../../../../core/widgets/media_type_toggle.dart';
 import '../../../l10n/strings.g.dart';
 import '../../tracking/data/models/media_type.dart';
+import '../../tracking/data/models/tracked_media_summary_model.dart';
 import '../../social/data/models/activity_event_model.dart';
 import '../../social/data/models/paginated_social_response.dart';
 import '../../social/data/models/social_profile_model.dart';
@@ -27,6 +28,50 @@ Future<void> refreshDashboardAndSocialFeed({
 }) async {
   await dashboardViewModel.refresh();
   await socialFeedViewModel.refresh();
+}
+
+String _dashboardReadingLabel(Translations t, MediaType mediaType) {
+  return mediaType == MediaType.book
+      ? t.dashboard_reading
+      : t.dashboard_watching;
+}
+
+String _dashboardWantToReadLabel(Translations t, MediaType mediaType) {
+  return mediaType == MediaType.book
+      ? t.dashboard_want_to_read
+      : t.dashboard_want_to_watch;
+}
+
+String _dashboardEmptyMessage(Translations t, MediaType mediaType) {
+  return switch (mediaType) {
+    MediaType.series => t.dashboard_empty,
+    MediaType.movie => t.dashboard_empty_movies,
+    MediaType.game => t.dashboard_empty_games,
+    MediaType.book => t.dashboard_empty_books,
+  };
+}
+
+IconData _dashboardMediaIcon(MediaType mediaType) {
+  return switch (mediaType) {
+    MediaType.game => Icons.sports_esports,
+    MediaType.book => Icons.menu_book,
+    MediaType.series || MediaType.movie => Icons.tv_off,
+  };
+}
+
+String? _dashboardDetailPath(MediaType mediaType, String mediaId) {
+  return switch (mediaType) {
+    MediaType.series => '/series/$mediaId',
+    MediaType.movie => '/movies/$mediaId',
+    MediaType.game => '/games/$mediaId',
+    MediaType.book => null,
+  };
+}
+
+void _openDashboardItem(BuildContext context, TrackedMediaSummaryModel item) {
+  if (item.mediaId.isEmpty || item.mediaType == null) return;
+  final path = _dashboardDetailPath(item.mediaType!, item.mediaId);
+  if (path != null) context.push(path);
 }
 
 class DashboardPage extends ConsumerStatefulWidget {
@@ -61,6 +106,8 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     });
 
     final selectedType = ref.watch(selectedMediaTypeProvider);
+    final readingLabel = _dashboardReadingLabel(t, selectedType);
+    final wantToReadLabel = _dashboardWantToReadLabel(t, selectedType);
     final dashboardState = ref.watch(dashboardViewModelProvider);
     final socialFeedState = ref.watch(socialFeedViewModelProvider);
     final socialProfileState = ref.watch(mySocialProfileProvider);
@@ -93,7 +140,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                   children: [
                     Expanded(
                       child: StatsCard(
-                        title: t.dashboard_watching,
+                        title: readingLabel,
                         count: dashboard.stats.watchingCount,
                         icon: Icons.play_circle_outline,
                         color: AppColors.watching,
@@ -102,7 +149,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: StatsCard(
-                        title: t.dashboard_want_to_watch,
+                        title: wantToReadLabel,
                         count: dashboard.stats.wantToWatchCount,
                         icon: Icons.bookmark_border,
                         color: AppColors.wantToWatch,
@@ -141,18 +188,9 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
             if (dashboard.watching.items.isNotEmpty)
               SliverToBoxAdapter(
                 child: DashboardSection(
-                  title: t.dashboard_watching,
+                  title: readingLabel,
                   items: dashboard.watching.items,
-                  onTap: (item) {
-                    if (item.mediaId.isEmpty) return;
-                    context.push(
-                      item.mediaType == MediaType.series
-                          ? '/series/${item.mediaId}'
-                          : item.mediaType == MediaType.game
-                          ? '/games/${item.mediaId}'
-                          : '/movies/${item.mediaId}',
-                    );
-                  },
+                  onTap: (item) => _openDashboardItem(context, item),
                 ),
               ),
             if (dashboard.wantToWatch.items.isNotEmpty)
@@ -160,18 +198,9 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                 child: Padding(
                   padding: const EdgeInsets.only(top: 12.0),
                   child: DashboardSection(
-                    title: t.dashboard_want_to_watch,
+                    title: wantToReadLabel,
                     items: dashboard.wantToWatch.items,
-                    onTap: (item) {
-                      if (item.mediaId.isEmpty) return;
-                      context.push(
-                        item.mediaType == MediaType.series
-                            ? '/series/${item.mediaId}'
-                            : item.mediaType == MediaType.game
-                            ? '/games/${item.mediaId}'
-                            : '/movies/${item.mediaId}',
-                      );
-                    },
+                    onTap: (item) => _openDashboardItem(context, item),
                   ),
                 ),
               ),
@@ -182,16 +211,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                   child: DashboardSection(
                     title: t.dashboard_completed,
                     items: dashboard.completed.items,
-                    onTap: (item) {
-                      if (item.mediaId.isEmpty) return;
-                      context.push(
-                        item.mediaType == MediaType.series
-                            ? '/series/${item.mediaId}'
-                            : item.mediaType == MediaType.game
-                            ? '/games/${item.mediaId}'
-                            : '/movies/${item.mediaId}',
-                      );
-                    },
+                    onTap: (item) => _openDashboardItem(context, item),
                   ),
                 ),
               ),
@@ -202,16 +222,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                   child: DashboardSection(
                     title: t.dashboard_dropped,
                     items: dashboard.dropped.items,
-                    onTap: (item) {
-                      if (item.mediaId.isEmpty) return;
-                      context.push(
-                        item.mediaType == MediaType.series
-                            ? '/series/${item.mediaId}'
-                            : item.mediaType == MediaType.game
-                            ? '/games/${item.mediaId}'
-                            : '/movies/${item.mediaId}',
-                      );
-                    },
+                    onTap: (item) => _openDashboardItem(context, item),
                   ),
                 ),
               ),
@@ -225,14 +236,8 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                     SizedBox(
                       height: 260,
                       child: EmptyStateWidget(
-                        message: selectedType == MediaType.series
-                            ? t.dashboard_empty
-                            : selectedType == MediaType.game
-                            ? t.dashboard_empty_games
-                            : t.dashboard_empty_movies,
-                        icon: selectedType == MediaType.game
-                            ? Icons.sports_esports
-                            : Icons.tv_off,
+                        message: _dashboardEmptyMessage(t, selectedType),
+                        icon: _dashboardMediaIcon(selectedType),
                       ),
                     ),
                     _SocialPreviewSection(

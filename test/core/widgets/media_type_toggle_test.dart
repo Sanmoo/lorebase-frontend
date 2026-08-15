@@ -25,10 +25,16 @@ Future<void> main() async {
 
     expect(find.text('Series'), findsOneWidget);
     expect(find.text('Movies'), findsOneWidget);
+    expect(find.text('Games'), findsOneWidget);
+    expect(find.text('Books'), findsOneWidget);
 
     await tester.tap(find.text('Movies'));
     await tester.pumpAndSettle();
-
     expect(selected, MediaType.movie);
+
+    await tester.tap(find.text('Books'));
+    await tester.pumpAndSettle();
+
+    expect(selected, MediaType.book);
   });
 }

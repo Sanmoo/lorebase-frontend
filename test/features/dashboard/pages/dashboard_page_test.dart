@@ -202,6 +202,33 @@ Future<void> main() async {
       expect(container.read(selectedMediaTypeProvider), MediaType.series);
     });
 
+    testWidgets('book selection uses reading labels and empty copy', (
+      tester,
+    ) async {
+      final fakeVM = FakeDashboardVM(
+        testState: AsyncValue.data(_emptyDashboard()),
+      );
+      final container = ProviderContainer(
+        overrides: [
+          selectedMediaTypeProvider.overrideWith((ref) => MediaType.book),
+          dashboardViewModelProvider.overrideWith(() => fakeVM),
+          socialFeedViewModelProvider.overrideWith(
+            () => FakeSocialFeedVM(testState: AsyncValue.data(_feed())),
+          ),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      expect(find.text('Reading'), findsOneWidget);
+      expect(find.text('Want to Read'), findsOneWidget);
+      expect(find.textContaining('No books tracked'), findsOneWidget);
+      expect(find.byIcon(Icons.menu_book), findsOneWidget);
+    });
+
     testWidgets('empty data shows EmptyStateWidget', (tester) async {
       final fakeVM = FakeDashboardVM(
         testState: AsyncValue.data(_emptyDashboard()),

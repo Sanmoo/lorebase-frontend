@@ -604,6 +604,27 @@ Future<void> main() async {
       expect(fakeGameVM.searchCalled, isTrue);
     });
 
+    testWidgets('switching to Books uses the book search labels', (
+      tester,
+    ) async {
+      final container = createContainer(FakeSearchVM());
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.tap(find.text('Books'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Search books...'), findsOneWidget);
+      expect(find.text('Type at least 2 characters to search'), findsOneWidget);
+
+      await tester.enterText(find.byType(TextField), 'Dune');
+      await tester.pump();
+
+      expect(find.text('No books found'), findsOneWidget);
+    });
+
     testWidgets('shows game results list when data available', (tester) async {
       final results = [
         const GameModel(gameId: '1', title: 'The Witcher 3'),

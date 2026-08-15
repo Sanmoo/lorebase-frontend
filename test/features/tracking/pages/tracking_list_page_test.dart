@@ -414,6 +414,32 @@ Future<void> main() async {
       expect(find.text('Want to Watch'), findsNothing);
     });
 
+    testWidgets('switching to Books uses reading statuses and copy', (
+      tester,
+    ) async {
+      final fakeVM = FakeTrackingListVM();
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.tap(find.text('Books'));
+      await tester.pumpAndSettle();
+
+      expect(fakeVM.lastMediaType, MediaType.book);
+      expect(fakeVM.lastStatus, 'WANT_TO_READ');
+      expect(find.text('Want to Read'), findsOneWidget);
+      expect(find.text('Reading'), findsOneWidget);
+      expect(find.text('Want to Watch'), findsNothing);
+      expect(find.text('No Want to Read books yet'), findsOneWidget);
+      expect(find.byIcon(Icons.menu_book), findsOneWidget);
+
+      await tester.tap(find.text('Reading'));
+      await tester.pumpAndSettle();
+      expect(fakeVM.lastStatus, 'READING');
+    });
+
     testWidgets('game tracking item navigates to /games/:id', (tester) async {
       final trackings = [_gameTracking('t1', 'PLAYING', media: _gameMedia(1))];
       final fakeVM = FakeTrackingListVM(state: AsyncValue.data(trackings));

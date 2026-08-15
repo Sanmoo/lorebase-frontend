@@ -1,15 +1,18 @@
 import '../../../../l10n/strings.g.dart';
+import 'media_tracking_status.dart';
 
-enum GameTrackingStatus {
+enum GameTrackingStatus implements MediaTrackingStatus {
   wantToPlay('WANT_TO_PLAY'),
   playing('PLAYING'),
   completed('COMPLETED'),
   dropped('DROPPED');
 
+  @override
   final String value;
 
   const GameTrackingStatus(this.value);
 
+  @override
   String label(Translations t) {
     return switch (this) {
       GameTrackingStatus.wantToPlay => t.tracking_want_to_play_game,

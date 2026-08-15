@@ -51,6 +51,19 @@ void main() {
     expect(restored.mediaType!.apiValue, 'MOVIE');
   });
 
+  test('toJson fromJson roundtrip preserves BOOK mediaType', () {
+    const original = TrackedMediaSummaryModel(
+      mediaId: 'volume-1',
+      title: 'Dune',
+      mediaType: MediaType.book,
+    );
+    final jsonMap = original.toJson();
+    final restored = TrackedMediaSummaryModel.fromJson(jsonMap);
+
+    expect(jsonMap['mediaType'], 'BOOK');
+    expect(restored.mediaType, MediaType.book);
+  });
+
   test('toJson fromJson roundtrip with null mediaType', () {
     const original = TrackedMediaSummaryModel(
       mediaId: '42',

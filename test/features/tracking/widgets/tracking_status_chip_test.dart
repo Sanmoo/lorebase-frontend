@@ -78,5 +78,39 @@ Future<void> main() async {
       );
       expect(find.text('Playing'), findsOneWidget);
     });
+
+    testWidgets('renders book status label', (tester) async {
+      await tester.pumpWidget(
+        TranslationProvider(
+          child: const MaterialApp(
+            home: Scaffold(
+              body: TrackingStatusChip(
+                status: 'READING',
+                mediaType: MediaType.book,
+              ),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Reading'), findsOneWidget);
+    });
+
+    testWidgets('unknown book status falls back to Want to Read', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        TranslationProvider(
+          child: const MaterialApp(
+            home: Scaffold(
+              body: TrackingStatusChip(
+                status: 'WATCHING',
+                mediaType: MediaType.book,
+              ),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Want to Read'), findsOneWidget);
+    });
   });
 }

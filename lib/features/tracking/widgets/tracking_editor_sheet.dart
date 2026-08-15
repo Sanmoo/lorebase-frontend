@@ -4,7 +4,7 @@ import '../../../l10n/strings.g.dart';
 import '../../games/widgets/game_hours_field.dart';
 import '../../games/widgets/game_platform_selector.dart';
 import '../data/models/game_platform.dart';
-import '../data/models/game_tracking_status.dart';
+import '../data/models/media_type.dart';
 import '../data/tracking_status.dart';
 import 'rating_stars.dart';
 
@@ -15,6 +15,9 @@ class TrackingEditorSheet extends StatefulWidget {
   final String initialReview;
   final String? initialSelectedPlatform;
   final double? initialHoursPlayed;
+  final MediaType mediaType;
+
+  /// Kept for compatibility with existing game detail callers.
   final bool isGame;
   final Future<void> Function({
     required String status,
@@ -37,6 +40,7 @@ class TrackingEditorSheet extends StatefulWidget {
     required this.initialReview,
     this.initialSelectedPlatform,
     this.initialHoursPlayed,
+    this.mediaType = MediaType.series,
     this.isGame = false,
     required this.onSave,
     this.onRemove,
@@ -93,7 +97,7 @@ class _TrackingEditorSheetState extends State<TrackingEditorSheet> {
                   onTap: () => setState(() => _status = status.value),
                 ),
               ),
-              if (widget.isGame) ...[
+              if (_isGame) ...[
                 const SizedBox(height: 24),
                 GamePlatformSelector(
                   platforms: GamePlatform.values
@@ -187,16 +191,17 @@ class _TrackingEditorSheetState extends State<TrackingEditorSheet> {
     );
   }
 
-  List<_StatusOption> get _statusOptions {
-    if (widget.isGame) {
-      return GameTrackingStatus.values
-          .map((s) => _StatusOption(value: s.value, label: s.label))
+  MediaType get _selectedMediaType =>
+      widget.isGame ? MediaType.game : widget.mediaType;
+
+  bool get _isGame => _selectedMediaType == MediaType.game;
+
+  List<_StatusOption> get _statusOptions =>
+      trackingStatusesFor(_selectedMediaType)
+          .map(
+            (status) => _StatusOption(value: status.value, label: status.label),
+          )
           .toList();
-    }
-    return TrackingStatus.values
-        .map((s) => _StatusOption(value: s.value, label: s.label))
-        .toList();
-  }
 }
 
 typedef _StatusLabel = String Function(Translations t);

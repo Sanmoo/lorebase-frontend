@@ -92,6 +92,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// pt-BR: 'Buscar jogos...'
 	String get search_hint_games => 'Buscar jogos...';
 
+	/// pt-BR: 'Buscar livros...'
+	String get search_hint_books => 'Buscar livros...';
+
 	/// pt-BR: 'Digite pelo menos 2 caracteres para buscar'
 	String get search_empty => 'Digite pelo menos 2 caracteres para buscar';
 
@@ -100,6 +103,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// pt-BR: 'Nenhum jogo encontrado'
 	String get search_no_results_games => 'Nenhum jogo encontrado';
+
+	/// pt-BR: 'Nenhum livro encontrado'
+	String get search_no_results_books => 'Nenhum livro encontrado';
 
 	/// pt-BR: 'Quero Ver'
 	String get tracking_want_to_watch => 'Quero Ver';
@@ -112,6 +118,12 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// pt-BR: 'Abandonado'
 	String get tracking_dropped => 'Abandonado';
+
+	/// pt-BR: 'Quero ler'
+	String get tracking_want_to_read => 'Quero ler';
+
+	/// pt-BR: 'Lendo'
+	String get tracking_reading => 'Lendo';
 
 	/// pt-BR: 'Quero Jogar'
 	String get tracking_want_to_play_game => 'Quero Jogar';
@@ -239,8 +251,14 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// pt-BR: 'Assistindo'
 	String get dashboard_watching => 'Assistindo';
 
+	/// pt-BR: 'Lendo'
+	String get dashboard_reading => 'Lendo';
+
 	/// pt-BR: 'Quero Ver'
 	String get dashboard_want_to_watch => 'Quero Ver';
+
+	/// pt-BR: 'Quero ler'
+	String get dashboard_want_to_read => 'Quero ler';
 
 	/// pt-BR: 'Concluído'
 	String get dashboard_completed => 'Concluído';
@@ -350,6 +368,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// pt-BR: 'Jogos'
 	String get media_type_games => 'Jogos';
 
+	/// pt-BR: 'Livros'
+	String get media_type_books => 'Livros';
+
 	/// pt-BR: 'Buscar filmes...'
 	String get search_hint_movies => 'Buscar filmes...';
 
@@ -359,8 +380,14 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// pt-BR: 'Nenhum filme {status} ainda'
 	String get tracking_empty_movies => 'Nenhum filme {status} ainda';
 
+	/// pt-BR: 'Nenhum livro {status} ainda'
+	String get tracking_empty_books => 'Nenhum livro {status} ainda';
+
 	/// pt-BR: 'Nenhum filme registrado ainda. Busque e adicione seu primeiro filme!'
 	String get dashboard_empty_movies => 'Nenhum filme registrado ainda.\nBusque e adicione seu primeiro filme!';
+
+	/// pt-BR: 'Nenhum livro registrado ainda. Busque e adicione seu primeiro livro!'
+	String get dashboard_empty_books => 'Nenhum livro registrado ainda.\nBusque e adicione seu primeiro livro!';
 
 	/// pt-BR: 'Erro: $message'
 	String movie_detail_error({required Object message}) => 'Erro: ${message}';
@@ -817,13 +844,17 @@ extension on Translations {
 			'login_or' => 'ou',
 			'search_hint' => 'Buscar séries...',
 			'search_hint_games' => 'Buscar jogos...',
+			'search_hint_books' => 'Buscar livros...',
 			'search_empty' => 'Digite pelo menos 2 caracteres para buscar',
 			'search_no_results' => 'Nenhuma série encontrada',
 			'search_no_results_games' => 'Nenhum jogo encontrado',
+			'search_no_results_books' => 'Nenhum livro encontrado',
 			'tracking_want_to_watch' => 'Quero Ver',
 			'tracking_watching' => 'Assistindo',
 			'tracking_completed' => 'Concluído',
 			'tracking_dropped' => 'Abandonado',
+			'tracking_want_to_read' => 'Quero ler',
+			'tracking_reading' => 'Lendo',
 			'tracking_want_to_play_game' => 'Quero Jogar',
 			'tracking_playing_game' => 'Jogando',
 			'tracking_completed_game' => 'Concluído',
@@ -866,7 +897,9 @@ extension on Translations {
 			'dashboard_empty' => 'Nenhuma série registrada ainda.\nBusque e adicione sua primeira série!',
 			'dashboard_empty_games' => 'Nenhum jogo registrado ainda.\nBusque e adicione seu primeiro jogo!',
 			'dashboard_watching' => 'Assistindo',
+			'dashboard_reading' => 'Lendo',
 			'dashboard_want_to_watch' => 'Quero Ver',
+			'dashboard_want_to_read' => 'Quero ler',
 			'dashboard_completed' => 'Concluído',
 			'dashboard_dropped' => 'Abandonado',
 			'auth_create_account' => 'Criar conta',
@@ -903,10 +936,13 @@ extension on Translations {
 			'media_type_series' => 'Séries',
 			'media_type_movies' => 'Filmes',
 			'media_type_games' => 'Jogos',
+			'media_type_books' => 'Livros',
 			'search_hint_movies' => 'Buscar filmes...',
 			'search_no_results_movies' => 'Nenhum filme encontrado',
 			'tracking_empty_movies' => 'Nenhum filme {status} ainda',
+			'tracking_empty_books' => 'Nenhum livro {status} ainda',
 			'dashboard_empty_movies' => 'Nenhum filme registrado ainda.\nBusque e adicione seu primeiro filme!',
+			'dashboard_empty_books' => 'Nenhum livro registrado ainda.\nBusque e adicione seu primeiro livro!',
 			'movie_detail_error' => ({required Object message}) => 'Erro: ${message}',
 			'movie_detail_loading' => 'Carregando detalhes do filme...',
 			'movie_detail_release_date' => 'Data de Lançamento',

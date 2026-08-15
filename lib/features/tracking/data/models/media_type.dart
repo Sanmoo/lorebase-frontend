@@ -3,7 +3,8 @@ import '../../../../l10n/strings.g.dart';
 enum MediaType {
   series('SERIES'),
   movie('MOVIE'),
-  game('GAME');
+  game('GAME'),
+  book('BOOK');
 
   const MediaType(this.apiValue);
 
@@ -17,6 +18,8 @@ enum MediaType {
         return t.media_type_movies;
       case MediaType.game:
         return t.media_type_games;
+      case MediaType.book:
+        return t.media_type_books;
     }
   }
 }

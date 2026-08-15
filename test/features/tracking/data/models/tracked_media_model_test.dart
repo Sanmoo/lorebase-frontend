@@ -17,11 +17,7 @@ void main() {
     'seasonRatings': [
       {'seasonNumber': 1, 'rating': 8, 'ratedAt': now},
     ],
-    'media': {
-      'mediaId': 42,
-      'title': 'Test Show',
-      'mediaType': 'SERIES',
-    },
+    'media': {'mediaId': 42, 'title': 'Test Show', 'mediaType': 'SERIES'},
     'addedAt': now,
     'lastUpdated': now,
   };
@@ -66,6 +62,25 @@ void main() {
     expect(model.mediaType.apiValue, 'MOVIE');
     expect(model.rating, isNull);
     expect(model.seasonRatings, isEmpty);
+  });
+
+  test('BOOK media type survives model serialization', () {
+    final original = TrackedMediaModel(
+      trackingId: 'trk-book',
+      userId: 'user-1',
+      mediaType: MediaType.book,
+      mediaId: 'volume-1',
+      status: 'READING',
+      addedAt: parsedNow,
+      lastUpdated: parsedNow,
+    );
+
+    final jsonMap = original.toJson();
+    final restored = TrackedMediaModel.fromJson(jsonMap);
+
+    expect(jsonMap['mediaType'], 'BOOK');
+    expect(restored.mediaType, MediaType.book);
+    expect(restored.status, 'READING');
   });
 
   test('toJson fromJson roundtrip without media', () {

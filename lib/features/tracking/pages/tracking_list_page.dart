@@ -14,7 +14,6 @@ import '../viewmodels/tracking_list_viewmodel.dart';
 import '../widgets/rating_stars.dart';
 import '../widgets/tracked_media_poster.dart';
 import '../../../../core/cache/cache_providers.dart';
-import '../data/models/game_tracking_status.dart';
 
 class TrackingListPage extends ConsumerStatefulWidget {
   const TrackingListPage({super.key});
@@ -57,12 +56,7 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
 
   void _loadTrackingForTab(int index) {
     final selectedType = ref.read(selectedMediaTypeProvider);
-    // Games têm status próprios (WANT_TO_PLAY/PLAYING/COMPLETED/DROPPED) —
-    // mandar status de série (WANT_TO_WATCH) para mediaType=GAME é rejeitado
-    // pelo backend (400 Invalid request) e a aba Jogos nunca carrega.
-    final status = selectedType == MediaType.game
-        ? GameTrackingStatus.values[index].value
-        : TrackingStatus.values[index].value;
+    final status = trackingStatusesFor(selectedType)[index].value;
     ref
         .read(trackingListViewModelProvider.notifier)
         .loadTracking(status: status, mediaType: selectedType);
@@ -103,14 +97,9 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
               controller: _tabController,
               isScrollable: true,
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              tabs: (selectedType == MediaType.game
-                      ? GameTrackingStatus.values.map(
-                          (s) => Tab(text: s.label(t)),
-                        )
-                      : TrackingStatus.values.map(
-                          (s) => Tab(text: s.label(t)),
-                        ))
-                  .toList(),
+              tabs: trackingStatusesFor(
+                selectedType,
+              ).map((status) => Tab(text: status.label(t))).toList(),
             ),
           ),
           Expanded(
@@ -125,24 +114,12 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
                   ),
                   data: (trackings) {
                     if (trackings.isEmpty) {
+                      final status = trackingStatusesFor(
+                        selectedType,
+                      )[index].label(t);
                       return EmptyStateWidget(
-                        message: selectedType == MediaType.series
-                            ? t.tracking_empty.replaceFirst(
-                                '{status}',
-                                TrackingStatus.values[index].label(t),
-                              )
-                            : selectedType == MediaType.game
-                            ? t.tracking_empty_games.replaceFirst(
-                                '{status}',
-                                GameTrackingStatus.values[index].label(t),
-                              )
-                            : t.tracking_empty_movies.replaceFirst(
-                                '{status}',
-                                TrackingStatus.values[index].label(t),
-                              ),
-                        icon: selectedType == MediaType.game
-                            ? Icons.sports_esports
-                            : Icons.tv_off,
+                        message: _trackingEmptyMessage(t, selectedType, status),
+                        icon: _trackingIcon(selectedType),
                       );
                     }
                     return GridView.builder(
@@ -159,8 +136,11 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
                         final tracking = trackings[i];
                         final media = tracking.media;
                         if (media == null) {
-                          return const Center(
-                            child: Icon(Icons.tv_off, color: Colors.grey),
+                          return Center(
+                            child: Icon(
+                              _trackingIcon(tracking.mediaType),
+                              color: Colors.grey,
+                            ),
                           );
                         }
                         return LayoutBuilder(
@@ -174,12 +154,11 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
                                       ? media.mediaId
                                       : tracking.mediaId;
                                   if (id.isEmpty) return;
-                                  final path =
-                                      tracking.mediaType == MediaType.series
-                                      ? '/series/$id'
-                                      : tracking.mediaType == MediaType.game
-                                      ? '/games/$id'
-                                      : '/movies/$id';
+                                  final path = _trackingDetailPath(
+                                    tracking.mediaType,
+                                    id,
+                                  );
+                                  if (path == null) return;
                                   await context.push(path);
                                   if (!context.mounted) return;
                                   _loadTrackingForTab(_tabController.index);
@@ -205,4 +184,35 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
       ),
     );
   }
+}
+
+String _trackingEmptyMessage(
+  Translations t,
+  MediaType mediaType,
+  String status,
+) {
+  final template = switch (mediaType) {
+    MediaType.series => t.tracking_empty,
+    MediaType.movie => t.tracking_empty_movies,
+    MediaType.game => t.tracking_empty_games,
+    MediaType.book => t.tracking_empty_books,
+  };
+  return template.replaceFirst('{status}', status);
+}
+
+IconData _trackingIcon(MediaType mediaType) {
+  return switch (mediaType) {
+    MediaType.game => Icons.sports_esports,
+    MediaType.book => Icons.menu_book,
+    MediaType.series || MediaType.movie => Icons.tv_off,
+  };
+}
+
+String? _trackingDetailPath(MediaType mediaType, String id) {
+  return switch (mediaType) {
+    MediaType.series => '/series/$id',
+    MediaType.movie => '/movies/$id',
+    MediaType.game => '/games/$id',
+    MediaType.book => null,
+  };
 }

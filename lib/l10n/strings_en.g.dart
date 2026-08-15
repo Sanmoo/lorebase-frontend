@@ -73,7 +73,10 @@ class TranslationsEn extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get dashboard_empty => 'No series tracked yet.\nSearch and add your first series!';
 	@override String get dashboard_empty_games => 'No games tracked yet.\nSearch and add your first game!';
 	@override String get dashboard_empty_movies => 'No movies tracked yet.\nSearch and add your first movie!';
+	@override String get dashboard_empty_books => 'No books tracked yet.\nSearch and add your first book!';
 	@override String get dashboard_loading => 'Loading your dashboard...';
+	@override String get dashboard_reading => 'Reading';
+	@override String get dashboard_want_to_read => 'Want to Read';
 	@override String get dashboard_want_to_watch => 'Want to Watch';
 	@override String get dashboard_watching => 'Watching';
 	@override String get error_retry => 'Retry';
@@ -96,6 +99,7 @@ class TranslationsEn extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get media_type_movies => 'Movies';
 	@override String get media_type_series => 'Series';
 	@override String get media_type_games => 'Games';
+	@override String get media_type_books => 'Books';
 	@override String movie_detail_error({required Object message}) => 'Error: ${message}';
 	@override String get movie_detail_loading => 'Loading movie details...';
 	@override String get movie_detail_release_date => 'Release Date';
@@ -111,9 +115,11 @@ class TranslationsEn extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get search_hint => 'Search series...';
 	@override String get search_hint_movies => 'Search movies...';
 	@override String get search_hint_games => 'Search games...';
+	@override String get search_hint_books => 'Search books...';
 	@override String get search_no_results => 'No series found';
 	@override String get search_no_results_movies => 'No movies found';
 	@override String get search_no_results_games => 'No games found';
+	@override String get search_no_results_books => 'No books found';
 	@override String get series_detail_add_to_list => 'Add to List';
 	@override String get series_detail_cancel => 'Cancel';
 	@override String get series_detail_episodes => 'Episodes';
@@ -148,6 +154,8 @@ class TranslationsEn extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get series_detail_status => 'Status';
 	@override String get tracking_completed => 'Completed';
 	@override String get tracking_dropped => 'Dropped';
+	@override String get tracking_reading => 'Reading';
+	@override String get tracking_want_to_read => 'Want to Read';
 	@override String get tracking_want_to_play_game => 'Want to Play';
 	@override String get tracking_playing_game => 'Playing';
 	@override String get tracking_completed_game => 'Completed';
@@ -155,6 +163,7 @@ class TranslationsEn extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get tracking_empty => 'No {status} series yet';
 	@override String get tracking_empty_games => 'No {status} games yet';
 	@override String get tracking_empty_movies => 'No {status} movies yet';
+	@override String get tracking_empty_books => 'No {status} books yet';
 	@override String get tracking_want_to_watch => 'Want to Watch';
 	@override String get tracking_watching => 'Watching';
 	@override String get social_load_error => 'Could not load Social.';
@@ -335,7 +344,10 @@ extension on TranslationsEn {
 			'dashboard_empty' => 'No series tracked yet.\nSearch and add your first series!',
 			'dashboard_empty_games' => 'No games tracked yet.\nSearch and add your first game!',
 			'dashboard_empty_movies' => 'No movies tracked yet.\nSearch and add your first movie!',
+			'dashboard_empty_books' => 'No books tracked yet.\nSearch and add your first book!',
 			'dashboard_loading' => 'Loading your dashboard...',
+			'dashboard_reading' => 'Reading',
+			'dashboard_want_to_read' => 'Want to Read',
 			'dashboard_want_to_watch' => 'Want to Watch',
 			'dashboard_watching' => 'Watching',
 			'error_retry' => 'Retry',
@@ -358,6 +370,7 @@ extension on TranslationsEn {
 			'media_type_movies' => 'Movies',
 			'media_type_series' => 'Series',
 			'media_type_games' => 'Games',
+			'media_type_books' => 'Books',
 			'movie_detail_error' => ({required Object message}) => 'Error: ${message}',
 			'movie_detail_loading' => 'Loading movie details...',
 			'movie_detail_release_date' => 'Release Date',
@@ -373,9 +386,11 @@ extension on TranslationsEn {
 			'search_hint' => 'Search series...',
 			'search_hint_movies' => 'Search movies...',
 			'search_hint_games' => 'Search games...',
+			'search_hint_books' => 'Search books...',
 			'search_no_results' => 'No series found',
 			'search_no_results_movies' => 'No movies found',
 			'search_no_results_games' => 'No games found',
+			'search_no_results_books' => 'No books found',
 			'series_detail_add_to_list' => 'Add to List',
 			'series_detail_cancel' => 'Cancel',
 			'series_detail_episodes' => 'Episodes',
@@ -410,6 +425,8 @@ extension on TranslationsEn {
 			'series_detail_status' => 'Status',
 			'tracking_completed' => 'Completed',
 			'tracking_dropped' => 'Dropped',
+			'tracking_reading' => 'Reading',
+			'tracking_want_to_read' => 'Want to Read',
 			'tracking_want_to_play_game' => 'Want to Play',
 			'tracking_playing_game' => 'Playing',
 			'tracking_completed_game' => 'Completed',
@@ -417,6 +434,7 @@ extension on TranslationsEn {
 			'tracking_empty' => 'No {status} series yet',
 			'tracking_empty_games' => 'No {status} games yet',
 			'tracking_empty_movies' => 'No {status} movies yet',
+			'tracking_empty_books' => 'No {status} books yet',
 			'tracking_want_to_watch' => 'Want to Watch',
 			'tracking_watching' => 'Watching',
 			'social_load_error' => 'Could not load Social.',
