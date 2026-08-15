@@ -12,6 +12,7 @@ import 'package:lorebase/features/movies/data/models/movie_model.dart';
 import 'package:lorebase/features/movies/viewmodels/movie_search_viewmodel.dart';
 import 'package:lorebase/features/games/data/models/game_model.dart';
 import 'package:lorebase/features/games/viewmodels/game_search_viewmodel.dart';
+import 'package:lorebase/features/games/widgets/game_card.dart';
 import 'package:lorebase/features/tracking/data/models/media_type.dart';
 import 'package:lorebase/features/tracking/data/models/tracked_media_model.dart';
 import 'package:lorebase/features/tracking/pages/tracking_list_page.dart';
@@ -347,6 +348,60 @@ Future<void> main() async {
       expect(find.text('Series detail 1'), findsOneWidget);
     });
 
+    testWidgets(
+      'tapping game item preserves search route for back navigation',
+      (tester) async {
+        final container = ProviderContainer(
+          overrides: [
+            selectedMediaTypeProvider.overrideWith((ref) => MediaType.game),
+            seriesSearchViewModelProvider.overrideWith(() => FakeSearchVM()),
+            movieSearchViewModelProvider.overrideWith(
+              () => FakeMovieSearchVM(),
+            ),
+            gameSearchViewModelProvider.overrideWith(
+              () => FakeGameSearchVM(
+                state: const AsyncValue.data([
+                  GameModel(gameId: '1', title: 'Hollow Knight'),
+                ]),
+              ),
+            ),
+            authViewModelProvider.overrideWith(() => FakeAuthVM()),
+          ],
+        );
+        addTearDown(container.dispose);
+
+        late final GoRouter router;
+        router = GoRouter(
+          initialLocation: '/search',
+          routes: [
+            GoRoute(
+              path: '/search',
+              builder: (_, _) => const SeriesSearchPage(),
+            ),
+            GoRoute(
+              path: '/games/:gameId',
+              builder: (_, state) => Text(
+                'Game detail ${state.pathParameters['gameId']}',
+                textDirection: TextDirection.ltr,
+              ),
+            ),
+          ],
+        );
+        addTearDown(router.dispose);
+
+        await tester.pumpWidget(
+          _wrapWithSeriesDetailRoute(container, router: router),
+        );
+        await tester.pump();
+
+        await tester.tap(find.byType(GameCard));
+        await tester.pumpAndSettle();
+
+        expect(router.canPop(), isTrue);
+        expect(find.text('Game detail 1'), findsOneWidget);
+      },
+    );
+
     testWidgets('uses and updates shared media type selection', (tester) async {
       final container = ProviderContainer(
         overrides: [
@@ -617,8 +672,7 @@ Future<void> main() async {
       await tester.tap(find.text('Hades'));
       await tester.pumpAndSettle();
 
-      expect(router.routeInformationProvider.value.uri.path, '/games/7');
-      expect(router.canPop(), isFalse);
+      expect(router.canPop(), isTrue);
       expect(find.text('Game detail 7'), findsOneWidget);
     });
   });

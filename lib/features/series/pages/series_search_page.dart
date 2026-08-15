@@ -264,7 +264,7 @@ class _SearchResultsBody extends ConsumerWidget {
                   padding: const EdgeInsets.only(bottom: 12.0),
                   child: GameCard(
                     game: item,
-                    onTap: () => context.go('/games/${item.gameId}'),
+                    onTap: () => context.push('/games/${item.gameId}'),
                   ),
                 );
               },
