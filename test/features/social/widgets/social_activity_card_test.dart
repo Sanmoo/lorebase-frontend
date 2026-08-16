@@ -4,6 +4,7 @@ import 'package:lorebase/features/social/data/models/activity_event_model.dart';
 import 'package:lorebase/features/social/data/models/social_media_model.dart';
 import 'package:lorebase/features/social/data/models/social_user_model.dart';
 import 'package:lorebase/features/social/widgets/social_activity_card.dart';
+import 'package:lorebase/l10n/strings.g.dart';
 
 void main() {
   ActivityEventModel event({
@@ -59,6 +60,20 @@ void main() {
     expect(find.text('One Piece'), findsOneWidget);
   });
 
+  ActivityEventModel bookEvent({String type = 'STARTED_READING'}) =>
+      ActivityEventModel(
+        eventId: 'evt-book-1',
+        user: const SocialUserModel(userId: 'user-1', displayName: 'Fulano'),
+        activityType: type,
+        media: const SocialMediaModel(
+          mediaId: 'book-1',
+          mediaType: 'BOOK',
+          title: 'Dom Casmurro',
+        ),
+        metadata: const <String, dynamic>{},
+        createdAt: DateTime(2026, 5, 20),
+      );
+
   testWidgets('renders all activity verbs and review metadata fallbacks', (
     tester,
   ) async {
@@ -66,6 +81,7 @@ void main() {
       'REVIEWED': 'escreveu uma review de',
       'COMPLETED': 'completou',
       'STARTED_WATCHING': 'começou',
+      'STARTED_PLAYING': 'começou a jogar',
       'DROPPED': 'abandonou',
       'ADDED_TO_LIST': 'adicionou à lista',
       'UNKNOWN': 'interagiu com',
@@ -108,6 +124,55 @@ void main() {
     );
 
     expect(find.textContaining('adicionou à lista'), findsOneWidget);
+    expect(find.text('One Piece'), findsOneWidget);
+  });
+
+  testWidgets('STARTED_READING book renders reading verb and title', (
+    tester,
+  ) async {
+    await pumpCard(tester, bookEvent());
+
+    expect(find.text('Fulano'), findsOneWidget);
+    expect(find.text('começou a ler'), findsOneWidget);
+    expect(find.text('Dom Casmurro'), findsOneWidget);
+  });
+
+  testWidgets('COMPLETED book uses reading vocabulary', (tester) async {
+    await pumpCard(tester, bookEvent(type: 'COMPLETED'));
+
+    expect(find.text('concluiu a leitura de'), findsOneWidget);
+    expect(find.text('Dom Casmurro'), findsOneWidget);
+  });
+
+  testWidgets('ADDED_TO_LIST book renders list sentence', (tester) async {
+    await pumpCard(
+      tester,
+      bookEvent(type: 'ADDED_TO_LIST').copyWith(
+        metadata: const {'listName': 'Favoritos'},
+      ),
+    );
+
+    expect(find.text('adicionou'), findsOneWidget);
+    expect(find.text('à lista Favoritos'), findsOneWidget);
+    expect(find.text('Dom Casmurro'), findsOneWidget);
+    expect(find.textContaining('adicionou à lista'), findsNothing);
+  });
+
+  testWidgets('STARTED_READING book renders English reading verb', (
+    tester,
+  ) async {
+    await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.en));
+    await pumpCard(tester, bookEvent());
+
+    expect(find.text('started reading'), findsOneWidget);
+    expect(find.text('Dom Casmurro'), findsOneWidget);
+
+    await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ptBr));
+  });
+  testWidgets('non-book COMPLETED keeps generic verb', (tester) async {
+    await pumpCard(tester, event(type: 'COMPLETED'));
+
+    expect(find.text('completou'), findsOneWidget);
     expect(find.text('One Piece'), findsOneWidget);
   });
 

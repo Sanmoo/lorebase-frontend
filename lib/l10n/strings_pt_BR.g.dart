@@ -647,11 +647,17 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// pt-BR: 'completou'
 	String get social_activity_completed => 'completou';
 
+	/// pt-BR: 'concluiu a leitura de'
+	String get social_activity_completed_reading => 'concluiu a leitura de';
+
 	/// pt-BR: 'começou'
 	String get social_activity_started_watching => 'começou';
 
 	/// pt-BR: 'começou a jogar'
 	String get social_activity_started_playing => 'começou a jogar';
+
+	/// pt-BR: 'começou a ler'
+	String get social_activity_started_reading => 'começou a ler';
 
 	/// pt-BR: 'abandonou'
 	String get social_activity_dropped => 'abandonou';
@@ -1058,8 +1064,10 @@ extension on Translations {
 			'social_activity_rated' => 'avaliou',
 			'social_activity_reviewed' => 'escreveu uma review de',
 			'social_activity_completed' => 'completou',
+			'social_activity_completed_reading' => 'concluiu a leitura de',
 			'social_activity_started_watching' => 'começou',
 			'social_activity_started_playing' => 'começou a jogar',
+			'social_activity_started_reading' => 'começou a ler',
 			'social_activity_dropped' => 'abandonou',
 			'social_activity_added_to_list' => 'adicionou à lista',
 			'social_activity_interacted_with' => 'interagiu com',

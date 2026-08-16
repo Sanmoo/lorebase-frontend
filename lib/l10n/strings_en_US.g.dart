@@ -243,8 +243,10 @@ class TranslationsEnUs extends Translations with BaseTranslations<AppLocale, Tra
 	@override String get social_activity_rated => 'rated';
 	@override String get social_activity_reviewed => 'wrote a review of';
 	@override String get social_activity_completed => 'completed';
+	@override String get social_activity_completed_reading => 'finished reading';
 	@override String get social_activity_started_watching => 'started';
 	@override String get social_activity_started_playing => 'started playing';
+	@override String get social_activity_started_reading => 'started reading';
 	@override String get social_activity_dropped => 'dropped';
 	@override String get social_activity_added_to_list => 'added to list';
 	@override String get social_activity_interacted_with => 'interacted with';
@@ -521,8 +523,10 @@ extension on TranslationsEnUs {
 			'social_activity_rated' => 'rated',
 			'social_activity_reviewed' => 'wrote a review of',
 			'social_activity_completed' => 'completed',
+			'social_activity_completed_reading' => 'finished reading',
 			'social_activity_started_watching' => 'started',
 			'social_activity_started_playing' => 'started playing',
+			'social_activity_started_reading' => 'started reading',
 			'social_activity_dropped' => 'dropped',
 			'social_activity_added_to_list' => 'added to list',
 			'social_activity_interacted_with' => 'interacted with',

@@ -243,8 +243,10 @@ class TranslationsEs extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get social_activity_rated => 'calificó';
 	@override String get social_activity_reviewed => 'escribió una reseña de';
 	@override String get social_activity_completed => 'completó';
+	@override String get social_activity_completed_reading => 'terminó de leer';
 	@override String get social_activity_started_watching => 'empezó';
 	@override String get social_activity_started_playing => 'empezó a jugar';
+	@override String get social_activity_started_reading => 'empezó a leer';
 	@override String get social_activity_dropped => 'abandonó';
 	@override String get social_activity_added_to_list => 'agregó a la lista';
 	@override String get social_activity_interacted_with => 'interactuó con';
@@ -521,8 +523,10 @@ extension on TranslationsEs {
 			'social_activity_rated' => 'calificó',
 			'social_activity_reviewed' => 'escribió una reseña de',
 			'social_activity_completed' => 'completó',
+			'social_activity_completed_reading' => 'terminó de leer',
 			'social_activity_started_watching' => 'empezó',
 			'social_activity_started_playing' => 'empezó a jugar',
+			'social_activity_started_reading' => 'empezó a leer',
 			'social_activity_dropped' => 'abandonó',
 			'social_activity_added_to_list' => 'agregó a la lista',
 			'social_activity_interacted_with' => 'interactuó con',

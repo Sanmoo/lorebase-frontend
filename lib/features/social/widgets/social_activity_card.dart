@@ -46,7 +46,10 @@ class SocialActivityCard extends StatelessWidget {
                 Text(
                   showsNamedList
                       ? 'adicionou'
-                      : localizedSocialActivityVerb(event.activityType),
+                      : localizedSocialActivityVerb(
+                          event.activityType,
+                          mediaType: event.media.mediaType,
+                        ),
                 ),
                 InkWell(
                   onTap: onMediaTap,
