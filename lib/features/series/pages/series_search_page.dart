@@ -17,6 +17,8 @@ import '../../../../core/widgets/media_type_toggle.dart';
 import '../../tracking/data/models/media_type.dart';
 import '../../games/viewmodels/game_search_viewmodel.dart';
 import '../../games/widgets/game_card.dart';
+import '../../books/viewmodels/book_search_viewmodel.dart';
+import '../../books/widgets/book_card.dart';
 
 class SeriesSearchPage extends ConsumerStatefulWidget {
   const SeriesSearchPage({super.key});
@@ -68,6 +70,7 @@ class _SeriesSearchPageState extends ConsumerState<SeriesSearchPage> {
     ref.read(seriesSearchViewModelProvider.notifier).clear();
     ref.read(movieSearchViewModelProvider.notifier).clear();
     ref.read(gameSearchViewModelProvider.notifier).clear();
+    ref.read(bookSearchViewModelProvider.notifier).clear();
   }
 
   void _onSearchChanged(String query) {
@@ -82,6 +85,8 @@ class _SeriesSearchPageState extends ConsumerState<SeriesSearchPage> {
           ref.read(movieSearchViewModelProvider.notifier).search(query);
         } else if (currentType == MediaType.game) {
           ref.read(gameSearchViewModelProvider.notifier).search(query);
+        } else if (currentType == MediaType.book) {
+          ref.read(bookSearchViewModelProvider.notifier).search(query);
         }
       });
     } else if (query.isEmpty) {
@@ -91,6 +96,8 @@ class _SeriesSearchPageState extends ConsumerState<SeriesSearchPage> {
         ref.read(movieSearchViewModelProvider.notifier).clear();
       } else if (selectedType == MediaType.game) {
         ref.read(gameSearchViewModelProvider.notifier).clear();
+      } else if (selectedType == MediaType.book) {
+        ref.read(bookSearchViewModelProvider.notifier).clear();
       }
     }
   }
@@ -100,6 +107,7 @@ class _SeriesSearchPageState extends ConsumerState<SeriesSearchPage> {
     ref.read(seriesSearchViewModelProvider.notifier).clear();
     ref.read(movieSearchViewModelProvider.notifier).clear();
     ref.read(gameSearchViewModelProvider.notifier).clear();
+    ref.read(bookSearchViewModelProvider.notifier).clear();
   }
 
   @override
@@ -165,6 +173,7 @@ class _SearchResultsBody extends ConsumerWidget {
     final seriesState = ref.watch(seriesSearchViewModelProvider);
     final movieState = ref.watch(movieSearchViewModelProvider);
     final gameState = ref.watch(gameSearchViewModelProvider);
+    final bookState = ref.watch(bookSearchViewModelProvider);
 
     switch (mediaType) {
       case MediaType.series:
@@ -274,9 +283,38 @@ class _SearchResultsBody extends ConsumerWidget {
           },
         );
       case MediaType.book:
-        return EmptyStateWidget(
-          message: query.isEmpty ? t.search_empty : t.search_no_results_books,
-          icon: query.isEmpty ? Icons.search : Icons.search_off,
+        return bookState.when(
+          loading: () => const LoadingWidget(),
+          error: (error, _) =>
+              AppErrorWidget(message: error.toString(), onRetry: onRetry),
+          data: (books) {
+            if (books.isEmpty && query.isEmpty) {
+              return EmptyStateWidget(
+                message: t.search_empty,
+                icon: Icons.search,
+              );
+            }
+            if (books.isEmpty) {
+              return EmptyStateWidget(
+                message: t.search_no_results_books,
+                icon: Icons.search_off,
+              );
+            }
+            return ListView.builder(
+              padding: const EdgeInsets.all(16.0),
+              itemCount: books.length,
+              itemBuilder: (context, index) {
+                final item = books[index];
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12.0),
+                  child: BookCard(
+                    book: item,
+                    onTap: () => context.push('/books/${item.bookId}'),
+                  ),
+                );
+              },
+            );
+          },
         );
     }
   }

@@ -259,5 +259,15 @@
   "game_detail_developer": "Desenvolvedora",
   "game_detail_publisher": "Publicadora",
   "game_detail_game_modes": "Modos de jogo",
-  "game_detail_platforms": "Plataformas"
+  "game_detail_platforms": "Plataformas",
+  "book_detail_loading": "Carregando detalhes do livro...",
+  "book_detail_synopsis": "Sinopse",
+  "book_detail_no_synopsis": "Nenhuma sinopse disponível.",
+  "book_detail_show_more": "Mostrar mais",
+  "book_detail_show_less": "Mostrar menos",
+  "book_detail_pages_label": "Páginas",
+  "book_detail_pages": "$count páginas",
+  "book_detail_isbn": "ISBN",
+  "book_detail_publisher": "Editora",
+  "book_detail_published_date": "Publicação"
 }

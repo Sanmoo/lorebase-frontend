@@ -817,6 +817,36 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// pt-BR: 'Plataformas'
 	String get game_detail_platforms => 'Plataformas';
+
+	/// pt-BR: 'Carregando detalhes do livro...'
+	String get book_detail_loading => 'Carregando detalhes do livro...';
+
+	/// pt-BR: 'Sinopse'
+	String get book_detail_synopsis => 'Sinopse';
+
+	/// pt-BR: 'Nenhuma sinopse disponível.'
+	String get book_detail_no_synopsis => 'Nenhuma sinopse disponível.';
+
+	/// pt-BR: 'Mostrar mais'
+	String get book_detail_show_more => 'Mostrar mais';
+
+	/// pt-BR: 'Mostrar menos'
+	String get book_detail_show_less => 'Mostrar menos';
+
+	/// pt-BR: 'Páginas'
+	String get book_detail_pages_label => 'Páginas';
+
+	/// pt-BR: '$count páginas'
+	String book_detail_pages({required Object count}) => '${count} páginas';
+
+	/// pt-BR: 'ISBN'
+	String get book_detail_isbn => 'ISBN';
+
+	/// pt-BR: 'Editora'
+	String get book_detail_publisher => 'Editora';
+
+	/// pt-BR: 'Publicação'
+	String get book_detail_published_date => 'Publicação';
 }
 
 /// The flat map containing all translations for locale <pt-BR>.
@@ -1085,6 +1115,16 @@ extension on Translations {
 			'game_detail_publisher' => 'Publicadora',
 			'game_detail_game_modes' => 'Modos de jogo',
 			'game_detail_platforms' => 'Plataformas',
+			'book_detail_loading' => 'Carregando detalhes do livro...',
+			'book_detail_synopsis' => 'Sinopse',
+			'book_detail_no_synopsis' => 'Nenhuma sinopse disponível.',
+			'book_detail_show_more' => 'Mostrar mais',
+			'book_detail_show_less' => 'Mostrar menos',
+			'book_detail_pages_label' => 'Páginas',
+			'book_detail_pages' => ({required Object count}) => '${count} páginas',
+			'book_detail_isbn' => 'ISBN',
+			'book_detail_publisher' => 'Editora',
+			'book_detail_published_date' => 'Publicação',
 			_ => null,
 		};
 	}

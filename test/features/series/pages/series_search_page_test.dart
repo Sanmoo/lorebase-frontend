@@ -13,6 +13,9 @@ import 'package:lorebase/features/movies/viewmodels/movie_search_viewmodel.dart'
 import 'package:lorebase/features/games/data/models/game_model.dart';
 import 'package:lorebase/features/games/viewmodels/game_search_viewmodel.dart';
 import 'package:lorebase/features/games/widgets/game_card.dart';
+import 'package:lorebase/features/books/data/models/book_model.dart';
+import 'package:lorebase/features/books/viewmodels/book_search_viewmodel.dart';
+import 'package:lorebase/features/books/widgets/book_card.dart';
 import 'package:lorebase/features/tracking/data/models/media_type.dart';
 import 'package:lorebase/features/tracking/data/models/tracked_media_model.dart';
 import 'package:lorebase/features/tracking/pages/tracking_list_page.dart';
@@ -64,6 +67,25 @@ class FakeGameSearchVM extends GameSearchViewModel {
 
   @override
   AsyncValue<List<GameModel>> build() => testState;
+
+  @override
+  Future<void> search(String query) async {
+    searchCalled = true;
+  }
+
+  @override
+  void clear() {}
+}
+
+class FakeBookSearchVM extends BookSearchViewModel {
+  final AsyncValue<List<BookModel>> testState;
+  bool searchCalled = false;
+
+  FakeBookSearchVM({AsyncValue<List<BookModel>>? state})
+    : testState = state ?? const AsyncValue.data([]);
+
+  @override
+  AsyncValue<List<BookModel>> build() => testState;
 
   @override
   Future<void> search(String query) async {
@@ -145,6 +167,7 @@ Future<void> main() async {
           seriesSearchViewModelProvider.overrideWith(() => fakeVM),
           movieSearchViewModelProvider.overrideWith(() => FakeMovieSearchVM()),
           gameSearchViewModelProvider.overrideWith(() => FakeGameSearchVM()),
+          bookSearchViewModelProvider.overrideWith(() => FakeBookSearchVM()),
           authViewModelProvider.overrideWith(() => FakeAuthVM()),
         ],
       );
@@ -542,12 +565,13 @@ Future<void> main() async {
       expect(find.text('Search games...'), findsOneWidget);
     });
 
-    testWidgets('switching to Games clears series and movie viewmodels', (
+    testWidgets('switching to Games clears series, movie and book viewmodels', (
       tester,
     ) async {
       bool seriesCleared = false;
       bool movieCleared = false;
       bool gameCleared = false;
+      bool bookCleared = false;
 
       final container = ProviderContainer(
         overrides: [
@@ -560,6 +584,9 @@ Future<void> main() async {
           ),
           gameSearchViewModelProvider.overrideWith(
             () => _FakeGameSearchVMWithClear(onClear: () => gameCleared = true),
+          ),
+          bookSearchViewModelProvider.overrideWith(
+            () => _FakeBookSearchVMWithClear(onClear: () => bookCleared = true),
           ),
           authViewModelProvider.overrideWith(() => FakeAuthVM()),
         ],
@@ -575,6 +602,7 @@ Future<void> main() async {
       expect(seriesCleared, isTrue);
       expect(movieCleared, isTrue);
       expect(gameCleared, isTrue);
+      expect(bookCleared, isTrue);
     });
 
     testWidgets('typing while Games selected triggers GameSearchViewModel', (
@@ -623,6 +651,167 @@ Future<void> main() async {
       await tester.pump();
 
       expect(find.text('No books found'), findsOneWidget);
+    });
+
+    testWidgets('typing while Books selected triggers BookSearchViewModel', (
+      tester,
+    ) async {
+      final fakeBookVM = FakeBookSearchVM();
+      final container = ProviderContainer(
+        overrides: [
+          seriesSearchViewModelProvider.overrideWith(() => FakeSearchVM()),
+          movieSearchViewModelProvider.overrideWith(
+            () => FakeMovieSearchVM(),
+          ),
+          gameSearchViewModelProvider.overrideWith(() => FakeGameSearchVM()),
+          bookSearchViewModelProvider.overrideWith(() => fakeBookVM),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.tap(find.text('Books'));
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextField), 'Dune');
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 1100));
+
+      expect(fakeBookVM.searchCalled, isTrue);
+    });
+
+    testWidgets('shows book results list when data available', (tester) async {
+      final results = [
+        const BookModel(bookId: 'b1', title: 'Dune'),
+        const BookModel(bookId: 'b2', title: 'Neuromancer'),
+      ];
+      final fakeBookVM = FakeBookSearchVM(state: AsyncValue.data(results));
+      final container = ProviderContainer(
+        overrides: [
+          seriesSearchViewModelProvider.overrideWith(() => FakeSearchVM()),
+          movieSearchViewModelProvider.overrideWith(
+            () => FakeMovieSearchVM(),
+          ),
+          gameSearchViewModelProvider.overrideWith(() => FakeGameSearchVM()),
+          bookSearchViewModelProvider.overrideWith(() => fakeBookVM),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.tap(find.text('Books'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(BookCard), findsNWidgets(2));
+      expect(find.text('Dune'), findsOneWidget);
+      expect(find.text('Neuromancer'), findsOneWidget);
+    });
+
+    testWidgets('shows book loading indicator while searching', (tester) async {
+      final fakeBookVM = FakeBookSearchVM(state: const AsyncValue.loading());
+      final container = ProviderContainer(
+        overrides: [
+          seriesSearchViewModelProvider.overrideWith(() => FakeSearchVM()),
+          movieSearchViewModelProvider.overrideWith(
+            () => FakeMovieSearchVM(),
+          ),
+          gameSearchViewModelProvider.overrideWith(() => FakeGameSearchVM()),
+          bookSearchViewModelProvider.overrideWith(() => fakeBookVM),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.tap(find.text('Books'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    });
+
+    testWidgets('shows book error message and retry', (tester) async {
+      final fakeBookVM = FakeBookSearchVM(
+        state: AsyncValue.error('Book search failed', StackTrace.current),
+      );
+      final container = ProviderContainer(
+        overrides: [
+          seriesSearchViewModelProvider.overrideWith(() => FakeSearchVM()),
+          movieSearchViewModelProvider.overrideWith(
+            () => FakeMovieSearchVM(),
+          ),
+          gameSearchViewModelProvider.overrideWith(() => FakeGameSearchVM()),
+          bookSearchViewModelProvider.overrideWith(() => fakeBookVM),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.tap(find.text('Books'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Book search failed'), findsOneWidget);
+      expect(find.text('Retry'), findsOneWidget);
+    });
+
+    testWidgets('tapping a book result navigates to book detail route', (
+      tester,
+    ) async {
+      final results = [const BookModel(bookId: 'abc123', title: 'Dune')];
+      final fakeBookVM = FakeBookSearchVM(state: AsyncValue.data(results));
+      final container = ProviderContainer(
+        overrides: [
+          seriesSearchViewModelProvider.overrideWith(() => FakeSearchVM()),
+          movieSearchViewModelProvider.overrideWith(
+            () => FakeMovieSearchVM(),
+          ),
+          gameSearchViewModelProvider.overrideWith(() => FakeGameSearchVM()),
+          bookSearchViewModelProvider.overrideWith(() => fakeBookVM),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      late final GoRouter router;
+      router = GoRouter(
+        initialLocation: '/search',
+        routes: [
+          GoRoute(path: '/search', builder: (_, _) => const SeriesSearchPage()),
+          GoRoute(
+            path: '/books/:bookId',
+            builder: (_, state) => Text(
+              'Book detail ${state.pathParameters['bookId']}',
+              textDirection: TextDirection.ltr,
+            ),
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+
+      await tester.pumpWidget(
+        _wrapWithSeriesDetailRoute(container, router: router),
+      );
+      await tester.pump();
+
+      await tester.tap(find.text('Books'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Dune'));
+      await tester.pumpAndSettle();
+
+      expect(router.canPop(), isTrue);
+      expect(find.text('Book detail abc123'), findsOneWidget);
     });
 
     testWidgets('shows game results list when data available', (tester) async {
@@ -736,6 +925,21 @@ class _FakeGameSearchVMWithClear extends GameSearchViewModel {
 
   @override
   AsyncValue<List<GameModel>> build() => const AsyncValue.data([]);
+
+  @override
+  Future<void> search(String query) async {}
+
+  @override
+  void clear() => onClear();
+}
+
+class _FakeBookSearchVMWithClear extends BookSearchViewModel {
+  final VoidCallback onClear;
+
+  _FakeBookSearchVMWithClear({required this.onClear});
+
+  @override
+  AsyncValue<List<BookModel>> build() => const AsyncValue.data([]);
 
   @override
   Future<void> search(String query) async {}

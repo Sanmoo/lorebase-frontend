@@ -16,6 +16,7 @@ import 'features/tracking/pages/tracking_list_page.dart';
 import 'features/series/pages/series_detail_page.dart';
 import 'features/movies/pages/movie_detail_page.dart';
 import 'features/games/pages/game_detail_page.dart';
+import 'features/books/pages/book_detail_page.dart';
 import 'features/social/pages/edit_social_profile_page.dart';
 import 'features/social/pages/social_follow_list_page.dart';
 import 'features/social/pages/social_page.dart';
@@ -90,6 +91,13 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) {
               final gameId = state.pathParameters['gameId']!;
               return GameDetailPage(gameId: gameId);
+            },
+          ),
+          GoRoute(
+            path: '/books/:bookId',
+            builder: (context, state) {
+              final bookId = state.pathParameters['bookId']!;
+              return BookDetailPage(bookId: bookId);
             },
           ),
           GoRoute(
