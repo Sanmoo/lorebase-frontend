@@ -314,6 +314,10 @@ class TranslationsEs extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get book_detail_isbn => 'ISBN';
 	@override String get book_detail_publisher => 'Editorial';
 	@override String get book_detail_published_date => 'Publicación';
+	@override String get book_detail_add_to_list => 'Añadir a Lista';
+	@override String get book_detail_manage_tracking => 'Gestionar';
+	@override String get book_detail_remove_from_list => 'Eliminar de Lista';
+	@override String book_detail_remove_confirm({required Object title}) => '¿Eliminar "${title}" de tu lista?';
 }
 
 /// The flat map containing all translations for locale <es>.
@@ -596,6 +600,10 @@ extension on TranslationsEs {
 			'book_detail_isbn' => 'ISBN',
 			'book_detail_publisher' => 'Editorial',
 			'book_detail_published_date' => 'Publicación',
+			'book_detail_add_to_list' => 'Añadir a Lista',
+			'book_detail_manage_tracking' => 'Gestionar',
+			'book_detail_remove_from_list' => 'Eliminar de Lista',
+			'book_detail_remove_confirm' => ({required Object title}) => '¿Eliminar "${title}" de tu lista?',
 			_ => null,
 		};
 	}

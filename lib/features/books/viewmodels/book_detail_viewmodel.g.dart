@@ -51,7 +51,7 @@ final class BookDetailViewModelProvider
 }
 
 String _$bookDetailViewModelHash() =>
-    r'a8dc4ca1ac4606cdff5f150c52bd8357ecf7b91d';
+    r'3e4103236809e549bf884dc53df6e6a2a09d9bbc';
 
 final class BookDetailViewModelFamily extends $Family
     with

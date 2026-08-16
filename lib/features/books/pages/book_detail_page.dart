@@ -7,7 +7,13 @@ import '../../../core/i18n/date_formatter.dart';
 import '../../../core/widgets/error_widget.dart';
 import '../../../core/widgets/loading_widget.dart';
 import '../../../l10n/strings.g.dart';
+import '../../tracking/data/models/book_tracking_status.dart';
+import '../../tracking/data/models/media_type.dart';
+import '../../tracking/data/models/tracked_media_model.dart';
+import '../../tracking/widgets/tracking_editor_sheet.dart';
+import '../../tracking/widgets/tracking_status_chip.dart';
 import '../data/models/book_model.dart';
+import '../viewmodels/book_detail_state.dart';
 import '../viewmodels/book_detail_viewmodel.dart';
 
 class BookDetailPage extends ConsumerWidget {
@@ -32,15 +38,104 @@ class BookDetailPage extends ConsumerWidget {
           onRetry: () => ref.invalidate(bookDetailViewModelProvider(bookId)),
         ),
       ),
-      data: (detail) => _BookDetailLoaded(book: detail.book),
+      data: (detail) => _BookDetailLoaded(
+        book: detail.book,
+        tracking: detail.tracking,
+        onTrackingAction: () => _showTrackingSheet(context, ref, detail),
+      ),
+    );
+  }
+
+  void _showTrackingSheet(
+    BuildContext context,
+    WidgetRef ref,
+    BookDetailState detail,
+  ) {
+    final book = detail.book;
+    final tracking = detail.tracking;
+    final isEditing = tracking != null;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (ctx) => TrackingEditorSheet(
+        title: isEditing
+            ? ctx.t.book_detail_manage_tracking
+            : ctx.t.book_detail_add_to_list,
+        initialStatus:
+            tracking?.status ?? BookTrackingStatus.wantToRead.value,
+        initialRating: tracking?.rating,
+        initialReview: tracking?.review ?? '',
+        mediaType: MediaType.book,
+        onSave:
+            ({
+              required status,
+              rating,
+              review,
+              selectedPlatform,
+              hoursPlayed,
+            }) async {
+              final notifier = ref.read(
+                bookDetailViewModelProvider(bookId).notifier,
+              );
+              try {
+                if (isEditing) {
+                  await notifier.updateTracking(
+                    status: status,
+                    rating: rating,
+                    review: review,
+                  );
+                } else {
+                  await notifier.addTracking(
+                    status,
+                    rating: rating,
+                    review: review,
+                  );
+                }
+                if (ctx.mounted) Navigator.pop(ctx);
+              } catch (e) {
+                if (ctx.mounted) {
+                  ScaffoldMessenger.of(
+                    ctx,
+                  ).showSnackBar(SnackBar(content: Text(ctx.t.error_server)));
+                }
+              }
+            },
+        onRemove: isEditing
+            ? () async {
+                try {
+                  await ref
+                      .read(bookDetailViewModelProvider(bookId).notifier)
+                      .removeTracking();
+                  if (ctx.mounted) Navigator.pop(ctx);
+                } catch (e) {
+                  if (ctx.mounted) {
+                    ScaffoldMessenger.of(
+                      ctx,
+                    ).showSnackBar(SnackBar(content: Text(ctx.t.error_server)));
+                  }
+                }
+              }
+            : null,
+        removeLabel: ctx.t.book_detail_remove_from_list,
+        removeConfirmTitle: ctx.t.book_detail_remove_from_list,
+        removeConfirmMessage: ctx.t.book_detail_remove_confirm(title: book.title),
+      ),
     );
   }
 }
 
 class _BookDetailLoaded extends StatelessWidget {
   final BookModel book;
+  final TrackedMediaModel? tracking;
+  final VoidCallback onTrackingAction;
 
-  const _BookDetailLoaded({required this.book});
+  const _BookDetailLoaded({
+    required this.book,
+    required this.tracking,
+    required this.onTrackingAction,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +145,20 @@ class _BookDetailLoaded extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(book.title)),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: FilledButton.icon(
+            onPressed: onTrackingAction,
+            icon: Icon(tracking != null ? Icons.edit : Icons.add),
+            label: Text(
+              tracking != null
+                  ? t.book_detail_manage_tracking
+                  : t.book_detail_add_to_list,
+            ),
+          ),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -117,12 +226,24 @@ class _BookDetailLoaded extends StatelessWidget {
                       ),
                     ),
                   const SizedBox(height: 12),
-                  if (book.genre != null && book.genre!.isNotEmpty)
-                    Chip(
-                      label: Text(book.genre!),
-                      visualDensity: VisualDensity.compact,
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
+                  Wrap(
+                    spacing: 6,
+                    runSpacing: 4,
+                    children: [
+                      if (book.genre != null && book.genre!.isNotEmpty)
+                        Chip(
+                          label: Text(book.genre!),
+                          visualDensity: VisualDensity.compact,
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
+                        ),
+                      if (tracking != null)
+                        TrackingStatusChip(
+                          status: tracking!.status,
+                          mediaType: MediaType.book,
+                        ),
+                    ],
+                  ),
                 ],
               ),
             ),

@@ -273,5 +273,9 @@
   "book_detail_pages": "$count pages",
   "book_detail_isbn": "ISBN",
   "book_detail_publisher": "Publisher",
-  "book_detail_published_date": "Published"
+  "book_detail_published_date": "Published",
+  "book_detail_add_to_list": "Add to List",
+  "book_detail_manage_tracking": "Manage Tracking",
+  "book_detail_remove_from_list": "Remove from List",
+  "book_detail_remove_confirm": "Remove \"$title\" from your list?"
 }

@@ -314,6 +314,10 @@ class TranslationsEnUs extends Translations with BaseTranslations<AppLocale, Tra
 	@override String get book_detail_isbn => 'ISBN';
 	@override String get book_detail_publisher => 'Publisher';
 	@override String get book_detail_published_date => 'Published';
+	@override String get book_detail_add_to_list => 'Add to List';
+	@override String get book_detail_manage_tracking => 'Manage Tracking';
+	@override String get book_detail_remove_from_list => 'Remove from List';
+	@override String book_detail_remove_confirm({required Object title}) => 'Remove "${title}" from your list?';
 }
 
 /// The flat map containing all translations for locale <en-US>.
@@ -596,6 +600,10 @@ extension on TranslationsEnUs {
 			'book_detail_isbn' => 'ISBN',
 			'book_detail_publisher' => 'Publisher',
 			'book_detail_published_date' => 'Published',
+			'book_detail_add_to_list' => 'Add to List',
+			'book_detail_manage_tracking' => 'Manage Tracking',
+			'book_detail_remove_from_list' => 'Remove from List',
+			'book_detail_remove_confirm' => ({required Object title}) => 'Remove "${title}" from your list?',
 			_ => null,
 		};
 	}

@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$BookDetailState {
 
- BookModel get book;
+ BookModel get book; TrackedMediaModel? get tracking;
 /// Create a copy of BookDetailState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $BookDetailStateCopyWith<BookDetailState> get copyWith => _$BookDetailStateCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BookDetailState&&(identical(other.book, book) || other.book == book));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BookDetailState&&(identical(other.book, book) || other.book == book)&&(identical(other.tracking, tracking) || other.tracking == tracking));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,book);
+int get hashCode => Object.hash(runtimeType,book,tracking);
 
 @override
 String toString() {
-  return 'BookDetailState(book: $book)';
+  return 'BookDetailState(book: $book, tracking: $tracking)';
 }
 
 
@@ -45,11 +45,11 @@ abstract mixin class $BookDetailStateCopyWith<$Res>  {
   factory $BookDetailStateCopyWith(BookDetailState value, $Res Function(BookDetailState) _then) = _$BookDetailStateCopyWithImpl;
 @useResult
 $Res call({
- BookModel book
+ BookModel book, TrackedMediaModel? tracking
 });
 
 
-$BookModelCopyWith<$Res> get book;
+$BookModelCopyWith<$Res> get book;$TrackedMediaModelCopyWith<$Res>? get tracking;
 
 }
 /// @nodoc
@@ -62,10 +62,11 @@ class _$BookDetailStateCopyWithImpl<$Res>
 
 /// Create a copy of BookDetailState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? book = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? book = null,Object? tracking = freezed,}) {
   return _then(_self.copyWith(
 book: null == book ? _self.book : book // ignore: cast_nullable_to_non_nullable
-as BookModel,
+as BookModel,tracking: freezed == tracking ? _self.tracking : tracking // ignore: cast_nullable_to_non_nullable
+as TrackedMediaModel?,
   ));
 }
 /// Create a copy of BookDetailState
@@ -76,6 +77,18 @@ $BookModelCopyWith<$Res> get book {
   
   return $BookModelCopyWith<$Res>(_self.book, (value) {
     return _then(_self.copyWith(book: value));
+  });
+}/// Create a copy of BookDetailState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$TrackedMediaModelCopyWith<$Res>? get tracking {
+    if (_self.tracking == null) {
+    return null;
+  }
+
+  return $TrackedMediaModelCopyWith<$Res>(_self.tracking!, (value) {
+    return _then(_self.copyWith(tracking: value));
   });
 }
 }
@@ -159,10 +172,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( BookModel book)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( BookModel book,  TrackedMediaModel? tracking)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _BookDetailState() when $default != null:
-return $default(_that.book);case _:
+return $default(_that.book,_that.tracking);case _:
   return orElse();
 
 }
@@ -180,10 +193,10 @@ return $default(_that.book);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( BookModel book)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( BookModel book,  TrackedMediaModel? tracking)  $default,) {final _that = this;
 switch (_that) {
 case _BookDetailState():
-return $default(_that.book);case _:
+return $default(_that.book,_that.tracking);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -200,10 +213,10 @@ return $default(_that.book);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( BookModel book)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( BookModel book,  TrackedMediaModel? tracking)?  $default,) {final _that = this;
 switch (_that) {
 case _BookDetailState() when $default != null:
-return $default(_that.book);case _:
+return $default(_that.book,_that.tracking);case _:
   return null;
 
 }
@@ -215,10 +228,11 @@ return $default(_that.book);case _:
 
 
 class _BookDetailState implements BookDetailState {
-  const _BookDetailState({required this.book});
+  const _BookDetailState({required this.book, this.tracking});
   
 
 @override final  BookModel book;
+@override final  TrackedMediaModel? tracking;
 
 /// Create a copy of BookDetailState
 /// with the given fields replaced by the non-null parameter values.
@@ -230,16 +244,16 @@ _$BookDetailStateCopyWith<_BookDetailState> get copyWith => __$BookDetailStateCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BookDetailState&&(identical(other.book, book) || other.book == book));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BookDetailState&&(identical(other.book, book) || other.book == book)&&(identical(other.tracking, tracking) || other.tracking == tracking));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,book);
+int get hashCode => Object.hash(runtimeType,book,tracking);
 
 @override
 String toString() {
-  return 'BookDetailState(book: $book)';
+  return 'BookDetailState(book: $book, tracking: $tracking)';
 }
 
 
@@ -250,11 +264,11 @@ abstract mixin class _$BookDetailStateCopyWith<$Res> implements $BookDetailState
   factory _$BookDetailStateCopyWith(_BookDetailState value, $Res Function(_BookDetailState) _then) = __$BookDetailStateCopyWithImpl;
 @override @useResult
 $Res call({
- BookModel book
+ BookModel book, TrackedMediaModel? tracking
 });
 
 
-@override $BookModelCopyWith<$Res> get book;
+@override $BookModelCopyWith<$Res> get book;@override $TrackedMediaModelCopyWith<$Res>? get tracking;
 
 }
 /// @nodoc
@@ -267,10 +281,11 @@ class __$BookDetailStateCopyWithImpl<$Res>
 
 /// Create a copy of BookDetailState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? book = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? book = null,Object? tracking = freezed,}) {
   return _then(_BookDetailState(
 book: null == book ? _self.book : book // ignore: cast_nullable_to_non_nullable
-as BookModel,
+as BookModel,tracking: freezed == tracking ? _self.tracking : tracking // ignore: cast_nullable_to_non_nullable
+as TrackedMediaModel?,
   ));
 }
 
@@ -282,6 +297,18 @@ $BookModelCopyWith<$Res> get book {
   
   return $BookModelCopyWith<$Res>(_self.book, (value) {
     return _then(_self.copyWith(book: value));
+  });
+}/// Create a copy of BookDetailState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$TrackedMediaModelCopyWith<$Res>? get tracking {
+    if (_self.tracking == null) {
+    return null;
+  }
+
+  return $TrackedMediaModelCopyWith<$Res>(_self.tracking!, (value) {
+    return _then(_self.copyWith(tracking: value));
   });
 }
 }

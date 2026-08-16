@@ -859,6 +859,18 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	/// pt-BR: 'Publicação'
 	String get book_detail_published_date => 'Publicação';
+
+	/// pt-BR: 'Adicionar à Lista'
+	String get book_detail_add_to_list => 'Adicionar à Lista';
+
+	/// pt-BR: 'Gerenciar'
+	String get book_detail_manage_tracking => 'Gerenciar';
+
+	/// pt-BR: 'Remover da Lista'
+	String get book_detail_remove_from_list => 'Remover da Lista';
+
+	/// pt-BR: 'Remover "$title" da sua lista?'
+	String book_detail_remove_confirm({required Object title}) => 'Remover "${title}" da sua lista?';
 }
 
 /// The flat map containing all translations for locale <pt-BR>.
@@ -1141,6 +1153,10 @@ extension on Translations {
 			'book_detail_isbn' => 'ISBN',
 			'book_detail_publisher' => 'Editora',
 			'book_detail_published_date' => 'Publicação',
+			'book_detail_add_to_list' => 'Adicionar à Lista',
+			'book_detail_manage_tracking' => 'Gerenciar',
+			'book_detail_remove_from_list' => 'Remover da Lista',
+			'book_detail_remove_confirm' => ({required Object title}) => 'Remover "${title}" da sua lista?',
 			_ => null,
 		};
 	}

@@ -148,6 +148,40 @@ void main() {
       expect(tracking.status, 'WATCHING');
     });
 
+    test('getTrackingByMedia returns book tracking for the book media type',
+        () async {
+      final dio = Dio(BaseOptions(baseUrl: 'https://api.example.com'));
+      final adapter = MockAdapter(
+        onFetch: (options) {
+          expect(options.method, 'GET');
+          expect(options.path, '/tracking/book-1');
+          expect(options.queryParameters['mediaType'], 'BOOK');
+          return _json({
+            'trackingId': 'track-book-1',
+            'userId': 'user-1',
+            'mediaType': 'BOOK',
+            'mediaId': 'book-1',
+            'status': 'WANT_TO_READ',
+            'rating': 8,
+            'review': 'On the shelf',
+            'addedAt': '2024-01-01T00:00:00Z',
+            'lastUpdated': '2024-01-02T00:00:00Z',
+          });
+        },
+      );
+      dio.httpClientAdapter = adapter;
+      final repo = TrackingRepositoryImpl(dio);
+
+      final tracking = await repo.getTrackingByMedia('book-1', MediaType.book);
+
+      expect(tracking, isNotNull);
+      expect(tracking!.trackingId, 'track-book-1');
+      expect(tracking.mediaType, MediaType.book);
+      expect(tracking.status, 'WANT_TO_READ');
+      expect(tracking.rating, 8);
+      expect(tracking.review, 'On the shelf');
+    });
+
     test('getTrackingByMedia returns null on 404', () async {
       final dio = Dio(BaseOptions(baseUrl: 'https://api.example.com'));
       final adapter = MockAdapter(
@@ -294,6 +328,33 @@ void main() {
       expect(capturedData!['review'], isNull);
     });
 
+    test('startTracking() sends book mediaType and reading status', () async {
+      Map<String, dynamic>? capturedData;
+      final dio = Dio()
+        ..httpClientAdapter = MockAdapter(
+          onFetch: (options) {
+            capturedData = options.data as Map<String, dynamic>?;
+            return _json(_trackingJson('t-book', 'book'));
+          },
+        );
+      final repo = TrackingRepositoryImpl(dio);
+
+      await repo.startTracking(
+        'book-1',
+        MediaType.book,
+        'WANT_TO_READ',
+        rating: 7,
+        review: 'To read soon',
+      );
+
+      expect(capturedData, isNotNull);
+      expect(capturedData!['mediaId'], 'book-1');
+      expect(capturedData!['mediaType'], 'BOOK');
+      expect(capturedData!['status'], 'WANT_TO_READ');
+      expect(capturedData!['rating'], 7);
+      expect(capturedData!['review'], 'To read soon');
+    });
+
     test('startTracking() throws ServerException on DioException', () async {
       final dio = Dio()
         ..httpClientAdapter = MockAdapter(
@@ -385,6 +446,28 @@ void main() {
       expect(capturedData!['hoursPlayed'], 42.0);
     });
 
+    test('updateTracking() sends book mediaType and reading status', () async {
+      Map<String, dynamic>? capturedData;
+      final dio = Dio()
+        ..httpClientAdapter = MockAdapter(
+          onFetch: (options) {
+            capturedData = options.data as Map<String, dynamic>?;
+            return _json(_trackingJson('t-book-updated', 'book'));
+          },
+        );
+      final repo = TrackingRepositoryImpl(dio);
+
+      await repo.updateTracking(
+        'book-1',
+        mediaType: MediaType.book,
+        status: 'READING',
+      );
+
+      expect(capturedData, isNotNull);
+      expect(capturedData!['mediaType'], 'BOOK');
+      expect(capturedData!['status'], 'READING');
+    });
+
     test('updateTracking() throws ServerException on DioException', () async {
       final dio = Dio()
         ..httpClientAdapter = MockAdapter(
@@ -415,6 +498,22 @@ void main() {
       await repo.deleteTracking('series-1', mediaType: MediaType.series);
 
       expect(capturedParams!['mediaType'], 'SERIES');
+    });
+
+    test('deleteTracking() sends book mediaType as query parameter', () async {
+      Map<String, dynamic>? capturedParams;
+      final dio = Dio()
+        ..httpClientAdapter = MockAdapter(
+          onFetch: (options) {
+            capturedParams = options.queryParameters;
+            return ResponseBody.fromString('', 204);
+          },
+        );
+      final repo = TrackingRepositoryImpl(dio);
+
+      await repo.deleteTracking('book-1', mediaType: MediaType.book);
+
+      expect(capturedParams!['mediaType'], 'BOOK');
     });
 
     test('deleteTracking() throws ServerException on DioException', () async {
