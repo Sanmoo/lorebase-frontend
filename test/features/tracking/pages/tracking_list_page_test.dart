@@ -126,6 +126,15 @@ Widget _wrap(ProviderContainer container) {
                 ),
               ),
             ),
+            GoRoute(
+              path: '/books/:bookId',
+              builder: (context, _) => Scaffold(
+                body: TextButton(
+                  onPressed: () => context.pop(),
+                  child: const Text('Back from book'),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -438,6 +447,44 @@ Future<void> main() async {
       await tester.tap(find.text('Reading'));
       await tester.pumpAndSettle();
       expect(fakeVM.lastStatus, 'READING');
+    });
+
+    testWidgets('book tracking item renders and navigates to /books/:id', (
+      tester,
+    ) async {
+      const media = TrackedMediaSummaryModel(
+        mediaId: 'book-1',
+        title: 'Book 1',
+        mediaType: MediaType.book,
+      );
+      final trackings = [
+        TrackedMediaModel(
+          trackingId: 't1',
+          userId: 'user-1',
+          mediaType: MediaType.book,
+          mediaId: 'book-1',
+          status: 'READING',
+          media: media,
+          addedAt: now,
+          lastUpdated: now,
+        ),
+      ];
+      final fakeVM = FakeTrackingListVM(state: AsyncValue.data(trackings));
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      // Book data returned by the tracking interface renders on the grid.
+      expect(find.text('Book 1'), findsOneWidget);
+      expect(find.byIcon(Icons.menu_book), findsNothing);
+
+      await tester.tap(find.text('Book 1'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Back from book'), findsOneWidget);
     });
 
     testWidgets('game tracking item navigates to /games/:id', (tester) async {

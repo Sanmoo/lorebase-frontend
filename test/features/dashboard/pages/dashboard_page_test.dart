@@ -126,6 +126,10 @@ Widget _wrap(ProviderContainer container) {
               path: '/games/:gameId',
               builder: (_, _) => const Scaffold(body: Text('Game detail page')),
             ),
+            GoRoute(
+              path: '/books/:bookId',
+              builder: (_, _) => const Scaffold(body: Text('Book detail page')),
+            ),
           ],
         ),
       ),
@@ -227,6 +231,92 @@ Future<void> main() async {
       expect(find.text('Want to Read'), findsOneWidget);
       expect(find.textContaining('No books tracked'), findsOneWidget);
       expect(find.byIcon(Icons.menu_book), findsOneWidget);
+    });
+
+    testWidgets('book data shows reading sections and counts', (tester) async {
+      const media = TrackedMediaSummaryModel(
+        mediaId: 'book-1',
+        title: 'Book X',
+        mediaType: MediaType.book,
+        posterPath: 'http://example.com/cover.jpg',
+      );
+      const dashboard = DashboardModel(
+        watching: DashboardSectionModel(items: [media]),
+        wantToWatch: DashboardSectionModel(items: [media]),
+        completed: DashboardSectionModel(),
+        dropped: DashboardSectionModel(),
+        stats: DashboardStatsModel(
+          watchingCount: 2,
+          wantToWatchCount: 3,
+          completedCount: 0,
+          droppedCount: 0,
+        ),
+      );
+      final fakeVM = FakeDashboardVM(
+        testState: const AsyncValue.data(dashboard),
+      );
+      final container = ProviderContainer(
+        overrides: [
+          selectedMediaTypeProvider.overrideWith((ref) => MediaType.book),
+          dashboardViewModelProvider.overrideWith(() => fakeVM),
+          socialFeedViewModelProvider.overrideWith(
+            () => FakeSocialFeedVM(testState: AsyncValue.data(_feed())),
+          ),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      // Section headers and stats use the reading vocabulary.
+      expect(find.text('Reading'), findsAtLeast(1));
+      expect(find.text('Want to Read'), findsAtLeast(1));
+      expect(find.text('2'), findsOneWidget);
+      expect(find.text('3'), findsOneWidget);
+      expect(find.text('Book X'), findsNWidgets(2));
+      expect(find.textContaining('No books tracked'), findsNothing);
+    });
+
+    testWidgets('book section item navigates to /books/:id', (tester) async {
+      const media = TrackedMediaSummaryModel(
+        mediaId: 'book-1',
+        title: 'Book X',
+        mediaType: MediaType.book,
+      );
+      const dashboard = DashboardModel(
+        watching: DashboardSectionModel(items: [media]),
+        wantToWatch: DashboardSectionModel(),
+        completed: DashboardSectionModel(),
+        dropped: DashboardSectionModel(),
+        stats: DashboardStatsModel(watchingCount: 1),
+      );
+      final fakeVM = FakeDashboardVM(
+        testState: const AsyncValue.data(dashboard),
+      );
+      final container = ProviderContainer(
+        overrides: [
+          selectedMediaTypeProvider.overrideWith((ref) => MediaType.book),
+          dashboardViewModelProvider.overrideWith(() => fakeVM),
+          socialFeedViewModelProvider.overrideWith(
+            () => FakeSocialFeedVM(testState: AsyncValue.data(_feed())),
+          ),
+          authViewModelProvider.overrideWith(() => FakeAuthVM()),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.ensureVisible(find.text('Book X'));
+
+      await tester.tap(find.text('Book X'), warnIfMissed: false);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Book detail page'), findsOneWidget);
     });
 
     testWidgets('empty data shows EmptyStateWidget', (tester) async {

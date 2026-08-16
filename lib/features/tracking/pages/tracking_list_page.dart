@@ -213,6 +213,6 @@ String? _trackingDetailPath(MediaType mediaType, String id) {
     MediaType.series => '/series/$id',
     MediaType.movie => '/movies/$id',
     MediaType.game => '/games/$id',
-    MediaType.book => null,
+    MediaType.book => '/books/$id',
   };
 }

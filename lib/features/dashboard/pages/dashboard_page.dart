@@ -64,7 +64,7 @@ String? _dashboardDetailPath(MediaType mediaType, String mediaId) {
     MediaType.series => '/series/$mediaId',
     MediaType.movie => '/movies/$mediaId',
     MediaType.game => '/games/$mediaId',
-    MediaType.book => null,
+    MediaType.book => '/books/$mediaId',
   };
 }
 

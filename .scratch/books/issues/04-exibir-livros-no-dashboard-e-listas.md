@@ -4,7 +4,9 @@
 
 **Blocked by:** 01 — Generalizar tipos de mídia e status por contexto.
 
-**Status:** ready-for-agent
+**Status:** claimed
+
+**Claimed by:** agente em paralelo — worktree `.worktrees/feat-books-dashboard-lists`, branch `feat/books-dashboard-lists`.
 
 - [ ] O usuário pode selecionar e filtrar Livros nessas superfícies sem perder a funcionalidade dos demais tipos de mídia.
 - [ ] Cartões de Livro exibem dados disponíveis e levam ao destino apropriado.
