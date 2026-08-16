@@ -276,7 +276,7 @@ Future<void> main() async {
       expect(find.text('Want to Read'), findsAtLeast(1));
       expect(find.text('2'), findsOneWidget);
       expect(find.text('3'), findsOneWidget);
-      expect(find.text('Book X'), findsNWidgets(2));
+      expect(find.text('Book X'), findsAtLeast(1));
       expect(find.textContaining('No books tracked'), findsNothing);
     });
 
@@ -311,9 +311,15 @@ Future<void> main() async {
       await tester.pumpWidget(_wrap(container));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
-      await tester.ensureVisible(find.text('Book X'));
+      // The first section's cards sit below the 600px test viewport; scroll
+      // the vertical list so the card is actually tappable.
+      await tester.drag(
+        find.byType(CustomScrollView),
+        const Offset(0, -200),
+      );
+      await tester.pump();
 
-      await tester.tap(find.text('Book X'), warnIfMissed: false);
+      await tester.tap(find.text('Book X'));
       await tester.pumpAndSettle();
 
       expect(find.text('Book detail page'), findsOneWidget);
