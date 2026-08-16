@@ -102,21 +102,24 @@ void main() {
       );
     });
 
-    test('socialActivityTextFor composes the completed reading sentence', () async {
-      await LocaleSettings.setLocale(AppLocale.ptBr);
-      expect(
-        socialActivityTextFor(bookEvent(type: 'COMPLETED')),
-        'Fulano concluiu a leitura de Dom Casmurro',
-      );
-    });
+    test(
+      'socialActivityTextFor composes the completed reading sentence',
+      () async {
+        await LocaleSettings.setLocale(AppLocale.ptBr);
+        expect(
+          socialActivityTextFor(bookEvent(type: 'COMPLETED')),
+          'Fulano concluiu a leitura de Dom Casmurro',
+        );
+      },
+    );
   });
 
   group('socialActivityTextFor with book events', () {
     test('ADDED_TO_LIST with list name uses the list sentence', () async {
       await LocaleSettings.setLocale(AppLocale.ptBr);
-      final event = bookEvent(type: 'ADDED_TO_LIST').copyWith(
-        metadata: const {'listName': 'Favoritos'},
-      );
+      final event = bookEvent(
+        type: 'ADDED_TO_LIST',
+      ).copyWith(metadata: const {'listName': 'Favoritos'});
 
       expect(
         socialActivityTextFor(event),
@@ -126,9 +129,9 @@ void main() {
 
     test('ADDED_TO_LIST list sentence is localized in English', () async {
       await LocaleSettings.setLocale(AppLocale.en);
-      final event = bookEvent(type: 'ADDED_TO_LIST').copyWith(
-        metadata: const {'listName': 'Favorites'},
-      );
+      final event = bookEvent(
+        type: 'ADDED_TO_LIST',
+      ).copyWith(metadata: const {'listName': 'Favorites'});
 
       expect(
         socialActivityTextFor(event),

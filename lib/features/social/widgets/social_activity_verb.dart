@@ -6,9 +6,10 @@ String localizedSocialActivityVerb(String type, {String? mediaType}) {
   return switch (type.toUpperCase()) {
     'RATED' => t.social_activity_rated,
     'REVIEWED' => t.social_activity_reviewed,
-    'COMPLETED' => isBook
-        ? t.social_activity_completed_reading
-        : t.social_activity_completed,
+    'COMPLETED' =>
+      isBook
+          ? t.social_activity_completed_reading
+          : t.social_activity_completed,
     'STARTED_WATCHING' => t.social_activity_started_watching,
     'STARTED_PLAYING' => t.social_activity_started_playing,
     'STARTED_READING' => t.social_activity_started_reading,

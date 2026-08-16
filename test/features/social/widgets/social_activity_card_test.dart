@@ -147,9 +147,9 @@ void main() {
   testWidgets('ADDED_TO_LIST book renders list sentence', (tester) async {
     await pumpCard(
       tester,
-      bookEvent(type: 'ADDED_TO_LIST').copyWith(
-        metadata: const {'listName': 'Favoritos'},
-      ),
+      bookEvent(
+        type: 'ADDED_TO_LIST',
+      ).copyWith(metadata: const {'listName': 'Favoritos'}),
     );
 
     expect(find.text('adicionou'), findsOneWidget);

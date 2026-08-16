@@ -161,13 +161,12 @@ class _ActivityTab extends StatelessWidget {
           event: event,
           actorLabel: actorLabel,
           onUserTap: () => context.go('/social/profile/${event.user.userId}'),
-          onMediaTap: () => context.go(
-            switch (event.media.mediaType.toUpperCase()) {
-              'SERIES' => '/series/${event.media.mediaId}',
-              'BOOK' => '/books/${event.media.mediaId}',
-              _ => '/movies/${event.media.mediaId}',
-            },
-          ),
+          onMediaTap: () =>
+              context.go(switch (event.media.mediaType.toUpperCase()) {
+                'SERIES' => '/series/${event.media.mediaId}',
+                'BOOK' => '/books/${event.media.mediaId}',
+                _ => '/movies/${event.media.mediaId}',
+              }),
         );
       },
     );

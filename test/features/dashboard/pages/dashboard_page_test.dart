@@ -313,10 +313,7 @@ Future<void> main() async {
       await tester.pump(const Duration(milliseconds: 100));
       // The first section's cards sit below the 600px test viewport; scroll
       // the vertical list so the card is actually tappable.
-      await tester.drag(
-        find.byType(CustomScrollView),
-        const Offset(0, -200),
-      );
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -200));
       await tester.pump();
 
       await tester.tap(find.text('Book X'));
