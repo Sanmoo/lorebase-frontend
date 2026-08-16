@@ -6,9 +6,9 @@
 
 **Status:** resolved
 
-- [ ] BOOK é reconhecido de forma segura nos mapeamentos compartilhados de tipo de mídia, filtros, rótulos e serialização.
-- [ ] Para Livro, o app disponibiliza somente Quero ler, Lendo, Concluído e Abandonado; filmes, séries e jogos mantêm seus status atuais.
-- [ ] Os textos novos são localizados e os testes cobrem os mapeamentos de Livro e a compatibilidade dos tipos existentes.
+- [x] BOOK é reconhecido de forma segura nos mapeamentos compartilhados de tipo de mídia, filtros, rótulos e serialização.
+- [x] Para Livro, o app disponibiliza somente Quero ler, Lendo, Concluído e Abandonado; filmes, séries e jogos mantêm seus status atuais.
+- [x] Os textos novos são localizados e os testes cobrem os mapeamentos de Livro e a compatibilidade dos tipos existentes.
 
 ## Answer
 

@@ -8,10 +8,10 @@
 
 **Claimed by:** agente em paralelo — worktree `.worktrees/feat-books-dashboard-lists`, branch `feat/books-dashboard-lists` (removida após integração).
 
-- [ ] O usuário pode selecionar e filtrar Livros nessas superfícies sem perder a funcionalidade dos demais tipos de mídia.
-- [ ] Cartões de Livro exibem dados disponíveis e levam ao destino apropriado.
-- [ ] Para Livro, o Dashboard mostra Quero ler e Lendo em vez de rótulos de assistir, inclusive nos resumos e contagens.
-- [ ] Testes de página e widget validam o comportamento a partir de dados de Livro retornados pelas interfaces existentes.
+- [x] O usuário pode selecionar e filtrar Livros nessas superfícies sem perder a funcionalidade dos demais tipos de mídia.
+- [x] Cartões de Livro exibem dados disponíveis e levam ao destino apropriado.
+- [x] Para Livro, o Dashboard mostra Quero ler e Lendo em vez de rótulos de assistir, inclusive nos resumos e contagens.
+- [x] Testes de página e widget validam o comportamento a partir de dados de Livro retornados pelas interfaces existentes.
 
 ## Answer
 
