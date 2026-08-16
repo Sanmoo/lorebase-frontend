@@ -92,7 +92,10 @@ void main() {
     test('keeps generic verb for other media types and unknown case', () async {
       await LocaleSettings.setLocale(AppLocale.ptBr);
       expect(localizedSocialActivityVerb('COMPLETED'), 'completou');
-      expect(localizedSocialActivityVerb('COMPLETED', mediaType: 'SERIES'), 'completou');
+      expect(
+        localizedSocialActivityVerb('COMPLETED', mediaType: 'SERIES'),
+        'completou',
+      );
       expect(
         localizedSocialActivityVerb('COMPLETED', mediaType: 'book'),
         'concluiu a leitura de',
@@ -118,6 +121,18 @@ void main() {
       expect(
         socialActivityTextFor(event),
         'Fulano adicionou Dom Casmurro à lista Favoritos',
+      );
+    });
+
+    test('ADDED_TO_LIST list sentence is localized in English', () async {
+      await LocaleSettings.setLocale(AppLocale.en);
+      final event = bookEvent(type: 'ADDED_TO_LIST').copyWith(
+        metadata: const {'listName': 'Favorites'},
+      );
+
+      expect(
+        socialActivityTextFor(event),
+        'Fulano added Dom Casmurro to list Favorites',
       );
     });
 

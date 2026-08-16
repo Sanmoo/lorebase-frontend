@@ -249,6 +249,8 @@ class TranslationsEn extends Translations with BaseTranslations<AppLocale, Trans
 	@override String get social_activity_started_reading => 'started reading';
 	@override String get social_activity_dropped => 'dropped';
 	@override String get social_activity_added_to_list => 'added to list';
+	@override String get social_activity_added => 'added';
+	@override String get social_activity_to_list => 'to list';
 	@override String get social_activity_interacted_with => 'interacted with';
 	@override String get auth_error_email_password_required => 'Enter email and password';
 	@override String get auth_error_invalid_credentials => 'Incorrect email or password';
@@ -529,6 +531,8 @@ extension on TranslationsEn {
 			'social_activity_started_reading' => 'started reading',
 			'social_activity_dropped' => 'dropped',
 			'social_activity_added_to_list' => 'added to list',
+			'social_activity_added' => 'added',
+			'social_activity_to_list' => 'to list',
 			'social_activity_interacted_with' => 'interacted with',
 			'auth_error_email_password_required' => 'Enter email and password',
 			'auth_error_invalid_credentials' => 'Incorrect email or password',

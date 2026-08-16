@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../l10n/strings.g.dart';
 import '../data/models/activity_event_model.dart';
 import 'social_activity_verb.dart';
 
@@ -45,7 +46,7 @@ class SocialActivityCard extends StatelessWidget {
                 ),
                 Text(
                   showsNamedList
-                      ? 'adicionou'
+                      ? t.social_activity_added
                       : localizedSocialActivityVerb(
                           event.activityType,
                           mediaType: event.media.mediaType,
@@ -58,7 +59,8 @@ class SocialActivityCard extends StatelessWidget {
                     style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
                 ),
-                if (showsNamedList) Text('à lista $listName'),
+                if (showsNamedList)
+                  Text('${t.social_activity_to_list} $listName'),
               ],
             ),
             if (rating != null) ...[

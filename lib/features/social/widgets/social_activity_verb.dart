@@ -30,7 +30,7 @@ String? socialActivityListNameFor(ActivityEventModel event) {
 String socialActivityTextFor(ActivityEventModel event) {
   final listName = socialActivityListNameFor(event);
   if (event.activityType.toUpperCase() == 'ADDED_TO_LIST' && listName != null) {
-    return '${event.user.displayName} adicionou ${event.media.title} à lista $listName';
+    return '${event.user.displayName} ${t.social_activity_added} ${event.media.title} ${t.social_activity_to_list} $listName';
   }
 
   return '${event.user.displayName} ${localizedSocialActivityVerb(event.activityType, mediaType: event.media.mediaType)} ${event.media.title}';

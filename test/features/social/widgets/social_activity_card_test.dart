@@ -176,6 +176,22 @@ void main() {
     expect(find.text('One Piece'), findsOneWidget);
   });
 
+  testWidgets('book RATED/REVIEWED/DROPPED render their verbs', (tester) async {
+    for (final entry in {
+      'RATED': 'avaliou',
+      'REVIEWED': 'escreveu uma review de',
+      'DROPPED': 'abandonou',
+    }.entries) {
+      await pumpCard(
+        tester,
+        bookEvent(type: entry.key).copyWith(metadata: const {'rating': 8}),
+      );
+
+      expect(find.textContaining(entry.value), findsOneWidget);
+      expect(find.text('Dom Casmurro'), findsOneWidget);
+    }
+  });
+
   testWidgets('does not render empty review text', (tester) async {
     await pumpCard(tester, event(metadata: const {'review': ''}));
 

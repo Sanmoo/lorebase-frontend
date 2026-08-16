@@ -746,6 +746,24 @@ void main() {
     expect(router.routeInformationProvider.value.uri.path, '/series/123');
   });
 
+  testWidgets('Feed book activity cards navigate to book detail', (
+    tester,
+  ) async {
+    final router = _router(
+      const SocialPage(),
+      _FakeSocialRepository(
+        feedItems: [_event(mediaType: 'BOOK', title: 'Livro Teste')],
+      ),
+    );
+    await tester.pumpRouter(router);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Livro Teste'));
+    await tester.pumpAndSettle();
+
+    expect(router.routeInformationProvider.value.uri.path, '/books/123');
+  });
+
   testWidgets('Discover cards navigate to user', (tester) async {
     final router = _router(
       const SocialPage(),
@@ -1033,6 +1051,11 @@ GoRouter _router(
             path: '/movies/:tmdbId',
             builder: (context, state) =>
                 Text('movie ${state.pathParameters['tmdbId']}'),
+          ),
+          GoRoute(
+            path: '/books/:bookId',
+            builder: (context, state) =>
+                Text('book ${state.pathParameters['bookId']}'),
           ),
         ],
       ),

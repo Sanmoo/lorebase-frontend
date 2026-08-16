@@ -142,9 +142,11 @@ class _FeedTab extends ConsumerWidget {
               onUserTap: () =>
                   context.go('/social/profile/${event.user.userId}'),
               onMediaTap: () => context.go(
-                event.media.mediaType == 'SERIES'
-                    ? '/series/${event.media.mediaId}'
-                    : '/movies/${event.media.mediaId}',
+                switch (event.media.mediaType.toUpperCase()) {
+                  'SERIES' => '/series/${event.media.mediaId}',
+                  'BOOK' => '/books/${event.media.mediaId}',
+                  _ => '/movies/${event.media.mediaId}',
+                },
               ),
             );
           },

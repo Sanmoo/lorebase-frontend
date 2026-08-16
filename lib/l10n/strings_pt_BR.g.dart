@@ -665,6 +665,12 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// pt-BR: 'adicionou à lista'
 	String get social_activity_added_to_list => 'adicionou à lista';
 
+	/// pt-BR: 'adicionou'
+	String get social_activity_added => 'adicionou';
+
+	/// pt-BR: 'à lista'
+	String get social_activity_to_list => 'à lista';
+
 	/// pt-BR: 'interagiu com'
 	String get social_activity_interacted_with => 'interagiu com';
 
@@ -1070,6 +1076,8 @@ extension on Translations {
 			'social_activity_started_reading' => 'começou a ler',
 			'social_activity_dropped' => 'abandonou',
 			'social_activity_added_to_list' => 'adicionou à lista',
+			'social_activity_added' => 'adicionou',
+			'social_activity_to_list' => 'à lista',
 			'social_activity_interacted_with' => 'interagiu com',
 			'auth_error_email_password_required' => 'Preencha e-mail e senha',
 			'auth_error_invalid_credentials' => 'E-mail ou senha incorretos',
