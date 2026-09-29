@@ -25,7 +25,8 @@ Todo fluxo de desenvolvimento começa pela criação de uma worktree isolada e d
 
    Inclua no PR o resumo, a issue relacionada (quando houver), as validações e os links das evidências. Se o trabalho estiver incompleto ou bloqueado, use um PR draft e registre as pendências.
 4. Entregue o link do PR e aguarde revisão. Todo novo desenvolvimento, inclusive documentação e configuração, deve passar por PR. Nunca faça commit, push ou merge de alterações da tarefa diretamente na `main`, nem mesmo com `--ff-only`. Não faça merge do PR automaticamente; aguarde autorização explícita.
-5. Enquanto o PR estiver aberto, preserve a branch e a worktree para ajustes e informe seus nomes no relato. Após o merge do PR, confirme a integração e a ausência de alterações locais antes de remover somente os recursos da tarefa. Se a remoção segura falhar, preserve-os e reporte o bloqueio; não force a exclusão.
+5. Aguarde o usuário avisar que o PR foi mergeado; até esse aviso, preserve a branch e a worktree para ajustes e informe seus nomes no relato.
+6. Após o aviso, confirme no GitHub que o PR está mergeado. Na worktree principal, verifique que a `main` está selecionada e atualize-a com `git pull --ff-only origin main`, preservando alterações locais. Confirme a integração e que a worktree da tarefa está limpa; então, de fora dela, remova-a com `git worktree remove <caminho>` e exclua a branch local com `git branch -d <branch>` e a remota com `git push origin --delete <branch>` (se ainda existir). Remova somente os recursos da tarefa. Se a atualização ou limpeza segura falhar, preserve os recursos restantes e reporte o bloqueio; não use reset ou exclusão forçada. Relate o commit da `main` atualizada e o resultado da limpeza.
 
 A entrega do desenvolvimento termina com o PR aberto e as validações relatadas; a integração ocorre exclusivamente pelo PR. Abrir um PR não equivale a concluir a issue nem dispensa suas evidências obrigatórias.
 
