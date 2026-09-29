@@ -115,7 +115,8 @@ por fixture no projeto `app`. Cenários `@tracking` auto-limpam via
 
 ### Issue tracker
 
-Issues live as local markdown files under `.scratch/<feature>/`. See `docs/agents/issue-tracker.md`.
+Issues and specs live in GitHub Issues for `Sanmoo/lorebase-frontend`.
+Use the `gh` CLI. See `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 
