@@ -86,7 +86,7 @@ class BookDetailViewModel extends _$BookDetailViewModel {
   Future<void> _invalidateCaches() async {
     final cacheService = ref.read(cacheServiceProvider);
     await cacheService.remove('dashboard:v2:BOOK');
-    await cacheService.removeByPrefix('tracking:v2:');
+    await cacheService.removeByPrefix('tracking:');
     ref.invalidate(dashboardViewModelProvider);
   }
 }

@@ -5,9 +5,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lorebase/core/cache/cache_entry.dart';
 import 'package:lorebase/core/cache/cache_service.dart';
 import 'package:lorebase/core/cache/cache_providers.dart';
+import 'package:lorebase/features/tracking/viewmodels/tracking_list_state.dart';
 import 'package:lorebase/features/tracking/viewmodels/tracking_list_viewmodel.dart';
 import 'package:lorebase/features/tracking/data/repositories/tracking_repository.dart';
 import 'package:lorebase/features/tracking/data/models/tracked_media_model.dart';
+import 'package:lorebase/features/tracking/data/models/tracking_page_model.dart';
 import 'package:lorebase/features/tracking/data/models/media_type.dart';
 
 final now = DateTime.now();
@@ -26,25 +28,56 @@ TrackedMediaModel _makeTracking(
   lastUpdated: now,
 );
 
+TrackingPage _page(
+  List<TrackedMediaModel> items, {
+  String? nextCursor,
+  int? totalCount,
+}) => TrackingPage(
+  items: items,
+  nextCursor: nextCursor,
+  totalCount: totalCount,
+);
+
+CacheEntry _cachedPage(
+  TrackingPage page, {
+  Duration ttl = const Duration(hours: 6),
+  DateTime? cachedAt,
+}) => CacheEntry(
+  json: jsonEncode(page.toJson()),
+  cachedAt: cachedAt ?? DateTime.now(),
+  ttl: ttl,
+);
+
+String _key(String mediaType, String status) =>
+    'tracking:v4:$mediaType:$status';
+
 class FakeTrackingRepo implements TrackingRepository {
   List<TrackedMediaModel>? results;
+  String? nextCursor;
+  int? totalCount;
   bool shouldThrow = false;
   MediaType? lastMediaType;
   int getTrackingCallCount = 0;
+  final requestedCursors = <String?>[];
   Completer<void>? delay;
 
   @override
-  Future<List<TrackedMediaModel>> getTracking({
+  Future<TrackingPage> getTracking({
     String? status,
     MediaType? mediaType,
-    int page = 1,
+    String? cursor,
     int pageSize = 20,
   }) async {
     getTrackingCallCount++;
     lastMediaType = mediaType;
+    requestedCursors.add(cursor);
     await delay?.future;
     if (shouldThrow) throw Exception('Failed');
-    return results ?? [];
+    return _page(
+      results ?? [],
+      nextCursor: nextCursor,
+      totalCount: totalCount,
+    );
   }
 
   @override
@@ -89,10 +122,10 @@ class QueuedTrackingRepo extends FakeTrackingRepo {
   final calls = <TrackingRequest>[];
 
   @override
-  Future<List<TrackedMediaModel>> getTracking({
+  Future<TrackingPage> getTracking({
     String? status,
     MediaType? mediaType,
-    int page = 1,
+    String? cursor,
     int pageSize = 20,
   }) {
     getTrackingCallCount++;
@@ -100,8 +133,8 @@ class QueuedTrackingRepo extends FakeTrackingRepo {
     final request = TrackingRequest(
       status: status,
       mediaType: mediaType,
-      page: page,
-      completer: Completer<List<TrackedMediaModel>>(),
+      cursor: cursor,
+      completer: Completer<TrackingPage>(),
     );
     calls.add(request);
     return request.completer.future;
@@ -112,14 +145,14 @@ class TrackingRequest {
   TrackingRequest({
     required this.status,
     required this.mediaType,
-    required this.page,
+    required this.cursor,
     required this.completer,
   });
 
   final String? status;
   final MediaType? mediaType;
-  final int page;
-  final Completer<List<TrackedMediaModel>> completer;
+  final String? cursor;
+  final Completer<TrackingPage> completer;
 }
 
 class DelayedSetCacheService extends CacheService {
@@ -135,6 +168,22 @@ class DelayedSetCacheService extends CacheService {
       await allowSet.future;
     }
     await super.set(key, entry);
+  }
+}
+
+/// Simula um cache apenas de disco: nada em memória, tudo em `disk`.
+class DiskOnlyCacheService extends CacheService {
+  final disk = <String, CacheEntry>{};
+
+  @override
+  CacheEntry? getSync(String key) => null;
+
+  @override
+  CacheEntry? getFromDiskSync(String key) => disk[key];
+
+  @override
+  Future<void> set(String key, CacheEntry entry) async {
+    disk[key] = entry;
   }
 }
 
@@ -158,7 +207,9 @@ void main() {
 
       final state = container.read(trackingListViewModelProvider);
       expect(state.hasValue, true);
-      expect(state.value, isEmpty);
+      expect(state.value, const TrackingListState());
+      expect(state.value!.items, isEmpty);
+      expect(state.value!.hasMore, false);
     });
 
     test('loadTracking() fetches with status filter', () async {
@@ -176,7 +227,48 @@ void main() {
 
       final state = container.read(trackingListViewModelProvider);
       expect(state.hasValue, true);
-      expect(state.value!.length, 2);
+      expect(state.value!.items.length, 2);
+    });
+
+    test('loadTracking() exposes the continuation token as hasMore', () async {
+      final repo = FakeTrackingRepo()
+        ..results = [_makeTracking('t-1', 'COMPLETED')]
+        ..nextCursor = 'cursor-page-2'
+        ..totalCount = 42;
+      final container = createContainer(repo);
+      addTearDown(container.dispose);
+
+      await container
+          .read(trackingListViewModelProvider.notifier)
+          .loadTracking(status: 'COMPLETED');
+
+      final state = container.read(trackingListViewModelProvider);
+      expect(state.value!.page.nextCursor, 'cursor-page-2');
+      expect(state.value!.page.totalCount, 42);
+      expect(state.value!.hasMore, true);
+      expect(repo.requestedCursors, [null]);
+    });
+
+    test('hasMore follows the token, never the item count', () async {
+      final repo = FakeTrackingRepo()
+        ..results = [
+          _makeTracking('t-1', 'COMPLETED'),
+          _makeTracking('t-2', 'COMPLETED'),
+          _makeTracking('t-3', 'COMPLETED'),
+        ]
+        ..nextCursor = 'cursor-page-2'
+        ..totalCount = 1;
+      final container = createContainer(repo);
+      addTearDown(container.dispose);
+
+      await container
+          .read(trackingListViewModelProvider.notifier)
+          .loadTracking(status: 'COMPLETED');
+
+      expect(
+        container.read(trackingListViewModelProvider).value!.hasMore,
+        true,
+      );
     });
 
     test('loadTracking() sets error on failure', () async {
@@ -228,25 +320,25 @@ void main() {
           'WATCHING',
           mediaType: MediaType.movie,
         );
-        repo.calls[1].completer.complete([movieItem]);
+        repo.calls[1].completer.complete(_page([movieItem]));
         await movieFuture;
 
-        expect(container.read(trackingListViewModelProvider).value, [
+        expect(container.read(trackingListViewModelProvider).value!.items, [
           movieItem,
         ]);
 
         final seriesItem = _makeTracking('series-1', 'WATCHING');
-        repo.calls[0].completer.complete([seriesItem]);
+        repo.calls[0].completer.complete(_page([seriesItem]));
         await seriesFuture;
 
         final state = container.read(trackingListViewModelProvider);
-        expect(state.value, [movieItem]);
+        expect(state.value!.items, [movieItem]);
         expect(
-          cache.getSync('tracking:v2:${MediaType.movie.apiValue}:WATCHING:1'),
+          cache.getSync(_key(MediaType.movie.apiValue, 'WATCHING')),
           isNotNull,
         );
         expect(
-          cache.getSync('tracking:v2:${MediaType.series.apiValue}:WATCHING:1'),
+          cache.getSync(_key(MediaType.series.apiValue, 'WATCHING')),
           isNull,
         );
       },
@@ -263,12 +355,8 @@ void main() {
           mediaType: MediaType.movie,
         );
         await cache.seed(
-          'tracking:v2:${MediaType.movie.apiValue}:WATCHING:1',
-          CacheEntry(
-            json: jsonEncode([movieItem.toJson()]),
-            cachedAt: DateTime.now(),
-            ttl: const Duration(hours: 6),
-          ),
+          _key(MediaType.movie.apiValue, 'WATCHING'),
+          _cachedPage(_page([movieItem])),
         );
         final container = createContainer(repo, cache: cache);
         addTearDown(container.dispose);
@@ -287,7 +375,7 @@ void main() {
         await Future<void>.delayed(Duration.zero);
 
         final seriesItem = _makeTracking('series-1', 'WATCHING');
-        repo.calls.single.completer.complete([seriesItem]);
+        repo.calls.single.completer.complete(_page([seriesItem]));
         await cache.setStarted.future;
 
         await notifier.loadTracking(
@@ -297,7 +385,7 @@ void main() {
         cache.allowSet.complete();
         await seriesFuture;
 
-        expect(container.read(trackingListViewModelProvider).value, [
+        expect(container.read(trackingListViewModelProvider).value!.items, [
           movieItem,
         ]);
       },
@@ -314,11 +402,9 @@ void main() {
           mediaType: MediaType.movie,
         );
         await cache.set(
-          'tracking:v2:${MediaType.movie.apiValue}:WATCHING:1',
-          CacheEntry(
-            json: jsonEncode([moviePage1.toJson()]),
-            cachedAt: DateTime.now(),
-            ttl: const Duration(hours: 6),
+          _key(MediaType.movie.apiValue, 'WATCHING'),
+          _cachedPage(
+            _page([moviePage1], nextCursor: 'movie-cursor-2', totalCount: 2),
           ),
         );
         final container = createContainer(repo, cache: cache);
@@ -344,12 +430,12 @@ void main() {
 
         expect(repo.calls, hasLength(1));
         expect(repo.calls.single.mediaType, MediaType.series);
-        expect(container.read(trackingListViewModelProvider).value, [
+        expect(container.read(trackingListViewModelProvider).value!.items, [
           moviePage1,
         ]);
 
         final seriesItem = _makeTracking('series-1', 'WATCHING');
-        repo.calls.single.completer.complete([seriesItem]);
+        repo.calls.single.completer.complete(_page([seriesItem]));
         await seriesFuture;
 
         final moviePage2 = _makeTracking(
@@ -362,35 +448,191 @@ void main() {
 
         expect(repo.calls, hasLength(2));
         expect(repo.calls.last.mediaType, MediaType.movie);
-        expect(repo.calls.last.page, 2);
+        expect(repo.calls.last.cursor, 'movie-cursor-2');
 
-        repo.calls.last.completer.complete([moviePage2]);
+        repo.calls.last.completer.complete(_page([moviePage2]));
         await loadMoreFuture;
 
-        expect(container.read(trackingListViewModelProvider).value, [
+        expect(container.read(trackingListViewModelProvider).value!.items, [
           moviePage1,
           moviePage2,
         ]);
       },
     );
 
-    test('loadMore() appends to existing list', () async {
-      final firstPage = [_makeTracking('t-1', 'WATCHING')];
-      final repo = FakeTrackingRepo()..results = firstPage;
+    test('loadMore() requests the stored token and appends', () async {
+      final repo = FakeTrackingRepo()
+        ..results = [_makeTracking('t-1', 'COMPLETED')]
+        ..nextCursor = 'cursor-page-2'
+        ..totalCount = 3;
       final container = createContainer(repo);
       addTearDown(container.dispose);
 
-      await container
-          .read(trackingListViewModelProvider.notifier)
-          .loadTracking(status: 'WATCHING');
-      expect(container.read(trackingListViewModelProvider).value!.length, 1);
+      final notifier = container.read(trackingListViewModelProvider.notifier);
+      await notifier.loadTracking(status: 'COMPLETED');
+      expect(
+        container.read(trackingListViewModelProvider).value!.hasMore,
+        true,
+      );
 
-      // Set page 2 results
-      repo.results = [_makeTracking('t-2', 'WATCHING')];
-      await container.read(trackingListViewModelProvider.notifier).loadMore();
+      repo.results = [_makeTracking('t-2', 'COMPLETED')];
+      repo.nextCursor = null;
+      await notifier.loadMore();
 
-      expect(container.read(trackingListViewModelProvider).value!.length, 2);
+      final state = container.read(trackingListViewModelProvider);
+      expect(repo.requestedCursors, [null, 'cursor-page-2']);
+      expect(state.value!.items.length, 2);
+      expect(state.value!.hasMore, false);
     });
+
+    test('loadMore() dedupes items already loaded', () async {
+      final repo = FakeTrackingRepo()
+        ..results = [
+          _makeTracking('t-1', 'COMPLETED'),
+          _makeTracking('t-2', 'COMPLETED'),
+        ]
+        ..nextCursor = 'cursor-page-2'
+        ..totalCount = 3;
+      final container = createContainer(repo);
+      addTearDown(container.dispose);
+
+      final notifier = container.read(trackingListViewModelProvider.notifier);
+      await notifier.loadTracking(status: 'COMPLETED');
+
+      repo.results = [
+        _makeTracking('t-2', 'COMPLETED'),
+        _makeTracking('t-3', 'COMPLETED'),
+      ];
+      repo.nextCursor = null;
+      await notifier.loadMore();
+
+      final state = container.read(trackingListViewModelProvider);
+      expect(state.value!.items.map((e) => e.trackingId), ['t-1', 't-2', 't-3']);
+      expect(state.value!.hasMore, false);
+    });
+
+    test('loadMore() keeps the first-page totalCount when omitted', () async {
+      final repo = FakeTrackingRepo()
+        ..results = [_makeTracking('t-1', 'COMPLETED')]
+        ..nextCursor = 'cursor-page-2'
+        ..totalCount = 42;
+      final container = createContainer(repo);
+      addTearDown(container.dispose);
+
+      final notifier = container.read(trackingListViewModelProvider.notifier);
+      await notifier.loadTracking(status: 'COMPLETED');
+
+      repo.results = [_makeTracking('t-2', 'COMPLETED')];
+      repo.nextCursor = null;
+      repo.totalCount = null;
+      await notifier.loadMore();
+
+      final state = container.read(trackingListViewModelProvider);
+      expect(state.value!.page.totalCount, 42);
+      expect(state.value!.items.length, 2);
+    });
+
+    test('loadMore() does not request once the token is gone', () async {
+      final repo = FakeTrackingRepo()
+        ..results = [_makeTracking('t-1', 'COMPLETED')]
+        ..nextCursor = null;
+      final container = createContainer(repo);
+      addTearDown(container.dispose);
+
+      final notifier = container.read(trackingListViewModelProvider.notifier);
+      await notifier.loadTracking(status: 'COMPLETED');
+      await notifier.loadMore();
+
+      expect(repo.requestedCursors, [null]);
+    });
+
+    test(
+      'loadMore() failure keeps items, reports the error and retries the same token',
+      () async {
+        final repo = FakeTrackingRepo()
+          ..results = [_makeTracking('t-1', 'COMPLETED')]
+          ..nextCursor = 'cursor-page-2'
+          ..totalCount = 2;
+        final container = createContainer(repo);
+        addTearDown(container.dispose);
+
+        final notifier = container.read(trackingListViewModelProvider.notifier);
+        await notifier.loadTracking(status: 'COMPLETED');
+
+        repo.shouldThrow = true;
+        await notifier.loadMore();
+
+        var state = container.read(trackingListViewModelProvider);
+        expect(state.value!.items.map((e) => e.trackingId), ['t-1']);
+        expect(state.value!.isLoadingMore, false);
+        expect(state.value!.loadMoreError, isNotNull);
+        expect(state.value!.page.nextCursor, 'cursor-page-2');
+        expect(repo.requestedCursors, [null, 'cursor-page-2']);
+
+        repo.shouldThrow = false;
+        repo.results = [_makeTracking('t-2', 'COMPLETED')];
+        repo.nextCursor = null;
+        await notifier.loadMore();
+
+        state = container.read(trackingListViewModelProvider);
+        expect(repo.requestedCursors, [null, 'cursor-page-2', 'cursor-page-2']);
+        expect(state.value!.items.map((e) => e.trackingId), ['t-1', 't-2']);
+        expect(state.value!.loadMoreError, isNull);
+        expect(state.value!.hasMore, false);
+      },
+    );
+
+    test('loadTracking() resets the token when the status changes', () async {
+      final repo = FakeTrackingRepo()
+        ..results = [_makeTracking('t-1', 'WATCHING')]
+        ..nextCursor = 'cursor-page-2';
+      final container = createContainer(repo);
+      addTearDown(container.dispose);
+
+      final notifier = container.read(trackingListViewModelProvider.notifier);
+      await notifier.loadTracking(status: 'WATCHING');
+      repo.results = [_makeTracking('t-2', 'WATCHING')];
+      repo.nextCursor = 'cursor-page-3';
+      await notifier.loadMore();
+
+      repo.results = [_makeTracking('t-3', 'COMPLETED')];
+      repo.nextCursor = null;
+      await notifier.loadTracking(status: 'COMPLETED');
+
+      final state = container.read(trackingListViewModelProvider);
+      expect(repo.requestedCursors, [null, 'cursor-page-2', null]);
+      expect(state.value!.items.map((e) => e.trackingId), ['t-3']);
+      expect(state.value!.hasMore, false);
+    });
+
+    test(
+      'loadTracking() resets the token when the media type changes',
+      () async {
+        final repo = FakeTrackingRepo()
+          ..results = [_makeTracking('t-1', 'WATCHING')]
+          ..nextCursor = 'cursor-page-2';
+        final container = createContainer(repo);
+        addTearDown(container.dispose);
+
+        final notifier = container.read(trackingListViewModelProvider.notifier);
+        await notifier.loadTracking(status: 'WATCHING');
+        repo.results = [_makeTracking('t-2', 'WATCHING')];
+        await notifier.loadMore();
+
+        repo.results = [
+          _makeTracking('m-1', 'WATCHING', mediaType: MediaType.movie),
+        ];
+        repo.nextCursor = null;
+        await notifier.loadTracking(
+          status: 'WATCHING',
+          mediaType: MediaType.movie,
+        );
+
+        final state = container.read(trackingListViewModelProvider);
+        expect(repo.requestedCursors, [null, 'cursor-page-2', null]);
+        expect(state.value!.items.map((e) => e.trackingId), ['m-1']);
+      },
+    );
 
     test('refresh() reuses current status filter', () async {
       final items = [_makeTracking('t-1', 'COMPLETED')];
@@ -401,7 +643,10 @@ void main() {
 
       final notifier = container.read(trackingListViewModelProvider.notifier);
       await notifier.loadTracking(status: 'COMPLETED');
-      expect(container.read(trackingListViewModelProvider).value!.length, 1);
+      expect(
+        container.read(trackingListViewModelProvider).value!.items.length,
+        1,
+      );
 
       // Clear cache so refresh re-fetches from network
       await cache.clearAll();
@@ -411,7 +656,37 @@ void main() {
         _makeTracking('t-2', 'COMPLETED'),
       ];
       await notifier.refresh();
-      expect(container.read(trackingListViewModelProvider).value!.length, 2);
+      expect(
+        container.read(trackingListViewModelProvider).value!.items.length,
+        2,
+      );
+    });
+
+    test('refresh() reloads the first page and recalculates hasMore', () async {
+      final repo = FakeTrackingRepo()
+        ..results = [_makeTracking('t-1', 'COMPLETED')]
+        ..nextCursor = 'cursor-page-2';
+      final container = createContainer(repo);
+      addTearDown(container.dispose);
+
+      final notifier = container.read(trackingListViewModelProvider.notifier);
+      await notifier.loadTracking(status: 'COMPLETED');
+      repo.results = [_makeTracking('t-2', 'COMPLETED')];
+      repo.nextCursor = 'cursor-page-3';
+      await notifier.loadMore();
+      expect(container.read(trackingListViewModelProvider).value!.items.length, 2);
+
+      repo.results = [
+        _makeTracking('t-1', 'COMPLETED'),
+        _makeTracking('t-4', 'COMPLETED'),
+      ];
+      repo.nextCursor = null;
+      await notifier.refresh();
+
+      final state = container.read(trackingListViewModelProvider);
+      expect(repo.requestedCursors, [null, 'cursor-page-2', null]);
+      expect(state.value!.items.map((e) => e.trackingId), ['t-1', 't-4']);
+      expect(state.value!.hasMore, false);
     });
 
     test('loadTracking() defaults to series media type', () async {
@@ -431,11 +706,9 @@ void main() {
       final cache = CacheService();
       final items = [_makeTracking('t-1', 'WATCHING')];
       await cache.set(
-        'tracking:v2:${MediaType.series.apiValue}:WATCHING:1',
-        CacheEntry(
-          json: jsonEncode(items.map((e) => e.toJson()).toList()),
-          cachedAt: DateTime.now(),
-          ttl: const Duration(hours: 6),
+        _key(MediaType.series.apiValue, 'WATCHING'),
+        _cachedPage(
+          _page(items, nextCursor: 'cursor-page-2', totalCount: 25),
         ),
       );
 
@@ -449,7 +722,81 @@ void main() {
 
       final state = container.read(trackingListViewModelProvider);
       expect(state.hasValue, true);
-      expect(state.value!.length, 1);
+      expect(state.value!.items.length, 1);
+      expect(state.value!.page.nextCursor, 'cursor-page-2');
+      expect(state.value!.hasMore, true);
+      expect(repo.getTrackingCallCount, 0);
+    });
+
+    test(
+      'loadTracking() restores the continuation token from a warm disk cache',
+      () async {
+        final page1 = _makeTracking('t-1', 'COMPLETED');
+        final cache = DiskOnlyCacheService()
+          ..disk[_key(MediaType.series.apiValue, 'COMPLETED')] = _cachedPage(
+            _page([page1], nextCursor: 'cursor-page-2', totalCount: 25),
+          );
+        final repo = FakeTrackingRepo();
+        final container = createContainer(repo, cache: cache);
+        addTearDown(container.dispose);
+
+        final notifier = container.read(trackingListViewModelProvider.notifier);
+        await notifier.loadTracking(status: 'COMPLETED');
+
+        var state = container.read(trackingListViewModelProvider);
+        expect(repo.getTrackingCallCount, 0);
+        expect(state.value!.hasMore, true);
+
+        repo.results = [_makeTracking('t-2', 'COMPLETED')];
+        repo.nextCursor = null;
+        await notifier.loadMore();
+
+        state = container.read(trackingListViewModelProvider);
+        expect(repo.requestedCursors, ['cursor-page-2']);
+        expect(state.value!.items.map((e) => e.trackingId), ['t-1', 't-2']);
+        expect(state.value!.hasMore, false);
+      },
+    );
+
+    test('cache keeps the continuation token for a warm restore', () async {
+      final repo = FakeTrackingRepo()
+        ..results = [_makeTracking('t-1', 'COMPLETED')]
+        ..nextCursor = 'cursor-page-2'
+        ..totalCount = 25;
+      final cache = CacheService();
+      final container = createContainer(repo, cache: cache);
+      addTearDown(container.dispose);
+
+      await container
+          .read(trackingListViewModelProvider.notifier)
+          .loadTracking(status: 'COMPLETED');
+
+      final persisted = cache.getSync(
+        _key(MediaType.series.apiValue, 'COMPLETED'),
+      );
+      expect(persisted, isNotNull);
+
+      final warmCache = DiskOnlyCacheService();
+      warmCache.disk[_key(MediaType.series.apiValue, 'COMPLETED')] = persisted!;
+      final warmRepo = FakeTrackingRepo()
+        ..results = [_makeTracking('t-2', 'COMPLETED')]
+        ..nextCursor = null;
+      final warmContainer = createContainer(warmRepo, cache: warmCache);
+      addTearDown(warmContainer.dispose);
+
+      final notifier = warmContainer.read(trackingListViewModelProvider.notifier);
+      await notifier.loadTracking(status: 'COMPLETED');
+
+      var state = warmContainer.read(trackingListViewModelProvider);
+      expect(warmRepo.getTrackingCallCount, 0);
+      expect(state.value!.items.map((e) => e.trackingId), ['t-1']);
+      expect(state.value!.hasMore, true);
+
+      await notifier.loadMore();
+
+      state = warmContainer.read(trackingListViewModelProvider);
+      expect(warmRepo.requestedCursors, ['cursor-page-2']);
+      expect(state.value!.items.length, 2);
     });
 
     test(
@@ -458,11 +805,10 @@ void main() {
         final cache = CacheService();
         final items = [_makeTracking('t-1', 'WATCHING')];
         await cache.set(
-          'tracking:v2:${MediaType.series.apiValue}:WATCHING:1',
-          CacheEntry(
-            json: jsonEncode(items.map((e) => e.toJson()).toList()),
+          _key(MediaType.series.apiValue, 'WATCHING'),
+          _cachedPage(
+            _page(items, nextCursor: 'cursor-page-2'),
             cachedAt: DateTime.now().subtract(const Duration(days: 1)),
-            ttl: const Duration(hours: 6),
           ),
         );
 
@@ -470,7 +816,9 @@ void main() {
           _makeTracking('t-1', 'WATCHING'),
           _makeTracking('t-2', 'WATCHING'),
         ];
-        final repo = FakeTrackingRepo()..results = newItems;
+        final repo = FakeTrackingRepo()
+          ..results = newItems
+          ..nextCursor = 'cursor-page-7';
         final container = createContainer(repo, cache: cache);
         addTearDown(container.dispose);
 
@@ -483,21 +831,66 @@ void main() {
             .read(trackingListViewModelProvider.notifier)
             .loadTracking(status: 'WATCHING');
 
-        expect(container.read(trackingListViewModelProvider).value!.length, 1);
+        expect(
+          container.read(trackingListViewModelProvider).value!.items.length,
+          1,
+        );
 
         // Background refresh runs on event loop, wait for it
         await Future<void>.delayed(const Duration(seconds: 1));
 
         // Background refresh calls getTracking and updates state
         expect(repo.getTrackingCallCount, 1);
-        // After background refresh, state should reflect new data
         final updatedState = container.read(trackingListViewModelProvider);
         expect(updatedState.hasValue, true);
-        expect(updatedState.value!.length, 2);
+        expect(updatedState.value!.items.length, 2);
+        expect(updatedState.value!.page.nextCursor, 'cursor-page-7');
 
         subscription.close();
       },
     );
+
+    test('background refresh does not shrink a paginated list', () async {
+      final cache = CacheService();
+      final page1 = _makeTracking('t-1', 'COMPLETED');
+      await cache.set(
+        _key(MediaType.series.apiValue, 'COMPLETED'),
+        _cachedPage(
+          _page([page1], nextCursor: 'cursor-page-2'),
+          cachedAt: DateTime.now().subtract(const Duration(days: 1)),
+        ),
+      );
+      final repo = QueuedTrackingRepo();
+      final container = createContainer(repo, cache: cache);
+      addTearDown(container.dispose);
+
+      final subscription = container.listen(
+        trackingListViewModelProvider,
+        (_, _) {},
+      );
+      addTearDown(subscription.close);
+
+      final notifier = container.read(trackingListViewModelProvider.notifier);
+      await notifier.loadTracking(status: 'COMPLETED');
+      await Future<void>.delayed(Duration.zero);
+      expect(repo.calls, hasLength(1));
+
+      final loadMoreFuture = notifier.loadMore();
+      await Future<void>.delayed(Duration.zero);
+      expect(repo.calls.last.cursor, 'cursor-page-2');
+      repo.calls[1].completer.complete(
+        _page([_makeTracking('t-2', 'COMPLETED')]),
+      );
+      await loadMoreFuture;
+
+      repo.calls[0].completer.complete(
+        _page([_makeTracking('t-9', 'COMPLETED')]),
+      );
+      await Future<void>.delayed(const Duration(seconds: 1));
+
+      final state = container.read(trackingListViewModelProvider);
+      expect(state.value!.items.map((e) => e.trackingId), ['t-1', 't-2']);
+    });
 
     test(
       'background refresh failure sets error provider on stale cache',
@@ -505,11 +898,10 @@ void main() {
         final cache = CacheService();
         final items = [_makeTracking('t-1', 'WATCHING')];
         await cache.set(
-          'tracking:v2:${MediaType.series.apiValue}:WATCHING:1',
-          CacheEntry(
-            json: jsonEncode(items.map((e) => e.toJson()).toList()),
+          _key(MediaType.series.apiValue, 'WATCHING'),
+          _cachedPage(
+            _page(items),
             cachedAt: DateTime.now().subtract(const Duration(days: 1)),
-            ttl: const Duration(hours: 6),
           ),
         );
 
@@ -534,11 +926,10 @@ void main() {
         final cache = CacheService();
         final seriesItem = _makeTracking('series-1', 'WATCHING');
         await cache.set(
-          'tracking:v2:${MediaType.series.apiValue}:WATCHING:1',
-          CacheEntry(
-            json: jsonEncode([seriesItem.toJson()]),
+          _key(MediaType.series.apiValue, 'WATCHING'),
+          _cachedPage(
+            _page([seriesItem]),
             cachedAt: DateTime.now().subtract(const Duration(days: 1)),
-            ttl: const Duration(hours: 6),
           ),
         );
         final movieItem = _makeTracking(
@@ -547,12 +938,8 @@ void main() {
           mediaType: MediaType.movie,
         );
         await cache.set(
-          'tracking:v2:${MediaType.movie.apiValue}:WATCHING:1',
-          CacheEntry(
-            json: jsonEncode([movieItem.toJson()]),
-            cachedAt: DateTime.now(),
-            ttl: const Duration(hours: 6),
-          ),
+          _key(MediaType.movie.apiValue, 'WATCHING'),
+          _cachedPage(_page([movieItem])),
         );
 
         final repo = QueuedTrackingRepo();
@@ -582,7 +969,7 @@ void main() {
         await Future<void>.delayed(Duration.zero);
 
         expect(container.read(trackingBackgroundErrorProvider), isNull);
-        expect(container.read(trackingListViewModelProvider).value, [
+        expect(container.read(trackingListViewModelProvider).value!.items, [
           movieItem,
         ]);
       },
@@ -614,12 +1001,8 @@ void main() {
       final cache = CacheService();
       final items = [_makeTracking('t-2', 'COMPLETED')];
       await cache.set(
-        'tracking:v2:${MediaType.series.apiValue}:COMPLETED:1',
-        CacheEntry(
-          json: jsonEncode(items.map((e) => e.toJson()).toList()),
-          cachedAt: DateTime.now(),
-          ttl: const Duration(hours: 6),
-        ),
+        _key(MediaType.series.apiValue, 'COMPLETED'),
+        _cachedPage(_page(items, nextCursor: 'cursor-page-2', totalCount: 3)),
       );
 
       final repo = FakeTrackingRepo()..results = items;
@@ -630,23 +1013,24 @@ void main() {
           .read(trackingListViewModelProvider.notifier)
           .loadTracking(status: 'COMPLETED');
 
-      expect(container.read(trackingListViewModelProvider).value!.length, 1);
+      expect(
+        container.read(trackingListViewModelProvider).value!.items.length,
+        1,
+      );
 
       repo.shouldThrow = true;
       await container.read(trackingListViewModelProvider.notifier).refresh();
 
       final state = container.read(trackingListViewModelProvider);
       expect(state.hasValue, true);
-      expect(state.value!.length, 1);
+      expect(state.value!.items.length, 1);
+      expect(state.value!.page.nextCursor, 'cursor-page-2');
+      expect(state.value!.hasMore, true);
     });
 
-    test('loadMore() skips when already loading', () async {
-      final delay = Completer<void>();
-      final repo = FakeTrackingRepo()
-        ..delay = delay
-        ..results = [_makeTracking('t-1', 'WATCHING')];
+    test('refresh() while a page fetch is in flight keeps loadMore usable', () async {
+      final repo = QueuedTrackingRepo();
       final cache = CacheService();
-      await cache.clearAll();
       final container = createContainer(repo, cache: cache);
       addTearDown(container.dispose);
 
@@ -656,17 +1040,122 @@ void main() {
       );
       addTearDown(subscription.close);
 
-      final firstLoadMoreFuture = container
-          .read(trackingListViewModelProvider.notifier)
-          .loadMore();
+      final notifier = container.read(trackingListViewModelProvider.notifier);
+      final firstLoad = notifier.loadTracking(status: 'COMPLETED');
       await Future<void>.delayed(Duration.zero);
 
-      final secondLoadMoreFuture = container
-          .read(trackingListViewModelProvider.notifier)
-          .loadMore();
+      final refreshFuture = notifier.refresh();
+      await Future<void>.delayed(Duration.zero);
+      expect(repo.calls, hasLength(2));
+
+      repo.calls[1].completer.complete(
+        _page(
+          [_makeTracking('t-1', 'COMPLETED')],
+          nextCursor: 'cursor-page-2',
+        ),
+      );
+      await refreshFuture;
+
+      repo.calls[0].completer.complete(
+        _page([_makeTracking('t-0', 'COMPLETED')]),
+      );
+      await firstLoad;
+
+      final loadMoreFuture = notifier.loadMore();
       await Future<void>.delayed(Duration.zero);
 
-      expect(repo.getTrackingCallCount, 1);
+      expect(repo.calls, hasLength(3));
+      expect(repo.calls.last.cursor, 'cursor-page-2');
+      repo.calls.last.completer.complete(
+        _page([_makeTracking('t-2', 'COMPLETED')]),
+      );
+      await loadMoreFuture;
+
+      expect(
+        container.read(trackingListViewModelProvider).value!.items.map(
+          (e) => e.trackingId,
+        ),
+        ['t-1', 't-2'],
+      );
+    });
+
+    test('refresh() blocks loadMore while it reloads', () async {
+      final repo = QueuedTrackingRepo();
+      final cache = CacheService();
+      final container = createContainer(repo, cache: cache);
+      addTearDown(container.dispose);
+
+      final subscription = container.listen(
+        trackingListViewModelProvider,
+        (_, _) {},
+      );
+      addTearDown(subscription.close);
+
+      final notifier = container.read(trackingListViewModelProvider.notifier);
+      final firstLoad = notifier.loadTracking(status: 'COMPLETED');
+      await Future<void>.delayed(Duration.zero);
+      repo.calls[0].completer.complete(
+        _page(
+          [_makeTracking('t-1', 'COMPLETED')],
+          nextCursor: 'cursor-page-2',
+        ),
+      );
+      await firstLoad;
+
+      final refreshFuture = notifier.refresh();
+      final loadMoreFuture = notifier.loadMore();
+      await Future<void>.delayed(Duration.zero);
+
+      expect(repo.calls, hasLength(2));
+      expect(repo.calls.last.cursor, isNull);
+
+      repo.calls[1].completer.complete(
+        _page(
+          [_makeTracking('t-1', 'COMPLETED')],
+          nextCursor: 'cursor-page-3',
+        ),
+      );
+      await refreshFuture;
+      await loadMoreFuture;
+
+      expect(repo.calls, hasLength(2));
+      expect(
+        container.read(trackingListViewModelProvider).value!.page.nextCursor,
+        'cursor-page-3',
+      );
+    });
+
+    test('loadMore() skips when already loading', () async {
+      final repo = FakeTrackingRepo()
+        ..results = [_makeTracking('t-1', 'WATCHING')]
+        ..nextCursor = 'cursor-page-2';
+      final container = createContainer(repo);
+      addTearDown(container.dispose);
+
+      final subscription = container.listen(
+        trackingListViewModelProvider,
+        (_, _) {},
+      );
+      addTearDown(subscription.close);
+
+      final notifier = container.read(trackingListViewModelProvider.notifier);
+      await notifier.loadTracking(status: 'WATCHING');
+      expect(
+        container.read(trackingListViewModelProvider).value!.hasMore,
+        true,
+      );
+
+      final delay = Completer<void>();
+      repo.delay = delay;
+
+      final firstLoadMoreFuture = notifier.loadMore();
+      await Future<void>.delayed(Duration.zero);
+
+      final secondLoadMoreFuture = notifier.loadMore();
+      await Future<void>.delayed(Duration.zero);
+
+      expect(repo.getTrackingCallCount, 2);
+      expect(repo.requestedCursors, [null, 'cursor-page-2']);
       delay.complete();
       await firstLoadMoreFuture;
       await secondLoadMoreFuture;

@@ -16,7 +16,7 @@ final class TrackingListViewModelProvider
     extends
         $NotifierProvider<
           TrackingListViewModel,
-          AsyncValue<List<TrackedMediaModel>>
+          AsyncValue<TrackingListState>
         > {
   TrackingListViewModelProvider._()
     : super(
@@ -37,10 +37,10 @@ final class TrackingListViewModelProvider
   TrackingListViewModel create() => TrackingListViewModel();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(AsyncValue<List<TrackedMediaModel>> value) {
+  Override overrideWithValue(AsyncValue<TrackingListState> value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<AsyncValue<List<TrackedMediaModel>>>(
+      providerOverride: $SyncValueProvider<AsyncValue<TrackingListState>>(
         value,
       ),
     );
@@ -48,28 +48,28 @@ final class TrackingListViewModelProvider
 }
 
 String _$trackingListViewModelHash() =>
-    r'6b336fa6cca42837256a41656510cd3bc8a3fe63';
+    r'8671441fb678e275767fc2e76c3af57b8d69f430';
 
 abstract class _$TrackingListViewModel
-    extends $Notifier<AsyncValue<List<TrackedMediaModel>>> {
-  AsyncValue<List<TrackedMediaModel>> build();
+    extends $Notifier<AsyncValue<TrackingListState>> {
+  AsyncValue<TrackingListState> build();
   @$mustCallSuper
   @override
   void runBuild() {
     final ref =
         this.ref
             as $Ref<
-              AsyncValue<List<TrackedMediaModel>>,
-              AsyncValue<List<TrackedMediaModel>>
+              AsyncValue<TrackingListState>,
+              AsyncValue<TrackingListState>
             >;
     final element =
         ref.element
             as $ClassProviderElement<
               AnyNotifier<
-                AsyncValue<List<TrackedMediaModel>>,
-                AsyncValue<List<TrackedMediaModel>>
+                AsyncValue<TrackingListState>,
+                AsyncValue<TrackingListState>
               >,
-              AsyncValue<List<TrackedMediaModel>>,
+              AsyncValue<TrackingListState>,
               Object?,
               Object?
             >;

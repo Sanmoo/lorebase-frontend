@@ -94,7 +94,7 @@ class GameDetailViewModel extends _$GameDetailViewModel {
   Future<void> _invalidateCaches() async {
     final cacheService = ref.read(cacheServiceProvider);
     await cacheService.remove('dashboard:v2:GAME');
-    await cacheService.removeByPrefix('tracking:v2:');
+    await cacheService.removeByPrefix('tracking:');
     ref.invalidate(dashboardViewModelProvider);
   }
 }

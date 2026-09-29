@@ -5,9 +5,11 @@ import 'package:lorebase/features/tracking/widgets/rating_stars.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lorebase/features/tracking/pages/tracking_list_page.dart';
+import 'package:lorebase/features/tracking/viewmodels/tracking_list_state.dart';
 import 'package:lorebase/features/tracking/viewmodels/tracking_list_viewmodel.dart';
 import 'package:lorebase/features/tracking/data/models/tracked_media_model.dart';
 import 'package:lorebase/features/tracking/data/models/tracked_media_summary_model.dart';
+import 'package:lorebase/features/tracking/data/models/tracking_page_model.dart';
 import 'package:lorebase/features/tracking/data/models/media_type.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_viewmodel.dart';
 import 'package:lorebase/features/auth/viewmodels/auth_state.dart';
@@ -60,15 +62,18 @@ TrackedMediaSummaryModel _gameMedia(int id) => TrackedMediaSummaryModel(
 );
 
 class FakeTrackingListVM extends TrackingListViewModel {
-  final AsyncValue<List<TrackedMediaModel>> testState;
+  final AsyncValue<TrackingListState> testState;
   int loadTrackingCallCount = 0;
+  int loadMoreCallCount = 0;
+  int refreshCallCount = 0;
   MediaType? lastMediaType;
   String? lastStatus;
-  FakeTrackingListVM({AsyncValue<List<TrackedMediaModel>>? state})
-    : testState = state ?? const AsyncValue.data([]);
+  bool shouldThrowOnLoadMore = false;
+  FakeTrackingListVM({AsyncValue<TrackingListState>? state})
+    : testState = state ?? const AsyncValue.data(TrackingListState());
 
   @override
-  AsyncValue<List<TrackedMediaModel>> build() => testState;
+  AsyncValue<TrackingListState> build() => testState;
   @override
   Future<void> loadTracking({
     String? status,
@@ -80,10 +85,52 @@ class FakeTrackingListVM extends TrackingListViewModel {
   }
 
   @override
-  Future<void> loadMore() async {}
+  Future<void> loadMore() async {
+    loadMoreCallCount++;
+    final current = state.value;
+    if (current == null) return;
+    if (shouldThrowOnLoadMore) {
+      state = AsyncValue.data(
+        current.copyWith(
+          isLoadingMore: false,
+          loadMoreError: 'Failed to load more',
+        ),
+      );
+      return;
+    }
+    state = AsyncValue.data(current.copyWith(isLoadingMore: true));
+  }
+
   @override
-  Future<void> refresh() async {}
+  Future<void> refresh() async {
+    refreshCallCount++;
+  }
 }
+
+TrackingListState _listState(
+  List<TrackedMediaModel> items, {
+  String? nextCursor,
+  bool isLoadingMore = false,
+  String? loadMoreError,
+}) => TrackingListState(
+  page: TrackingPage(items: items, nextCursor: nextCursor),
+  isLoadingMore: isLoadingMore,
+  loadMoreError: loadMoreError,
+);
+
+AsyncValue<TrackingListState> _data(
+  List<TrackedMediaModel> items, {
+  String? nextCursor,
+  bool isLoadingMore = false,
+  String? loadMoreError,
+}) => AsyncValue.data(
+  _listState(
+    items,
+    nextCursor: nextCursor,
+    isLoadingMore: isLoadingMore,
+    loadMoreError: loadMoreError,
+  ),
+);
 
 class FakeAuthVM extends AuthViewModel {
   @override
@@ -238,7 +285,7 @@ Future<void> main() async {
         _tracking('t1', 'WATCHING', media: _media(1)),
         _tracking('t2', 'WATCHING', media: _media(2)),
       ];
-      final fakeVM = FakeTrackingListVM(state: AsyncValue.data(trackings));
+      final fakeVM = FakeTrackingListVM(state: _data(trackings));
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
       await tester.pumpWidget(_wrap(container));
@@ -251,7 +298,7 @@ Future<void> main() async {
 
     testWidgets('shows tv icon when media is null', (tester) async {
       final trackings = [_tracking('t1', 'WATCHING', media: null)];
-      final fakeVM = FakeTrackingListVM(state: AsyncValue.data(trackings));
+      final fakeVM = FakeTrackingListVM(state: _data(trackings));
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
       await tester.pumpWidget(_wrap(container));
@@ -265,7 +312,7 @@ Future<void> main() async {
       final trackings = [
         _tracking('t1', 'WATCHING', media: _media(1), rating: 8),
       ];
-      final fakeVM = FakeTrackingListVM(state: AsyncValue.data(trackings));
+      final fakeVM = FakeTrackingListVM(state: _data(trackings));
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
       await tester.pumpWidget(_wrap(container));
@@ -284,7 +331,7 @@ Future<void> main() async {
         mediaType: MediaType.series,
       );
       final trackings = [_tracking('t1', 'WATCHING', media: media)];
-      final fakeVM = FakeTrackingListVM(state: AsyncValue.data(trackings));
+      final fakeVM = FakeTrackingListVM(state: _data(trackings));
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
       await tester.pumpWidget(_wrap(container));
@@ -303,7 +350,7 @@ Future<void> main() async {
         mediaType: MediaType.series,
       );
       final trackings = [_tracking('t1', 'WANT_TO_WATCH', media: media)];
-      final fakeVM = FakeTrackingListVM(state: AsyncValue.data(trackings));
+      final fakeVM = FakeTrackingListVM(state: _data(trackings));
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
       await tester.pumpWidget(_wrap(container));
@@ -322,9 +369,7 @@ Future<void> main() async {
         mediaType: MediaType.series,
       );
       final fakeVM = FakeTrackingListVM(
-        state: AsyncValue.data([
-          _tracking('t1', 'WANT_TO_WATCH', media: media),
-        ]),
+        state: _data([_tracking('t1', 'WANT_TO_WATCH', media: media)]),
       );
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
@@ -469,7 +514,7 @@ Future<void> main() async {
           lastUpdated: now,
         ),
       ];
-      final fakeVM = FakeTrackingListVM(state: AsyncValue.data(trackings));
+      final fakeVM = FakeTrackingListVM(state: _data(trackings));
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
 
@@ -489,7 +534,7 @@ Future<void> main() async {
 
     testWidgets('game tracking item navigates to /games/:id', (tester) async {
       final trackings = [_gameTracking('t1', 'PLAYING', media: _gameMedia(1))];
-      final fakeVM = FakeTrackingListVM(state: AsyncValue.data(trackings));
+      final fakeVM = FakeTrackingListVM(state: _data(trackings));
       final container = createContainer(fakeVM);
       addTearDown(container.dispose);
 
@@ -503,6 +548,161 @@ Future<void> main() async {
       await tester.pumpAndSettle();
 
       expect(find.text('Back from game'), findsOneWidget);
+    });
+
+    testWidgets('loads the next page when the grid approaches the end', (
+      tester,
+    ) async {
+      final trackings = List.generate(
+        20,
+        (i) => _tracking('t$i', 'COMPLETED', media: _media(i)),
+      );
+      final fakeVM = FakeTrackingListVM(
+        state: _data(trackings, nextCursor: 'cursor-page-2'),
+      );
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+      expect(fakeVM.loadMoreCallCount, 0);
+
+      await tester.drag(
+        find.byType(CustomScrollView),
+        const Offset(0, -4000),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(fakeVM.loadMoreCallCount, 1);
+    });
+
+    testWidgets('does not load more when the list is exhausted', (tester) async {
+      final trackings = List.generate(
+        20,
+        (i) => _tracking('t$i', 'COMPLETED', media: _media(i)),
+      );
+      final fakeVM = FakeTrackingListVM(
+        state: _data(trackings),
+      );
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+
+      await tester.drag(
+        find.byType(CustomScrollView),
+        const Offset(0, -4000),
+      );
+      await tester.pumpAndSettle();
+
+      expect(fakeVM.loadMoreCallCount, 0);
+    });
+
+    testWidgets('loads more when a short page does not fill the viewport', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(800, 4000);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final trackings = List.generate(
+        20,
+        (i) => _tracking('t$i', 'COMPLETED', media: _media(i)),
+      );
+      final fakeVM = FakeTrackingListVM(
+        state: _data(trackings, nextCursor: 'cursor-page-2'),
+      );
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(fakeVM.loadMoreCallCount, 1);
+    });
+
+    testWidgets('shows a footer indicator while loading more', (tester) async {
+      final trackings = List.generate(
+        20,
+        (i) => _tracking('t$i', 'COMPLETED', media: _media(i)),
+      );
+      final fakeVM = FakeTrackingListVM(
+        state: _data(
+          trackings,
+          nextCursor: 'cursor-page-2',
+          isLoadingMore: true,
+        ),
+      );
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      await tester.drag(
+        find.byType(CustomScrollView),
+        const Offset(0, -4000),
+      );
+      await tester.pump();
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    });
+
+    testWidgets('shows no footer indicator when the list is exhausted', (
+      tester,
+    ) async {
+      final trackings = [_tracking('t1', 'COMPLETED', media: _media(1))];
+      final fakeVM = FakeTrackingListVM(state: _data(trackings));
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.text('Retry'), findsNothing);
+    });
+
+    testWidgets('load-more failure keeps items and retries from the footer', (
+      tester,
+    ) async {
+      final trackings = List.generate(
+        2,
+        (i) => _tracking('t$i', 'COMPLETED', media: _media(i)),
+      );
+      final fakeVM = FakeTrackingListVM(
+        state: _data(trackings, nextCursor: 'cursor-page-2'),
+      )..shouldThrowOnLoadMore = true;
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      await tester.drag(
+        find.byType(CustomScrollView),
+        const Offset(0, -4000),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.text('Show 0'), findsOneWidget);
+      expect(find.text('Failed to load more'), findsOneWidget);
+
+      fakeVM.shouldThrowOnLoadMore = false;
+      await tester.tap(find.text('Retry'));
+      await tester.pump();
+      await tester.pump();
+
+      expect(fakeVM.loadMoreCallCount, 2);
+      expect(find.text('Failed to load more'), findsNothing);
     });
   });
 }

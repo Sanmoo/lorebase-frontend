@@ -3,13 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/providers/core_providers.dart';
 import '../models/tracked_media_model.dart';
+import '../models/tracking_page_model.dart';
 import '../models/media_type.dart';
 
 abstract class TrackingRepository {
-  Future<List<TrackedMediaModel>> getTracking({
+  Future<TrackingPage> getTracking({
     String? status,
     MediaType? mediaType,
-    int page = 1,
+    String? cursor,
     int pageSize = 20,
   });
 
@@ -48,10 +49,10 @@ class TrackingRepositoryImpl implements TrackingRepository {
   TrackingRepositoryImpl(this._dio);
 
   @override
-  Future<List<TrackedMediaModel>> getTracking({
+  Future<TrackingPage> getTracking({
     String? status,
     MediaType? mediaType,
-    int page = 1,
+    String? cursor,
     int pageSize = 20,
   }) async {
     try {
@@ -60,13 +61,14 @@ class TrackingRepositoryImpl implements TrackingRepository {
         queryParameters: {
           'status': ?status,
           'mediaType': ?mediaType?.apiValue,
-          'page': page,
+          'cursor': ?cursor,
           'pageSize': pageSize,
           'includeMedia': true,
         },
       );
-      final items = response.data['items'] as List;
-      return items.map((json) => TrackedMediaModel.fromJson(json)).toList();
+      return TrackingPage.fromJson(
+        Map<String, dynamic>.from(response.data as Map),
+      );
     } on DioException catch (e) {
       throw ServerException(
         message: e.message ?? 'Failed to load tracking',

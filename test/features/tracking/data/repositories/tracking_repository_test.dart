@@ -56,7 +56,7 @@ Map<String, dynamic> _trackingJson(String id, String mediaType) => {
 
 void main() {
   group('TrackingRepositoryImpl', () {
-    test('getTracking() returns list of TrackedMediaModel', () async {
+    test('getTracking() returns items with the continuation token', () async {
       final dio = Dio()
         ..httpClientAdapter = MockAdapter(
           onFetch: (options) => _json({
@@ -64,18 +64,59 @@ void main() {
               _trackingJson('t-1', 'series'),
               _trackingJson('t-2', 'series'),
             ],
+            'nextCursor': 'cursor-page-2',
+            'totalCount': 42,
+            'page': 1,
+            'pageSize': 20,
           }),
         );
       final repo = TrackingRepositoryImpl(dio);
 
-      final results = await repo.getTracking();
-      expect(results.length, 2);
-      expect(results[0].trackingId, 't-1');
-      expect(results[1].trackingId, 't-2');
+      final page = await repo.getTracking();
+
+      expect(page.items.length, 2);
+      expect(page.items[0].trackingId, 't-1');
+      expect(page.items[1].trackingId, 't-2');
+      expect(page.nextCursor, 'cursor-page-2');
+      expect(page.totalCount, 42);
+      expect(page.pageSize, 20);
+    });
+
+    test('getTracking() parses a cursor page without totalCount', () async {
+      final dio = Dio()
+        ..httpClientAdapter = MockAdapter(
+          onFetch: (options) => _json({
+            'items': [_trackingJson('t-21', 'series')],
+            'nextCursor': 'cursor-page-3',
+          }),
+        );
+      final repo = TrackingRepositoryImpl(dio);
+
+      final page = await repo.getTracking(cursor: 'cursor-page-2');
+
+      expect(page.nextCursor, 'cursor-page-3');
+      expect(page.totalCount, isNull);
+    });
+
+    test('getTracking() marks the end of the list when nextCursor is absent', () async {
+      final dio = Dio()
+        ..httpClientAdapter = MockAdapter(
+          onFetch: (options) => _json({
+            'items': [_trackingJson('t-42', 'series')],
+            'totalCount': 42,
+            'page': 3,
+            'pageSize': 20,
+          }),
+        );
+      final repo = TrackingRepositoryImpl(dio);
+
+      final page = await repo.getTracking(cursor: 'cursor-page-3');
+
+      expect(page.nextCursor, isNull);
     });
 
     test(
-      'getTracking() passes status, mediaType, page, pageSize, includeMedia',
+      'getTracking() sends cursor (never page) plus status, mediaType, pageSize, includeMedia',
       () async {
         Map<String, dynamic>? capturedParams;
         final dio = Dio()
@@ -90,17 +131,35 @@ void main() {
         await repo.getTracking(
           status: 'WATCHING',
           mediaType: MediaType.movie,
-          page: 2,
+          cursor: 'cursor-page-2',
           pageSize: 10,
         );
 
         expect(capturedParams!['status'], 'WATCHING');
         expect(capturedParams!['mediaType'], 'MOVIE');
-        expect(capturedParams!['page'], 2);
+        expect(capturedParams!['cursor'], 'cursor-page-2');
         expect(capturedParams!['pageSize'], 10);
         expect(capturedParams!['includeMedia'], true);
+        expect(capturedParams!.containsKey('page'), isFalse);
       },
     );
+
+    test('getTracking() omits cursor on the first page', () async {
+      Map<String, dynamic>? capturedParams;
+      final dio = Dio()
+        ..httpClientAdapter = MockAdapter(
+          onFetch: (options) {
+            capturedParams = options.queryParameters;
+            return _json({'items': <Map<String, dynamic>>[]});
+          },
+        );
+      final repo = TrackingRepositoryImpl(dio);
+
+      await repo.getTracking(status: 'WATCHING');
+
+      expect(capturedParams!.containsKey('cursor'), isFalse);
+      expect(capturedParams!.containsKey('page'), isFalse);
+    });
 
     test('getTracking() throws ServerException on DioException', () async {
       final dio = Dio()
