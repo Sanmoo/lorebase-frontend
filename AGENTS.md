@@ -104,6 +104,13 @@ sessão exportada do IndexedDB do Amplify (`.auth/amplify-idb.json`), semeada
 por fixture no projeto `app`. Cenários `@tracking` auto-limpam via
 `DELETE /tracking/:id`. Credenciais em `e2e/.env.e2e` (gitignored).
 
+## Critério de conclusão de issues
+
+- Toda issue com impacto comportamental exige validação funcional no app real, na plataforma afetada (Android via ADB/Wi-Fi ou web via browser), cobrindo seus critérios de aceite. Testes unitários/widget não substituem essa validação.
+- Colete screenshots de evidência e anexe-as à GitHub issue, junto dos passos, ambiente/build testado e resultados. Confirme que as imagens carregam na issue; arquivos apenas locais não bastam. Remova segredos e dados sensíveis antes de publicar.
+- Só declare a issue concluída ou a encerre após a validação passar e as evidências estarem publicadas. Se houver falha ou bloqueio de acesso, dispositivo ou upload, registre-o e mantenha a issue pendente; peça autorização antes de alterar dados do usuário.
+- Alterações sem impacto comportamental (ex.: documentação) dispensam esse fluxo, com a justificativa registrada no relato de conclusão.
+
 ## Known quirks
 
 - `lib/amplifyconfiguration.dart` (with Cognito pool ID / client ID) IS tracked despite being in `.gitignore` (was committed before the gitignore rule was added).
