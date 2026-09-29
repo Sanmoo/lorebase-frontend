@@ -15,29 +15,19 @@ Todo fluxo de desenvolvimento começa pela criação de uma worktree isolada e d
    cd .worktrees/<nome-da-tarefa>
    ```
 
-2. Desenvolva, teste e finalize todas as alterações dentro dessa worktree.
-3. Ao finalizar o desenvolvimento, faça o rebase da branch sobre a `main` local:
+2. Desenvolva, teste e faça commit apenas das alterações da tarefa dentro dessa worktree. Cumpra o critério de validação funcional abaixo quando houver impacto comportamental.
+3. Publique a branch e abra um pull request com destino à `main`:
 
    ```bash
-   git rebase main
+   git push -u origin <nome-da-branch>
+   gh pr create --base main --head <nome-da-branch> --title "..." --body-file <descricao.md>
    ```
 
-4. Na worktree principal, faça a integração usando obrigatoriamente fast-forward:
+   Inclua no PR o resumo, a issue relacionada (quando houver), as validações e os links das evidências. Se o trabalho estiver incompleto ou bloqueado, use um PR draft e registre as pendências.
+4. Entregue o link do PR e aguarde revisão. Todo novo desenvolvimento, inclusive documentação e configuração, deve passar por PR. Nunca faça commit, push ou merge de alterações da tarefa diretamente na `main`, nem mesmo com `--ff-only`. Não faça merge do PR automaticamente; aguarde autorização explícita.
+5. Enquanto o PR estiver aberto, preserve a branch e a worktree para ajustes e informe seus nomes no relato. Após o merge do PR, confirme a integração e a ausência de alterações locais antes de remover somente os recursos da tarefa. Se a remoção segura falhar, preserve-os e reporte o bloqueio; não force a exclusão.
 
-   ```bash
-   git switch main
-   git merge --ff-only <nome-da-branch>
-   ```
-
-   O merge só pode ser concluído com `--ff-only`; não crie merge commits.
-5. Depois do merge bem-sucedido, remova a worktree e a branch:
-
-   ```bash
-   git worktree remove .worktrees/<nome-da-tarefa>
-   git branch -d <nome-da-branch>
-   ```
-
-O fluxo só está concluído quando a `main` local contém a alteração integrada e tanto a worktree isolada quanto a branch da tarefa foram removidas.
+A entrega do desenvolvimento termina com o PR aberto e as validações relatadas; a integração ocorre exclusivamente pelo PR. Abrir um PR não equivale a concluir a issue nem dispensa suas evidências obrigatórias.
 
 ## Commands
 
