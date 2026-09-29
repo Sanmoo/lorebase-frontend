@@ -17,9 +17,9 @@ import 'package:lorebase/features/books/data/models/book_model.dart';
 import 'package:lorebase/features/books/viewmodels/book_search_viewmodel.dart';
 import 'package:lorebase/features/books/widgets/book_card.dart';
 import 'package:lorebase/features/tracking/data/models/media_type.dart';
-import 'package:lorebase/features/tracking/data/models/tracked_media_model.dart';
 import 'package:lorebase/features/tracking/pages/tracking_list_page.dart';
 import 'package:lorebase/features/tracking/viewmodels/tracking_list_viewmodel.dart';
+import 'package:lorebase/features/tracking/viewmodels/tracking_list_state.dart';
 import 'package:lorebase/l10n/strings.g.dart';
 
 class FakeSearchVM extends SeriesSearchViewModel {
@@ -111,7 +111,8 @@ class FakeTrackingListVM extends TrackingListViewModel {
   MediaType? lastMediaType;
 
   @override
-  AsyncValue<List<TrackedMediaModel>> build() => const AsyncValue.data([]);
+  AsyncValue<TrackingListState> build() =>
+      const AsyncValue.data(TrackingListState());
 
   @override
   Future<void> loadTracking({

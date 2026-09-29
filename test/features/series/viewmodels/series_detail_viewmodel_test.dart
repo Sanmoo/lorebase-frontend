@@ -17,6 +17,7 @@ import 'package:lorebase/features/tracking/data/models/tracked_media_model.dart'
 import 'package:lorebase/features/tracking/data/models/tracked_media_summary_model.dart';
 import 'package:lorebase/features/tracking/data/models/media_type.dart';
 import 'package:lorebase/features/tracking/data/repositories/tracking_repository.dart';
+import 'package:lorebase/features/tracking/data/models/tracking_page_model.dart';
 
 class FakeSeriesRepo implements SeriesRepository {
   SeriesModel? seriesResult;
@@ -75,16 +76,16 @@ class FakeTrackingRepo implements TrackingRepository {
   void Function()? onGetTrackingByMedia;
 
   @override
-  Future<List<TrackedMediaModel>> getTracking({
+  Future<TrackingPage> getTracking({
     String? status,
     MediaType? mediaType,
     int pageSize = 20,
-    int page = 1,
+    String? cursor,
   }) async {
     getTrackingCallCount++;
     lastMediaType = mediaType;
     if (shouldThrowTracking) throw Exception('failed');
-    return trackingResults;
+    return TrackingPage(items: trackingResults, totalCount: trackingResults.length);
   }
 
   @override

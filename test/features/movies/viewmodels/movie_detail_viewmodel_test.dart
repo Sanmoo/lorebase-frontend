@@ -12,6 +12,7 @@ import 'package:lorebase/features/tracking/data/models/media_type.dart';
 import 'package:lorebase/features/tracking/data/models/tracked_media_model.dart';
 import 'package:lorebase/features/tracking/data/models/tracked_media_summary_model.dart';
 import 'package:lorebase/features/tracking/data/repositories/tracking_repository.dart';
+import 'package:lorebase/features/tracking/data/models/tracking_page_model.dart';
 
 class FakeMovieRepo implements MovieRepository {
   MovieModel? movieResult;
@@ -56,15 +57,15 @@ class FakeTrackingRepo implements TrackingRepository {
   MediaType? lastGetTrackingByMediaType;
 
   @override
-  Future<List<TrackedMediaModel>> getTracking({
+  Future<TrackingPage> getTracking({
     String? status,
     MediaType? mediaType,
-    int page = 1,
+    String? cursor,
     int pageSize = 20,
   }) async {
     getTrackingCallCount++;
     if (shouldThrow) throw Exception('Failed');
-    return trackingResults;
+    return TrackingPage(items: trackingResults, totalCount: trackingResults.length);
   }
 
   @override

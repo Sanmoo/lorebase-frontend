@@ -12,6 +12,7 @@ import 'package:lorebase/features/games/viewmodels/game_detail_viewmodel.dart';
 import 'package:lorebase/features/tracking/data/models/media_type.dart';
 import 'package:lorebase/features/tracking/data/models/tracked_media_model.dart';
 import 'package:lorebase/features/tracking/data/repositories/tracking_repository.dart';
+import 'package:lorebase/features/tracking/data/models/tracking_page_model.dart';
 
 class FakeGameRepo implements GameRepository {
   GameModel? gameResult;
@@ -71,10 +72,10 @@ class FakeTrackingRepo implements TrackingRepository {
   MediaType? lastDeleteMediaType;
 
   @override
-  Future<List<TrackedMediaModel>> getTracking({
+  Future<TrackingPage> getTracking({
     String? status,
     MediaType? mediaType,
-    int page = 1,
+    String? cursor,
     int pageSize = 20,
   }) async {
     throw UnimplementedError();
@@ -490,7 +491,7 @@ void main() {
         );
       final cacheService = CacheService();
       await cacheService.set('dashboard:v2:GAME', CacheEntry.test());
-      await cacheService.set('tracking:v2:GAME:all:1', CacheEntry.test());
+      await cacheService.set('tracking:v4:GAME:all', CacheEntry.test());
 
       final container = createContainer(
         gameRepo: gameRepo,
@@ -505,7 +506,7 @@ void main() {
           .removeTracking();
 
       expect(cacheService.getSync('dashboard:v2:GAME'), isNull);
-      expect(cacheService.getSync('tracking:v2:GAME:all:1'), isNull);
+      expect(cacheService.getSync('tracking:v4:GAME:all'), isNull);
     });
   });
 }

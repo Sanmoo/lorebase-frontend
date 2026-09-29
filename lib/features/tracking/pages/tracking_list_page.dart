@@ -10,10 +10,15 @@ import '../../../../core/widgets/media_type_toggle.dart';
 import '../../../l10n/strings.g.dart';
 import '../data/tracking_status.dart';
 import '../data/models/media_type.dart';
+import '../data/models/tracked_media_model.dart';
+import '../viewmodels/tracking_list_state.dart';
 import '../viewmodels/tracking_list_viewmodel.dart';
 import '../widgets/rating_stars.dart';
 import '../widgets/tracked_media_poster.dart';
 import '../../../../core/cache/cache_providers.dart';
+
+/// Distância do fim do grid que dispara a busca da próxima página.
+const double _loadMoreThreshold = 400;
 
 class TrackingListPage extends ConsumerStatefulWidget {
   const TrackingListPage({super.key});
@@ -60,6 +65,34 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
     ref
         .read(trackingListViewModelProvider.notifier)
         .loadTracking(status: status, mediaType: selectedType);
+  }
+
+  /// Dispara a próxima página quando o grid se aproxima do fim — inclusive
+  /// quando a página atual não preenche a viewport (sem rolagem possível).
+  void _onScrollMetrics(ScrollMetrics metrics) {
+    if (metrics.extentAfter > _loadMoreThreshold) return;
+    if (!_canLoadMore) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _loadMoreNow();
+    });
+  }
+
+  bool get _canLoadMore {
+    final listState = ref.read(trackingListViewModelProvider).value;
+    return listState != null &&
+        listState.hasMore &&
+        !listState.isLoadingMore &&
+        listState.loadMoreError == null;
+  }
+
+  void _loadMoreNow() {
+    if (!_canLoadMore) return;
+    ref.read(trackingListViewModelProvider.notifier).loadMore();
+  }
+
+  void _retryLoadMore() {
+    ref.read(trackingListViewModelProvider.notifier).loadMore();
   }
 
   @override
@@ -112,8 +145,8 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
                     message: error.toString(),
                     onRetry: () => _loadTrackingForTab(index),
                   ),
-                  data: (trackings) {
-                    if (trackings.isEmpty) {
+                  data: (listState) {
+                    if (listState.items.isEmpty) {
                       final status = trackingStatusesFor(
                         selectedType,
                       )[index].label(t);
@@ -122,59 +155,7 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
                         icon: _trackingIcon(selectedType),
                       );
                     }
-                    return GridView.builder(
-                      padding: const EdgeInsets.all(16.0),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            childAspectRatio: 0.50,
-                            crossAxisSpacing: 12,
-                            mainAxisSpacing: 12,
-                          ),
-                      itemCount: trackings.length,
-                      itemBuilder: (context, i) {
-                        final tracking = trackings[i];
-                        final media = tracking.media;
-                        if (media == null) {
-                          return Center(
-                            child: Icon(
-                              _trackingIcon(tracking.mediaType),
-                              color: Colors.grey,
-                            ),
-                          );
-                        }
-                        return LayoutBuilder(
-                          builder: (context, constraints) => Column(
-                            children: [
-                              TrackedMediaPoster(
-                                media: media,
-                                width: constraints.maxWidth,
-                                onTap: () async {
-                                  final id = media.mediaId.isNotEmpty
-                                      ? media.mediaId
-                                      : tracking.mediaId;
-                                  if (id.isEmpty) return;
-                                  final path = _trackingDetailPath(
-                                    tracking.mediaType,
-                                    id,
-                                  );
-                                  if (path == null) return;
-                                  await context.push(path);
-                                  if (!context.mounted) return;
-                                  _loadTrackingForTab(_tabController.index);
-                                },
-                              ),
-                              const SizedBox(height: 4),
-                              RatingStars(
-                                rating: tracking.rating,
-                                size: 10,
-                                maxRating: 10,
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    );
+                    return _buildGrid(listState);
                   },
                 );
               }),
@@ -183,6 +164,122 @@ class _TrackingListPageState extends ConsumerState<TrackingListPage>
         ],
       ),
     );
+  }
+
+  Widget _buildGrid(TrackingListState listState) {
+    return NotificationListener<ScrollNotification>(
+      onNotification: (notification) {
+        _onScrollMetrics(notification.metrics);
+        return false;
+      },
+      child: NotificationListener<ScrollMetricsNotification>(
+        onNotification: (notification) {
+          _onScrollMetrics(notification.metrics);
+          return false;
+        },
+        child: CustomScrollView(
+          slivers: [
+            SliverPadding(
+              padding: const EdgeInsets.all(16.0),
+              sliver: SliverGrid(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  childAspectRatio: 0.50,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (context, i) => _buildItem(listState.items[i]),
+                  childCount: listState.items.length,
+                ),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: _TrackingGridFooter(
+                isLoadingMore: listState.isLoadingMore,
+                error: listState.loadMoreError,
+                onRetry: _retryLoadMore,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildItem(TrackedMediaModel tracking) {
+    final media = tracking.media;
+    if (media == null) {
+      return Center(
+        child: Icon(
+          _trackingIcon(tracking.mediaType),
+          color: Colors.grey,
+        ),
+      );
+    }
+    return LayoutBuilder(
+      builder: (context, constraints) => Column(
+        children: [
+          TrackedMediaPoster(
+            media: media,
+            width: constraints.maxWidth,
+            onTap: () async {
+              final id = media.mediaId.isNotEmpty
+                  ? media.mediaId
+                  : tracking.mediaId;
+              if (id.isEmpty) return;
+              final path = _trackingDetailPath(tracking.mediaType, id);
+              if (path == null) return;
+              await context.push(path);
+              if (!context.mounted) return;
+              _loadTrackingForTab(_tabController.index);
+            },
+          ),
+          const SizedBox(height: 4),
+          RatingStars(rating: tracking.rating, size: 10, maxRating: 10),
+        ],
+      ),
+    );
+  }
+}
+
+class _TrackingGridFooter extends StatelessWidget {
+  final bool isLoadingMore;
+  final String? error;
+  final VoidCallback onRetry;
+
+  const _TrackingGridFooter({
+    required this.isLoadingMore,
+    required this.error,
+    required this.onRetry,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (isLoadingMore) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 24),
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+    final error = this.error;
+    if (error != null) {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+        child: Column(
+          children: [
+            Text(error, textAlign: TextAlign.center),
+            const SizedBox(height: 8),
+            TextButton.icon(
+              onPressed: onRetry,
+              icon: const Icon(Icons.refresh),
+              label: Text(context.t.error_retry),
+            ),
+          ],
+        ),
+      );
+    }
+    return const SizedBox.shrink();
   }
 }
 

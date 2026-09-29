@@ -14,6 +14,7 @@ import 'package:lorebase/features/books/viewmodels/book_detail_viewmodel.dart';
 import 'package:lorebase/features/tracking/data/models/media_type.dart';
 import 'package:lorebase/features/tracking/data/models/tracked_media_model.dart';
 import 'package:lorebase/features/tracking/data/repositories/tracking_repository.dart';
+import 'package:lorebase/features/tracking/data/models/tracking_page_model.dart';
 
 class FakeBookRepo implements BookRepository {
   BookModel? bookResult;
@@ -67,10 +68,10 @@ class FakeTrackingRepo implements TrackingRepository {
   MediaType? lastDeleteMediaType;
 
   @override
-  Future<List<TrackedMediaModel>> getTracking({
+  Future<TrackingPage> getTracking({
     String? status,
     MediaType? mediaType,
-    int page = 1,
+    String? cursor,
     int pageSize = 20,
   }) async {
     throw UnimplementedError();
@@ -428,7 +429,7 @@ void main() {
         );
       final cacheService = CacheService();
       await cacheService.set('dashboard:v2:BOOK', CacheEntry.test());
-      await cacheService.set('tracking:v2:BOOK:all:1', CacheEntry.test());
+      await cacheService.set('tracking:v4:BOOK:all', CacheEntry.test());
 
       final container = createContainer(
         bookRepo: bookRepo,
@@ -443,7 +444,7 @@ void main() {
           .removeTracking();
 
       expect(cacheService.getSync('dashboard:v2:BOOK'), isNull);
-      expect(cacheService.getSync('tracking:v2:BOOK:all:1'), isNull);
+      expect(cacheService.getSync('tracking:v4:BOOK:all'), isNull);
     });
   });
 }

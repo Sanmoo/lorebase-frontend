@@ -25,6 +25,8 @@ import 'package:lorebase/features/series/viewmodels/series_search_viewmodel.dart
 import 'package:lorebase/features/tracking/data/models/media_type.dart';
 import 'package:lorebase/features/tracking/data/models/tracked_media_model.dart';
 import 'package:lorebase/features/tracking/data/models/tracked_media_summary_model.dart';
+import 'package:lorebase/features/tracking/data/models/tracking_page_model.dart';
+import 'package:lorebase/features/tracking/viewmodels/tracking_list_state.dart';
 import 'package:lorebase/features/tracking/viewmodels/tracking_list_viewmodel.dart';
 
 // ─── Fake ViewModels ────────────────────────────────────
@@ -229,8 +231,14 @@ class FakeGameDetailVM extends GameDetailViewModel {
 
 class FakeTrackingListVM extends TrackingListViewModel {
   @override
-  AsyncValue<List<TrackedMediaModel>> build() =>
-      AsyncValue.data(_trackingItems());
+  AsyncValue<TrackingListState> build() {
+    final items = _trackingItems();
+    return AsyncValue.data(
+      TrackingListState(
+        page: TrackingPage(items: items, totalCount: items.length),
+      ),
+    );
+  }
 
   @override
   Future<void> loadTracking({
