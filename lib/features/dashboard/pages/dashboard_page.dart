@@ -31,9 +31,11 @@ Future<void> refreshDashboardAndSocialFeed({
 }
 
 String _dashboardReadingLabel(Translations t, MediaType mediaType) {
-  return mediaType == MediaType.book
-      ? t.dashboard_reading
-      : t.dashboard_watching;
+  return switch (mediaType) {
+    MediaType.book => t.dashboard_reading,
+    MediaType.game => t.tracking_playing_game,
+    MediaType.series || MediaType.movie => t.dashboard_watching,
+  };
 }
 
 String _dashboardWantToReadLabel(Translations t, MediaType mediaType) {

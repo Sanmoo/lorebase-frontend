@@ -206,6 +206,38 @@ Future<void> main() async {
       expect(container.read(selectedMediaTypeProvider), MediaType.series);
     });
 
+    testWidgets('games tab shows Jogando instead of Assistindo', (tester) async {
+      await LocaleSettings.setLocale(AppLocale.ptBr);
+      addTearDown(() => LocaleSettings.setLocale(AppLocale.enUs));
+      const dashboard = DashboardModel(
+        watching: DashboardSectionModel(items: [
+          TrackedMediaSummaryModel(
+            mediaId: '789',
+            title: 'Game X',
+            mediaType: MediaType.game,
+          ),
+        ]),
+        wantToWatch: DashboardSectionModel(),
+        completed: DashboardSectionModel(),
+        dropped: DashboardSectionModel(),
+        stats: DashboardStatsModel(watchingCount: 1),
+      );
+      final container = createContainer(
+        FakeDashboardVM(testState: const AsyncValue.data(dashboard)),
+      );
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(_wrap(container));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Jogos'));
+      await tester.pumpAndSettle();
+
+      expect(container.read(selectedMediaTypeProvider), MediaType.game);
+      expect(t.tracking_playing_game, 'Jogando');
+      expect(find.text('Jogando'), findsNWidgets(2));
+      expect(find.text('Assistindo'), findsNothing);
+    });
+
     testWidgets('book selection uses reading labels and empty copy', (
       tester,
     ) async {
