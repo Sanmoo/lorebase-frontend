@@ -186,7 +186,7 @@ ProviderContainer createContainer({
       gameRepositoryProvider.overrideWith((ref) => gameRepo),
       trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
       cacheServiceProvider.overrideWith(
-        (ref) => cacheService ?? CacheService(),
+        (ref) => cacheService ?? CacheService(envFingerprint: 'test'),
       ),
     ],
   );
@@ -490,7 +490,7 @@ void main() {
           addedAt: DateTime.now(),
           lastUpdated: DateTime.now(),
         );
-      final cacheService = CacheService();
+      final cacheService = CacheService(envFingerprint: 'test');
       await cacheService.set('dashboard:v2:GAME', CacheEntry.test());
       await cacheService.set('${trackingCachePrefix}GAME:all', CacheEntry.test());
 

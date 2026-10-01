@@ -159,6 +159,8 @@ class TrackingRequest {
 }
 
 class DelayedSetCacheService extends CacheService {
+  DelayedSetCacheService() : super(envFingerprint: 'test');
+
   final setStarted = Completer<void>();
   final allowSet = Completer<void>();
 
@@ -176,6 +178,8 @@ class DelayedSetCacheService extends CacheService {
 
 /// Simula um cache apenas de disco: nada em memória, tudo em `disk`.
 class DiskOnlyCacheService extends CacheService {
+  DiskOnlyCacheService() : super(envFingerprint: 'test');
+
   final disk = <String, CacheEntry>{};
 
   @override
@@ -199,7 +203,7 @@ void main() {
       return ProviderContainer(
         overrides: [
           trackingRepositoryProvider.overrideWith((ref) => repo),
-          cacheServiceProvider.overrideWith((ref) => cache ?? CacheService()),
+          cacheServiceProvider.overrideWith((ref) => cache ?? CacheService(envFingerprint: 'test')),
         ],
       );
     }
@@ -263,7 +267,7 @@ void main() {
     );
 
     test('loadTracking() ignores a cache entry from the previous key version', () async {
-      final cache = CacheService();
+      final cache = CacheService(envFingerprint: 'test');
       await cache.set(
         'tracking:v4:SERIES:WATCHING',
         _cachedPage(_page([_makeTracking('t-old', 'WATCHING')])),
@@ -287,7 +291,7 @@ void main() {
     });
 
     test('loadTracking() restores the rating order from cache', () async {
-      final cache = CacheService();
+      final cache = CacheService(envFingerprint: 'test');
       final items = [
         _makeTracking('t-9', 'WATCHING', rating: 9),
         _makeTracking('t-4', 'WATCHING', rating: 4),
@@ -399,7 +403,7 @@ void main() {
       'stale loadTracking() response cannot overwrite newer media type',
       () async {
         final repo = QueuedTrackingRepo();
-        final cache = CacheService();
+        final cache = CacheService(envFingerprint: 'test');
         final container = createContainer(repo, cache: cache);
         addTearDown(container.dispose);
 
@@ -506,7 +510,7 @@ void main() {
       'cached loadTracking() clears fetching so loadMore works after stale request',
       () async {
         final repo = QueuedTrackingRepo();
-        final cache = CacheService();
+        final cache = CacheService(envFingerprint: 'test');
         final moviePage1 = _makeTracking(
           'movie-1',
           'WATCHING',
@@ -748,7 +752,7 @@ void main() {
     test('refresh() reuses current status filter', () async {
       final items = [_makeTracking('t-1', 'COMPLETED')];
       final repo = FakeTrackingRepo()..results = items;
-      final cache = CacheService();
+      final cache = CacheService(envFingerprint: 'test');
       final container = createContainer(repo, cache: cache);
       addTearDown(container.dispose);
 
@@ -814,7 +818,7 @@ void main() {
     });
 
     test('loadTracking() returns cached data from memory', () async {
-      final cache = CacheService();
+      final cache = CacheService(envFingerprint: 'test');
       final items = [_makeTracking('t-1', 'WATCHING')];
       await cache.set(
         _key(MediaType.series.apiValue, 'WATCHING'),
@@ -874,7 +878,7 @@ void main() {
         ..results = [_makeTracking('t-1', 'COMPLETED')]
         ..nextCursor = 'cursor-page-2'
         ..totalCount = 25;
-      final cache = CacheService();
+      final cache = CacheService(envFingerprint: 'test');
       final container = createContainer(repo, cache: cache);
       addTearDown(container.dispose);
 
@@ -913,7 +917,7 @@ void main() {
     test(
       'loadTracking() triggers background refresh when cache is stale',
       () async {
-        final cache = CacheService();
+        final cache = CacheService(envFingerprint: 'test');
         final items = [_makeTracking('t-1', 'WATCHING')];
         await cache.set(
           _key(MediaType.series.apiValue, 'WATCHING'),
@@ -962,7 +966,7 @@ void main() {
     );
 
     test('background refresh does not shrink a paginated list', () async {
-      final cache = CacheService();
+      final cache = CacheService(envFingerprint: 'test');
       final page1 = _makeTracking('t-1', 'COMPLETED');
       await cache.set(
         _key(MediaType.series.apiValue, 'COMPLETED'),
@@ -1006,7 +1010,7 @@ void main() {
     test(
       'background refresh failure sets error provider on stale cache',
       () async {
-        final cache = CacheService();
+        final cache = CacheService(envFingerprint: 'test');
         final items = [_makeTracking('t-1', 'WATCHING')];
         await cache.set(
           _key(MediaType.series.apiValue, 'WATCHING'),
@@ -1034,7 +1038,7 @@ void main() {
     test(
       'stale background refresh failure does not set error provider',
       () async {
-        final cache = CacheService();
+        final cache = CacheService(envFingerprint: 'test');
         final seriesItem = _makeTracking('series-1', 'WATCHING');
         await cache.set(
           _key(MediaType.series.apiValue, 'WATCHING'),
@@ -1109,7 +1113,7 @@ void main() {
     );
 
     test('refresh() reuses stale cache on network failure', () async {
-      final cache = CacheService();
+      final cache = CacheService(envFingerprint: 'test');
       final items = [_makeTracking('t-2', 'COMPLETED')];
       await cache.set(
         _key(MediaType.series.apiValue, 'COMPLETED'),
@@ -1141,7 +1145,7 @@ void main() {
 
     test('refresh() while a page fetch is in flight keeps loadMore usable', () async {
       final repo = QueuedTrackingRepo();
-      final cache = CacheService();
+      final cache = CacheService(envFingerprint: 'test');
       final container = createContainer(repo, cache: cache);
       addTearDown(container.dispose);
 
@@ -1192,7 +1196,7 @@ void main() {
 
     test('refresh() blocks loadMore while it reloads', () async {
       final repo = QueuedTrackingRepo();
-      final cache = CacheService();
+      final cache = CacheService(envFingerprint: 'test');
       final container = createContainer(repo, cache: cache);
       addTearDown(container.dispose);
 
