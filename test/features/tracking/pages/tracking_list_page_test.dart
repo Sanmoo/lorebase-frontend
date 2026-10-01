@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lorebase/core/providers/media_filter_provider.dart';
 import 'package:lorebase/features/tracking/widgets/rating_stars.dart';
+import 'package:lorebase/features/tracking/widgets/tracked_media_poster.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lorebase/features/tracking/pages/tracking_list_page.dart';
@@ -294,6 +295,28 @@ Future<void> main() async {
 
       expect(find.text('Show 1'), findsOneWidget);
       expect(find.text('Show 2'), findsOneWidget);
+    });
+
+    testWidgets('renders posters in the state order: best rating first', (
+      tester,
+    ) async {
+      final trackings = [
+        _tracking('t1', 'WATCHING', media: _media(1), rating: 9),
+        _tracking('t2', 'WATCHING', media: _media(2), rating: 7),
+        _tracking('t3', 'WATCHING', media: _media(3)),
+      ];
+      final fakeVM = FakeTrackingListVM(state: _data(trackings));
+      final container = createContainer(fakeVM);
+      addTearDown(container.dispose);
+      await tester.pumpWidget(_wrap(container));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      final titles = tester
+          .widgetList<TrackedMediaPoster>(find.byType(TrackedMediaPoster))
+          .map((poster) => poster.media.title)
+          .toList();
+      expect(titles, ['Show 1', 'Show 2', 'Show 3']);
     });
 
     testWidgets('shows tv icon when media is null', (tester) async {

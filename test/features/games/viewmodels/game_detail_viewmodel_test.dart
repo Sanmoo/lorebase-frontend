@@ -491,7 +491,7 @@ void main() {
         );
       final cacheService = CacheService();
       await cacheService.set('dashboard:v2:GAME', CacheEntry.test());
-      await cacheService.set('tracking:v4:GAME:all', CacheEntry.test());
+      await cacheService.set('tracking:v5:GAME:all', CacheEntry.test());
 
       final container = createContainer(
         gameRepo: gameRepo,
@@ -506,7 +506,7 @@ void main() {
           .removeTracking();
 
       expect(cacheService.getSync('dashboard:v2:GAME'), isNull);
-      expect(cacheService.getSync('tracking:v4:GAME:all'), isNull);
+      expect(cacheService.getSync('tracking:v5:GAME:all'), isNull);
     });
   });
 }

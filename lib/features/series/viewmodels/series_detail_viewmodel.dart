@@ -5,6 +5,7 @@ import '../../dashboard/viewmodels/dashboard_viewmodel.dart';
 import '../data/repositories/series_repository.dart';
 import '../../tracking/data/repositories/tracking_repository.dart';
 import '../../tracking/data/models/media_type.dart';
+import '../../tracking/data/tracking_cache.dart';
 import 'series_detail_state.dart';
 
 part 'series_detail_viewmodel.g.dart';
@@ -47,7 +48,9 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
       review: review,
     );
     await ref.read(cacheServiceProvider).remove('dashboard:v2:SERIES');
-    await ref.read(cacheServiceProvider).removeByPrefix('tracking:');
+    await ref.read(cacheServiceProvider).removeByPrefix(
+      trackingCacheInvalidationPrefix,
+    );
     ref.invalidate(dashboardViewModelProvider);
     ref.invalidateSelf();
   }
@@ -82,7 +85,9 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
       );
       debugPrint('[SERIES_VM] updateTracking API call succeeded');
       await ref.read(cacheServiceProvider).remove('dashboard:v2:SERIES');
-      await ref.read(cacheServiceProvider).removeByPrefix('tracking:');
+      await ref.read(cacheServiceProvider).removeByPrefix(
+        trackingCacheInvalidationPrefix,
+      );
       debugPrint('[SERIES_VM] cache cleared, invalidating dashboard and self');
       ref.invalidate(dashboardViewModelProvider);
       ref.invalidateSelf();
@@ -104,7 +109,9 @@ class SeriesDetailViewModel extends _$SeriesDetailViewModel {
       mediaType: MediaType.series,
     );
     await ref.read(cacheServiceProvider).remove('dashboard:v2:SERIES');
-    await ref.read(cacheServiceProvider).removeByPrefix('tracking:');
+    await ref.read(cacheServiceProvider).removeByPrefix(
+      trackingCacheInvalidationPrefix,
+    );
     ref.invalidate(dashboardViewModelProvider);
     ref.invalidateSelf();
   }

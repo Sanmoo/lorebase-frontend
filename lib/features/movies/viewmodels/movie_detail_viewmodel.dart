@@ -4,6 +4,7 @@ import '../../../core/cache/cache_providers.dart';
 import '../../dashboard/viewmodels/dashboard_viewmodel.dart';
 import '../../tracking/data/models/media_type.dart';
 import '../../tracking/data/repositories/tracking_repository.dart';
+import '../../tracking/data/tracking_cache.dart';
 import '../data/repositories/movie_repository.dart';
 import 'movie_detail_state.dart';
 
@@ -52,7 +53,9 @@ class MovieDetailViewModel extends _$MovieDetailViewModel {
         '[MOVIE_VM] startTracking succeeded: mediaId=${tracking.mediaId}',
       );
       await ref.read(cacheServiceProvider).remove('dashboard:v2:MOVIE');
-      await ref.read(cacheServiceProvider).removeByPrefix('tracking:');
+      await ref.read(cacheServiceProvider).removeByPrefix(
+        trackingCacheInvalidationPrefix,
+      );
       ref.invalidate(dashboardViewModelProvider);
       ref.invalidateSelf();
     } catch (e, st) {
@@ -85,7 +88,9 @@ class MovieDetailViewModel extends _$MovieDetailViewModel {
         '[MOVIE_VM] updateTracking succeeded: mediaId=${current.mediaId} status=$status rating=$rating',
       );
       await ref.read(cacheServiceProvider).remove('dashboard:v2:MOVIE');
-      await ref.read(cacheServiceProvider).removeByPrefix('tracking:');
+      await ref.read(cacheServiceProvider).removeByPrefix(
+        trackingCacheInvalidationPrefix,
+      );
       ref.invalidate(dashboardViewModelProvider);
       ref.invalidateSelf();
     } catch (e, st) {
@@ -101,7 +106,9 @@ class MovieDetailViewModel extends _$MovieDetailViewModel {
         .read(trackingRepositoryProvider)
         .deleteTracking(current.mediaId, mediaType: MediaType.movie);
     await ref.read(cacheServiceProvider).remove('dashboard:v2:MOVIE');
-    await ref.read(cacheServiceProvider).removeByPrefix('tracking:');
+    await ref.read(cacheServiceProvider).removeByPrefix(
+      trackingCacheInvalidationPrefix,
+    );
     ref.invalidate(dashboardViewModelProvider);
     ref.invalidateSelf();
   }

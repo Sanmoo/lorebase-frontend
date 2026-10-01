@@ -5,6 +5,7 @@ import '../../dashboard/viewmodels/dashboard_viewmodel.dart';
 import '../data/repositories/game_repository.dart';
 import '../../tracking/data/models/media_type.dart';
 import '../../tracking/data/repositories/tracking_repository.dart';
+import '../../tracking/data/tracking_cache.dart';
 import 'game_detail_state.dart';
 
 part 'game_detail_viewmodel.g.dart';
@@ -94,7 +95,7 @@ class GameDetailViewModel extends _$GameDetailViewModel {
   Future<void> _invalidateCaches() async {
     final cacheService = ref.read(cacheServiceProvider);
     await cacheService.remove('dashboard:v2:GAME');
-    await cacheService.removeByPrefix('tracking:');
+    await cacheService.removeByPrefix(trackingCacheInvalidationPrefix);
     ref.invalidate(dashboardViewModelProvider);
   }
 }
