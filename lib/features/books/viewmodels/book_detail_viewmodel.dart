@@ -4,6 +4,7 @@ import '../../../core/cache/cache_providers.dart';
 import '../../dashboard/viewmodels/dashboard_viewmodel.dart';
 import '../../tracking/data/models/media_type.dart';
 import '../../tracking/data/repositories/tracking_repository.dart';
+import '../../tracking/data/tracking_cache.dart';
 import '../data/repositories/book_repository.dart';
 import 'book_detail_state.dart';
 
@@ -86,7 +87,7 @@ class BookDetailViewModel extends _$BookDetailViewModel {
   Future<void> _invalidateCaches() async {
     final cacheService = ref.read(cacheServiceProvider);
     await cacheService.remove('dashboard:v2:BOOK');
-    await cacheService.removeByPrefix('tracking:');
+    await cacheService.removeByPrefix(trackingCacheInvalidationPrefix);
     ref.invalidate(dashboardViewModelProvider);
   }
 }

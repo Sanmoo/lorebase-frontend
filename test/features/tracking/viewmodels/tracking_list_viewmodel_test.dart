@@ -18,12 +18,14 @@ TrackedMediaModel _makeTracking(
   String id,
   String status, {
   MediaType mediaType = MediaType.series,
+  int? rating,
 }) => TrackedMediaModel(
   trackingId: id,
   userId: 'user-1',
   mediaType: mediaType,
   mediaId: '123',
   status: status,
+  rating: rating,
   addedAt: now,
   lastUpdated: now,
 );
@@ -49,7 +51,7 @@ CacheEntry _cachedPage(
 );
 
 String _key(String mediaType, String status) =>
-    'tracking:v4:$mediaType:$status';
+    'tracking:v5:$mediaType:$status';
 
 class FakeTrackingRepo implements TrackingRepository {
   List<TrackedMediaModel>? results;
@@ -228,6 +230,90 @@ void main() {
       final state = container.read(trackingListViewModelProvider);
       expect(state.hasValue, true);
       expect(state.value!.items.length, 2);
+    });
+
+    test(
+      'loadTracking() keeps the API rating order: better first, ties stable, '
+      'unrated last',
+      () async {
+        final items = [
+          _makeTracking('t-10', 'WATCHING', rating: 10),
+          _makeTracking('t-9a', 'WATCHING', rating: 9),
+          _makeTracking('t-9b', 'WATCHING', rating: 9),
+          _makeTracking('t-none', 'WATCHING'),
+        ];
+        final repo = FakeTrackingRepo()..results = items;
+        final container = createContainer(repo);
+        addTearDown(container.dispose);
+
+        await container
+            .read(trackingListViewModelProvider.notifier)
+            .loadTracking(status: 'WATCHING');
+
+        final state = container.read(trackingListViewModelProvider);
+        expect(state.value!.items.map((e) => e.trackingId), [
+          't-10',
+          't-9a',
+          't-9b',
+          't-none',
+        ]);
+        expect(state.value!.items.map((e) => e.rating), [10, 9, 9, null]);
+      },
+    );
+
+    test('loadTracking() restores the rating order from cache', () async {
+      final cache = CacheService();
+      final items = [
+        _makeTracking('t-9', 'WATCHING', rating: 9),
+        _makeTracking('t-4', 'WATCHING', rating: 4),
+        _makeTracking('t-none', 'WATCHING'),
+      ];
+      await cache.set(
+        _key(MediaType.series.apiValue, 'WATCHING'),
+        _cachedPage(_page(items)),
+      );
+      final container = createContainer(FakeTrackingRepo(), cache: cache);
+      addTearDown(container.dispose);
+
+      await container
+          .read(trackingListViewModelProvider.notifier)
+          .loadTracking(status: 'WATCHING');
+
+      final state = container.read(trackingListViewModelProvider);
+      expect(state.value!.items.map((e) => e.trackingId), [
+        't-9',
+        't-4',
+        't-none',
+      ]);
+    });
+
+    test('refresh() shows the reordered list coming from the API', () async {
+      final repo = FakeTrackingRepo()
+        ..results = [
+          _makeTracking('t-5', 'WATCHING', rating: 5),
+          _makeTracking('t-none', 'WATCHING'),
+        ];
+      final container = createContainer(repo);
+      addTearDown(container.dispose);
+
+      final notifier = container.read(trackingListViewModelProvider.notifier);
+      await notifier.loadTracking(status: 'WATCHING');
+      expect(
+        container.read(trackingListViewModelProvider).value!.items.map(
+          (e) => e.trackingId,
+        ),
+        ['t-5', 't-none'],
+      );
+
+      repo.results = [
+        _makeTracking('t-none', 'WATCHING', rating: 10),
+        _makeTracking('t-5', 'WATCHING', rating: 5),
+      ];
+      await notifier.refresh();
+
+      final state = container.read(trackingListViewModelProvider);
+      expect(state.value!.items.map((e) => e.trackingId), ['t-none', 't-5']);
+      expect(state.value!.items.map((e) => e.rating), [10, 5]);
     });
 
     test('loadTracking() exposes the continuation token as hasMore', () async {

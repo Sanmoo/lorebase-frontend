@@ -140,6 +140,7 @@ void main() {
         expect(capturedParams!['cursor'], 'cursor-page-2');
         expect(capturedParams!['pageSize'], 10);
         expect(capturedParams!['includeMedia'], true);
+        expect(capturedParams!['sortBy'], 'rating');
         expect(capturedParams!.containsKey('page'), isFalse);
       },
     );
@@ -159,6 +160,32 @@ void main() {
 
       expect(capturedParams!.containsKey('cursor'), isFalse);
       expect(capturedParams!.containsKey('page'), isFalse);
+      expect(capturedParams!['sortBy'], 'rating');
+    });
+
+    test('getTracking() preserves the API order without reordering on the client', () async {
+      final dio = Dio()
+        ..httpClientAdapter = MockAdapter(
+          onFetch: (options) => _json({
+            'items': [
+              _trackingJson('t-low', 'series')..['rating'] = 7,
+              _trackingJson('t-high', 'series')..['rating'] = 9,
+              _trackingJson('t-none', 'series')..['rating'] = null,
+            ],
+          }),
+        );
+      final repo = TrackingRepositoryImpl(dio);
+
+      final page = await repo.getTracking(
+        status: 'WATCHING',
+        mediaType: MediaType.series,
+      );
+
+      expect(
+        page.items.map((item) => item.trackingId).toList(),
+        ['t-low', 't-high', 't-none'],
+      );
+      expect(page.items.map((item) => item.rating).toList(), [7, 9, null]);
     });
 
     test('getTracking() throws ServerException on DioException', () async {

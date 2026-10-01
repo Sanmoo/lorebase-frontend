@@ -64,6 +64,9 @@ class TrackingRepositoryImpl implements TrackingRepository {
           'cursor': ?cursor,
           'pageSize': pageSize,
           'includeMedia': true,
+          // Contrato do backend: notas maiores primeiro, sem nota por último.
+          // O cliente exibe a ordem recebida sem reordenar.
+          'sortBy': 'rating',
         },
       );
       return TrackingPage.fromJson(

@@ -6,6 +6,7 @@ import '../data/models/media_type.dart';
 import '../data/models/tracked_media_model.dart';
 import '../data/models/tracking_page_model.dart';
 import '../data/repositories/tracking_repository.dart';
+import '../data/tracking_cache.dart';
 import 'tracking_list_state.dart';
 
 part 'tracking_list_viewmodel.g.dart';
@@ -267,7 +268,7 @@ class TrackingListViewModel extends _$TrackingListViewModel {
       mediaType == _currentMediaType;
 
   String _buildCacheKey() =>
-      'tracking:v4:${_currentMediaType.apiValue}:${_currentStatus ?? "all"}';
+      '$trackingCachePrefix${_currentMediaType.apiValue}:${_currentStatus ?? "all"}';
 
   TrackingPage _parsePage(String json) =>
       TrackingPage.fromJson(Map<String, dynamic>.from(jsonDecode(json) as Map));

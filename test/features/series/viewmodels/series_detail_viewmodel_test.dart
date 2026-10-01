@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lorebase/core/cache/cache_entry.dart';
 import 'package:lorebase/core/cache/cache_service.dart';
 import 'package:lorebase/core/cache/cache_providers.dart';
 import 'package:lorebase/features/series/data/models/series_model.dart';
@@ -175,12 +176,13 @@ void main() {
     ProviderContainer createContainer({
       required FakeSeriesRepo seriesRepo,
       required FakeTrackingRepo trackingRepo,
+      CacheService? cache,
     }) {
       return ProviderContainer(
         overrides: [
           seriesRepositoryProvider.overrideWith((ref) => seriesRepo),
           trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
-          cacheServiceProvider.overrideWith((ref) => CacheService()),
+          cacheServiceProvider.overrideWith((ref) => cache ?? CacheService()),
         ],
       );
     }
@@ -629,6 +631,42 @@ void main() {
 
       expect(trackingRepo.lastDeletedMediaId, isNull);
     });
+
+    test(
+      'updateTracking() invalidates the versioned tracking list cache',
+      () async {
+        final seriesRepo = FakeSeriesRepo()
+          ..seriesResult = const SeriesModel(tmdbId: 42, title: 'Test Show');
+        final trackingRepo = FakeTrackingRepo()
+          ..trackingByMediaResult = TrackedMediaModel(
+            trackingId: 'track-42',
+            userId: 'user-1',
+            mediaType: MediaType.series,
+            mediaId: '42',
+            status: 'WATCHING',
+            addedAt: DateTime.now(),
+            lastUpdated: DateTime.now(),
+          );
+        final cache = CacheService();
+        await cache.set('dashboard:v2:SERIES', CacheEntry.test());
+        await cache.set('tracking:v5:SERIES:all', CacheEntry.test());
+
+        final container = createContainer(
+          seriesRepo: seriesRepo,
+          trackingRepo: trackingRepo,
+          cache: cache,
+        );
+        addTearDown(container.dispose);
+
+        await container.read(seriesDetailViewModelProvider(42).future);
+        await container
+            .read(seriesDetailViewModelProvider(42).notifier)
+            .updateTracking(rating: 8);
+
+        expect(cache.getSync('dashboard:v2:SERIES'), isNull);
+        expect(cache.getSync('tracking:v5:SERIES:all'), isNull);
+      },
+    );
 
     test('removeTracking() no-ops when tracking is null in state', () async {
       final seriesRepo = FakeSeriesRepo()

@@ -429,7 +429,7 @@ void main() {
         );
       final cacheService = CacheService();
       await cacheService.set('dashboard:v2:BOOK', CacheEntry.test());
-      await cacheService.set('tracking:v4:BOOK:all', CacheEntry.test());
+      await cacheService.set('tracking:v5:BOOK:all', CacheEntry.test());
 
       final container = createContainer(
         bookRepo: bookRepo,
@@ -444,7 +444,7 @@ void main() {
           .removeTracking();
 
       expect(cacheService.getSync('dashboard:v2:BOOK'), isNull);
-      expect(cacheService.getSync('tracking:v4:BOOK:all'), isNull);
+      expect(cacheService.getSync('tracking:v5:BOOK:all'), isNull);
     });
   });
 }

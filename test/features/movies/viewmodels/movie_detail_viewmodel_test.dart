@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lorebase/core/cache/cache_entry.dart';
 import 'package:lorebase/core/cache/cache_providers.dart';
 import 'package:lorebase/core/cache/cache_service.dart';
 import 'package:lorebase/features/movies/data/models/movie_model.dart';
@@ -536,6 +537,41 @@ void main() {
         .removeTracking();
 
     expect(trackingRepo.deleteCalled, true);
+  });
+
+  test('updateTracking() invalidates the versioned tracking list cache', () async {
+    final movieRepo = FakeMovieRepo()
+      ..movieResult = const MovieModel(tmdbId: 7, title: 'Se7en');
+    final trackingRepo = FakeTrackingRepo()
+      ..directTrackingResult = TrackedMediaModel(
+        trackingId: 'track-7',
+        userId: 'user-1',
+        mediaType: MediaType.movie,
+        mediaId: '7',
+        status: 'WATCHING',
+        addedAt: DateTime.now(),
+        lastUpdated: DateTime.now(),
+      );
+    final cache = CacheService();
+    await cache.set('dashboard:v2:MOVIE', CacheEntry.test());
+    await cache.set('tracking:v5:MOVIE:all', CacheEntry.test());
+
+    final container = ProviderContainer(
+      overrides: [
+        movieRepositoryProvider.overrideWith((ref) => movieRepo),
+        trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
+        cacheServiceProvider.overrideWith((ref) => cache),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    await container.read(movieDetailViewModelProvider(7).future);
+    await container
+        .read(movieDetailViewModelProvider(7).notifier)
+        .updateTracking(rating: 8);
+
+    expect(cache.getSync('dashboard:v2:MOVIE'), isNull);
+    expect(cache.getSync('tracking:v5:MOVIE:all'), isNull);
   });
 
   test('removeTracking() does nothing when no tracking exists', () async {
