@@ -83,7 +83,7 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           dashboardRepositoryProvider.overrideWith((ref) => repo),
-          cacheServiceProvider.overrideWith((ref) => CacheService()),
+          cacheServiceProvider.overrideWith((ref) => CacheService(envFingerprint: 'test')),
         ],
       );
       addTearDown(container.dispose);
@@ -98,7 +98,7 @@ void main() {
         overrides: [
           selectedMediaTypeProvider.overrideWith((ref) => MediaType.movie),
           dashboardRepositoryProvider.overrideWith((ref) => repo),
-          cacheServiceProvider.overrideWith((ref) => CacheService()),
+          cacheServiceProvider.overrideWith((ref) => CacheService(envFingerprint: 'test')),
         ],
       );
       addTearDown(container.dispose);
@@ -127,7 +127,7 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           dashboardRepositoryProvider.overrideWith((ref) => repo),
-          cacheServiceProvider.overrideWith((ref) => CacheService()),
+          cacheServiceProvider.overrideWith((ref) => CacheService(envFingerprint: 'test')),
         ],
       );
       addTearDown(container.dispose);
@@ -154,7 +154,7 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           dashboardRepositoryProvider.overrideWith((ref) => repo),
-          cacheServiceProvider.overrideWith((ref) => CacheService()),
+          cacheServiceProvider.overrideWith((ref) => CacheService(envFingerprint: 'test')),
         ],
       );
       addTearDown(container.dispose);
@@ -173,7 +173,7 @@ void main() {
     });
 
     test('ignores out-of-order stale media type responses', () async {
-      final cacheService = CacheService();
+      final cacheService = CacheService(envFingerprint: 'test');
       final repo = ControlledDashboardRepo();
       final container = ProviderContainer(
         overrides: [
@@ -238,7 +238,7 @@ void main() {
     test(
       'stale background refresh failure does not set background error',
       () async {
-        final cacheService = CacheService();
+        final cacheService = CacheService(envFingerprint: 'test');
         await cacheService.set(
           'dashboard:v2:SERIES',
           CacheEntry(
@@ -288,7 +288,7 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           dashboardRepositoryProvider.overrideWith((ref) => repo),
-          cacheServiceProvider.overrideWith((ref) => CacheService()),
+          cacheServiceProvider.overrideWith((ref) => CacheService(envFingerprint: 'test')),
         ],
       );
       addTearDown(container.dispose);
@@ -323,7 +323,7 @@ void main() {
     });
 
     test('refresh() keeps stale data on network failure', () async {
-      final cacheService = CacheService();
+      final cacheService = CacheService(envFingerprint: 'test');
       await cacheService.set(
         'dashboard:v2:SERIES',
         CacheEntry(
@@ -356,7 +356,7 @@ void main() {
     });
 
     test('build() returns cached data from memory', () async {
-      final cacheService = CacheService();
+      final cacheService = CacheService(envFingerprint: 'test');
       await cacheService.set(
         'dashboard:v2:SERIES',
         CacheEntry(
@@ -388,7 +388,7 @@ void main() {
     });
 
     test('build() triggers background refresh when cache is stale', () async {
-      final cacheService = CacheService();
+      final cacheService = CacheService(envFingerprint: 'test');
       await cacheService.set(
         'dashboard:v2:SERIES',
         CacheEntry(
@@ -434,7 +434,7 @@ void main() {
     });
 
     test('build() handles background refresh failure on stale cache', () async {
-      final cacheService = CacheService();
+      final cacheService = CacheService(envFingerprint: 'test');
       await cacheService.set(
         'dashboard:v2:SERIES',
         CacheEntry(
@@ -476,7 +476,7 @@ void main() {
         overrides: [
           selectedMediaTypeProvider.overrideWith((ref) => MediaType.movie),
           dashboardRepositoryProvider.overrideWith((ref) => repo),
-          cacheServiceProvider.overrideWith((ref) => CacheService()),
+          cacheServiceProvider.overrideWith((ref) => CacheService(envFingerprint: 'test')),
         ],
       );
       addTearDown(container.dispose);
@@ -491,7 +491,7 @@ void main() {
     });
 
     test('loadDashboard() switches media type and reloads', () async {
-      final cacheService = CacheService();
+      final cacheService = CacheService(envFingerprint: 'test');
       final repo = FakeDashboardRepo()
         ..result = const DashboardModel(
           watching: DashboardSectionModel(),
@@ -522,7 +522,7 @@ void main() {
     });
 
     test('refresh() ignores invalid stale cache and sets error', () async {
-      final cacheService = CacheService();
+      final cacheService = CacheService(envFingerprint: 'test');
       await cacheService.set(
         'dashboard:v2:SERIES',
         CacheEntry(
@@ -551,7 +551,7 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           dashboardRepositoryProvider.overrideWith((ref) => repo),
-          cacheServiceProvider.overrideWith((ref) => CacheService()),
+          cacheServiceProvider.overrideWith((ref) => CacheService(envFingerprint: 'test')),
         ],
       );
       addTearDown(container.dispose);

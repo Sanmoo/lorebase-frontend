@@ -9,6 +9,9 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'amplifyconfiguration.dart';
 import 'app.dart';
+import 'core/cache/cache_service.dart';
+import 'core/cache/env_fingerprint.dart';
+import 'core/constants/api_constants.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,7 +35,11 @@ void main() async {
 Future<void> _configureHive() async {
   try {
     await Hive.initFlutter();
-    await Hive.openBox('cache');
+    final box = await Hive.openBox('cache');
+    await CacheService(
+      envFingerprint: envFingerprintOf(ApiConstants.baseUrl),
+      hiveBox: box,
+    ).purgeForeignEnvironments();
   } catch (e) {
     debugPrint('Could not configure Hive cache: $e');
   }

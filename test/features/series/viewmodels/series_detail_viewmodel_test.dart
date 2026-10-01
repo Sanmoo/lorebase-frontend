@@ -183,7 +183,7 @@ void main() {
         overrides: [
           seriesRepositoryProvider.overrideWith((ref) => seriesRepo),
           trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
-          cacheServiceProvider.overrideWith((ref) => cache ?? CacheService()),
+          cacheServiceProvider.overrideWith((ref) => cache ?? CacheService(envFingerprint: 'test')),
         ],
       );
     }
@@ -214,7 +214,7 @@ void main() {
           seriesRepositoryProvider.overrideWith((ref) => seriesRepo),
           trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
           dashboardRepositoryProvider.overrideWith((ref) => dashboardRepo),
-          cacheServiceProvider.overrideWith((ref) => CacheService()),
+          cacheServiceProvider.overrideWith((ref) => CacheService(envFingerprint: 'test')),
         ],
       );
       addTearDown(container.dispose);
@@ -648,7 +648,7 @@ void main() {
             addedAt: DateTime.now(),
             lastUpdated: DateTime.now(),
           );
-        final cache = CacheService();
+        final cache = CacheService(envFingerprint: 'test');
         await cache.set('dashboard:v2:SERIES', CacheEntry.test());
         await cache.set('${trackingCachePrefix}SERIES:all', CacheEntry.test());
 

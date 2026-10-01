@@ -193,7 +193,7 @@ void main() {
       overrides: [
         movieRepositoryProvider.overrideWith((ref) => movieRepo),
         trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
-        cacheServiceProvider.overrideWith((ref) => CacheService()),
+        cacheServiceProvider.overrideWith((ref) => CacheService(envFingerprint: 'test')),
       ],
     );
     addTearDown(container.dispose);
@@ -235,7 +235,7 @@ void main() {
       overrides: [
         movieRepositoryProvider.overrideWith((ref) => movieRepo),
         trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
-        cacheServiceProvider.overrideWith((ref) => CacheService()),
+        cacheServiceProvider.overrideWith((ref) => CacheService(envFingerprint: 'test')),
       ],
     );
     addTearDown(container.dispose);
@@ -256,7 +256,7 @@ void main() {
       overrides: [
         movieRepositoryProvider.overrideWith((ref) => movieRepo),
         trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
-        cacheServiceProvider.overrideWith((ref) => CacheService()),
+        cacheServiceProvider.overrideWith((ref) => CacheService(envFingerprint: 'test')),
       ],
     );
     addTearDown(container.dispose);
@@ -278,7 +278,7 @@ void main() {
         overrides: [
           movieRepositoryProvider.overrideWith((ref) => movieRepo),
           trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
-          cacheServiceProvider.overrideWith((ref) => CacheService()),
+          cacheServiceProvider.overrideWith((ref) => CacheService(envFingerprint: 'test')),
         ],
       );
       addTearDown(container.dispose);
@@ -303,7 +303,7 @@ void main() {
       overrides: [
         movieRepositoryProvider.overrideWith((ref) => movieRepo),
         trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
-        cacheServiceProvider.overrideWith((ref) => CacheService()),
+        cacheServiceProvider.overrideWith((ref) => CacheService(envFingerprint: 'test')),
       ],
     );
     addTearDown(container.dispose);
@@ -326,7 +326,7 @@ void main() {
       overrides: [
         movieRepositoryProvider.overrideWith((ref) => movieRepo),
         trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
-        cacheServiceProvider.overrideWith((ref) => CacheService()),
+        cacheServiceProvider.overrideWith((ref) => CacheService(envFingerprint: 'test')),
       ],
     );
     addTearDown(container.dispose);
@@ -351,7 +351,7 @@ void main() {
       overrides: [
         movieRepositoryProvider.overrideWith((ref) => movieRepo),
         trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
-        cacheServiceProvider.overrideWith((ref) => CacheService()),
+        cacheServiceProvider.overrideWith((ref) => CacheService(envFingerprint: 'test')),
       ],
     );
     addTearDown(container.dispose);
@@ -376,7 +376,7 @@ void main() {
       overrides: [
         movieRepositoryProvider.overrideWith((ref) => movieRepo),
         trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
-        cacheServiceProvider.overrideWith((ref) => CacheService()),
+        cacheServiceProvider.overrideWith((ref) => CacheService(envFingerprint: 'test')),
       ],
     );
     addTearDown(container.dispose);
@@ -410,7 +410,7 @@ void main() {
       overrides: [
         movieRepositoryProvider.overrideWith((ref) => movieRepo),
         trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
-        cacheServiceProvider.overrideWith((ref) => CacheService()),
+        cacheServiceProvider.overrideWith((ref) => CacheService(envFingerprint: 'test')),
       ],
     );
     addTearDown(container.dispose);
@@ -434,7 +434,7 @@ void main() {
       overrides: [
         movieRepositoryProvider.overrideWith((ref) => movieRepo),
         trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
-        cacheServiceProvider.overrideWith((ref) => CacheService()),
+        cacheServiceProvider.overrideWith((ref) => CacheService(envFingerprint: 'test')),
       ],
     );
     addTearDown(container.dispose);
@@ -470,7 +470,7 @@ void main() {
       overrides: [
         movieRepositoryProvider.overrideWith((ref) => movieRepo),
         trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
-        cacheServiceProvider.overrideWith((ref) => CacheService()),
+        cacheServiceProvider.overrideWith((ref) => CacheService(envFingerprint: 'test')),
       ],
     );
     addTearDown(container.dispose);
@@ -494,7 +494,7 @@ void main() {
       overrides: [
         movieRepositoryProvider.overrideWith((ref) => movieRepo),
         trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
-        cacheServiceProvider.overrideWith((ref) => CacheService()),
+        cacheServiceProvider.overrideWith((ref) => CacheService(envFingerprint: 'test')),
       ],
     );
     addTearDown(container.dispose);
@@ -527,7 +527,7 @@ void main() {
       overrides: [
         movieRepositoryProvider.overrideWith((ref) => movieRepo),
         trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
-        cacheServiceProvider.overrideWith((ref) => CacheService()),
+        cacheServiceProvider.overrideWith((ref) => CacheService(envFingerprint: 'test')),
       ],
     );
     addTearDown(container.dispose);
@@ -553,7 +553,7 @@ void main() {
         addedAt: DateTime.now(),
         lastUpdated: DateTime.now(),
       );
-    final cache = CacheService();
+    final cache = CacheService(envFingerprint: 'test');
     await cache.set('dashboard:v2:MOVIE', CacheEntry.test());
     await cache.set('${trackingCachePrefix}MOVIE:all', CacheEntry.test());
 
@@ -584,7 +584,7 @@ void main() {
       overrides: [
         movieRepositoryProvider.overrideWith((ref) => movieRepo),
         trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
-        cacheServiceProvider.overrideWith((ref) => CacheService()),
+        cacheServiceProvider.overrideWith((ref) => CacheService(envFingerprint: 'test')),
       ],
     );
     addTearDown(container.dispose);

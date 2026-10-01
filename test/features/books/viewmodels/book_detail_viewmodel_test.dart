@@ -174,7 +174,7 @@ ProviderContainer createContainer({
       bookRepositoryProvider.overrideWith((ref) => bookRepo),
       trackingRepositoryProvider.overrideWith((ref) => trackingRepo),
       cacheServiceProvider.overrideWith(
-        (ref) => cacheService ?? CacheService(),
+        (ref) => cacheService ?? CacheService(envFingerprint: 'test'),
       ),
     ],
   );
@@ -428,7 +428,7 @@ void main() {
           addedAt: DateTime.now(),
           lastUpdated: DateTime.now(),
         );
-      final cacheService = CacheService();
+      final cacheService = CacheService(envFingerprint: 'test');
       await cacheService.set('dashboard:v2:BOOK', CacheEntry.test());
       await cacheService.set('${trackingCachePrefix}BOOK:all', CacheEntry.test());
 

@@ -118,7 +118,7 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           authRepositoryProvider.overrideWith((ref) => repo),
-          cacheServiceProvider.overrideWith((ref) => CacheService()),
+          cacheServiceProvider.overrideWith((ref) => CacheService(envFingerprint: 'test')),
         ],
       );
       addTearDown(container.dispose);
@@ -133,7 +133,7 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           authRepositoryProvider.overrideWith((ref) => FakeAuthRepo()),
-          cacheServiceProvider.overrideWith((ref) => CacheService()),
+          cacheServiceProvider.overrideWith((ref) => CacheService(envFingerprint: 'test')),
         ],
       );
       addTearDown(container.dispose);
@@ -151,7 +151,7 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           authRepositoryProvider.overrideWith((ref) => repo),
-          cacheServiceProvider.overrideWith((ref) => CacheService()),
+          cacheServiceProvider.overrideWith((ref) => CacheService(envFingerprint: 'test')),
         ],
       );
       addTearDown(container.dispose);
