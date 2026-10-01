@@ -1,16 +1,24 @@
 # lorebase
 
-A new Flutter project.
+Aplicativo Flutter de descoberta e acompanhamento pessoal de obras de entretenimento.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+```bash
+flutter pub get       # instala dependências
+cp .env.example .env  # config local; o pubspec declara .env como asset (gitignored)
+make codegen          # gera código (build_runner + slang) — obrigatório antes de compilar
+make test             # testes unitários/widget (roda o codegen antes)
+make check            # codegen + analyze + cobertura + goldens
+```
 
-A few resources to get you started if this is your first Flutter project:
+Os arquivos gerados (`*.g.dart`, `*.freezed.dart` e `lib/l10n/strings*.g.dart`) **não são
+versionados**: rode `make codegen` depois de clonar, trocar de branch ou alterar
+modelos/viewmodels. O loop de desenvolvimento é
+`dart run build_runner watch --delete-conflicting-outputs`.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+`flutter test` cru não é o fluxo suportado — sem o codegen a árvore não compila. Se a IDE ou
+`flutter run` reclamar de `Target of URI doesn't exist: '…g.dart'`, falta o codegen; não existe
+hook de build nesses caminhos.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Política completa em `AGENTS.md` > Conventions.

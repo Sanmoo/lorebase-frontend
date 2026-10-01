@@ -37,19 +37,25 @@ A entrega do desenvolvimento termina com o PR aberto e as validações relatadas
 ## Commands
 
 ```bash
-flutter pub get                          # install deps (run before build_runner)
-dart run build_runner build --delete-conflicting-outputs   # codegen (one-shot)
-dart run build_runner watch --delete-conflicting-outputs   # codegen (watch)
-flutter test                             # unit + widget tests
+flutter pub get                          # install deps
+cp .env.example .env                     # config local; o pubspec declara .env como asset (gitignored)
+make codegen                             # setup obrigatório: pub get + build_runner + `dart run slang`
+dart run build_runner build --delete-conflicting-outputs   # codegen Dart (one-shot)
+dart run build_runner watch --delete-conflicting-outputs   # loop de desenvolvimento recomendado (watch)
+dart run slang                           # codegen i18n (lib/l10n/strings*.g.dart)
+make test                                # unit + widget tests (roda o codegen antes)
 dart analyze --fatal-infos               # lint
 make analyze                             # dart analyze wrapper that treats exit code 2 (warnings-only) as pass
 make test-coverage                       # runs `flutter test --coverage --branch-coverage` then gates at 100% line + branch
-make check                               # analyze + coverage gate
+make check                               # codegen + analyze + coverage gate + goldens
 flutter run                              # mobile
 flutter run -d chrome                    # web
 make e2e-install && make e2e          # acceptance E2E (Gherkin pt + Playwright) vs backend quality
 python scripts/get_cognito_token.py <email>  # get Cognito JWT tokens for API testing
 ```
+
+`flutter run`/IDE não têm hook de build — se aparecer `Target of URI doesn't exist: '…g.dart'`,
+rode `make codegen`. Mais detalhes da política em Conventions, abaixo.
 
 ## Architecture
 
@@ -65,7 +71,7 @@ Each feature under `lib/features/<name>/` follows: `data/`, `pages/`, `viewmodel
 
 ## Conventions
 
-- **Never edit** `*.g.dart` or `*.freezed.dart` — auto-generated.
+- **Arquivos gerados (`*.g.dart`, `*.freezed.dart`) não são versionados.** Nunca edite à mão e nunca os commite: `git ls-files '*.g.dart' '*.freezed.dart'` tem que ficar vazio. A fonte da verdade são os geradores (`make codegen`: `pub get` + `build_runner` + `dart run slang`), rode-o depois de clonar, trocar de branch ou alterar modelos/viewmodels. `make test`, `make test-coverage`, `make golden-test`, `make check` e os builds dependem dele; **`flutter test` cru não é o fluxo suportado** — sem o codegen a árvore não compila. `slang.yaml` usa `timestamp: false` para o `make codegen` ser idempotente (duas execuções não alteram arquivo).
 - Models: `@freezed` with `part '...freezed.dart'` and `part '...g.dart'`.
 - ViewModels: `@riverpod class Foo extends _$Foo { ... }` with `part '...g.dart'`. Extend `_$Foo`.
 - Plain providers: `final fooProvider = Provider<Foo>((ref) => ...);` (e.g. `routerProvider`, `dioProvider`, `secureStorageProvider`).
@@ -115,7 +121,7 @@ por fixture no projeto `app`. Cenários `@tracking` auto-limpam via
 - `lib/amplifyconfiguration.dart` (with Cognito pool ID / client ID) IS tracked despite being in `.gitignore` (was committed before the gitignore rule was added).
 - `.env` is gitignored; `.env.example` only has `API_BASE_URL`.
 - Web: `setPathUrlStrategy()` in main.dart enables clean URLs without `#`.
-- No i18n/localization implementation yet (planned but not built).
+- i18n via `slang`: 4 locales (`pt_BR` base, `en`, `en_US`, `es`) com as fontes em `lib/l10n/*.i18n.json`; os `lib/l10n/strings*.g.dart` saem de `dart run slang` e não são versionados. `slang_build_runner` permanece desabilitado no `build.yaml` (quebrado com as versões pinadas) — use o CLI.
 
 ## Agent skills
 
