@@ -13,6 +13,7 @@ import 'package:lorebase/features/tracking/data/models/media_type.dart';
 import 'package:lorebase/features/tracking/data/models/tracked_media_model.dart';
 import 'package:lorebase/features/tracking/data/models/tracked_media_summary_model.dart';
 import 'package:lorebase/features/tracking/data/repositories/tracking_repository.dart';
+import 'package:lorebase/features/tracking/data/tracking_cache.dart';
 import 'package:lorebase/features/tracking/data/models/tracking_page_model.dart';
 
 class FakeMovieRepo implements MovieRepository {
@@ -554,7 +555,7 @@ void main() {
       );
     final cache = CacheService();
     await cache.set('dashboard:v2:MOVIE', CacheEntry.test());
-    await cache.set('tracking:v5:MOVIE:all', CacheEntry.test());
+    await cache.set('${trackingCachePrefix}MOVIE:all', CacheEntry.test());
 
     final container = ProviderContainer(
       overrides: [
@@ -571,7 +572,7 @@ void main() {
         .updateTracking(rating: 8);
 
     expect(cache.getSync('dashboard:v2:MOVIE'), isNull);
-    expect(cache.getSync('tracking:v5:MOVIE:all'), isNull);
+    expect(cache.getSync('${trackingCachePrefix}MOVIE:all'), isNull);
   });
 
   test('removeTracking() does nothing when no tracking exists', () async {

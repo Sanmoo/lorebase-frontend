@@ -11,6 +11,7 @@ import 'package:lorebase/features/tracking/data/repositories/tracking_repository
 import 'package:lorebase/features/tracking/data/models/tracked_media_model.dart';
 import 'package:lorebase/features/tracking/data/models/tracking_page_model.dart';
 import 'package:lorebase/features/tracking/data/models/media_type.dart';
+import 'package:lorebase/features/tracking/data/tracking_cache.dart';
 
 final now = DateTime.now();
 
@@ -51,7 +52,7 @@ CacheEntry _cachedPage(
 );
 
 String _key(String mediaType, String status) =>
-    'tracking:v5:$mediaType:$status';
+    '$trackingCachePrefix$mediaType:$status';
 
 class FakeTrackingRepo implements TrackingRepository {
   List<TrackedMediaModel>? results;
@@ -260,6 +261,30 @@ void main() {
         expect(state.value!.items.map((e) => e.rating), [10, 9, 9, null]);
       },
     );
+
+    test('loadTracking() ignores a cache entry from the previous key version', () async {
+      final cache = CacheService();
+      await cache.set(
+        'tracking:v4:SERIES:WATCHING',
+        _cachedPage(_page([_makeTracking('t-old', 'WATCHING')])),
+      );
+      final repo = FakeTrackingRepo()
+        ..results = [_makeTracking('t-new', 'WATCHING', rating: 9)];
+      final container = createContainer(repo, cache: cache);
+      addTearDown(container.dispose);
+
+      await container
+          .read(trackingListViewModelProvider.notifier)
+          .loadTracking(status: 'WATCHING');
+
+      expect(repo.getTrackingCallCount, 1);
+      expect(
+        container.read(trackingListViewModelProvider).value!.items.map(
+          (e) => e.trackingId,
+        ),
+        ['t-new'],
+      );
+    });
 
     test('loadTracking() restores the rating order from cache', () async {
       final cache = CacheService();

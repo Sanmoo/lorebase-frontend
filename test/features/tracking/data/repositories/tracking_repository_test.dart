@@ -168,8 +168,8 @@ void main() {
         ..httpClientAdapter = MockAdapter(
           onFetch: (options) => _json({
             'items': [
-              _trackingJson('t-low', 'series')..['rating'] = 7,
-              _trackingJson('t-high', 'series')..['rating'] = 9,
+              _trackingJson('t-7', 'series')..['rating'] = 7,
+              _trackingJson('t-9', 'series')..['rating'] = 9,
               _trackingJson('t-none', 'series')..['rating'] = null,
             ],
           }),
@@ -183,7 +183,7 @@ void main() {
 
       expect(
         page.items.map((item) => item.trackingId).toList(),
-        ['t-low', 't-high', 't-none'],
+        ['t-7', 't-9', 't-none'],
       );
       expect(page.items.map((item) => item.rating).toList(), [7, 9, null]);
     });
