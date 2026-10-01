@@ -97,8 +97,10 @@ por fixture no projeto `app`. Cenários `@tracking` auto-limpam via
 
 ## Critério de conclusão de issues
 
-- Toda issue com impacto comportamental exige validação funcional no app real, na plataforma afetada (Android via ADB/Wi-Fi ou web via browser), cobrindo seus critérios de aceite. Testes unitários/widget não substituem essa validação.
-- Para validar mudanças Android, prefira o app em debug no dispositivo físico conectado via ADB por Wi-Fi. Verifique `adb devices -l` e reutilize a conexão existente. Se necessário, solicite pareamento; IP, portas e código são temporários. Navegue via ADB e capture evidências com `adb -s <device> exec-out screencap -p > <evidencia>.png`. Se o dispositivo estiver indisponível, registre o bloqueio; testes web não substituem a validação Android.
+- Toda issue com impacto comportamental exige validação funcional **no app Android real** (dispositivo físico, build debug conectado via ADB por Wi-Fi), cobrindo seus critérios de aceite. Testes unitários/widget **e a versão web não substituem** essa validação.
+- Exceção única: comportamento que só existe na web (ex.: estratégia de URL/histórico do navegador). Nesse caso, valide no navegador e registre a justificativa da exceção no relato de conclusão.
+- Verifique `adb devices -l` e reutilize a conexão existente. Se necessário, solicite pareamento; IP, portas e código são temporários. Navegue via ADB e capture evidências com `adb -s <device> exec-out screencap -p > <evidencia>.png`.
+- Se o dispositivo Android estiver indisponível, registre o bloqueio e mantenha a issue pendente; validação web não supre a lacuna.
 - Colete screenshots de evidência e anexe-as à GitHub issue, junto dos passos, ambiente/build testado e resultados. Confirme que as imagens carregam na issue; arquivos apenas locais não bastam. Remova segredos e dados sensíveis antes de publicar.
 - Só declare a issue concluída ou a encerre após a validação passar e as evidências estarem publicadas. Se houver falha ou bloqueio de acesso, dispositivo ou upload, registre-o e mantenha a issue pendente; peça autorização antes de alterar dados do usuário.
 - Alterações sem impacto comportamental (ex.: documentação) dispensam esse fluxo, com a justificativa registrada no relato de conclusão.
