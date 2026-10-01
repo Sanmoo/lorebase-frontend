@@ -12,6 +12,7 @@ import 'package:lorebase/features/games/viewmodels/game_detail_viewmodel.dart';
 import 'package:lorebase/features/tracking/data/models/media_type.dart';
 import 'package:lorebase/features/tracking/data/models/tracked_media_model.dart';
 import 'package:lorebase/features/tracking/data/repositories/tracking_repository.dart';
+import 'package:lorebase/features/tracking/data/tracking_cache.dart';
 import 'package:lorebase/features/tracking/data/models/tracking_page_model.dart';
 
 class FakeGameRepo implements GameRepository {
@@ -491,7 +492,7 @@ void main() {
         );
       final cacheService = CacheService();
       await cacheService.set('dashboard:v2:GAME', CacheEntry.test());
-      await cacheService.set('tracking:v5:GAME:all', CacheEntry.test());
+      await cacheService.set('${trackingCachePrefix}GAME:all', CacheEntry.test());
 
       final container = createContainer(
         gameRepo: gameRepo,
@@ -506,7 +507,7 @@ void main() {
           .removeTracking();
 
       expect(cacheService.getSync('dashboard:v2:GAME'), isNull);
-      expect(cacheService.getSync('tracking:v5:GAME:all'), isNull);
+      expect(cacheService.getSync('${trackingCachePrefix}GAME:all'), isNull);
     });
   });
 }

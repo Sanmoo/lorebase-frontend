@@ -18,6 +18,7 @@ import 'package:lorebase/features/tracking/data/models/tracked_media_model.dart'
 import 'package:lorebase/features/tracking/data/models/tracked_media_summary_model.dart';
 import 'package:lorebase/features/tracking/data/models/media_type.dart';
 import 'package:lorebase/features/tracking/data/repositories/tracking_repository.dart';
+import 'package:lorebase/features/tracking/data/tracking_cache.dart';
 import 'package:lorebase/features/tracking/data/models/tracking_page_model.dart';
 
 class FakeSeriesRepo implements SeriesRepository {
@@ -649,7 +650,7 @@ void main() {
           );
         final cache = CacheService();
         await cache.set('dashboard:v2:SERIES', CacheEntry.test());
-        await cache.set('tracking:v5:SERIES:all', CacheEntry.test());
+        await cache.set('${trackingCachePrefix}SERIES:all', CacheEntry.test());
 
         final container = createContainer(
           seriesRepo: seriesRepo,
@@ -664,7 +665,7 @@ void main() {
             .updateTracking(rating: 8);
 
         expect(cache.getSync('dashboard:v2:SERIES'), isNull);
-        expect(cache.getSync('tracking:v5:SERIES:all'), isNull);
+        expect(cache.getSync('${trackingCachePrefix}SERIES:all'), isNull);
       },
     );
 
