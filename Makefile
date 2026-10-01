@@ -1,27 +1,36 @@
-.PHONY: test test-coverage analyze check-disk check clean-tmp golden-test golden-update deploy deploy-dev-fast deploy-dev-quick build-web infra workspace-list workspace-show workspace-create
+.PHONY: codegen test test-coverage analyze check-disk check clean-tmp golden-test golden-update deploy deploy-dev-fast deploy-dev-quick build-web infra workspace-list workspace-show workspace-create
+
+# ─── Code Generation ───────────────────────────
+# Arquivos gerados (*.g.dart / *.freezed.dart) NÃO são versionados: rode `make codegen`
+# depois de clonar ou trocar de branch. Ele é pré-requisito incondicional dos alvos que
+# compilam, então não existe passo manual para esquecer. Política em AGENTS.md > Conventions.
+codegen:
+	flutter pub get
+	dart run build_runner build --delete-conflicting-outputs
+	dart run slang
 
 # ─── Testing & Quality ─────────────────────────
 
-test:
+test: codegen
 	flutter test
 
-test-coverage:
+test-coverage: codegen
 	dart run scripts/check_coverage.dart
 
-analyze:
+analyze: codegen
 	@dart analyze --fatal-infos || case "$$?" in 2) true ;; *) false ;; esac
 
 check-disk:
 	@sh -c 'usage=$$(df -P /tmp | awk '\''NR==2{gsub(/%/,""); print $$5}'\''); if [ -n "$$usage" ] && [ "$$usage" -gt 70 ]; then echo "⚠️  /tmp is $$usage% full. Consider '\''make clean-tmp'\'' for faster tests."; fi' || true
 
-check: analyze check-disk test-coverage golden-test
+check: codegen analyze check-disk test-coverage golden-test
 
 # ─── Visual Regression ──────────────────────
 
-golden-test:
+golden-test: codegen
 	flutter test test/visual/
 
-golden-update:
+golden-update: codegen
 	flutter test test/visual/ --update-goldens
 
 clean-tmp:
@@ -32,13 +41,13 @@ clean-tmp:
 
 # ─── Web Build ─────────────────────────────────
 
-build-web: check-deps
+build-web: check-deps codegen
 	@echo "🔨 Building Flutter web..."
 	flutter build web --release
 
 # ─── Deploy (infra + build + upload) ───────────
 
-deploy: check-deps deploy-env-check check-files
+deploy: check-deps deploy-env-check check-files codegen
 	@echo "🏗️  Initializing Terraform..."
 	terraform -chdir=terraform init
 	@echo "🏗️  Selecting workspace '$(ENV)'..."
@@ -59,7 +68,7 @@ deploy: check-deps deploy-env-check check-files
 	@echo "✅  Deploy completo!"
 	@echo "🌐  $(ENV): https://`terraform -chdir=terraform output -raw cloudfront_domain`"
 
-deploy-dev-fast: check-dev-fast-deps check-files
+deploy-dev-fast: check-dev-fast-deps check-files codegen
 	@echo "🔨 Building Flutter web for fast dev deploy..."
 	flutter build web --release
 	@echo "📦 Syncing directly to dev S3 website bucket..."
@@ -68,7 +77,7 @@ deploy-dev-fast: check-dev-fast-deps check-files
 	@echo "✅  Deploy dev rápido completo!"
 	@echo "🌐  dev: http://lorebase-web-dev.s3-website-us-east-1.amazonaws.com"
 
-deploy-dev-quick: check-dev-fast-deps check-files
+deploy-dev-quick: check-dev-fast-deps check-files codegen
 	@echo "⚡ Building Flutter web profile bundle for quick dev deploy..."
 	flutter build web --profile --no-wasm-dry-run -o build/web-quick
 	@echo "📦 Syncing quick build directly to dev S3 website bucket..."
@@ -133,7 +142,7 @@ e2e-install:
 
 BACKEND_DIR ?= ../lorebase-backend
 
-e2e-build-web:
+e2e-build-web: codegen
 	@command -v terraform >/dev/null 2>&1 || { echo "❌ terraform não encontrado"; exit 1; }
 	@[ -d "$(BACKEND_DIR)/experience-bff/terraform" ] || { echo "❌ backend repo não encontrado em $(BACKEND_DIR). Use: make e2e BACKEND_DIR=/caminho/lorebase-backend"; exit 1; }
 	API_URL=$$(TF_WORKSPACE=qa terraform -chdir=$(BACKEND_DIR)/experience-bff/terraform output -raw api_gateway_endpoint) && \

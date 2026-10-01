@@ -33,6 +33,11 @@ migrate_working_dir/
 .pub/
 /build/
 
+# Código gerado (build_runner + slang) — não versionar, gerar com `make codegen`.
+# Ver AGENTS.md > Conventions
+*.g.dart
+*.freezed.dart
+
 # Symbolication related
 app.*.symbols
 

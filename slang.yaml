@@ -3,3 +3,5 @@ fallback_strategy: base_locale
 flavor: riverpod
 input_directory: lib/l10n
 output_directory: lib/l10n
+# Sem timestamp no cabeçalho: mantém a saída idempotente (ver AGENTS.md > Conventions).
+timestamp: false
