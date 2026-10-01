@@ -102,6 +102,7 @@ por fixture no projeto `app`. Cenários `@tracking` auto-limpam via
 - Verifique `adb devices -l` e reutilize a conexão existente. Se necessário, solicite pareamento; IP, portas e código são temporários. Navegue via ADB e capture evidências com `adb -s <device> exec-out screencap -p > <evidencia>.png`.
 - Se o dispositivo Android estiver indisponível, registre o bloqueio e mantenha a issue pendente; validação web não supre a lacuna.
 - Colete screenshots de evidência e anexe-as à GitHub issue, junto dos passos, ambiente/build testado e resultados. Confirme que as imagens carregam na issue; arquivos apenas locais não bastam. Remova segredos e dados sensíveis antes de publicar.
+- **Nunca versione evidências** (screenshots, vídeos, logs, relatórios de validação) no repositório — nada em `docs/evidence/` nem em qualquer outra pasta. PRs contêm apenas código, testes e documentação de produto/processo. Se a plataforma não permitir anexar direto na issue (a API do GitHub não sobe anexos), publique em um gist e referencie as URLs no comentário da issue.
 - Só declare a issue concluída ou a encerre após a validação passar e as evidências estarem publicadas. Se houver falha ou bloqueio de acesso, dispositivo ou upload, registre-o e mantenha a issue pendente; peça autorização antes de alterar dados do usuário.
 - Alterações sem impacto comportamental (ex.: documentação) dispensam esse fluxo, com a justificativa registrada no relato de conclusão.
 
